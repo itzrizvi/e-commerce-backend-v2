@@ -4,20 +4,21 @@ const db = require('../../Models');
 const jwt = require('jsonwebtoken');
 const User = db.users;
 
-//
+// SIGN IN CONTROLLER FUNCTION
 const signIn = async (req, res) => {
 
     try {
+        // DESTRUCTURE FROM REQ BODY
         const { email, password } = req.body;
 
-        //
+        // FILTER CHECK THE USER FOR SIGN IN
         const user = await User.findOne({
             where: {
                 email: email
             }
         });
 
-        //
+        // FOUND USER LOGIC
         if (user) {
 
             const isSame = await bcrypt.compare(password, user.password);
@@ -33,10 +34,9 @@ const signIn = async (req, res) => {
                 //go ahead and generate a cookie for the user
                 res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
 
-                console.log("user", JSON.stringify(user, null, 2));
-                console.log(token);
+                console.log("user", JSON.stringify(user, null, 2)); // TODO : REMOVE
+                console.log(token); // TODO : REMOVE
 
-                //
                 return res.status(201).send(user);
 
             } else {

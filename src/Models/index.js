@@ -23,7 +23,9 @@ const sequelize = new Sequelize(database, user, password, {
 
 // CONNECTION CHECKING
 sequelize.authenticate().then(() => {
-    console.log("DB CONNECTED")
+
+    console.log("DB CONNECTED");
+
 }).catch((err) => {
     console.log('Unable To Connect: ', err);
 });
@@ -37,5 +39,5 @@ db.sequelize = sequelize;
 // Connecting To Model
 db.users = require('./User/UserModel')(sequelize, DataTypes);
 
-
+// EXPORT
 module.exports = db;

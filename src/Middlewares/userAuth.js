@@ -13,6 +13,7 @@ const saveUser = async (req, res, next) => {
             }
         });
 
+        // Return if user already exist
         if (email) {
             return res.status(409).send("Authentication failed");
         }

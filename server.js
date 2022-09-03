@@ -9,11 +9,10 @@ const PORT = process.env.PORT || 3000;
 const db = require('./src/Models');
 
 
-
 // CREATE SERVER APP
 const app = express();
 
-// ROUTERS
+// ROUTE IMPORTS
 const authRoute = require('./src/Routes/AuthRoute/authRoute');
 
 
@@ -28,10 +27,12 @@ const middlewares = [
     cookieParser()
 ];
 
-app.use(middlewares);
+app.use(middlewares); // Middlewares Using
+
+// ROUTE DECLARATION
 app.use('/api/users', authRoute);
 
-//
+// SEQUELIZE FOR RE SYNC
 db.sequelize.sync({ force: false }).then(() => {
     console.log("DB HAS BEEN RE SYNC")
 });
@@ -39,7 +40,7 @@ db.sequelize.sync({ force: false }).then(() => {
 
 // ROOT API
 app.get('/', (req, res) => {
-    res.send('HELLO PRIME SERVER PARTS ❤️‍🔥');
+    res.send('HELLO FROM PRIME SERVER PARTS ❤️‍🔥');
 });
 
 

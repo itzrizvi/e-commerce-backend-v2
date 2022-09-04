@@ -34,7 +34,10 @@ app.use('/api/users', authRoute);
 
 // SEQUELIZE FOR RE SYNC
 db.sequelize.sync({ force: false }).then(() => {
-    console.log("DB HAS BEEN RE SYNC")
+    console.log("DB HAS BEEN RE SYNC");
+
+}).catch((err) => {
+    console.log("SYNC ERROR", err)
 });
 
 

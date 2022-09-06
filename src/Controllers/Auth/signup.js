@@ -1,10 +1,8 @@
 // All Requires
 const bcrypt = require('bcrypt');
-const db = require('../../Models');
 const jwt = require('jsonwebtoken');
+const pool = require('../../Database/db');
 
-// User Model/TABLE
-const User = db.users;
 
 // SIGN UP CONTROLLER FUNCTION
 const signUp = async (req, res) => {
@@ -22,24 +20,26 @@ const signUp = async (req, res) => {
         }
 
         // INSERT DATA TO DATA TABLE
-        const createUser = await User.create(data);
+        const createUser = await pool.pool.query(
+            'INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
+            [data.first_name, data.last_name, data.email, data.password]);
 
         // generate token with the user's id and the secretKey in the env file
         // set cookie with the token generated
-        if (createUser) {
+        if (createUser.rows.length) {
 
             // TOKEN GENERATION
-            let token = jwt.sign({ id: createUser.id }, process.env.secretKey, {
-                expiresIn: 1 * 24 * 60 * 60 * 1000
+            let token = jwt.sign({ id: createUser.rows[0].id }, process.env.secretKey, {
+                expiresIn: 7 * 24 * 60 * 60 * 1000
             });
 
             // SEND RES COOKIE WITH EXPIRATION TIME
-            res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
+            req.session.isLoggedIn = true;
+            req.session.jwtToken = token;
 
-            console.log("USER", JSON.stringify(createUser, null, 2)); // TODO: REMOVE
-            console.log(token); // TODO: REMOVE
 
-            return res.status(201).send(createUser);
+
+            return res.status(201).send(createUser.rows[0]);
 
         } else {
             return res.status(409).send("Unauthenticated")

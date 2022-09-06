@@ -77,7 +77,7 @@ app.get('/rizvi', (req, res) => { // TEST API
 // console.log('MY ID ENC : ', ciphertext); // 'my message'
 
 
-
+// DB CONNECT AND LISTEN SERVER
 pool.clientConnect
     .connect().then(() => {
         // LISTEN APP

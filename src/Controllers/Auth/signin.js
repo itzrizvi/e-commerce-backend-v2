@@ -32,8 +32,6 @@ const signIn = async (req, res) => {
                 req.session.isLoggedIn = true;
                 req.session.jwtToken = token;
 
-
-
                 return res.status(201).send("Success!!");
 
             } else {

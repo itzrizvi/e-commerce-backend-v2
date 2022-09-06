@@ -1,6 +1,7 @@
 // ALL REQUIRES
 const jwt = require('jsonwebtoken');
-const { pool } = require('../Database/db');
+const db = require('../Models');
+const User = db.users;
 
 // BIND MIDDLE WARE
 const bindUserWithRequest = async (req, res, next) => {
@@ -16,10 +17,15 @@ const bindUserWithRequest = async (req, res, next) => {
         const decodeToken = jwt.verify(token, process.env.SESSION_SECRET);
 
         // QUERY FOR USER DATA
-        const user = await pool.query('SELECT * FROM users WHERE email = $1', [decodeToken.email]);
+        const user = await User.findOne({
+            where: {
+                email: decodeToken.email
+            }
+        });
+
 
         // REQ USER ADDED
-        req.user = user.rows[0];
+        req.user = user;
 
         next();
 

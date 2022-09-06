@@ -8,16 +8,22 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3000;
 const CryptoJS = require('crypto-js');
-const pgSession = require('connect-pg-simple')(expressSession);
-const pool = require('./src/Database/db');
+const db = require('./src/Models');
+const Sequelize = require('sequelize');
+
+
+//
+const SequelizeStore = require("connect-session-sequelize")(expressSession.Store);
 
 // CREATE SERVER APP
 const app = express();
 
 // ROUTE IMPORTS
 const authRoute = require('./src/Routes/AuthRoute/authRoute');
-const bindUserWithRequest = require('./src/Middlewares/verifyAuth');
 
+
+// IMPORT MIDDLEWARES
+const bindUserWithRequest = require('./src/Middlewares/verifyAuth');
 
 
 
@@ -31,8 +37,8 @@ const middlewares = [
     cors(),
     cookieParser(),
     expressSession({
-        store: new pgSession({
-            pool: pool.pool,         // Connection pool
+        store: new SequelizeStore({
+            db: db.sequelize,         // Connection pool
             tableName: 'sessions'   // Use another table-name than the default "session" one
         }),
         secret: process.env.SESSION_SECRET,
@@ -78,20 +84,15 @@ app.get('/rizvi', (req, res) => { // TEST API
 // console.log('MY ID: ', originalText); // 'my message'
 // console.log('MY ID ENC : ', ciphertext); // 'my message'
 
-
 // DB CONNECT AND LISTEN SERVER
-pool.clientConnect
-    .connect().then(() => {
-        // LISTEN APP
-        app.listen(PORT, () => {
-            console.log(`LISTENING TO PORT: ${PORT}`);
-        });
+db.sequelize.sync({ force: false }).then(() => {
+    // LISTEN APP
+    app.listen(PORT, () => {
+        console.log(`LISTENING TO PORT: ${PORT}`);
+    });
+    console.log("DB HAS BEEN RESYNC")
+})
 
-        console.log("DB CONNECTED");
-
-    }).catch(err => {
-        console.log("CONNECTION ERROR :", err)
-    })
 
 
 

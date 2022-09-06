@@ -1,7 +1,8 @@
 // All Requires
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('../../Database/db');
+const db = require('../../Models');
+const User = db.users;
 
 
 // SIGN UP CONTROLLER FUNCTION
@@ -20,16 +21,14 @@ const signUp = async (req, res) => {
         }
 
         // INSERT DATA TO DATA TABLE
-        const createUser = await pool.pool.query(
-            'INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
-            [data.first_name, data.last_name, data.email, data.password]);
+        const createUser = await User.create(data);
 
         // generate token with the user's id and the secretKey in the env file
         // set cookie with the token generated
-        if (createUser.rows.length) {
+        if (createUser) {
 
             // TOKEN GENERATION
-            let token = jwt.sign({ id: createUser.rows[0].id, email: createUser.rows[0].email }, process.env.secretKey, {
+            let token = jwt.sign({ id: createUser.id, email: createUser.email }, process.env.SESSION_SECRET, {
                 expiresIn: 7 * 24 * 60 * 60 * 1000
             });
 
@@ -39,7 +38,7 @@ const signUp = async (req, res) => {
 
 
 
-            return res.status(201).send(createUser.rows[0]);
+            return res.status(201).send(createUser);
 
         } else {
             return res.status(409).send("Unauthenticated")

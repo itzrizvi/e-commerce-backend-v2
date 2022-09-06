@@ -1,7 +1,8 @@
 // All Requires
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('../../Database/db');
+const db = require('../../Models');
+const User = db.users;
 
 
 // SIGN IN CONTROLLER FUNCTION
@@ -13,17 +14,18 @@ const signIn = async (req, res) => {
 
 
         // FILTER CHECK THE USER FOR SIGN IN
-        const user = await pool.pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const user = await User.findOne({ where: { email: email } });
+
 
         // FOUND USER LOGIC
-        if (user.rows.length) {
+        if (user) {
 
-            const isSame = await bcrypt.compare(password, user.rows[0].password);
+            const isSame = await bcrypt.compare(password, user.password);
 
             //if password is the same
             //generate token with the user's id and the secretKey in the env file
             if (isSame) {
-                let token = jwt.sign({ id: user.rows[0].id, email: user.rows[0].email }, process.env.SESSION_SECRET, {
+                let token = jwt.sign({ id: user.id, email: user.email }, process.env.SESSION_SECRET, {
                     expiresIn: 7 * 24 * 60 * 60 * 1000
                 });
 

@@ -11,7 +11,6 @@ const CryptoJS = require('crypto-js');
 const db = require('./src/Models');
 const Sequelize = require('sequelize');
 
-
 //
 const SequelizeStore = require("connect-session-sequelize")(expressSession.Store);
 

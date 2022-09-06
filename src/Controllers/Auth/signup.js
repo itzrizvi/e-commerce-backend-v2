@@ -29,7 +29,7 @@ const signUp = async (req, res) => {
         if (createUser.rows.length) {
 
             // TOKEN GENERATION
-            let token = jwt.sign({ id: createUser.rows[0].id }, process.env.secretKey, {
+            let token = jwt.sign({ id: createUser.rows[0].id, email: createUser.rows[0].email }, process.env.secretKey, {
                 expiresIn: 7 * 24 * 60 * 60 * 1000
             });
 

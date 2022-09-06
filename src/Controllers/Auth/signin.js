@@ -23,7 +23,7 @@ const signIn = async (req, res) => {
             //if password is the same
             //generate token with the user's id and the secretKey in the env file
             if (isSame) {
-                let token = jwt.sign({ id: user.id }, process.env.SESSION_SECRET, {
+                let token = jwt.sign({ id: user.rows[0].id, email: user.rows[0].email }, process.env.SESSION_SECRET, {
                     expiresIn: 7 * 24 * 60 * 60 * 1000
                 });
 

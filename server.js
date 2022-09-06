@@ -11,12 +11,13 @@ const CryptoJS = require('crypto-js');
 const pgSession = require('connect-pg-simple')(expressSession);
 const pool = require('./src/Database/db');
 
-
 // CREATE SERVER APP
 const app = express();
 
 // ROUTE IMPORTS
 const authRoute = require('./src/Routes/AuthRoute/authRoute');
+const bindUserWithRequest = require('./src/Middlewares/verifyAuth');
+
 
 
 
@@ -33,13 +34,13 @@ const middlewares = [
         store: new pgSession({
             pool: pool.pool,         // Connection pool
             tableName: 'sessions'   // Use another table-name than the default "session" one
-            // Insert connect-pg-simple options here
         }),
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true }
-    })
+    }),
+    bindUserWithRequest,
 ];
 
 app.use(middlewares); // Middlewares Using
@@ -56,11 +57,12 @@ app.get('/', (req, res) => {
 
 // TESTAPI
 app.get('/rizvi', (req, res) => { // TEST API
-    const myObject = req.session.cookie;
-    const loggedin = req.session.isLoggedIn
-    const jwttoken = req.session.jwtToken
 
-    res.json({ myObject, loggedin, jwttoken })
+    if (req.user) {
+        res.json({ "message": `Hi ${req.user.first_name}..!!` })
+    } else {
+        res.json({ "message": "You are not allowed!!!" })
+    }
 });
 
 

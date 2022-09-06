@@ -2,7 +2,7 @@
 exports.signOut = async (req, res) => {
 
     try {
-        await req.session.destroy();
+        await req.session.destroy(); // DESTROY SESSION
 
         res.json("SIGNED Out!!");
 

@@ -6,10 +6,28 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 const CryptoJS = require('crypto-js');
 const db = require('./src/Models');
-const Sequelize = require('sequelize');
+const { ApolloServer, gql } = require('apollo-server-express');
+const { createServer } = require('http');
+
+
+//
+// Construct a schema, using GraphQL schema language
+const typeDefs = gql`
+type Query {
+PING: String
+}
+`;
+// Provide resolver functions for your schema fields
+const resolvers = {
+    Query: {
+        PING: () => 'PONG!',
+    },
+};
+
+
 
 //
 const SequelizeStore = require("connect-session-sequelize")(expressSession.Store);
@@ -32,7 +50,7 @@ const middlewares = [
     express.json(),
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
-    helmet(),
+    // helmet(),
     cors(),
     cookieParser(),
     expressSession({
@@ -83,12 +101,29 @@ app.get('/rizvi', (req, res) => { // TEST API
 // console.log('MY ID: ', originalText); // 'my message'
 // console.log('MY ID ENC : ', ciphertext); // 'my message'
 
+
+
+let apolloServer = null;
+async function startServer() {
+    apolloServer = new ApolloServer({
+        typeDefs,
+        resolvers,
+    });
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app, path: '/graphql' });
+}
+startServer();
+
+const server = createServer(app);
+
+
+
 // DB CONNECT AND LISTEN SERVER
 db.sequelize.sync({ force: false }).then(() => {
     // LISTEN APP
-    app.listen(PORT, () => {
-        console.log(`LISTENING TO PORT: ${PORT}`);
-    });
+    server.listen({ port }, () => console.log(
+        `🚀 Server ready at http://localhost:${port}/graphql`,
+    ));
     console.log("DB HAS BEEN RESYNC")
 })
 

@@ -12,12 +12,16 @@ const db = require('./src/db');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
+
+
 //
 const SequelizeStore = require("connect-session-sequelize")(expressSession.Store);
 
 // CREATE SERVER APP
 const app = express();
 
+// Middlewares Require
+const onReqTokenGenerate = require('./src/middlewares/onReqTokenGenerator');
 
 
 // MIDDLWARES ARRAY
@@ -38,10 +42,11 @@ const middlewares = [
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true }
-    })
+    }),
 ];
 
 app.use(middlewares); // Middlewares Using
+app.use(onReqTokenGenerate)
 
 
 // //
@@ -67,8 +72,17 @@ async function startApolloServer() {
         playground: true,
         introspection: true,
         tracing: true,
-        context: { db },
+        context: ({ req }) => {
+            let { isAuth, user } = req;
+            return {
+                req,
+                isAuth,
+                user,
+                db
+            }
+        },
         cache: 'bounded',
+
     });
     await server.start();
 

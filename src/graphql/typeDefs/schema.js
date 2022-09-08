@@ -17,7 +17,10 @@ input RoleRecordInput {
 }
 
 type RoleOutput {
+    isAuth:Boolean
+    Message: String!
     data: [Role]
+    FtechedBy: String!
 }
 
 type User {
@@ -28,6 +31,15 @@ type User {
     email:String
     password:String
 }
+
+type AuthPayload {
+    authToken: String!
+    uid:String!
+    first_name:String!
+    last_name:String!
+    email:String!
+    message:String!
+  }
 
 input UserInput {
     first_name:String
@@ -51,12 +63,13 @@ type UserOutput {
 
 
 type Query {
-    user(query: UserInput): UserOutput
+    user(query: UserInput): User
     role(query: RoleInput): RoleOutput
 }
 
 type Mutation{
-    createUser(data: UserInput):UserOutput
+    userSignUp(data: UserInput): AuthPayload!
+    userSignIn(email: String!, password: String!): AuthPayload!
     createRole(data: RoleInput): Role
 }
 `;

@@ -10,23 +10,13 @@ const port = process.env.PORT || 3000;
 const CryptoJS = require('crypto-js');
 const db = require('./src/db');
 const { ApolloServer } = require('apollo-server-express');
-const { createServer } = require('http');
-
-
-
+const typeDefs = require('./src/graphql/typeDefs/schema');
+const resolvers = require('./src/graphql/resolvers');
 //
 const SequelizeStore = require("connect-session-sequelize")(expressSession.Store);
 
 // CREATE SERVER APP
 const app = express();
-
-// ROUTE IMPORTS
-const authRoute = require('./src/Routes/AuthRoute/authRoute');
-
-
-// IMPORT MIDDLEWARES
-const bindUserWithRequest = require('./src/Middlewares/verifyAuth');
-const { schemaWithResolvers } = require('./src/graphql');
 
 
 
@@ -48,31 +38,10 @@ const middlewares = [
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true }
-    }),
-    bindUserWithRequest,
+    })
 ];
 
 app.use(middlewares); // Middlewares Using
-
-// ROUTE DECLARATION
-app.use('/api/users', authRoute);
-
-
-// ROOT API
-app.get('/', (req, res) => {
-    res.send('HELLO FROM PRIME SERVER PARTS ❤️‍🔥');
-});
-
-
-// TESTAPI
-app.get('/rizvi', (req, res) => { // TEST API
-
-    if (req.user) {
-        res.json({ "message": `Hi ${req.user.first_name}..!!` })
-    } else {
-        res.json({ "message": "You are not allowed!!!" })
-    }
-});
 
 
 // //
@@ -89,31 +58,39 @@ app.get('/rizvi', (req, res) => { // TEST API
 
 
 
-let apolloServer = null;
-async function startServer() {
-    apolloServer = new ApolloServer({
-        schema: schemaWithResolvers,
+async function startApolloServer() {
+    const server = new ApolloServer({
+        typeDefs: typeDefs,
+        resolvers: resolvers,
+        csrfPrevention: true,
         uploads: true,
         playground: true,
         introspection: true,
         tracing: true,
-        context: { db }
+        context: { db },
+        cache: 'bounded',
     });
-    await apolloServer.start();
-    apolloServer.applyMiddleware({ app, path: '/graphql' });
-}
-startServer();
+    await server.start();
 
-const server = createServer(app);
+    server.applyMiddleware({ app });
+    app.use((req, res) => {
+        res.status(200);
+        res.send('Hello FROM PRIME SERVER PARTS!');
+        res.end();
+    });
+    await new Promise(resolve => app.listen({ port }, resolve));
+    console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
+    return { server, app };
+}
+startApolloServer();
+
 
 
 
 // DB CONNECT AND LISTEN SERVER
 db.sequelize.sync({ force: false }).then(() => {
     // LISTEN APP
-    server.listen({ port }, () => console.log(
-        `🚀 Server ready at http://localhost:${port}/graphql`,
-    ));
+
     console.log("DB HAS BEEN RESYNC")
 })
 

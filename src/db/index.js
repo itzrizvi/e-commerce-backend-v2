@@ -51,16 +51,14 @@ Object.keys(db).forEach(modelName => {
 });
 
 
-db.Sequelize = Sequelize
 db.sequelize = sequelize
+db.Sequelize = Sequelize
 
-//connecting to model
-// db.users = require('./Models/User')(sequelize, DataTypes);
 
 
 
 //////////////////////////////////////////////////////////////////////
-let constructResponse = function (data, error) {
+let constructResponse = function async(data, error) {
     return {
         count: data ? data.length : 0,
         data: data,
@@ -77,10 +75,12 @@ db.getUser = async (request) => {
         .then(res => constructResponse(res))
 }
 
+
 db.createUser = async (request) => {
     console.log("createUser called")
     return db.users.create(request.data).then(res => constructResponse(res))
 }
+
 
 //exporting the module
 module.exports = db

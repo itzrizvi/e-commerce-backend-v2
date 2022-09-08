@@ -1,5 +1,5 @@
 // ALL REQUIRES
-const db = require("../Models");
+const db = require("../db");
 const User = db.users;
 
 // This Function is to Avoid having Two users with same email

@@ -1,7 +1,7 @@
 // All Requires
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const db = require('../../Models');
+const db = require('../../db');
 const User = db.users;
 
 

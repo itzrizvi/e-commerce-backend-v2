@@ -1,0 +1,28 @@
+type User {
+    uid:ID,
+    id:ID
+    first_name:String
+    last_name:String
+    email:String
+    password:String
+}
+
+input UserInput {
+    first_name:String
+    last_name:String
+    email:String
+    password:String
+}
+
+input UserRecordInput {
+    uid:ID,
+    first_name:String
+    last_name:String
+    email:String
+    password:String
+}
+
+type UserOutput {
+    count: Int
+    data: [User]
+}

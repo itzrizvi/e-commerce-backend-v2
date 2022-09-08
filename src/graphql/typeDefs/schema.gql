@@ -1,0 +1,7 @@
+type Query {
+    user(query: UserInput): UserOutput
+}
+
+type Mutation{
+    createUser(data: UserInput):UserOutput
+}

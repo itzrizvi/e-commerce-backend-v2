@@ -8,24 +8,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 3000;
 const CryptoJS = require('crypto-js');
-const db = require('./src/Models');
-const { ApolloServer, gql } = require('apollo-server-express');
+const db = require('./src/db');
+const { ApolloServer } = require('apollo-server-express');
 const { createServer } = require('http');
-
-
-//
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-type Query {
-PING: String
-}
-`;
-// Provide resolver functions for your schema fields
-const resolvers = {
-    Query: {
-        PING: () => 'PONG!',
-    },
-};
 
 
 
@@ -41,6 +26,7 @@ const authRoute = require('./src/Routes/AuthRoute/authRoute');
 
 // IMPORT MIDDLEWARES
 const bindUserWithRequest = require('./src/Middlewares/verifyAuth');
+const { schemaWithResolvers } = require('./src/graphql');
 
 
 
@@ -106,8 +92,12 @@ app.get('/rizvi', (req, res) => { // TEST API
 let apolloServer = null;
 async function startServer() {
     apolloServer = new ApolloServer({
-        typeDefs,
-        resolvers,
+        schema: schemaWithResolvers,
+        uploads: true,
+        playground: true,
+        introspection: true,
+        tracing: true,
+        context: { db }
     });
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, path: '/graphql' });

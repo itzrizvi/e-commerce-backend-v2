@@ -1,6 +1,6 @@
 // ALL REQUIRES
 const jwt = require('jsonwebtoken');
-const db = require('../Models');
+const db = require('../db');
 const User = db.users;
 
 // BIND MIDDLE WARE

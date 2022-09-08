@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@graphql-tools/graphql-file-loader": "^7.5.4",
+    "@graphql-tools/load": "^7.7.6",
+    "@graphql-tools/schema": "^9.0.3",
     "apollo-server-express": "^3.10.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",

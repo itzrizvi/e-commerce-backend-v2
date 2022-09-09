@@ -20,7 +20,7 @@ type RoleOutput {
     isAuth:Boolean
     Message: String!
     data: [Role]
-    FtechedBy: String!
+    FetchedBy: String!
 }
 
 type User {
@@ -63,7 +63,7 @@ type UserOutput {
 
 
 type Query {
-    role(query: RoleInput): RoleOutput
+    getAllRoles(query: RoleInput): RoleOutput
 }
 
 type Mutation{

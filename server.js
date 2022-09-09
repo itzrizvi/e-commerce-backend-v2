@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const expressSession = require('express-session');
 const bodyParser = require('body-parser');
-const helmet = require('helmet');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 3000;
@@ -14,8 +13,6 @@ const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
 
 
-//
-const SequelizeStore = require("connect-session-sequelize")(expressSession.Store);
 
 // CREATE SERVER APP
 const app = express();
@@ -32,17 +29,7 @@ const middlewares = [
     bodyParser.urlencoded({ extended: true }),
     // helmet(),
     cors(),
-    cookieParser(),
-    expressSession({
-        store: new SequelizeStore({
-            db: db.sequelize,         // Connection pool
-            tableName: 'sessions'   // Use another table-name than the default "session" one
-        }),
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-        cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true }
-    }),
+    cookieParser()
 ];
 
 app.use(middlewares); // Middlewares Using
@@ -92,7 +79,10 @@ async function startApolloServer() {
         res.send('Hello FROM PRIME SERVER PARTS!');
         res.end();
     });
+
     await new Promise(resolve => app.listen({ port }, resolve));
+
+    // LISTEN APP
     console.log(`🚀 Server ready at http://localhost:3000${server.graphqlPath}`);
     return { server, app };
 }
@@ -101,10 +91,8 @@ startApolloServer();
 
 
 
-// DB CONNECT AND LISTEN SERVER
+// DB RESYNC
 db.sequelize.sync({ force: false }).then(() => {
-    // LISTEN APP
-
     console.log("DB HAS BEEN RESYNC")
 })
 

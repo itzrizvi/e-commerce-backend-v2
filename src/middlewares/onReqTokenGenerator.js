@@ -3,6 +3,7 @@ const db = require("../db");
 
 
 const onReqTokenGenerate = async (req, res, next) => {
+    console.log("MIDDLE WARE CALLED")
     const authToken = req.get('Authorization') || '';
 
     if (!authToken) {

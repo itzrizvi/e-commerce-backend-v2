@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const resolvers = {
     Query: {
-        user: (parent, args, { db }, info) => db.getUser(args, info),
         role: async (parent, args, { db, user, isAuth }, info) => {
             if (!user && !isAuth) return { data: [], isAuth: false, Message: "Not Authenticated", FtechedBy: "" };
             let q = {

@@ -63,7 +63,6 @@ type UserOutput {
 
 
 type Query {
-    user(query: UserInput): User
     role(query: RoleInput): RoleOutput
 }
 

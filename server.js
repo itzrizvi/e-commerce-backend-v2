@@ -27,7 +27,6 @@ const middlewares = [
     express.json(),
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
-    // helmet(),
     cors(),
     cookieParser()
 ];

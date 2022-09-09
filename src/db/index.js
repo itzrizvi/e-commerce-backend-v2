@@ -41,45 +41,15 @@ readdirSync(path.join(__dirname, './Models'))
     .forEach(file => {
         const model = require(path.join(__dirname, './Models', file))(sequelize, DataTypes);
         db[model.name] = model;
+        if (db[model.name].associate) {
+            db[model.name].associate(db);
+        }
 
     });
-
-Object.keys(db).forEach(modelName => {
-    if (db[modelName].associate) {
-        db[modelName].associate(db);
-    }
-});
 
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
-
-
-
-
-//////////////////////////////////////////////////////////////////////
-let constructResponse = function async(data, error) {
-    return {
-        count: data ? data.length : 0,
-        data: data,
-        error: error ? (error.name ? error.name : error) : null
-    }
-}
-
-db.getUser = async (request) => {
-    console.log("getUser called")
-    let q = {
-        where: request.query
-    };
-    return db.users.findAll(q)
-        .then(res => constructResponse(res))
-}
-
-
-db.createUser = async (request) => {
-    console.log("createUser called")
-    return db.users.create(request.data).then(res => constructResponse(res))
-}
 
 
 //exporting the module

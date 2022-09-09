@@ -16,6 +16,16 @@ const userSignUpRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// SIGN IN REQUEST
+const userSignInRequest = (body) => {
+    rules = {
+        email: 'required|email',
+        password: 'string|min:6'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 
 const checkBody = (body, rules) => {
@@ -37,4 +47,4 @@ const checkBody = (body, rules) => {
 
 }
 
-module.exports = { userSignUpRequest }
+module.exports = { userSignUpRequest, userSignInRequest }

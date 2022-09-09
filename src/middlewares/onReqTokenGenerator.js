@@ -3,7 +3,7 @@ const db = require("../db");
 
 
 const onReqTokenGenerate = async (req, res, next) => {
-    console.log("AUTH CHECKED")
+
     const authToken = req.get('Authorization') || '';
 
     if (!authToken) {

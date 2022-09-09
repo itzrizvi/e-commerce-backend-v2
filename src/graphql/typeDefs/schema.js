@@ -70,9 +70,10 @@ type Query {
 type Mutation{
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
-    createRole(data: RoleInput): Role
 }
 `;
 
 
 module.exports = typeDefs;
+
+// createRole(data: RoleInput): Role

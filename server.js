@@ -11,7 +11,7 @@ const db = require('./src/db');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
-
+const { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
 
 
 // CREATE SERVER APP
@@ -19,6 +19,7 @@ const app = express();
 
 // Middlewares Require
 const onReqTokenGenerate = require('./src/middlewares/onReqTokenGenerator');
+
 
 
 // MIDDLWARES ARRAY
@@ -68,6 +69,10 @@ async function startApolloServer() {
             }
         },
         cache: 'bounded',
+        plugins: [
+            ApolloServerPluginLandingPageGraphQLPlayground(), // FOR DISABLE Apollo STUDIO
+            ApolloServerPluginLandingPageDisabled() // FOR DISABLE Apollo STUDIO
+        ]
 
     });
     await server.start();

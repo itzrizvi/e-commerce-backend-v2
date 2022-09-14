@@ -96,22 +96,22 @@ module.exports = {
     },
     // Email Verify
     verifyEmail: async (req, db, user, isAuth) => {
-        if (!user && !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" };
+        if (!user && !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
 
-        const email = req.email;
+        const email = req.email; // Email From Request
 
-        //
+        // User Find For Matching Code
         const findUser = await db.users.findOne({ where: { email } });
 
-        //
+        // IF Not User
         if (!findUser) {
-            console.log("User Not Found")
+            return { emailVerified: false, isAuth: true, message: "Something Went Wrong", email: email };
         };
 
-        //
+        // Destructure Values
         const { updatedAt, verification_code, email_verified } = findUser;
 
-        //
+        // Time Calculating
         const reqTime = new Date();
         const recordTime = new Date(updatedAt);
         // Calculating Minutes
@@ -119,18 +119,18 @@ module.exports = {
         // Difference
         const diffs = Math.abs(Math.round(minutes));
 
-        //
+        // IF Difference Less than or Equal to 20 minutes
         if (diffs <= 20) {
-
+            // Matching Codes
             if (verification_code === req.verificationCode) {
-
+                // Updating Doc
                 const updateDoc = {
                     email_verified: true
                 }
-
+                // Update User
                 const updateUser = await db.users.update(updateDoc, { where: { email } });
 
-
+                // If Updated then return values
                 if (updateUser) {
                     return {
                         email: email,
@@ -139,7 +139,7 @@ module.exports = {
                         isAuth: isAuth
                     }
                 } else {
-                    return {
+                    return { // If Not updated
                         email: email,
                         emailVerified: false,
                         message: "ERROR WHEN MATCHING",
@@ -149,7 +149,7 @@ module.exports = {
 
 
             } else {
-                return {
+                return { // If nOt Matched
                     email: email,
                     emailVerified: false,
                     message: "CODE DIDN'T MATCHED",
@@ -158,7 +158,7 @@ module.exports = {
             }
 
 
-        } else {
+        } else { // If Time Expired
 
             return {
                 email: email,
@@ -167,9 +167,6 @@ module.exports = {
                 isAuth: isAuth
             }
         }
-
-
-
 
 
 

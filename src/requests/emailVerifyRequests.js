@@ -1,9 +1,9 @@
-// ALL ROLE BASED REQUEST FORMATION
+// Verification Based Request
 // All Requires
 const { make } = require('simple-body-validator');
 let rules = {}, request, response;
 
-// GET ALL ROLES REQUEST
+// Email Verify REQUEST
 const emailVerifyRequest = (body) => {
     rules = {
         email: 'required|email',
@@ -14,7 +14,7 @@ const emailVerifyRequest = (body) => {
 }
 
 
-//
+// Validation Check
 const checkBody = (body, rules) => {
 
     request = body;
@@ -24,7 +24,6 @@ const checkBody = (body, rules) => {
         const validator = make(request, rules);
         if (!validator.validate()) response = { success: false, data: validator.errors().all() }
         else response = { success: true }
-
 
         return response;
 

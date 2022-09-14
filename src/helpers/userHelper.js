@@ -7,12 +7,13 @@ module.exports = {
     userSignUp: async (req, db) => {
         try {
 
-            const { first_name, last_name, email, password } = req;
+            const { first_name, last_name, email, password, email_verified } = req;
             const user = await db.users.create({
                 first_name,
                 last_name,
                 email,
-                password: await bcrypt.hash(password, 10)
+                password: await bcrypt.hash(password, 10),
+                email_verified: false
             });
 
             const authToken = jwt.sign(
@@ -22,7 +23,7 @@ module.exports = {
             )
 
             return {
-                authToken, uid: user.uid, first_name: user.first_name, last_name: user.last_name, email: user.email, message: "Sign Up succesfull"
+                authToken, uid: user.uid, first_name: user.first_name, last_name: user.last_name, email: user.email, emailVerified: user.email_verified, message: "Sign Up succesfull"
             }
 
         } catch (error) {

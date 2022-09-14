@@ -39,6 +39,7 @@ type AuthPayload {
     last_name:String!
     email:String!
     message:String!
+    emailVerified:Boolean!
   }
 
 input UserInput {

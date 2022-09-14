@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
         email_verified: {
             type: DataTypes.BOOLEAN,
             allowNull: true
+        },
+        verification_code: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
 
     }, {

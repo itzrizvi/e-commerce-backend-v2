@@ -40,6 +40,9 @@ type AuthPayload {
     email:String!
     message:String!
     emailVerified:Boolean!
+    verificationCode:Int!
+    updatedAt:String!
+    createdAt:String!
   }
 
 input UserInput {

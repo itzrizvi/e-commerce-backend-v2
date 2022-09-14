@@ -2,9 +2,11 @@ const { userSignUpController, userSignInController, emailVerifyController } = re
 
 
 module.exports = {
+    // SIGN UP MUTATION
     userSignUp: async (root, args, { db }, info) => {
         return await userSignUpController(args.data, db);
     },
+    // SIGN IN MUTATION
     userSignIn: async (root, { email, password }, { db }, info) => {
         const data = {
             email,
@@ -12,6 +14,7 @@ module.exports = {
         }
         return await userSignInController(data, db);
     },
+    // Verify Email MUTATION
     verifyEmail: async (root, args, { db, user, isAuth }, info) => {
         return await emailVerifyController(args.data, db, user, isAuth);
     }

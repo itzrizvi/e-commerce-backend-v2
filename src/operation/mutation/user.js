@@ -1,4 +1,4 @@
-const { userSignUpController, userSignInController } = require('../../controllers');
+const { userSignUpController, userSignInController, emailVerifyController } = require('../../controllers');
 
 
 module.exports = {
@@ -11,5 +11,8 @@ module.exports = {
             password
         }
         return await userSignInController(data, db);
+    },
+    verifyEmail: async (root, args, { db, user, isAuth }, info) => {
+        return await emailVerifyController(args.data, db, user, isAuth);
     }
 }

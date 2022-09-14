@@ -78,11 +78,100 @@ module.exports = {
             )
 
             return {
-                authToken, uid: user.uid, first_name: user.first_name, last_name: user.last_name, email: user.email, message: "Sign In succesfull"
+                authToken,
+                uid: user.uid,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                message: "Sign In succesfull",
+                emailVerified: user.email_verified,
+                verificationCode: user.verification_code,
+                updatedAt: user.createdAt,
+                createdAt: user.updatedAt
             }
 
         } catch (error) {
             throw new Error(error.message)
         }
     },
+    // Email Verify
+    verifyEmail: async (req, db, user, isAuth) => {
+        if (!user && !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" };
+
+        const email = req.email;
+
+        //
+        const findUser = await db.users.findOne({ where: { email } });
+
+        //
+        if (!findUser) {
+            console.log("User Not Found")
+        };
+
+        //
+        const { updatedAt, verification_code, email_verified } = findUser;
+
+        //
+        const reqTime = new Date();
+        const recordTime = new Date(updatedAt);
+        // Calculating Minutes
+        let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
+        // Difference
+        const diffs = Math.abs(Math.round(minutes));
+
+        //
+        if (diffs <= 20) {
+
+            if (verification_code === req.verificationCode) {
+
+                const updateDoc = {
+                    email_verified: true
+                }
+
+                const updateUser = await db.users.update(updateDoc, { where: { email } });
+
+
+                if (updateUser) {
+                    return {
+                        email: email,
+                        emailVerified: true,
+                        message: "Email Verified Successfully!!",
+                        isAuth: isAuth
+                    }
+                } else {
+                    return {
+                        email: email,
+                        emailVerified: false,
+                        message: "ERROR WHEN MATCHING",
+                        isAuth: isAuth
+                    }
+                }
+
+
+            } else {
+                return {
+                    email: email,
+                    emailVerified: false,
+                    message: "CODE DIDN'T MATCHED",
+                    isAuth: isAuth
+                }
+            }
+
+
+        } else {
+
+            return {
+                email: email,
+                emailVerified: false,
+                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Resend Code From Profile!!!",
+                isAuth: isAuth
+            }
+        }
+
+
+
+
+
+
+    }
 }

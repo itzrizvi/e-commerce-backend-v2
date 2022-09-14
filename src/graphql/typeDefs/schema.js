@@ -65,6 +65,18 @@ type UserOutput {
     data: [User]
 }
 
+input VerifyEmailInput {
+    verificationCode:Int!
+    email:String!
+}
+
+type VerifyEmailOutput {
+    email:String!
+    emailVerified:Boolean!
+    isAuth:Boolean!
+    message:String!
+}
+
 
 type Query {
     getAllRoles(query: RoleInput): RoleOutput
@@ -73,6 +85,7 @@ type Query {
 type Mutation{
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
+    verifyEmail(data: VerifyEmailInput):VerifyEmailOutput
 }
 `;
 

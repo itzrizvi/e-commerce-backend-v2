@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer'); // Node Mailer
 
 exports.verifierEmail = async (data) => {
-
+    // Transport Creator From Nodemailer
     const transport = nodemailer.createTransport({
         host: process.env.NODEMAILER_HOST,
         port: process.env.NODEMAILER_PORT,
@@ -11,6 +11,7 @@ exports.verifierEmail = async (data) => {
         }
     });
 
+    // Message Data to Send Email
     const message = {
         from: "Prime Server Parts",
         to: data.email,
@@ -18,6 +19,7 @@ exports.verifierEmail = async (data) => {
         text: data.message
     }
 
+    // Email Sender
     await transport.sendMail(message, (error, info) => {
         if (error) {
             console.log("NODE MAILER ERROR: ", error)

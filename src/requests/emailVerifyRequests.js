@@ -6,7 +6,6 @@ let rules = {}, request, response;
 // Email Verify REQUEST
 const emailVerifyRequest = (body) => {
     rules = {
-        email: 'required|email',
         verificationCode: 'required|strict|integer'
     }
 

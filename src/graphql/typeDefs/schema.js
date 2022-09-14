@@ -67,7 +67,6 @@ type UserOutput {
 
 input VerifyEmailInput {
     verificationCode:Int!
-    email:String!
 }
 
 type VerifyEmailOutput {
@@ -85,7 +84,7 @@ type Query {
 type Mutation{
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
-    verifyEmail(data: VerifyEmailInput):VerifyEmailOutput
+    verifyEmail(data: VerifyEmailInput): VerifyEmailOutput
 }
 `;
 

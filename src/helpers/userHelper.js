@@ -98,7 +98,7 @@ module.exports = {
     verifyEmail: async (req, db, user, isAuth) => {
         if (!user && !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
 
-        const email = req.email; // Email From Request
+        const email = user.email; // Email From Request
 
         // User Find For Matching Code
         const findUser = await db.users.findOne({ where: { email } });

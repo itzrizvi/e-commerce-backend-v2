@@ -1,4 +1,7 @@
-const { userSignUpController, userSignInController, emailVerifyController, resendVerificationEmailController } = require('../../controllers');
+const { userSignUpController,
+    userSignInController,
+    emailVerifyController,
+    resendVerificationEmailController } = require('../../controllers');
 
 
 module.exports = {

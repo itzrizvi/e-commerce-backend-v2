@@ -1,4 +1,4 @@
-//
+// ROLE BASED QUERY
 const { getAllRolesController } = require('../../controllers');
 
 module.exports = {

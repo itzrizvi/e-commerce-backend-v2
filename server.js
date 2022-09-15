@@ -11,7 +11,8 @@ const db = require('./src/db');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
-const { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
+const { ApolloServerPluginLandingPageGraphQLPlayground,
+    ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
 
 
 // CREATE SERVER APP

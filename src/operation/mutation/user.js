@@ -1,4 +1,4 @@
-const { userSignUpController, userSignInController, emailVerifyController } = require('../../controllers');
+const { userSignUpController, userSignInController, emailVerifyController, resendVerificationEmailController } = require('../../controllers');
 
 
 module.exports = {
@@ -17,5 +17,9 @@ module.exports = {
     // Verify Email MUTATION
     verifyEmail: async (root, args, { db, user, isAuth }, info) => {
         return await emailVerifyController(args.data, db, user, isAuth);
+    },
+    // Resend Verification Email MUTATION
+    resendVerificationEmail: async (root, args, { db, user, isAuth }, info) => {
+        return await resendVerificationEmailController(args.data, db, user, isAuth);
     }
 }

@@ -8,7 +8,7 @@ module.exports = {
     userSignUp: async (req, db) => {
         try {
 
-            const { first_name, last_name, email, password, email_verified } = req;
+            const { first_name, last_name, email, password } = req;
             const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
             const user = await db.users.create({
@@ -170,5 +170,58 @@ module.exports = {
 
 
 
+    },
+    // Resend Email For Verification
+    resendVerificationEmail: async (req, db, user, isAuth) => {
+        if (!user && !isAuth) return { message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
+
+        const confirmEmail = req.email === user.email; // Confirm that requested email and Auth Email is same
+
+
+        if (confirmEmail) { // Condirm Condition
+
+            // EMAIL FROM REQUEST
+            const email = req.email;
+            // NEW VERIFICATION CODE GENERATE
+            const newVerificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
+
+            // Updating Doc
+            const updateDoc = {
+                verification_code: newVerificationCode
+            }
+            // Update User
+            const updateUser = await db.users.update(updateDoc, { where: { email } });
+
+
+
+            // If Updated then return values
+            if (updateUser) {
+
+                // Setting Up Data for EMAIL SENDER
+                const mailData = {
+                    email: email,
+                    subject: "Verification Code From Primer Server Parts",
+                    message: `Your NEW 6 Digit Verification Code is ${newVerificationCode}`
+                }
+
+                // SENDING EMAIL
+                await verifierEmail(mailData);
+                // Return The Response
+                return {
+                    email: email,
+                    message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!"
+                }
+            } else {
+                return { // If Not updated
+                    email: email,
+                    message: "Failed To Send New Code"
+                }
+            }
+
+        } else {
+
+            return { message: "Not Authenticated", email: "Not Found!" }
+
+        }
     }
 }

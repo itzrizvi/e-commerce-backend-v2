@@ -4,7 +4,7 @@ const { userSignUpController,
     resendVerificationEmailController,
     forgotPasswordController } = require('../../controllers');
 
-const { forgotPasswordInitController } = forgotPasswordController;
+const { forgotPasswordInitController, forgotPasswordCodeMatchController } = forgotPasswordController;
 
 
 module.exports = {
@@ -31,5 +31,9 @@ module.exports = {
     // Forgot Password Initiation
     forgotPassInit: async (root, args, { db }, info) => {
         return await forgotPasswordInitController(args.data, db);
+    },
+    // Forgot Password Code Match Mutation
+    forgotPassCodeMatch: async (root, args, { db }, info) => {
+        return await forgotPasswordCodeMatchController(args.data, db);
     }
 }

@@ -110,7 +110,7 @@ module.exports = {
         };
 
         // Destructure Values
-        const { updatedAt, verification_code, email_verified } = findUser;
+        const { updatedAt, verification_code } = findUser;
 
         // Time Calculating
         const reqTime = new Date();
@@ -278,6 +278,59 @@ module.exports = {
                 email: email
             }
         }
+
+    },
+    // Forgot Password Code Match Helper
+    forgotPassCodeMatch: async (req, db) => {
+
+        // FORGOT PASS CODE AND EMAIL FROM REQ
+        const email = req.email;
+        const forgotPassVerifyCode = req.forgotPassVerifyCode;
+
+        // CHECK USER 
+        const checkUser = await db.users.findOne({ where: { email } });
+
+        if (!checkUser) return { email: email, message: "Please Enter Valid Details!!!" };
+
+        // Destructure From User
+        const { forgot_password_code, updatedAt } = checkUser;
+
+        // Time Calculating
+        const reqTime = new Date();
+        const recordTime = new Date(updatedAt);
+        // Calculating Minutes
+        let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
+        // Difference
+        const diffs = Math.abs(Math.round(minutes));
+
+        // IF Difference Less than or Equal to 20 minutes
+        if (diffs <= 20) {
+
+            // Check the code is matched or not
+            const matchedOrNot = forgotPassVerifyCode === forgot_password_code;
+
+            // Code match condition
+            if (matchedOrNot) {
+                return {
+                    email: email,
+                    message: "Code Matched, Proceeding To Next Step!!!"
+                }
+            } else { // If not matched
+                return {
+                    email: email,
+                    message: "Please Enter Valid Details!!!"
+                }
+            }
+
+
+        } else { // If Time Expired
+
+            return {
+                email: email,
+                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Start Again From The Beginning!!!"
+            }
+        }
+
 
     }
 }

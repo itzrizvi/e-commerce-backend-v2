@@ -12,6 +12,16 @@ const forgotPassInitRequest = (body) => {
 }
 
 
+// Forgot Password Code Match REQUEST
+const forgotPassCodeMatchRequest = (body) => {
+    rules = {
+        email: 'required|email',
+        forgotPassVerifyCode: 'required|strict|integer'
+    }
+    return checkBody(body, rules);
+}
+
+
 // Validation Check
 const checkBody = (body, rules) => {
 
@@ -35,5 +45,6 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    forgotPassInitRequest
+    forgotPassInitRequest,
+    forgotPassCodeMatchRequest
 }

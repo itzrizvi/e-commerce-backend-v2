@@ -27,11 +27,15 @@ module.exports = (sequelize, DataTypes) => {
         },
         email_verified: {
             type: DataTypes.BOOLEAN,
-            allowNull: true
+            allowNull: false
         },
         verification_code: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
+        },
+        forgot_password_code: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
 
     }, {

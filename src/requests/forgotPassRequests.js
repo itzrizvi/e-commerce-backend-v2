@@ -8,7 +8,6 @@ const forgotPassInitRequest = (body) => {
     rules = {
         email: 'required|email',
     }
-
     return checkBody(body, rules);
 }
 

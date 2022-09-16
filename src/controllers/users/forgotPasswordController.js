@@ -1,9 +1,10 @@
+// All Requires
 const { forgotPassInit } = require("../../helpers/userHelper");
 const { forgotPassInitRequest } = require("../../requests/forgotPassRequests");
 const { singleResponse } = require("../../utils/response");
 
 
-
+// FORGOT PASSWORD INITIATION (STEP 1)
 const forgotPasswordInitController = async (req, db) => {
 
     // Validate Request

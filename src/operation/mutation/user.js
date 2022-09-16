@@ -1,7 +1,10 @@
 const { userSignUpController,
     userSignInController,
     emailVerifyController,
-    resendVerificationEmailController } = require('../../controllers');
+    resendVerificationEmailController,
+    forgotPasswordController } = require('../../controllers');
+
+const { forgotPasswordInitController } = forgotPasswordController;
 
 
 module.exports = {
@@ -24,5 +27,9 @@ module.exports = {
     // Resend Verification Email MUTATION
     resendVerificationEmail: async (root, args, { db, user, isAuth }, info) => {
         return await resendVerificationEmailController(args.data, db, user, isAuth);
+    },
+    // Forgot Password Initiation
+    forgotPassInit: async (root, args, { db }, info) => {
+        return await forgotPasswordInitController(args.data, db);
     }
 }

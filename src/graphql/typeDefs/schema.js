@@ -84,6 +84,15 @@ type resendVerifyEmailOutput {
     email:String!
 }
 
+input ForgotPassInitInput {
+    email:String!
+}
+
+type ForgotPassInitOutput {
+    message:String!
+    email:String!
+}
+
 
 type Query {
     getAllRoles(query: RoleInput): RoleOutput
@@ -94,6 +103,7 @@ type Mutation{
     userSignIn(email: String!, password: String!): AuthPayload!
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!
+    forgotPassInit(data: ForgotPassInitInput):ForgotPassInitOutput!
 }
 `;
 

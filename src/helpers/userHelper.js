@@ -31,7 +31,7 @@ module.exports = {
             const mailData = {
                 email: user.email,
                 subject: "Verification Code From Primer Server Parts",
-                message: `Your 6 Digit Verification Code is ${user.verification_code}`
+                message: `Your 6 Digit Verification Code is ${user.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
             }
 
             // SENDING EMAIL
@@ -202,7 +202,7 @@ module.exports = {
                 const mailData = {
                     email: email,
                     subject: "Verification Code From Primer Server Parts",
-                    message: `Your NEW 6 Digit Verification Code is ${newVerificationCode}`
+                    message: `Your NEW 6 Digit Verification Code is ${newVerificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
                 }
 
                 // SENDING EMAIL
@@ -224,5 +224,60 @@ module.exports = {
             return { message: "Not Authenticated", email: "Not Found!" }
 
         }
+    },
+    // Forgot Password Initiation Helper
+    forgotPassInit: async (req, db) => {
+
+        // GET EMAIL FROM REQUEST
+        const email = req.email;
+
+        // Check User is Exists
+        const checkUser = await db.users.findOne({ where: { email } });
+
+        // IF USer Exists
+        if (checkUser) {
+            // GENERATE FORGOT PASS VERIFY CODE
+            const forgotPasswordCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
+
+            // Updating Doc
+            const updateDoc = {
+                forgot_password_code: forgotPasswordCode
+            }
+            // Update User
+            const updateUser = await db.users.update(updateDoc, { where: { email } });
+
+            // IF USER UPDATED
+            if (updateUser) {
+
+                // Setting Up Data for EMAIL SENDER
+                const mailData = {
+                    email: email,
+                    subject: "Reset Password Verification Code From Primer Server Parts",
+                    message: `Your Reset Password Verification 6 Digit Code is ${forgotPasswordCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+                }
+
+                // SENDING EMAIL FOR RESET PASSWORD
+                await verifierEmail(mailData);
+
+                // Return The Response
+                return {
+                    message: "A Reset Password Verification Code is Sent to Your Email!!!",
+                    email: email
+                }
+
+            } else { // ELSE USER COULDN"T UPDATE
+                return {
+                    message: "Something Went Wrong Try Again!!!",
+                    email: email
+                }
+            }
+
+        } else { // IF USER NOT FOUND
+            return {
+                message: "User Not Found, Please Enter Your Account Email!!!",
+                email: email
+            }
+        }
+
     }
 }

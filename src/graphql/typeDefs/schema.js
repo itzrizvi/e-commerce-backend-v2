@@ -103,6 +103,18 @@ type ForgotPassCodeMatchOutput {
     email:String!
 }
 
+input ForgotPassFinalInput {
+    email:String!
+    forgotPassVerifyCode:Int!
+    newPassword:String!
+    confirmPassword:String!
+}
+
+type ForgotPassFinalOutput {
+    email:String!
+    message:String!
+}
+
 
 type Query {
     getAllRoles(query: RoleInput): RoleOutput
@@ -114,7 +126,8 @@ type Mutation{
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!
     forgotPassInit(data: ForgotPassInitInput):ForgotPassInitOutput!
-    forgotPassCodeMatch(data:ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
+    forgotPassCodeMatch(data: ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
+    forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
 }
 `;
 

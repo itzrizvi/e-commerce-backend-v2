@@ -225,7 +225,7 @@ module.exports = {
 
         }
     },
-    // Forgot Password Initiation Helper
+    // Forgot Password Initiation Helper (STEP 1)
     forgotPassInit: async (req, db) => {
 
         // GET EMAIL FROM REQUEST
@@ -280,7 +280,7 @@ module.exports = {
         }
 
     },
-    // Forgot Password Code Match Helper
+    // Forgot Password Code Match Helper (STEP 2)
     forgotPassCodeMatch: async (req, db) => {
 
         // FORGOT PASS CODE AND EMAIL FROM REQ
@@ -320,6 +320,80 @@ module.exports = {
                     email: email,
                     message: "Please Enter Valid Details!!!"
                 }
+            }
+
+
+        } else { // If Time Expired
+
+            return {
+                email: email,
+                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Start Again From The Beginning!!!"
+            }
+        }
+
+
+    },
+    // Forgot Password Final (STEP 3)
+    forgotPassFinal: async (req, db) => {
+
+        // Details From Request 
+        const email = req.email;
+        const forgotPassVerifyCode = req.forgotPassVerifyCode;
+        const newPassword = req.newPassword;
+        const confirmPassword = req.confirmPassword;
+
+        // CHECK USER 
+        const checkUser = await db.users.findOne({ where: { email } });
+
+        if (!checkUser) return { email: email, message: "Please Enter Valid Details!!!" }; // If user not found by Email
+
+        // Check Password Match
+        const passwordMatch = newPassword === confirmPassword;
+        if (!passwordMatch) return { email: email, message: "Two Password Didn't Matched!!!" }; // If two password didn't matched
+
+        // Destructure From User
+        const { forgot_password_code, updatedAt } = checkUser;
+
+        // Time Calculating
+        const reqTime = new Date();
+        const recordTime = new Date(updatedAt);
+        // Calculating Minutes
+        let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
+        // Difference
+        const diffs = Math.abs(Math.round(minutes));
+
+        // IF Difference Less than or Equal to 20 minutes
+        if (diffs <= 20) {
+
+            // Check the code is matched or not
+            const codeMatched = forgotPassVerifyCode === forgot_password_code;
+
+            // Code match condition
+            if (!codeMatched) return { email: email, message: "Invalid Password Verification Code!!!" };
+
+
+            // Updating Doc
+            const updateDoc = {
+                password: await bcrypt.hash(confirmPassword, 10),
+            }
+            // Update User
+            const updateUser = await db.users.update(updateDoc, { where: { email } });
+            if (!updateUser) return { email: email, message: "Something Went Wrong Please Start Again After A Moment!!!" };
+
+            // Setting Up Data for EMAIL SENDER
+            const mailData = {
+                email: email,
+                subject: "Password Reset of Primer Server Parts Account",
+                message: `Your Prime Server Parts Account Password Updated Successfully, Your Email is: ${email}, Your Updated Password is: ${confirmPassword}`
+            }
+
+            // SENDING EMAIL FOR RESET PASSWORD
+            await verifierEmail(mailData);
+
+
+            return {
+                email: email,
+                message: "Your Password is Updated, Please Sign In With New Password!!!"
             }
 
 

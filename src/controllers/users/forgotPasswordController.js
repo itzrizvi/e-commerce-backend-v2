@@ -1,6 +1,6 @@
 // All Requires
-const { forgotPassInit, forgotPassCodeMatch } = require("../../helpers/userHelper");
-const { forgotPassInitRequest, forgotPassCodeMatchRequest } = require("../../requests/forgotPassRequests");
+const { forgotPassInit, forgotPassCodeMatch, forgotPassFinal } = require("../../helpers/userHelper");
+const { forgotPassInitRequest, forgotPassCodeMatchRequest, forgotPassFinalRequest } = require("../../requests/forgotPassRequests");
 const { singleResponse } = require("../../utils/response");
 
 
@@ -40,11 +40,31 @@ const forgotPasswordCodeMatchController = async (req, db) => {
 }
 
 
+// FORGOT PASSWORD FINAL (STEP 3)
+const forgotPasswordFinalController = async (req, db) => {
+
+    // Validate Request
+    const validate = await forgotPassFinalRequest(req);
+    if (!validate.success) {
+        return singleResponse(validate.data);
+    }
+
+    // Forgot Password Final With Helper
+    const data = await forgotPassFinal(req, db);
+
+    // Final Response
+    return singleResponse(data);
+
+
+}
+
+
 
 
 
 // Exports
 module.exports = {
     forgotPasswordInitController,
-    forgotPasswordCodeMatchController
+    forgotPasswordCodeMatchController,
+    forgotPasswordFinalController
 }

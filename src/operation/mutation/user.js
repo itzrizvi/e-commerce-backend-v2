@@ -1,10 +1,13 @@
+// All Requires
 const { userSignUpController,
     userSignInController,
     emailVerifyController,
     resendVerificationEmailController,
     forgotPasswordController } = require('../../controllers');
 
-const { forgotPasswordInitController, forgotPasswordCodeMatchController } = forgotPasswordController;
+const { forgotPasswordInitController,
+    forgotPasswordCodeMatchController,
+    forgotPasswordFinalController } = forgotPasswordController;
 
 
 module.exports = {
@@ -28,12 +31,16 @@ module.exports = {
     resendVerificationEmail: async (root, args, { db, user, isAuth }, info) => {
         return await resendVerificationEmailController(args.data, db, user, isAuth);
     },
-    // Forgot Password Initiation
+    // Forgot Password Initiation (FP STEP 1)
     forgotPassInit: async (root, args, { db }, info) => {
         return await forgotPasswordInitController(args.data, db);
     },
-    // Forgot Password Code Match Mutation
+    // Forgot Password Code Match Mutation (FP STEP 2)
     forgotPassCodeMatch: async (root, args, { db }, info) => {
         return await forgotPasswordCodeMatchController(args.data, db);
+    },
+    // Forgot Password Final (FP STEP 3)
+    forgotPassFinal: async (root, args, { db }, info) => {
+        return await forgotPasswordFinalController(args.data, db);
     }
 }

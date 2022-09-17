@@ -36,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
         forgot_password_code: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        role_id: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false
         }
 
     }, {

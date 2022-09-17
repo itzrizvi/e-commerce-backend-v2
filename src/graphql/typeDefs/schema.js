@@ -2,6 +2,11 @@ const { gql } = require('apollo-server-express');
 
 
 const typeDefs = gql`
+
+scalar JSON
+scalar JSONObject
+scalar UUID
+
 type Role {
     uid: ID
     role: String
@@ -113,6 +118,27 @@ input ForgotPassFinalInput {
 type ForgotPassFinalOutput {
     email:String!
     message:String!
+}
+
+
+input CategoryCreateInput {
+    categoryName:String!
+    categorySlug:String!
+    categoryDescription:JSON
+    categoryParentId:UUID
+    categoryMetaTagTitle:String
+    categoryMetaTagDescription:JSON
+    categoryMetaTagKeywords:JSON
+    categoryImage:String
+    categorySortOrder:Int
+    categoryStatus:Boolean
+}
+
+type CategoryCreateOutput {
+    message:String!
+    creategoryName:String!
+    createdBy:String!
+    role:String!
 }
 
 

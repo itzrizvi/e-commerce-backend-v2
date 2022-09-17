@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         cat_status: {
             type: DataTypes.BOOLEAN,
             allowNull: true
+        },
+        created_by: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
 
     }, {

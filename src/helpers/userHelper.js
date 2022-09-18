@@ -71,6 +71,13 @@ module.exports = {
                 throw new Error('NOT ALLOWED TWO')
             }
 
+            // Check Roles
+            const { role_no } = user;
+            const checkRoleExist = await db.roles.findOne({ where: { role_no } });
+
+
+            console.log(checkRoleExist); // TODO ROLE CONDITION
+
             // return jwt
             const authToken = jwt.sign(
                 { uid: user.uid, email: user.email },

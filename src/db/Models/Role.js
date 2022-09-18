@@ -1,13 +1,23 @@
 //user model
 module.exports = (sequelize, DataTypes) => {
 
-    const Role = sequelize.define("user_roles", {
-        uid: {
+    const Role = sequelize.define("roles", {
+        role_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4
+            allowNull: false,
+            defaultValue: DataTypes.UUIDV4,
+        },
+        role_no: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
         },
         role: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        role_slug: {
             type: DataTypes.STRING,
             allowNull: false
         }
@@ -15,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'user_roles',
+        tableName: 'roles',
     })
 
     return Role

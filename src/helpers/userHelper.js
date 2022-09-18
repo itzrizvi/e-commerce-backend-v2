@@ -2,6 +2,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
+const CryptoJS = require('crypto-js');
 
 module.exports = {
     // SIGN UP
@@ -56,34 +57,68 @@ module.exports = {
     },
     // SIGN IN
     userSignIn: async (req, db) => {
+
         try {
             const { email, password } = req;
 
             const user = await db.users.findOne({ where: { email } });
 
             if (!user) {
-                throw new Error('NOT ALLOWED!!')
+                return {
+                    authToken: "NO TOKEN",
+                    uid: "NO UID",
+                    first_name: "NOT FOUND",
+                    last_name: "NOT FOUND",
+                    email: "NOT FOUND",
+                    message: "USER NOT FOUND",
+                    emailVerified: false,
+                    verificationCode: 0,
+                    updatedAt: "NO DATE",
+                    createdAt: "NO DATE"
+                };
             }
 
             const isValid = await bcrypt.compare(password, user.password);
 
             if (!isValid) {
-                throw new Error('NOT ALLOWED TWO')
+                return {
+                    authToken: "NO TOKEN",
+                    uid: "NO UID",
+                    first_name: "NOT FOUND",
+                    last_name: "NOT FOUND",
+                    email: "NOT FOUND",
+                    message: "USER NOT FOUND",
+                    emailVerified: false,
+                    verificationCode: 0,
+                    updatedAt: "NO DATE",
+                    createdAt: "NO DATE"
+                };
             }
 
             // Check Roles
             const { role_no } = user;
             const checkRoleExist = await db.roles.findOne({ where: { role_no } });
+            if (!checkRoleExist) return {
+                authToken: "NO TOKEN",
+                uid: "NO UID",
+                first_name: "NOT FOUND",
+                last_name: "NOT FOUND",
+                email: "NOT FOUND",
+                message: "USER NOT FOUND",
+                emailVerified: false,
+                verificationCode: 0,
+                updatedAt: "NO DATE",
+                createdAt: "NO DATE"
+            };
 
-
-            console.log(checkRoleExist); // TODO ROLE CONDITION
+            const { role_no: roleNo } = checkRoleExist;
 
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email },
+                { uid: user.uid, email: user.email, roleNO: CryptoJS.AES.encrypt(roleNo, process.env.ROLE_SECRET).toString() },
                 process.env.JWT_SECRET,
                 { expiresIn: '4h' }
-            )
+            );
 
             return {
                 authToken,

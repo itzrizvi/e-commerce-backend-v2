@@ -46,8 +46,6 @@ app.use(onReqTokenGenerate)
 // var bytes = CryptoJS.AES.decrypt(ciphertext, process.env.secretKey);
 // var originalText = bytes.toString(CryptoJS.enc.Utf8);
 
-// console.log('MY ID: ', originalText); // 'my message'
-// console.log('MY ID ENC : ', ciphertext); // 'my message'
 
 
 

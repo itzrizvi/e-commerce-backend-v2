@@ -7,26 +7,9 @@ scalar JSON
 scalar JSONObject
 scalar UUID
 
-type Role {
-    uid: ID
-    role: String
-}
 
-input RoleInput {
-    role: String
-}
-
-input RoleRecordInput {
-    uid: ID
-    role: String
-}
-
-type RoleOutput {
-    isAuth:Boolean
-    Message: String!
-    data: [Role]
-    FetchedBy: String!
-}
+# User Based Input and Queries #######################################################
+######################################################################################
 
 type User {
     uid:ID,
@@ -69,6 +52,10 @@ type UserOutput {
     data: [User]
 }
 
+
+# Verify Email Based Input and Queries ###############################################
+######################################################################################
+
 input VerifyEmailInput {
     verificationCode:Int!
 }
@@ -88,6 +75,10 @@ type resendVerifyEmailOutput {
     message:String!
     email:String!
 }
+
+
+# Forgot Password Based Input and Queries ############################################
+######################################################################################
 
 input ForgotPassInitInput {
     email:String!
@@ -121,6 +112,47 @@ type ForgotPassFinalOutput {
 }
 
 
+# Role Based Input and Queries ###############################################
+##############################################################################
+
+type Role {
+    uid: ID
+    role: String
+}
+
+input RoleInput {
+    role: String
+}
+
+input RoleRecordInput {
+    uid: ID
+    role: String
+}
+
+type RoleOutput {
+    isAuth:Boolean
+    Message: String!
+    data: [Role]
+    FetchedBy: String!
+}
+
+input CreateRoleInput {
+    roleNo:Int!
+    role:String!
+}
+
+type CreateRoleOutput {
+    roleNo:Int!
+    role:String!
+    roleUUID:String!
+    roleSlug:String!
+    message:String!
+}
+
+
+# Category Based Input and Queries ###############################################
+##################################################################################
+
 input CategoryCreateInput {
     categoryName:String!
     categorySlug:String!
@@ -142,6 +174,11 @@ type CategoryCreateOutput {
 }
 
 
+
+
+# ROOT QUERIES AND MUTATIONS ###############################################
+############################################################################
+
 type Query {
     getAllRoles(query: RoleInput): RoleOutput
 }
@@ -154,6 +191,7 @@ type Mutation{
     forgotPassInit(data: ForgotPassInitInput):ForgotPassInitOutput!
     forgotPassCodeMatch(data: ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
+    createRole(data: CreateRoleInput): CreateRoleOutput!
 }
 `;
 

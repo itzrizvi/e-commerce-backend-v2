@@ -12,9 +12,19 @@ const getAllRoleRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// CREATE ROLE REQUEST
+const createRoleRequest = (body) => {
+    rules = {
+        role: 'required|string',
+        roleNo: 'required|strict|integer'
+    }
+
+    return checkBody(body, rules);
+}
 
 
-//
+
+// Check Validation
 const checkBody = (body, rules) => {
 
     request = body;
@@ -37,5 +47,6 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    getAllRoleRequest
+    getAllRoleRequest,
+    createRoleRequest
 }

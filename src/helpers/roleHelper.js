@@ -32,7 +32,7 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" };
 
         // CREATE ROLE CONDITION
-        if (checkRole.role_no === 11 || checkRole.role_no === 12) {
+        if (checkRole.role_no === 11) {
 
             // GET DATA
             const { roleNo, role } = req;

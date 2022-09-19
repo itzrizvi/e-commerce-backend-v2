@@ -187,6 +187,19 @@ type CategoryCreateOutput {
 }
 
 
+# Permission Based Input and Queries #########################################
+##############################################################################
+
+input FeaturePermissionListInput {
+    featureName:String!
+}
+type FeaturePermissionListOutput {
+    featureNameUUID:UUID!
+    featureName:String!
+    featureNameSlug:String!
+}
+
+
 
 
 # ROOT QUERIES AND MUTATIONS ###############################################
@@ -206,6 +219,7 @@ type Mutation{
     forgotPassCodeMatch(data: ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
     createRole(data: CreateRoleInput): CreateRoleOutput!
+    createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
 }
 `;
 

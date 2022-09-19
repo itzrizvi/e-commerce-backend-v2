@@ -113,9 +113,11 @@ module.exports = {
 
             const { role_no: roleNo } = checkRoleExist;
 
+            // roleNO: CryptoJS.AES.encrypt(roleNo, process.env.ROLE_SECRET).toString() ##### TESTING PURPOSE
+
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email, roleNO: CryptoJS.AES.encrypt(roleNo, process.env.ROLE_SECRET).toString() },
+                { uid: user.uid, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: '4h' }
             );

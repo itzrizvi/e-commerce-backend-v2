@@ -6,7 +6,7 @@ const CryptoJS = require('crypto-js');
 
 // HELPER
 module.exports = {
-    // Admin Sign In
+    // Admin Sign In HELPER
     adminSignIn: async (req, db) => {
 
         try {

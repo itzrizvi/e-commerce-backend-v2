@@ -1,3 +1,4 @@
+// Require Controllers
 const { adminSignInController } = require("../../controllers")
 
 
@@ -6,7 +7,7 @@ const { adminSignInController } = require("../../controllers")
 module.exports = {
     // Admin Sign In
     adminSignIn: async (root, { email, password }, { db }, info) => {
-        //
+        // Data from ARGS
         const data = {
             email,
             password

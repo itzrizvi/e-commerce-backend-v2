@@ -1,7 +1,6 @@
-//
+// ADMIN HELPER REQUIRES
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const CryptoJS = require('crypto-js');
 
 
 // HELPER
@@ -47,11 +46,9 @@ module.exports = {
                 emailVerified: false
             };
 
-            const { role_no: roleNo } = checkRoleExist;
-
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email, roleno: CryptoJS.AES.encrypt(`${roleNo}`, process.env.ROLE_SECRET).toString() },
+                { uid: user.uid, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
             );

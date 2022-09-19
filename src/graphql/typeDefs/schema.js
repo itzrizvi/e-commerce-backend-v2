@@ -194,9 +194,10 @@ input FeaturePermissionListInput {
     featureName:String!
 }
 type FeaturePermissionListOutput {
-    featureNameUUID:UUID!
-    featureName:String!
-    featureNameSlug:String!
+    featureNameUUID:String!
+    featureName:String
+    featureNameSlug:String
+    message:String!
 }
 
 

@@ -30,7 +30,19 @@ type AuthPayload {
     emailVerified:Boolean!
     updatedAt:String!
     createdAt:String!
-  }
+}
+
+type AdminAuthPayload {
+    authToken:String!
+    uid:String!
+    first_name:String
+    last_name:String
+    email:String!
+    message:String!
+    emailVerified:Boolean!
+    updatedAt:String
+    createdAt:String
+}
 
 input UserInput {
     first_name:String
@@ -51,6 +63,7 @@ type UserOutput {
     count: Int
     data: [User]
 }
+
 
 
 # Verify Email Based Input and Queries ###############################################
@@ -186,6 +199,7 @@ type Query {
 type Mutation{
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
+    adminSignIn(email: String!, password: String!): AdminAuthPayload!
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!
     forgotPassInit(data: ForgotPassInitInput):ForgotPassInitOutput!

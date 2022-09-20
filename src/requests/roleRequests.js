@@ -15,8 +15,7 @@ const getAllRoleRequest = (body) => {
 // CREATE ROLE REQUEST
 const createRoleRequest = (body) => {
     rules = {
-        role: 'required|string',
-        roleNo: 'required|strict|integer'
+        role: 'required|string'
     }
 
     return checkBody(body, rules);

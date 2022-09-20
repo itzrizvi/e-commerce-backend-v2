@@ -26,52 +26,48 @@ module.exports = {
         // ROLE CHECK
         const { role_no } = user;
         const checkRole = await db.roles.findOne({ where: { role_no } });
-        if (!checkRole || checkRole.role_no === 0 || checkRole.role_no != 11) return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" };
+        if (!checkRole || checkRole.role_no === '0') return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" };
 
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" };
 
-        // CREATE ROLE CONDITION
-        if (checkRole.role_no === 11) {
 
-            // GET DATA
-            const { roleNo, role } = req;
-            // Create Slug
-            const role_slug = slugify(`${role}`, {
-                replacement: '-',
-                remove: /[*+~.()'"!:@]/g,
-                lower: true,
-                strict: true,
-                trim: true
+        // GET DATA
+        const { role } = req;
+        // Create Slug
+        const role_slug = slugify(`${role}`, {
+            replacement: '-',
+            remove: /[*+~.()'"!:@]/g,
+            lower: true,
+            strict: true,
+            trim: true
+        });
+
+        // Check The Role Is Already Taken or Not
+        const checkRoleExist = await db.roles.findOne({ where: { role_slug: role_slug } });
+
+        // Create Random String for Role No
+        const roleNo = Math.ceil(Date.now() + Math.random());
+
+
+        // If Not Exists then create
+        if (!checkRoleExist) {
+            const createrole = await db.roles.create({
+                role_no: roleNo,
+                role: role,
+                role_slug: role_slug
             });
 
-            // Check The Role Is Already Taken or Not
-            const checkRoleExist = await db.roles.findOne({ where: { role: role } });
-
-
-            // If Not Exists then create
-            if (!checkRoleExist) {
-                const createrole = await db.roles.create({
-                    role_no: roleNo,
-                    role: role,
-                    role_slug: role_slug
-                });
-
-                return {
-                    roleNo: createrole.role_no,
-                    role: createrole.role,
-                    roleUUID: createrole.role_uuid,
-                    roleSlug: createrole.role_slug,
-                    message: "Successfully Created A Role!!!"
-                }
-
-            } else {
-                return { message: "Already Have This Role", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" }
+            return {
+                roleNo: createrole.role_no,
+                role: createrole.role,
+                roleUUID: createrole.role_uuid,
+                roleSlug: createrole.role_slug,
+                message: "Successfully Created A Role!!!"
             }
 
-
         } else {
-            return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" }
+            return { message: "Already Have This Role", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" }
         }
 
 

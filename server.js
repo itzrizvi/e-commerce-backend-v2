@@ -46,9 +46,7 @@ app.use(onReqTokenGenerate)
 // var bytes = CryptoJS.AES.decrypt(ciphertext, process.env.secretKey);
 // var originalText = bytes.toString(CryptoJS.enc.Utf8);
 
-
-
-
+// APOLLO SERVER STARTS
 async function startApolloServer() {
     const server = new ApolloServer({
         typeDefs: typeDefs,

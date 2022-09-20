@@ -1,32 +1,27 @@
-//user model
+// Feature Permission List Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Role = sequelize.define("roles", {
-        role_uuid: {
+    const Permissions = sequelize.define("permissions_data", {
+        permission_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        role_no: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-            defaultValue: 0
-        },
-        role: {
+        permissions_list: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        role_slug: {
-            type: DataTypes.STRING,
+        role_no: {
+            type: DataTypes.BIGINT,
             allowNull: false
         }
 
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'roles',
+        tableName: 'permissions_data',
     })
 
-    return Role
+    return Permissions
 }

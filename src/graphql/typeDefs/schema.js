@@ -150,12 +150,11 @@ type RoleOutput {
 }
 
 input CreateRoleInput {
-    roleNo:Int!
     role:String!
 }
 
 type CreateRoleOutput {
-    roleNo:Int!
+    roleNo:Float!
     role:String!
     roleUUID:String!
     roleSlug:String!
@@ -200,6 +199,18 @@ type FeaturePermissionListOutput {
     message:String!
 }
 
+input PermissionsInput {
+    permissionList:[String]
+    roleNo:Int!
+}
+
+type PermissionOutput {
+    permissionUUID:String!
+    permissionList:[String]!
+    roleNo:Int!
+    message:String!
+}
+
 
 
 
@@ -221,6 +232,7 @@ type Mutation{
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
     createRole(data: CreateRoleInput): CreateRoleOutput!
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
+    createPermission(data: PermissionsInput): PermissionOutput!
 }
 `;
 

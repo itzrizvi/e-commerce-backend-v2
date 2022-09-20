@@ -59,10 +59,11 @@ module.exports = {
     userSignIn: async (req, db) => {
 
         try {
+            // DATA FROM REQUEST
             const { email, password } = req;
 
+            // CHECK USER
             const user = await db.users.findOne({ where: { email } });
-
             if (!user) {
                 return {
                     authToken: "NO TOKEN",
@@ -78,8 +79,8 @@ module.exports = {
                 };
             }
 
+            // CHECK IS VALID
             const isValid = await bcrypt.compare(password, user.password);
-
             if (!isValid) {
                 return {
                     authToken: "NO TOKEN",
@@ -95,24 +96,7 @@ module.exports = {
                 };
             }
 
-            // Check Roles
-            const { role_no } = user;
-            const checkRoleExist = await db.roles.findOne({ where: { role_no } });
-            if (!checkRoleExist) return {
-                authToken: "NO TOKEN",
-                uid: "NO UID",
-                first_name: "NOT FOUND",
-                last_name: "NOT FOUND",
-                email: "NOT FOUND",
-                message: "USER NOT FOUND",
-                emailVerified: false,
-                verificationCode: 0,
-                updatedAt: "NO DATE",
-                createdAt: "NO DATE"
-            };
-
-            const { role_no: roleNo } = checkRoleExist;
-
+            // const { role_no: roleNo } = checkRoleExist;
             // roleNO: CryptoJS.AES.encrypt(roleNo, process.env.ROLE_SECRET).toString() ##### TESTING PURPOSE
 
             // return jwt

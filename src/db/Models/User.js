@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         role_no: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             defaultValue: 0,
             allowNull: false
         }

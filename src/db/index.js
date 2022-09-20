@@ -8,10 +8,15 @@ const baseName = basename(__filename);
 //port for my database is 5433
 //database name is discover
 // DB CONFIGS
-const database = process.env.DB_NAME;
-const user = process.env.DB_USER;
-const password = process.env.DB_PASS;
-const host = process.env.HOST;
+// const database = process.env.DB_NAME;
+// const user = process.env.DB_USER;
+// const password = process.env.DB_PASS;
+// const host = process.env.HOST;
+const database = process.env.RDS_DB_NAME;
+const user = process.env.RDS_USERNAME;
+const password = process.env.RDS_PASSWORD;
+const host = process.env.RDS_HOSTNAME;
+const port = process.env.RDS_PORT
 
 const db = {}
 const sequelize = new Sequelize(database, user, password, {
@@ -23,7 +28,7 @@ const sequelize = new Sequelize(database, user, password, {
         acquire: 30000,
         idle: 10000
     },
-    port: 5000,
+    port: port,
     logging: false
 })
 

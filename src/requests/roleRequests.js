@@ -3,15 +3,6 @@
 const { make } = require('simple-body-validator');
 let rules = {}, request, response;
 
-// GET ALL ROLES REQUEST
-const getAllRoleRequest = (body) => {
-    rules = {
-        role: 'required|string'
-    }
-
-    return checkBody(body, rules);
-}
-
 // CREATE ROLE REQUEST
 const createRoleRequest = (body) => {
     rules = {
@@ -46,6 +37,5 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    getAllRoleRequest,
     createRoleRequest
 }

@@ -130,8 +130,12 @@ type ForgotPassFinalOutput {
 ##############################################################################
 
 type Role {
-    uid: ID
-    role: String
+    role_uuid: UUID
+    role_no: Float
+    role:String
+    role_slug:String
+    createdAt:String
+    updatedAt:String
 }
 
 input RoleInput {
@@ -145,9 +149,8 @@ input RoleRecordInput {
 
 type RoleOutput {
     isAuth:Boolean
-    Message: String!
+    message: String!
     data: [Role]
-    FetchedBy: String!
 }
 
 input CreateRoleInput {
@@ -219,7 +222,7 @@ type PermissionOutput {
 ############################################################################
 
 type Query {
-    getAllRoles(query: RoleInput): RoleOutput
+    getAllRoles: RoleOutput!
 }
 
 type Mutation{
@@ -239,5 +242,3 @@ type Mutation{
 
 
 module.exports = typeDefs;
-
-// createRole(data: RoleInput): Role

@@ -5,20 +5,33 @@ const { default: slugify } = require("slugify");
 // ROLE HELPER
 module.exports = {
     // GET ALL ROLES API
-    getAllRoles: async (req, db, user, isAuth) => {
+    getAllRoles: async (db, user, isAuth) => {
+        // Return if No Auth
+        if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated" };
+        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, data: [] };
 
-        if (!user && !isAuth) return { data: [], isAuth: false, Message: "Not Authenticated", FetchedBy: "User Not Found!" };
-        let q = {
-            where: req
-        };
-        const getAllRoles = await db.user_roles.findAll(q);
+        // CHECK ACCESS
+        const roleNo = user.role_no;
+        const checkRoleForAccess = await db.roles.findOne({ where: { role_no: roleNo } });
 
-        return {
-            data: getAllRoles,
-            isAuth: isAuth,
-            Message: "Authenticated User",
-            FetchedBy: user.email
+        // ROLE SLUG FROM ROLES
+        const { role_slug } = checkRoleForAccess;
+        // CHECK ACCESS
+        if (role_slug === process.env.GET_ROLE_ACCESS) {
+            // GET ALL ROLES
+            const getAllRoles = await db.roles.findAll();
+
+            return {
+                data: getAllRoles,
+                isAuth: isAuth,
+                message: "All Roles GET Success!!!",
+            }
+        } else {
+            return { message: "Not Authorized", isAuth: false, data: [] }
         }
+
+
+
 
     },
     // CREATE ROLES API

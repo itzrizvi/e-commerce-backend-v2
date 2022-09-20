@@ -42,6 +42,7 @@ type AdminAuthPayload {
     emailVerified:Boolean!
     updatedAt:String
     createdAt:String
+    roleNo:String
 }
 
 input UserInput {

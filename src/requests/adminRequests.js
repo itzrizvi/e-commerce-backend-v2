@@ -15,6 +15,20 @@ const adminSignInRequest = (body) => {
 }
 
 
+// ADMIN SIGN IN REQUEST
+const adminSignUpRequest = (body) => {
+    rules = {
+        first_name: 'required|string',
+        last_name: 'required|string',
+        email: 'required|email',
+        password: 'string|min:6',
+        roleNo: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
 // Check Admin Req Body
 const checkBody = (body, rules) => {
 
@@ -35,4 +49,4 @@ const checkBody = (body, rules) => {
 
 }
 
-module.exports = { adminSignInRequest }
+module.exports = { adminSignInRequest, adminSignUpRequest }

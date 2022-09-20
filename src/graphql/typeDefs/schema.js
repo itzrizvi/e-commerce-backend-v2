@@ -32,19 +32,6 @@ type AuthPayload {
     createdAt:String!
 }
 
-type AdminAuthPayload {
-    authToken:String!
-    uid:String!
-    first_name:String
-    last_name:String
-    email:String!
-    message:String!
-    emailVerified:Boolean!
-    updatedAt:String
-    createdAt:String
-    roleNo:String
-}
-
 input UserInput {
     first_name:String
     last_name:String
@@ -64,6 +51,47 @@ type UserOutput {
     count: Int
     data: [User]
 }
+
+
+# Admin Stuff Based Input and Queries ################################################
+######################################################################################
+
+type AdminAuthPayload {
+    authToken:String!
+    uid:String!
+    first_name:String
+    last_name:String
+    email:String!
+    message:String!
+    emailVerified:Boolean!
+    updatedAt:String
+    createdAt:String
+    roleNo:String
+}
+
+input AdminSignUpInput {
+    first_name:String
+    last_name:String
+    email:String
+    password:String
+    roleNo:String
+}
+
+type AdminSignUpOutput {
+    authToken:String
+    uid:String
+    first_name:String
+    last_name:String
+    email:String!
+    message:String!
+    emailVerified:Boolean
+    updatedAt:String
+    createdAt:String
+    roleNo:Float
+    role:String
+    roleSlug:String
+}
+
 
 
 
@@ -228,6 +256,7 @@ type Query {
 type Mutation{
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
+    adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!

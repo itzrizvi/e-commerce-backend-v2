@@ -125,7 +125,7 @@ module.exports = {
     },
     // Email Verify
     verifyEmail: async (req, db, user, isAuth) => {
-        if (!user && !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
+        if (!user || !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
 
         const email = user.email; // Email From Request
 
@@ -202,7 +202,7 @@ module.exports = {
     },
     // Resend Email For Verification
     resendVerificationEmail: async (req, db, user, isAuth) => {
-        if (!user && !isAuth) return { message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
+        if (!user || !isAuth) return { message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
 
         const confirmEmail = req.email === user.email; // Confirm that requested email and Auth Email is same
 

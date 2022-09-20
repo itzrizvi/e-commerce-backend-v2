@@ -69,5 +69,13 @@ module.exports = {
         }
 
 
+    },
+    // Admin Sign Up Helper
+    adminSignUp: async (req, db, user, isAuth) => {
+        // Return If No Auth and No Role
+        if (!user || !isAuth) return { message: "Not Authorized", email: req.email };
+        if (user.role_no === '0') return { message: "Not Authorized", email: req.email };
+
+
     }
 }

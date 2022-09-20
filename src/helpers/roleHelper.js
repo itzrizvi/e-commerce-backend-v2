@@ -17,7 +17,7 @@ module.exports = {
         // ROLE SLUG FROM ROLES
         const { role_slug } = checkRoleForAccess;
         // CHECK ACCESS
-        if (role_slug === process.env.GET_ROLE_ACCESS) {
+        if (role_slug === process.env.ACCESS_SLUG) {
             // GET ALL ROLES
             const getAllRoles = await db.roles.findAll();
 

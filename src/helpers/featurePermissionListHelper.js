@@ -10,7 +10,7 @@ module.exports = {
         if (!isAuth) return { featureNameUUID: "Null", message: "Not Authorized!!" } // If Not Auth
         // Check Role IS Authorized or Nots
         const { role_no } = user;
-        if (role_no <= 10 || role_no >= 12) return { featureNameUUID: "Null", message: "Not Authorized!!" }; // If Not Authorized the return
+        if (role_no === '0') return { featureNameUUID: "Null", message: "Not Authorized!!" }; // If Not Authorized the return
 
         // Req Data
         const featureName = req.featureName;

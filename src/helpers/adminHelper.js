@@ -84,20 +84,20 @@ module.exports = {
         const password = req.password;
         const role_no = req.roleNo;
 
-        //
+        // Find Role according to role_no
         const findRoleDetails = await db.roles.findOne({ where: { role_no } });
         if (!findRoleDetails) return { message: "The Assigned Role Must be Created First!!", email: email }
 
         // Check User Already Exist
         const checkUserExist = await db.users.findOne({ where: { email } });
 
-        //
+        // Email verification Code generate
         const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
         // Insert or Update By Condition
         if (!checkUserExist) {
 
-            //
+            // Insert User
             const createStuff = await db.users.create({
                 first_name: first_name,
                 last_name: last_name,
@@ -108,10 +108,10 @@ module.exports = {
             });
 
 
-            //
+            // If Admin Created
             if (createStuff) {
 
-                //
+                // Token generate
                 const authToken = jwt.sign(
                     { uid: createStuff.uid, email: createStuff.email },
                     process.env.JWT_SECRET,
@@ -148,10 +148,10 @@ module.exports = {
 
         } else {
 
-            //
+            // Email From Existing user
             const { email: userEmail } = checkUserExist;
 
-            //
+            // Update Data for Existing User Data
             const updateDoc = {
                 first_name: first_name,
                 last_name: last_name,
@@ -162,10 +162,10 @@ module.exports = {
             }
             const updateUserToStuff = await db.users.update(updateDoc, { where: { email: userEmail } });
 
-            //
+            // If updated data 
             if (updateUserToStuff) {
 
-                //
+                // Find Updated User
                 const updatedStuffData = await db.users.findOne({ where: { email: userEmail } });
                 const { email: updatedStuffEmail, verification_code: updatedStuffVerficationCode } = updatedStuffData;
 
@@ -179,7 +179,7 @@ module.exports = {
                 // SENDING EMAIL
                 await verifierEmail(mailData);
 
-                //
+                // Generate Auth Token
                 const authToken = jwt.sign(
                     { uid: updatedStuffData.uid, email: updatedStuffData.email },
                     process.env.JWT_SECRET,
@@ -187,7 +187,7 @@ module.exports = {
                 );
 
 
-                //
+                // Return Final Data
                 return {
                     authToken: authToken,
                     uid: updatedStuffData.uid,

@@ -30,7 +30,7 @@ module.exports = {
             const mailData = {
                 email: user.email,
                 subject: "Verification Code From Primer Server Parts",
-                message: `Your 6 Digit Verification Code is ${user.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+                message: `Your 6 Digit Verification Code is ${user.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${user.email} and Your Password: ${password}`
             }
 
             // SENDING EMAIL

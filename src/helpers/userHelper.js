@@ -17,8 +17,6 @@ module.exports = {
                 last_name,
                 email,
                 password: await bcrypt.hash(password, 10),
-                email_verified: false,
-                forgot_password_code: 0,
                 verification_code: verificationCode
             });
 

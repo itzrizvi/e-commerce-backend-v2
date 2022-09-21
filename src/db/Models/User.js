@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         email_verified: {
             type: DataTypes.BOOLEAN,
+            defaultValue: false,
             allowNull: false
         },
         verification_code: {
@@ -35,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         forgot_password_code: {
             type: DataTypes.INTEGER,
+            defaultValue: 0,
             allowNull: false
         },
         role_no: {

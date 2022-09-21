@@ -122,7 +122,7 @@ module.exports = {
                 const mailData = {
                     email: createStuff.email,
                     subject: "Admin Verification Code From Primer Server Parts",
-                    message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+                    message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
                 }
 
                 // SENDING EMAIL
@@ -173,7 +173,7 @@ module.exports = {
                 const mailData = {
                     email: updatedStuffEmail,
                     subject: "Admin Updated Verification Code From Primer Server Parts",
-                    message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+                    message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
                 }
 
                 // SENDING EMAIL

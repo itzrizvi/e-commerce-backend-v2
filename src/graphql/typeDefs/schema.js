@@ -232,14 +232,16 @@ type FeaturePermissionListOutput {
 }
 
 input PermissionsInput {
-    permissionList:[String]
-    roleNo:Int!
+    permission:String
+    roleNo:String
+    stuffUUID:String
 }
 
 type PermissionOutput {
     permissionUUID:String!
-    permissionList:[String]!
-    roleNo:Int!
+    adminUUID:String!
+    permission:String!
+    roleNo:Float!
     message:String!
 }
 

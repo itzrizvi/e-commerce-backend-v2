@@ -92,6 +92,23 @@ type AdminSignUpOutput {
     roleSlug:String
 }
 
+type Stuff {
+    stuffUUID:UUID
+    first_name:String
+    last_name:String
+    email:String
+    role:String
+    roleSlug:String
+    roleNo:Float
+    emailVerified:Boolean
+}
+
+type GetALLStuffOutput {
+    data:[Stuff]
+    isAuth:Boolean
+    message:String
+}
+
 
 
 
@@ -253,6 +270,7 @@ type PermissionOutput {
 
 type Query {
     getAllRoles: RoleOutput!
+    getAllStuff: GetALLStuffOutput!
 }
 
 type Mutation{

@@ -15,7 +15,7 @@ module.exports = {
         const checkRoleForAccess = await db.roles.findOne({ where: { role_no: roleNo } });
 
         // CHECK ACCESS
-        if (!checkRoleForAccess) {
+        if (checkRoleForAccess) {
             // GET ALL ROLES
             const getAllRoles = await db.roles.findAll();
 

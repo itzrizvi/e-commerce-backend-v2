@@ -1,3 +1,5 @@
+const Role = require("./Role")
+
 //user model
 module.exports = (sequelize, DataTypes) => {
 
@@ -50,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
         freezeTableName: true,
         tableName: 'users',
     })
+
 
     return User
 }

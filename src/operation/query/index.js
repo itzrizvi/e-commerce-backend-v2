@@ -1,3 +1,4 @@
 module.exports = {
-    ...require('./role')
+    ...require('./role'),
+    ...require('./staff'),
 }

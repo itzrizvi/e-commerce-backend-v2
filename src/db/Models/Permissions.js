@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
-        stuff_uuid: {
+        staff_uuid: {
             type: DataTypes.UUID,
             allowNull: false
         }

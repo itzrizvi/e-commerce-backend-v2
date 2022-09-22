@@ -53,7 +53,7 @@ type UserOutput {
 }
 
 
-# Admin Stuff Based Input and Queries ################################################
+# Admin Staff Based Input and Queries ################################################
 ######################################################################################
 
 type AdminAuthPayload {
@@ -92,19 +92,17 @@ type AdminSignUpOutput {
     roleSlug:String
 }
 
-type Stuff {
-    stuffUUID:UUID
+type Staff {
+    uid:UUID
     first_name:String
     last_name:String
     email:String
-    role:String
-    roleSlug:String
-    roleNo:Float
-    emailVerified:Boolean
+    role:[Role]
+    email_verified:Boolean
 }
 
-type GetALLStuffOutput {
-    data:[Stuff]
+type GetALLStaffOutput {
+    data:[Staff]
     isAuth:Boolean
     message:String
 }
@@ -251,12 +249,12 @@ type FeaturePermissionListOutput {
 input PermissionsInput {
     permission:String
     roleNo:String
-    stuffUUID:String
+    staffUUID:String
 }
 
 type PermissionOutput {
     permissionUUID:String!
-    adminUUID:String!
+    staffUUID:String!
     permission:String!
     roleNo:Float!
     message:String!
@@ -270,7 +268,7 @@ type PermissionOutput {
 
 type Query {
     getAllRoles: RoleOutput!
-    getAllStuff: GetALLStuffOutput!
+    getAllStaff: GetALLStaffOutput!
 }
 
 type Mutation{

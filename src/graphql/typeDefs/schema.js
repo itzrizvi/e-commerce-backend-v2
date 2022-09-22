@@ -97,7 +97,7 @@ type Staff {
     first_name:String
     last_name:String
     email:String
-    role:[Role]
+    roles:Role
     email_verified:Boolean
 }
 
@@ -214,13 +214,12 @@ type CreateRoleOutput {
 
 input CategoryCreateInput {
     categoryName:String!
-    categorySlug:String!
-    categoryDescription:JSON
+    categoryDescription:JSON!
     categoryParentId:UUID
     categoryMetaTagTitle:String
     categoryMetaTagDescription:JSON
     categoryMetaTagKeywords:JSON
-    categoryImage:String
+    categoryImage:String!
     categorySortOrder:Int
     categoryStatus:Boolean
 }
@@ -284,6 +283,7 @@ type Mutation{
     createRole(data: CreateRoleInput): CreateRoleOutput!
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
     createPermission(data: PermissionsInput): PermissionOutput!
+    createCategory(data: CategoryCreateInput): CategoryCreateOutput!
 }
 `;
 

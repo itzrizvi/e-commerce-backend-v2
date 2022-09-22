@@ -1,6 +1,4 @@
-const { Op, DataTypes } = require("sequelize");
-const { default: slugify } = require("slugify");
-
+const { Op } = require("sequelize");
 
 
 // STUFF HELPER
@@ -11,32 +9,35 @@ module.exports = {
         if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated" };
         if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, data: [] };
 
-        // CHECK ACCESS
-        const roleNo = user.role_no;
-        const checkRoleForAccess = await db.roles.findOne({ where: { role_no: roleNo } });
+        try {
+            // CHECK ACCESS
+            const roleNo = user.role_no;
+            const checkRoleForAccess = await db.roles.findOne({ where: { role_no: roleNo } });
 
-        // CHECK ACCESS
-        if (checkRoleForAccess) {
-            // GET ALL STAFFS
+            // CHECK ACCESS
+            if (checkRoleForAccess) {
+                // Check If Has Alias 
+                if (!db.users.hasAlias('roles')) {
+                    await db.users.hasOne(db.roles, { sourceKey: 'role_no', foreignKey: 'role_no', as: 'roles' });
+                }
 
-            // db.users.hasOne(db.roles, { foreignKey: { type: DataTypes.BIGINT, name: 'role_no' }, as: 'roles' });
-            // db.roles.hasMany(db.users, { foreignKey: { type: DataTypes.BIGINT, name: 'role_no' }, as: 'users' });
-            // db.roles.belongsTo(db.users, { foreignKey: { type: DataTypes.BIGINT, name: 'role_no' } });
+                // GET ALL STAFF QUERY
+                const getAllStaff = await db.users.findAll({ include: [{ model: db.roles, as: 'roles' }], where: { role_no: { [Op.ne]: '0' } } });
 
-            // const getAllStaff = await db.users.findAll({ where: { role_no: { [Op.ne]: '0' } }, include: [{ model: db.roles, as: 'roles' }] });
-            const getAllStaff = await db.users.findAll({ where: { role_no: { [Op.ne]: '0' } } });
+                return {
+                    data: getAllStaff,
+                    isAuth: isAuth,
+                    message: "All Staff GET Success!!!",
+                }
+            } else {
+                return { message: "Not Authorized", isAuth: false, data: [] }
+            }
 
-            console.log(getAllStaff)
-            // return {
-            //     data: getAllStaff,
-            //     isAuth: isAuth,
-            //     message: "All Staff GET Success!!!",
-            // }
-        } else {
-            return { message: "Not Authorized", isAuth: false, data: [] }
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong!!!", isAuth: false, data: [] }
+            }
         }
-
-
 
 
     }

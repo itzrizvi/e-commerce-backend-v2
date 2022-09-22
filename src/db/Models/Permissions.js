@@ -12,8 +12,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        permission_slug: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         role_no: {
             type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        role_slug: {
+            type: DataTypes.STRING,
             allowNull: false
         },
         staff_uuid: {

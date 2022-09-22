@@ -256,6 +256,7 @@ type PermissionOutput {
     staffUUID:String!
     permission:String!
     roleNo:Float!
+    role:String!
     message:String!
 }
 

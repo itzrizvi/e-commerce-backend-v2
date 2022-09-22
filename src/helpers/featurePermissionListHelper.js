@@ -1,8 +1,6 @@
 const { default: slugify } = require("slugify");
 
 
-
-
 // Feature Permission List Helper
 module.exports = {
     // Create Feature Permission List
@@ -50,5 +48,29 @@ module.exports = {
         }
 
 
+    },
+    // GET ALL Feature Permission
+    getAllFeaturePermission: async (db, user, isAuth) => {
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", isAuth: false, data: [] };
+        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, data: [] };
+
+
+        try {
+            // GET ALL Feature Permissions Query
+            const allFeaturePermission = await db.feature_permission_list.findAll();
+            // Return Data
+            return {
+                isAuth: isAuth,
+                message: "All Permission List GET Success!!!",
+                data: allFeaturePermission
+            }
+
+
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong", isAuth: false, data: [] }
+            }
+        }
     }
 }

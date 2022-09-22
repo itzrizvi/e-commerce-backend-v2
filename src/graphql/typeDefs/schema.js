@@ -261,6 +261,19 @@ type PermissionOutput {
 }
 
 
+type FeaturePermission {
+    feature_permission_uuid:UUID
+    feature_permission_name:String
+    feature_permission_slug:String
+}
+
+type GetALLFeaturePermissionOutput {
+    isAuth:Boolean
+    message: String!
+    data: [FeaturePermission]
+}
+
+
 
 
 # ROOT QUERIES AND MUTATIONS ###############################################
@@ -269,6 +282,7 @@ type PermissionOutput {
 type Query {
     getAllRoles: RoleOutput!
     getAllStaff: GetALLStaffOutput!
+    getAllFeaturePermission: GetALLFeaturePermissionOutput!
 }
 
 type Mutation{

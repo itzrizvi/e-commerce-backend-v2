@@ -260,6 +260,22 @@ type PermissionOutput {
     message:String!
 }
 
+input AssignPermissionInput {
+    permissionUUIDList:JSON!
+    staffUUID:UUID!
+    roleNo:Float!
+}
+
+type AssignPermissionOutput {
+    permission_uuid:UUID!
+    permission_list_uuid:JSON!
+    staff_uuid:UUID!
+    first_name:String!
+    role:String!
+    role_no:Float!
+    message:String!
+}
+
 
 type FeaturePermission {
     feature_permission_uuid:UUID
@@ -299,6 +315,7 @@ type Mutation{
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
     createPermission(data: PermissionsInput): PermissionOutput!
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
+    assignPermission(data: AssignPermissionInput):AssignPermissionOutput
 }
 `;
 

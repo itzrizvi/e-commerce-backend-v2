@@ -8,12 +8,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        permission: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        permission_slug: {
-            type: DataTypes.STRING,
+        permission_list_uuid: {
+            type: DataTypes.JSON,
             allowNull: false
         },
         role_no: {

@@ -1,4 +1,4 @@
-const { default: slugify } = require("slugify");
+// All Requires
 
 
 // Permission Helper

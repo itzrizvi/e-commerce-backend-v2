@@ -245,21 +245,6 @@ type FeaturePermissionListOutput {
     message:String!
 }
 
-input PermissionsInput {
-    permission:String
-    roleNo:String
-    staffUUID:String
-}
-
-type PermissionOutput {
-    permissionUUID:String!
-    staffUUID:String!
-    permission:String!
-    roleNo:Float!
-    role:String!
-    message:String!
-}
-
 input AssignPermissionInput {
     permissionUUIDList:JSON!
     staffUUID:UUID!
@@ -267,12 +252,12 @@ input AssignPermissionInput {
 }
 
 type AssignPermissionOutput {
-    permission_uuid:UUID!
-    permission_list_uuid:JSON!
-    staff_uuid:UUID!
-    first_name:String!
-    role:String!
-    role_no:Float!
+    permission_uuid:UUID
+    permission_list_uuid:JSON
+    staff_uuid:UUID
+    first_name:String
+    role:String
+    role_no:Float
     message:String!
 }
 
@@ -313,9 +298,8 @@ type Mutation{
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
     createRole(data: CreateRoleInput): CreateRoleOutput!
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
-    createPermission(data: PermissionsInput): PermissionOutput!
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
-    assignPermission(data: AssignPermissionInput):AssignPermissionOutput
+    assignPermission(data: AssignPermissionInput):AssignPermissionOutput!
 }
 `;
 

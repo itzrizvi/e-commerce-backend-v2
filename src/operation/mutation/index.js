@@ -4,4 +4,5 @@ module.exports = {
     ...require('./admin'),
     ...require('./featurePermissionList'),
     ...require('./category'),
+    ...require('./permission'),
 }

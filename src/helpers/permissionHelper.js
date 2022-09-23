@@ -103,5 +103,49 @@ module.exports = {
                 return { message: "Something Went Wrong!!!" }
             }
         }
+    },
+    // GET ALL Permission By Staff
+    getAllPermissionByStaff: async (req, db, user, isAuth) => {
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", isAuth: false };
+        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false };
+
+
+        try {
+
+            // Staff UUID
+            const staffUUID = req.staffUUID;
+
+            // Check If User Has Alias or Not 
+            if (!db.users.hasAlias('roles')) {
+                await db.users.hasOne(db.roles, { sourceKey: 'role_no', foreignKey: 'role_no', as: 'roles' });
+            }
+
+            // GET Staff Data
+            const getStaffDetailWithRole = await db.users.findOne({ include: [{ model: db.roles, as: 'roles' }], where: { uid: staffUUID } });
+            // GET Permission Data 
+            const getPermissionData = await db.permissions_data.findOne({ where: { staff_uuid: staffUUID } });
+            const { permission_list_uuid } = getPermissionData;
+            const permissionIDArray = permission_list_uuid.split("@");
+            // GET Feature Permission Data 
+            const getFeaturePermission = await db.feature_permission_list.findAll({ where: { feature_permission_uuid: permissionIDArray } });
+
+            // Return Final Data
+            return {
+                isAuth: isAuth,
+                message: "Successfully GET ALL Permissions By Staff!!!",
+                staffData: getStaffDetailWithRole,
+                permissions_data: {
+                    permission_uuid: getPermissionData.permission_uuid,
+                    feature_permission_list: getFeaturePermission
+                }
+            }
+
+
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong!!!", isAuth: false }
+            }
+        }
     }
 }

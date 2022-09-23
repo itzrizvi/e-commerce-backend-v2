@@ -274,6 +274,21 @@ type GetALLFeaturePermissionOutput {
     data: [FeaturePermission]
 }
 
+input GetPermisssionsByStaff {
+    staffUUID:UUID!
+}
+
+type Permission {
+    permission_uuid:UUID
+    feature_permission_list:[FeaturePermission]
+}
+
+type GetPermisssionsByStaffOutput {
+    isAuth:Boolean
+    message: String!
+    staffData: Staff
+    permissions_data:Permission
+}
 
 
 
@@ -284,6 +299,7 @@ type Query {
     getAllRoles: RoleOutput!
     getAllStaff: GetALLStaffOutput!
     getAllFeaturePermission: GetALLFeaturePermissionOutput!
+    getAllPermissionByStaff(query: GetPermisssionsByStaff): GetPermisssionsByStaffOutput!
 }
 
 type Mutation{

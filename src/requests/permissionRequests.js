@@ -1,9 +1,9 @@
-// Feature Permission List BASED REQUEST FORMATION
+// Permission BASED REQUEST FORMATION
 // All Requires
 const { make } = require('simple-body-validator');
 let rules = {}, request, response;
 
-// Feature Permission List REQUEST
+// Assign Permission REQUEST
 const assignPermissionRequest = (body) => {
     rules = {
         permissionUUIDList: 'required|string',
@@ -11,6 +11,14 @@ const assignPermissionRequest = (body) => {
         roleNo: 'required|strict|integer'
     }
 
+    return checkBody(body, rules);
+}
+
+// GET All Permission By Staff 
+const getAllPermissionByStaffRequest = (body) => {
+    rules = {
+        staffUUID: 'required|string'
+    }
     return checkBody(body, rules);
 }
 
@@ -26,6 +34,7 @@ const checkBody = (body, rules) => {
         const validator = make(request, rules);
         if (!validator.validate()) response = { success: false, data: validator.errors().all() }
         else response = { success: true }
+
         return response;
 
 
@@ -39,4 +48,5 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     assignPermissionRequest,
+    getAllPermissionByStaffRequest
 }

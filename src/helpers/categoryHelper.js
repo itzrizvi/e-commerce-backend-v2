@@ -85,7 +85,7 @@ module.exports = {
     getAllCategories: async (db, user, isAuth, TENANT_ID) => {
 
         try {
-            // Check If Has Alias 
+            // Check If Has Alias with subcategories
             if (!db.categories.hasAlias('subcategories')) {
 
                 await db.categories.hasMany(db.categories, {
@@ -95,6 +95,7 @@ module.exports = {
                 });
             }
 
+            // Check If Has Alias with subsubcategories
             if (!db.categories.hasAlias('subsubcategories')) {
                 await db.categories.hasMany(db.categories, {
                     targetKey: 'cat_id',

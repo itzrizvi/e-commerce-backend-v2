@@ -15,26 +15,26 @@ module.exports = async (req, db) => {
     const checkEmail = await db.users.findOne({ where: { email: req.email } });
 
     // If Not Exists then create User
-    if (!checkEmail) {
-        const data = await userSignUp(req, db);
-        return singleResponse(data);
+    // if (!checkEmail) {
+    const data = await userSignUp(req, db);
+    return singleResponse(data);
 
-    } else { // Else Send Error Message
-        const data = {
-            authToken: "NO DATA",
-            uid: "NO DATA",
-            first_name: "NO DATA",
-            last_name: "NO DATA",
-            email: req.email,
-            message: "THIS EMAIL IS ALREADY TAKEN",
-            emailVerified: false,
-            verificationCode: 0,
-            updatedAt: "NO DATA",
-            createdAt: "NO DATA"
-        }
+    // } else { // Else Send Error Message
+    //     const data = {
+    //         authToken: "NO DATA",
+    //         uid: "NO DATA",
+    //         first_name: "NO DATA",
+    //         last_name: "NO DATA",
+    //         email: req.email,
+    //         message: "THIS EMAIL IS ALREADY TAKEN",
+    //         emailVerified: false,
+    //         verificationCode: 0,
+    //         updatedAt: "NO DATA",
+    //         createdAt: "NO DATA"
+    //     }
 
-        return singleResponse(data);
-    }
+    // return singleResponse(data);
+    // }
 
 
 }

@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         cat_id: {
             type: DataTypes.UUID,
             primaryKey: true,
+            allowNull: false,
             defaultValue: DataTypes.UUIDV4
         },
         cat_name: {
@@ -41,13 +42,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         cat_sort_order: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: true,
+            defaultValue: 0
         },
         cat_status: {
             type: DataTypes.BOOLEAN,
-            allowNull: true
+            allowNull: false,
+            defaultValue: false
         },
         created_by: {
+            type: DataTypes.UUID,
+            allowNull: false
+        },
+        tenant_id: {
             type: DataTypes.STRING,
             allowNull: false
         }

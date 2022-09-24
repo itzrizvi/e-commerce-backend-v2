@@ -5,6 +5,7 @@ const db = require("../db");
 const onReqTokenGenerate = async (req, res, next) => {
 
     const authToken = req.get('Authorization') || '';
+    const TENANT_ID = req.get('TENANT_ID') || '';
 
     if (!authToken) {
         req.isAuth = false;
@@ -35,6 +36,7 @@ const onReqTokenGenerate = async (req, res, next) => {
     }
 
     req.user = authUser;
+    req.TENANT_ID = TENANT_ID;
     req.isAuth = true
 
     return next();

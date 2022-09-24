@@ -214,21 +214,21 @@ type CreateRoleOutput {
 
 input CategoryCreateInput {
     categoryName:String!
-    categoryDescription:JSON!
+    categoryDescription:JSON
     categoryParentId:UUID
     categoryMetaTagTitle:String
     categoryMetaTagDescription:JSON
     categoryMetaTagKeywords:JSON
-    categoryImage:String!
+    categoryImage:String
     categorySortOrder:Int
     categoryStatus:Boolean
 }
 
 type CategoryCreateOutput {
     message:String!
-    creategoryName:String!
-    createdBy:String!
-    role:String!
+    status:Boolean!
+    creategoryName:String
+    createdBy:String
 }
 
 
@@ -302,7 +302,7 @@ type Query {
     getAllPermissionByStaff(query: GetPermisssionsByStaff): GetPermisssionsByStaffOutput!
 }
 
-type Mutation{
+type Mutation {
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
     adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!

@@ -1,9 +1,16 @@
 // All Requires
+const { createCategoryController } = require("../../controllers");
 
 
 // Role Mutation Start
 module.exports = {
-    createCategory: async (root, args, { db, user, isAuth }, info) => {
-        console.log(args);
+    // Create Category Mutation
+    createCategory: async (root, args, { db, user, isAuth, TENANT_ID }, info) => {
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await createCategoryController(args.data, db, user, isAuth, TENANT_ID);
     }
 }

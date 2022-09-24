@@ -7,6 +7,6 @@ const { singleResponse } = require("../../utils/response");
 module.exports = async (db, user, isAuth, TENANT_ID) => {
     // Sending Request to Helper
     const data = await getAllCategories(db, user, isAuth, TENANT_ID);
-
+    // Final Response
     return singleResponse(data);
 }

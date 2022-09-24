@@ -118,7 +118,10 @@ module.exports = {
                     }
                 ],
                 where: {
-                    cat_parent_id: null
+                    [Op.and]: [{
+                        cat_parent_id: null,
+                        tenant_id: TENANT_ID
+                    }]
                 }
             });
 

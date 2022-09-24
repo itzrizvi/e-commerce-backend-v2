@@ -105,7 +105,7 @@ module.exports = {
 
             }
 
-            // 
+            // All Categories with Sub and Sub Sub Categories Query
             const allCategories = await db.categories.findAll({
                 include: [
                     { model: db.categories, as: 'subcategories' },
@@ -126,6 +126,7 @@ module.exports = {
                 }
             });
 
+            // Return Data
             return {
                 message: "Success",
                 status: true,

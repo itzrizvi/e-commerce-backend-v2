@@ -80,5 +80,60 @@ module.exports = {
             }
         }
 
+    },
+    // GET ALL Categories Helper
+    getAllCategories: async (db, user, isAuth, TENANT_ID) => {
+
+        try {
+            // Check If Has Alias 
+            if (!db.categories.hasAlias('subcategories')) {
+
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subcategories'
+                });
+            }
+
+            if (!db.categories.hasAlias('subsubcategories')) {
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subsubcategories'
+                });
+
+            }
+
+            // 
+            const allCategories = await db.categories.findAll({
+                include: [
+                    { model: db.categories, as: 'subcategories' },
+                    {
+                        model: db.categories,
+                        as: 'subcategories',
+                        include: {
+                            model: db.categories,
+                            as: 'subsubcategories'
+                        }
+                    }
+                ],
+                where: {
+                    cat_parent_id: null
+                }
+            });
+
+            return {
+                message: "Success",
+                status: true,
+                categories: allCategories
+            }
+
+
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong!!!", status: false, }
+            }
+        }
+
     }
 }

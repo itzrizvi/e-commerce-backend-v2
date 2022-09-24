@@ -231,6 +231,50 @@ type CategoryCreateOutput {
     createdBy:String
 }
 
+type SubSubCategory {
+    cat_id:UUID
+    cat_name:String
+    cat_slug:String
+    cat_descriptipn:JSON
+    cat_image:String
+    cat_sort_order:Int
+    cat_status:Boolean
+    tenant_id:String
+    cat_parent_id:UUID
+}
+
+type SubCategory {
+    cat_id:UUID
+    cat_name:String
+    cat_slug:String
+    cat_descriptipn:JSON
+    cat_image:String
+    cat_sort_order:Int
+    cat_status:Boolean
+    tenant_id:String
+    cat_parent_id:UUID
+    subsubcategories:[SubSubCategory]
+}
+
+type Category {
+    cat_id:UUID!
+    cat_name:String!
+    cat_slug:String!
+    cat_descriptipn:JSON
+    cat_image:String
+    cat_sort_order:Int
+    cat_status:Boolean
+    tenant_id:String
+    cat_parent_id:UUID
+    subcategories:[SubCategory]
+}
+
+type GetCategories {
+    message:String!
+    status:Boolean!
+    categories: [Category]
+}
+
 
 # Permission Based Input and Queries #########################################
 ##############################################################################
@@ -300,6 +344,7 @@ type Query {
     getAllStaff: GetALLStaffOutput!
     getAllFeaturePermission: GetALLFeaturePermissionOutput!
     getAllPermissionByStaff(query: GetPermisssionsByStaff): GetPermisssionsByStaffOutput!
+    getAllCategories: GetCategories!
 }
 
 type Mutation {

@@ -20,6 +20,8 @@ const app = express();
 
 // Middlewares Require
 const onReqTokenGenerate = require('./src/middlewares/onReqTokenGenerator');
+const onReqTenantCheck = require('./src/middlewares/onReqTenantCheckMiddleware');
+
 
 
 
@@ -35,6 +37,7 @@ const middlewares = [
 
 app.use(middlewares); // Middlewares Using
 app.use(onReqTokenGenerate)
+app.use(onReqTenantCheck)
 
 
 // //

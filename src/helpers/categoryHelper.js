@@ -82,7 +82,7 @@ module.exports = {
 
     },
     // GET ALL Categories Helper
-    getAllCategories: async (db, user, isAuth, TENANT_ID) => {
+    getAllCategories: async (db, TENANT_ID) => {
 
         try {
             // Check If Has Alias with subcategories
@@ -136,7 +136,7 @@ module.exports = {
 
         } catch (error) {
             if (error) {
-                return { message: "Something Went Wrong!!!", status: false, }
+                return { message: "Something Went Wrong!!!", status: false }
             }
         }
 

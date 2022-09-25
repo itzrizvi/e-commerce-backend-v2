@@ -1,14 +1,14 @@
 
 const onReqTenantCheck = async (req, res, next) => {
 
-    const TENANT_ID = req.get('TENANT_ID') || '';
+    const TENANTID = req.get('TENANTID') || '';
 
-    if (!TENANT_ID) {
-        req.TENANT_ID = null;
+    if (!TENANTID) {
+        req.TENANTID = null;
         return next();
     }
 
-    req.TENANT_ID = TENANT_ID;
+    req.TENANTID = TENANTID;
 
     return next();
 }

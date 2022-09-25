@@ -4,9 +4,9 @@ const { singleResponse } = require("../../utils/response");
 
 
 // GET PERMISSION BY STAFF CONTROLLER
-module.exports = async (db, TENANT_ID) => {
+module.exports = async (db, TENANTID) => {
     // Sending Request to Helper
-    const data = await getAllCategories(db, TENANT_ID);
+    const data = await getAllCategories(db, TENANTID);
     // Final Response
     return singleResponse(data);
 }

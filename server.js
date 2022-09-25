@@ -32,7 +32,7 @@ const middlewares = [
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
     cors(),
-    cookieParser()
+    cookieParser(),
 ];
 
 app.use(middlewares); // Middlewares Using
@@ -60,13 +60,13 @@ async function startApolloServer() {
         introspection: true,
         tracing: true,
         context: ({ req }) => {
-            let { isAuth, user, TENANT_ID } = req;
+            let { isAuth, user, TENANTID } = req;
             return {
                 req,
                 isAuth,
                 user,
                 db,
-                TENANT_ID
+                TENANTID
             }
         },
         cache: 'bounded',

@@ -4,7 +4,7 @@ const { createCategoryRequest } = require("../../requests/categoryRequests");
 const { singleResponse } = require("../../utils/response");
 
 // Create Category Controller
-module.exports = async (req, db, user, isAuth, TENANT_ID) => {
+module.exports = async (req, db, user, isAuth, TENANTID) => {
 
     // Validate Create Role Request
     const validate = await createCategoryRequest(req);
@@ -17,7 +17,7 @@ module.exports = async (req, db, user, isAuth, TENANT_ID) => {
     if (user.role_no === '0') return { message: "Not Authorized", status: false };
 
     // Helper
-    const data = await createCategory(req, db, user, isAuth, TENANT_ID);
+    const data = await createCategory(req, db, user, isAuth, TENANTID);
 
     // Return Data
     return singleResponse(data);

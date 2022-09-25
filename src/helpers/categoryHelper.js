@@ -8,7 +8,7 @@ const { default: slugify } = require("slugify");
 // Category Helper
 module.exports = {
     // Create Category Helper
-    createCategory: async (req, db, user, isAuth, TENANT_ID) => {
+    createCategory: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.role_no === '0') return { message: "Not Authorized", status: false };
@@ -56,7 +56,7 @@ module.exports = {
                     cat_sort_order,
                     cat_status,
                     created_by,
-                    tenant_id: TENANT_ID
+                    tenant_id: TENANTID
                 });
 
                 // If Inserted Data
@@ -82,7 +82,7 @@ module.exports = {
 
     },
     // GET ALL Categories Helper
-    getAllCategories: async (db, TENANT_ID) => {
+    getAllCategories: async (db, TENANTID) => {
 
         try {
             // Check If Has Alias with subcategories
@@ -121,7 +121,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         cat_parent_id: null,
-                        tenant_id: TENANT_ID
+                        tenant_id: TENANTID
                     }]
                 }
             });

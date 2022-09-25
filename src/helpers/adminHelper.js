@@ -1,26 +1,32 @@
 // ADMIN HELPER REQUIRES
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 
 
 // HELPER
 module.exports = {
     // Admin Sign In HELPER
-    adminSignIn: async (req, db) => {
+    adminSignIn: async (req, db, TENANTID) => {
 
         try {
             const { email, password } = req;
 
             // Check User
-            const user = await db.users.findOne({ where: { email } });
+            const user = await db.users.findOne({
+                where: {
+                    [Op.and]: [{
+                        email: email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             if (!user) {
                 return {
-                    authToken: "NO TOKEN",
-                    uid: "NO UID",
-                    email: "NOT FOUND",
                     message: "USER NOT FOUND",
-                    emailVerified: false,
+                    status: false,
                 };
             }
 
@@ -28,28 +34,30 @@ module.exports = {
             const isValid = await bcrypt.compare(password, user.password);
             if (!isValid) {
                 return {
-                    authToken: "NO TOKEN",
-                    uid: "NO UID",
-                    email: "NOT FOUND",
                     message: "USER NOT FOUND",
-                    emailVerified: false
+                    status: false,
                 };
             }
 
             // Check Roles
             const { role_no } = user;
-            const checkRoleExist = await db.roles.findOne({ where: { role_no } });
+            const checkRoleExist = await db.roles.findOne({
+                where: {
+                    [Op.and]: [{
+                        role_no,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             if (!checkRoleExist || checkRoleExist.role_no === '0') return {
-                authToken: "NO TOKEN",
-                uid: "NO UID",
-                email: "NOT FOUND",
                 message: "USER NOT FOUND",
-                emailVerified: false
+                status: false,
             };
 
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email },
+                { uid: user.uid, email: user.email, role_no: user.role_no },
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
             );
@@ -62,20 +70,21 @@ module.exports = {
                 emailVerified: user.email_verified,
                 first_name: user.first_name,
                 last_name: user.last_name,
-                roleNo: checkRoleExist.role_no
+                roleNo: checkRoleExist.role_no,
+                status: true
             }
 
         } catch (error) {
-            throw new Error(error.message)
+            if (error) return { message: "Something Went Wrong", status: false }
         }
 
 
     },
     // Admin Sign Up Helper
-    adminSignUp: async (req, db, user, isAuth) => {
+    adminSignUp: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth and No Role
-        if (!user || !isAuth) return { message: "Not Authorized", email: req.email };
-        if (user.role_no === '0') return { message: "Not Authorized", email: req.email };
+        if (!user || !isAuth) return { message: "Not Authorized", email: req.email, status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", email: req.email, status: false };
 
         // Data From Request
         const first_name = req.first_name;
@@ -85,11 +94,25 @@ module.exports = {
         const role_no = req.roleNo;
 
         // Find Role according to role_no
-        const findRoleDetails = await db.roles.findOne({ where: { role_no } });
-        if (!findRoleDetails) return { message: "The Assigned Role Must be Created First!!", email: email }
+        const findRoleDetails = await db.roles.findOne({
+            where: {
+                [Op.and]: [{
+                    role_no,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
+        if (!findRoleDetails) return { message: "The Assigned Role Must be Created First!!", email: email, status: false }
 
         // Check User Already Exist
-        const checkUserExist = await db.users.findOne({ where: { email } });
+        const checkUserExist = await db.users.findOne({
+            where: {
+                [Op.and]: [{
+                    email,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
 
         // Email verification Code generate
         const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
@@ -104,7 +127,8 @@ module.exports = {
                 email: email,
                 password: await bcrypt.hash(password, 10),
                 role_no: role_no,
-                verification_code: verificationCode
+                verification_code: verificationCode,
+                tenant_id: TENANTID
             });
 
 
@@ -113,7 +137,7 @@ module.exports = {
 
                 // Token generate
                 const authToken = jwt.sign(
-                    { uid: createStuff.uid, email: createStuff.email },
+                    { uid: createStuff.uid, email: createStuff.email, role_no: createStuff.role_no },
                     process.env.JWT_SECRET,
                     { expiresIn: '1y' }
                 );
@@ -141,9 +165,11 @@ module.exports = {
                     roleNo: createStuff.role_no,
                     role: findRoleDetails.role,
                     roleSlug: findRoleDetails.role_slug,
+                    tenant_id: createStuff.tenant_id,
+                    status: true
                 }
             } else {
-                return { message: "Something Went Wrong!!!", email: email };
+                return { message: "Something Went Wrong!!!", email: email, status: false };
             }
 
         } else {
@@ -160,13 +186,29 @@ module.exports = {
                 email_verified: false,
                 verification_code: verificationCode
             }
-            const updateUserToStuff = await db.users.update(updateDoc, { where: { email: userEmail } });
+
+            const updateUserToStuff = await db.users.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        email: userEmail,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
             // If updated data 
             if (updateUserToStuff) {
 
                 // Find Updated User
-                const updatedStuffData = await db.users.findOne({ where: { email: userEmail } });
+                const updatedStuffData = await db.users.findOne({
+                    where: {
+                        [Op.and]: [{
+                            email: userEmail,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
                 const { email: updatedStuffEmail, verification_code: updatedStuffVerficationCode } = updatedStuffData;
 
                 // Setting Up Data for EMAIL SENDER
@@ -181,7 +223,7 @@ module.exports = {
 
                 // Generate Auth Token
                 const authToken = jwt.sign(
-                    { uid: updatedStuffData.uid, email: updatedStuffData.email },
+                    { uid: updatedStuffData.uid, email: updatedStuffData.email, role_no: updatedStuffData.role_no },
                     process.env.JWT_SECRET,
                     { expiresIn: '1y' }
                 );
@@ -201,10 +243,12 @@ module.exports = {
                     roleNo: updatedStuffData.role_no,
                     role: findRoleDetails.role,
                     roleSlug: findRoleDetails.role_slug,
+                    tenant_id: updatedStuffData.tenant_id,
+                    status: true
                 }
 
             } else {
-                return { message: "Something Went Wrong!!!", email: email };
+                return { message: "Something Went Wrong!!!", email: email, status: false };
             }
         }
     }

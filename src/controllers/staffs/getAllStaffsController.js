@@ -4,8 +4,8 @@ const { groupResponse } = require("../../utils/response");
 
 
 // GET STUFF CONTROLLER
-module.exports = async (db, user, isAuth) => {
-    const data = await getAllStaff(db, user, isAuth);
+module.exports = async (db, user, isAuth, TENANTID) => {
+    const data = await getAllStaff(db, user, isAuth, TENANTID);
 
     return groupResponse(data);
 }

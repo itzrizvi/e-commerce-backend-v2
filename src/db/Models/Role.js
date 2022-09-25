@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         role_slug: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        tenant_id: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
 
     }, {

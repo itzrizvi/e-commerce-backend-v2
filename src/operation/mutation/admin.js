@@ -6,29 +6,28 @@ const { adminSignInController, adminSignUpController } = require("../../controll
 // Admin Mutation 
 module.exports = {
     // Admin Sign In
-    adminSignIn: async (root, { email, password }, { db }, info) => {
+    adminSignIn: async (root, { email, password }, { db, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
         // Data from ARGS
         const data = {
             email,
             password
         }
-        return await adminSignInController(data, db);
+        return await adminSignInController(data, db, TENANTID);
     },
     // Admin Sign Up From Admin Panel
-    adminSignUp: async (root, args, { db, user, isAuth }, info) => {
+    adminSignUp: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth and No Role
-        if (!user || !isAuth) return { message: "Not Authorized", email: args.data.email };
-        if (user.role_no === '0') return { message: "Not Authorized", email: args.data.email };
+        if (!user || !isAuth) return { message: "Not Authorized", email: args.data.email, status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", email: args.data.email, status: false };
 
-        // CHECK ACCESS
-        const roleNo = user.role_no;
-        const checkRoleForAccess = await db.roles.findOne({ where: { role_no: roleNo } });
-
-        // CHECK ACCESS
-        if (!checkRoleForAccess) return { message: "Not Authorized", email: args.data.email };
 
         // Return To Controller
-        return await adminSignUpController(args.data, db, user, isAuth);
+        return await adminSignUpController(args.data, db, user, isAuth, TENANTID);
 
     }
 }

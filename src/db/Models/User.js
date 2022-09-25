@@ -1,5 +1,3 @@
-const Role = require("./Role")
-
 //user model
 module.exports = (sequelize, DataTypes) => {
 
@@ -43,6 +41,10 @@ module.exports = (sequelize, DataTypes) => {
         role_no: {
             type: DataTypes.BIGINT,
             defaultValue: 0,
+            allowNull: false
+        },
+        tenant_id: {
+            type: DataTypes.STRING,
             allowNull: false
         }
 

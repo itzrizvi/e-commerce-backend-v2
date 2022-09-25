@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const CryptoJS = require('crypto-js');
+const { Op } = require('sequelize');
 
 module.exports = {
     // SIGN UP
-    userSignUp: async (req, db) => {
+    userSignUp: async (req, db, TENANTID) => {
         try {
 
             const { first_name, last_name, email, password } = req;
@@ -17,7 +18,8 @@ module.exports = {
                 last_name,
                 email,
                 password: await bcrypt.hash(password, 10),
-                verification_code: verificationCode
+                verification_code: verificationCode,
+                tenant_id: TENANTID
             });
 
             const authToken = jwt.sign(
@@ -46,34 +48,35 @@ module.exports = {
                 message: "Sign Up succesfull",
                 verificationCode: user.verification_code,
                 updatedAt: user.createdAt,
-                createdAt: user.updatedAt
+                createdAt: user.updatedAt,
+                tenant_id: user.tenant_id,
+                status: true
             }
 
         } catch (error) {
-            throw new Error(error.message)
+            if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
     // SIGN IN
-    userSignIn: async (req, db) => {
+    userSignIn: async (req, db, TENANTID) => {
 
         try {
             // DATA FROM REQUEST
             const { email, password } = req;
 
             // CHECK USER
-            const user = await db.users.findOne({ where: { email } });
+            const user = await db.users.findOne({
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
             if (!user) {
                 return {
-                    authToken: "NO TOKEN",
-                    uid: "NO UID",
-                    first_name: "NOT FOUND",
-                    last_name: "NOT FOUND",
-                    email: "NOT FOUND",
                     message: "USER NOT FOUND",
-                    emailVerified: false,
-                    verificationCode: 0,
-                    updatedAt: "NO DATE",
-                    createdAt: "NO DATE"
+                    status: false
                 };
             }
 
@@ -81,21 +84,10 @@ module.exports = {
             const isValid = await bcrypt.compare(password, user.password);
             if (!isValid) {
                 return {
-                    authToken: "NO TOKEN",
-                    uid: "NO UID",
-                    first_name: "NOT FOUND",
-                    last_name: "NOT FOUND",
-                    email: "NOT FOUND",
                     message: "USER NOT FOUND",
-                    emailVerified: false,
-                    verificationCode: 0,
-                    updatedAt: "NO DATE",
-                    createdAt: "NO DATE"
+                    status: false
                 };
             }
-
-            // const { role_no: roleNo } = checkRoleExist;
-            // roleNO: CryptoJS.AES.encrypt(roleNo, process.env.ROLE_SECRET).toString() ##### TESTING PURPOSE
 
             // return jwt
             const authToken = jwt.sign(
@@ -114,25 +106,34 @@ module.exports = {
                 emailVerified: user.email_verified,
                 verificationCode: user.verification_code,
                 updatedAt: user.createdAt,
-                createdAt: user.updatedAt
+                createdAt: user.updatedAt,
+                tenant_id: user.tenant_id,
+                status: true
             }
 
         } catch (error) {
-            throw new Error(error.message)
+            if (error) return { message: "USER NOT FOUND", status: false };
         }
     },
     // Email Verify
-    verifyEmail: async (req, db, user, isAuth) => {
-        if (!user || !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
+    verifyEmail: async (req, db, user, isAuth, TENANTID) => {
+        if (!user || !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!", status: false }; // RReturn if not auth
 
         const email = user.email; // Email From Request
 
         // User Find For Matching Code
-        const findUser = await db.users.findOne({ where: { email } });
+        const findUser = await db.users.findOne({
+            where: {
+                [Op.and]: [{
+                    email,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
 
         // IF Not User
         if (!findUser) {
-            return { emailVerified: false, isAuth: true, message: "Something Went Wrong", email: email };
+            return { emailVerified: false, isAuth: true, message: "Something Went Wrong", email: email, status: false };
         };
 
         // Destructure Values
@@ -155,7 +156,14 @@ module.exports = {
                     email_verified: true
                 }
                 // Update User
-                const updateUser = await db.users.update(updateDoc, { where: { email } });
+                const updateUser = await db.users.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            email,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
 
                 // If Updated then return values
                 if (updateUser) {
@@ -163,14 +171,16 @@ module.exports = {
                         email: email,
                         emailVerified: true,
                         message: "Email Verified Successfully!!",
-                        isAuth: isAuth
+                        isAuth: isAuth,
+                        status: false
                     }
                 } else {
                     return { // If Not updated
                         email: email,
                         emailVerified: false,
                         message: "ERROR WHEN MATCHING",
-                        isAuth: isAuth
+                        isAuth: isAuth,
+                        status: false
                     }
                 }
 
@@ -180,7 +190,8 @@ module.exports = {
                     email: email,
                     emailVerified: false,
                     message: "CODE DIDN'T MATCHED",
-                    isAuth: isAuth
+                    isAuth: isAuth,
+                    status: false
                 }
             }
 
@@ -191,7 +202,8 @@ module.exports = {
                 email: email,
                 emailVerified: false,
                 message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Resend Code From Profile!!!",
-                isAuth: isAuth
+                isAuth: isAuth,
+                status: false
             }
         }
 
@@ -199,8 +211,8 @@ module.exports = {
 
     },
     // Resend Email For Verification
-    resendVerificationEmail: async (req, db, user, isAuth) => {
-        if (!user || !isAuth) return { message: "Not Authenticated", email: "Not Found!" }; // RReturn if not auth
+    resendVerificationEmail: async (req, db, user, isAuth, TENANTID) => {
+        if (!user || !isAuth) return { message: "Not Authenticated", email: "Not Found!", status: false }; // RReturn if not auth
 
         const confirmEmail = req.email === user.email; // Confirm that requested email and Auth Email is same
 
@@ -217,7 +229,14 @@ module.exports = {
                 verification_code: newVerificationCode
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, { where: { email } });
+            const updateUser = await db.users.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
 
 
@@ -236,29 +255,38 @@ module.exports = {
                 // Return The Response
                 return {
                     email: email,
-                    message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!"
+                    message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!",
+                    status: true
                 }
             } else {
                 return { // If Not updated
                     email: email,
-                    message: "Failed To Send New Code"
+                    message: "Failed To Send New Code",
+                    status: false
                 }
             }
 
         } else {
 
-            return { message: "Not Authenticated", email: "Not Found!" }
+            return { message: "Not Authenticated", email: "Not Found!", status: false }
 
         }
     },
     // Forgot Password Initiation Helper (STEP 1)
-    forgotPassInit: async (req, db) => {
+    forgotPassInit: async (req, db, TENANTID) => {
 
         // GET EMAIL FROM REQUEST
         const email = req.email;
 
         // Check User is Exists
-        const checkUser = await db.users.findOne({ where: { email } });
+        const checkUser = await db.users.findOne({
+            where: {
+                [Op.and]: [{
+                    email,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
 
         // IF USer Exists
         if (checkUser) {
@@ -270,7 +298,14 @@ module.exports = {
                 forgot_password_code: forgotPasswordCode
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, { where: { email } });
+            const updateUser = await db.users.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
             // IF USER UPDATED
             if (updateUser) {
@@ -288,35 +323,45 @@ module.exports = {
                 // Return The Response
                 return {
                     message: "A Reset Password Verification Code is Sent to Your Email!!!",
-                    email: email
+                    email: email,
+                    status: true
                 }
 
             } else { // ELSE USER COULDN"T UPDATE
                 return {
                     message: "Something Went Wrong Try Again!!!",
-                    email: email
+                    email: email,
+                    status: false
                 }
             }
 
         } else { // IF USER NOT FOUND
             return {
                 message: "User Not Found, Please Enter Your Account Email!!!",
-                email: email
+                email: email,
+                status: false
             }
         }
 
     },
     // Forgot Password Code Match Helper (STEP 2)
-    forgotPassCodeMatch: async (req, db) => {
+    forgotPassCodeMatch: async (req, db, TENANTID) => {
 
         // FORGOT PASS CODE AND EMAIL FROM REQ
         const email = req.email;
         const forgotPassVerifyCode = req.forgotPassVerifyCode;
 
         // CHECK USER 
-        const checkUser = await db.users.findOne({ where: { email } });
+        const checkUser = await db.users.findOne({
+            where: {
+                [Op.and]: [{
+                    email,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
 
-        if (!checkUser) return { email: email, message: "Please Enter Valid Details!!!" };
+        if (!checkUser) return { email: email, message: "Please Enter Valid Details!!!", status: false };
 
         // Destructure From User
         const { forgot_password_code, updatedAt } = checkUser;
@@ -344,7 +389,8 @@ module.exports = {
             } else { // If not matched
                 return {
                     email: email,
-                    message: "Please Enter Valid Details!!!"
+                    message: "Please Enter Valid Details!!!",
+                    status: false
                 }
             }
 
@@ -353,14 +399,15 @@ module.exports = {
 
             return {
                 email: email,
-                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Start Again From The Beginning!!!"
+                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Start Again From The Beginning!!!",
+                status: false
             }
         }
 
 
     },
     // Forgot Password Final (STEP 3)
-    forgotPassFinal: async (req, db) => {
+    forgotPassFinal: async (req, db, TENANTID) => {
 
         // Details From Request 
         const email = req.email;
@@ -369,13 +416,20 @@ module.exports = {
         const confirmPassword = req.confirmPassword;
 
         // CHECK USER 
-        const checkUser = await db.users.findOne({ where: { email } });
+        const checkUser = await db.users.findOne({
+            where: {
+                [Op.and]: [{
+                    email,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
 
-        if (!checkUser) return { email: email, message: "Please Enter Valid Details!!!" }; // If user not found by Email
+        if (!checkUser) return { email: email, message: "Please Enter Valid Details!!!", status: false }; // If user not found by Email
 
         // Check Password Match
         const passwordMatch = newPassword === confirmPassword;
-        if (!passwordMatch) return { email: email, message: "Two Password Didn't Matched!!!" }; // If two password didn't matched
+        if (!passwordMatch) return { email: email, message: "Two Password Didn't Matched!!!", status: false }; // If two password didn't matched
 
         // Destructure From User
         const { forgot_password_code, updatedAt } = checkUser;
@@ -395,7 +449,7 @@ module.exports = {
             const codeMatched = forgotPassVerifyCode === forgot_password_code;
 
             // Code match condition
-            if (!codeMatched) return { email: email, message: "Invalid Password Verification Code!!!" };
+            if (!codeMatched) return { email: email, message: "Invalid Password Verification Code!!!", status: false };
 
 
             // Updating Doc
@@ -403,8 +457,16 @@ module.exports = {
                 password: await bcrypt.hash(confirmPassword, 10),
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, { where: { email } });
-            if (!updateUser) return { email: email, message: "Something Went Wrong Please Start Again After A Moment!!!" };
+            const updateUser = await db.users.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!updateUser) return { email: email, message: "Something Went Wrong Please Start Again After A Moment!!!", status: false };
 
             // Setting Up Data for EMAIL SENDER
             const mailData = {
@@ -419,7 +481,8 @@ module.exports = {
 
             return {
                 email: email,
-                message: "Your Password is Updated, Please Sign In With New Password!!!"
+                message: "Your Password is Updated, Please Sign In With New Password!!!",
+                status: true
             }
 
 
@@ -427,7 +490,8 @@ module.exports = {
 
             return {
                 email: email,
-                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Start Again From The Beginning!!!"
+                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Start Again From The Beginning!!!",
+                status: false
             }
         }
 

@@ -21,15 +21,16 @@ type User {
 }
 
 type AuthPayload {
-    authToken: String!
-    uid:String!
-    first_name:String!
-    last_name:String!
-    email:String!
-    message:String!
-    emailVerified:Boolean!
-    updatedAt:String!
-    createdAt:String!
+    authToken: String
+    uid:String
+    first_name:String
+    last_name:String
+    email:String
+    message:String
+    emailVerified:Boolean
+    updatedAt:String
+    createdAt:String
+    status:Boolean
 }
 
 input UserInput {
@@ -39,34 +40,23 @@ input UserInput {
     password:String
 }
 
-input UserRecordInput {
-    uid:ID,
-    first_name:String
-    last_name:String
-    email:String
-    password:String
-}
-
-type UserOutput {
-    count: Int
-    data: [User]
-}
 
 
 # Admin Staff Based Input and Queries ################################################
 ######################################################################################
 
 type AdminAuthPayload {
-    authToken:String!
-    uid:String!
+    authToken:String
+    uid:String
     first_name:String
     last_name:String
-    email:String!
-    message:String!
-    emailVerified:Boolean!
+    email:String
+    message:String
+    emailVerified:Boolean
     updatedAt:String
     createdAt:String
     roleNo:String
+    status:Boolean
 }
 
 input AdminSignUpInput {
@@ -82,14 +72,15 @@ type AdminSignUpOutput {
     uid:String
     first_name:String
     last_name:String
-    email:String!
-    message:String!
+    email:String
+    message:String
     emailVerified:Boolean
     updatedAt:String
     createdAt:String
     roleNo:Float
     role:String
     roleSlug:String
+    status:Boolean
 }
 
 type Staff {
@@ -105,6 +96,7 @@ type GetALLStaffOutput {
     data:[Staff]
     isAuth:Boolean
     message:String
+    status:Boolean
 }
 
 
@@ -118,10 +110,11 @@ input VerifyEmailInput {
 }
 
 type VerifyEmailOutput {
-    email:String!
-    emailVerified:Boolean!
-    isAuth:Boolean!
-    message:String!
+    email:String
+    emailVerified:Boolean
+    isAuth:Boolean
+    message:String
+    status:Boolean
 }
 
 input resendVerificationEmailInput {
@@ -129,8 +122,9 @@ input resendVerificationEmailInput {
 }
 
 type resendVerifyEmailOutput {
-    message:String!
-    email:String!
+    message:String
+    status:Boolean
+    email:String
 }
 
 
@@ -142,8 +136,9 @@ input ForgotPassInitInput {
 }
 
 type ForgotPassInitOutput {
-    message:String!
-    email:String!
+    message:String
+    email:String
+    status:Boolean
 }
 
 input ForgotPassCodeMatchInput {
@@ -152,8 +147,9 @@ input ForgotPassCodeMatchInput {
 }
 
 type ForgotPassCodeMatchOutput {
-    message:String!
-    email:String!
+    message:String
+    email:String
+    status:Boolean
 }
 
 input ForgotPassFinalInput {
@@ -164,8 +160,9 @@ input ForgotPassFinalInput {
 }
 
 type ForgotPassFinalOutput {
-    email:String!
-    message:String!
+    email:String
+    message:String
+    status:Boolean
 }
 
 

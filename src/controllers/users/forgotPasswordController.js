@@ -5,7 +5,7 @@ const { singleResponse } = require("../../utils/response");
 
 
 // FORGOT PASSWORD INITIATION (STEP 1)
-const forgotPasswordInitController = async (req, db) => {
+const forgotPasswordInitController = async (req, db, TENANTID) => {
 
     // Validate Request
     const validate = await forgotPassInitRequest(req);
@@ -14,7 +14,7 @@ const forgotPasswordInitController = async (req, db) => {
     }
 
     // Forgot Password Init With Helper
-    const data = await forgotPassInit(req, db);
+    const data = await forgotPassInit(req, db, TENANTID);
 
     // Final Response
     return singleResponse(data);
@@ -22,7 +22,7 @@ const forgotPasswordInitController = async (req, db) => {
 
 
 // FORGOT PASSWORD CODE MATCHING (STEP 2)
-const forgotPasswordCodeMatchController = async (req, db) => {
+const forgotPasswordCodeMatchController = async (req, db, TENANTID) => {
 
     // Validate Request
     const validate = await forgotPassCodeMatchRequest(req);
@@ -31,7 +31,7 @@ const forgotPasswordCodeMatchController = async (req, db) => {
     }
 
     // Forgot Password Code Match With Helper
-    const data = await forgotPassCodeMatch(req, db);
+    const data = await forgotPassCodeMatch(req, db, TENANTID);
 
     // Final Response
     return singleResponse(data);
@@ -41,7 +41,7 @@ const forgotPasswordCodeMatchController = async (req, db) => {
 
 
 // FORGOT PASSWORD FINAL (STEP 3)
-const forgotPasswordFinalController = async (req, db) => {
+const forgotPasswordFinalController = async (req, db, TENANTID) => {
 
     // Validate Request
     const validate = await forgotPassFinalRequest(req);
@@ -50,7 +50,7 @@ const forgotPasswordFinalController = async (req, db) => {
     }
 
     // Forgot Password Final With Helper
-    const data = await forgotPassFinal(req, db);
+    const data = await forgotPassFinal(req, db, TENANTID);
 
     // Final Response
     return singleResponse(data);

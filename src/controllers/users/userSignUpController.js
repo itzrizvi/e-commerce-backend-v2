@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { userSignUp } = require("../../helpers/userHelper");
 const { userSignUpRequest } = require("../../requests/userRequests");
 const { singleResponse } = require("../../utils/response");
@@ -5,36 +6,35 @@ const { singleResponse } = require("../../utils/response");
 
 
 // Sign Up Controller Export
-module.exports = async (req, db) => {
+module.exports = async (req, db, TENANTID) => {
     // Validate Sign UP
     const validate = await userSignUpRequest(req);
     if (!validate.success) {
         return singleResponse(validate.data);
     }
     // Check Email Is Already Taken or Not
-    const checkEmail = await db.users.findOne({ where: { email: req.email } });
+    const checkEmail = await db.users.findOne({
+        where: {
+            [Op.and]: [{
+                email: req.email,
+                tenant_id: TENANTID
+            }]
+        }
+    });
 
     // If Not Exists then create User
-    // if (!checkEmail) {
-    const data = await userSignUp(req, db);
-    return singleResponse(data);
+    if (!checkEmail) {
+        const data = await userSignUp(req, db, TENANTID);
+        return singleResponse(data);
 
-    // } else { // Else Send Error Message
-    //     const data = {
-    //         authToken: "NO DATA",
-    //         uid: "NO DATA",
-    //         first_name: "NO DATA",
-    //         last_name: "NO DATA",
-    //         email: req.email,
-    //         message: "THIS EMAIL IS ALREADY TAKEN",
-    //         emailVerified: false,
-    //         verificationCode: 0,
-    //         updatedAt: "NO DATA",
-    //         createdAt: "NO DATA"
-    //     }
+    } else { // Else Send Error Message
+        const data = {
+            message: "THIS EMAIL IS ALREADY TAKEN",
+            status: false
+        }
 
-    // return singleResponse(data);
-    // }
+        return singleResponse(data);
+    }
 
 
 }

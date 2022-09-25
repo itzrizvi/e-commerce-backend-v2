@@ -81,7 +81,7 @@ async function startApolloServer() {
     server.applyMiddleware({ app });
     app.use((req, res) => {
         res.status(200);
-        res.send('Hello FROM PRIME SERVER PARTS!');
+        res.send('Hello FROM PRIME SERVER PARTS!!!🚀🚀');
         res.end();
     });
 

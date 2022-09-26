@@ -3,8 +3,8 @@ const { groupResponse } = require("../../utils/response");
 
 
 // GET ROLE CONTROLLER
-module.exports = async (db, user, isAuth) => {
-    const data = await getAllRoles(db, user, isAuth);
+module.exports = async (db, user, isAuth, TENANTID) => {
+    const data = await getAllRoles(db, user, isAuth, TENANTID);
 
     return groupResponse(data);
 }

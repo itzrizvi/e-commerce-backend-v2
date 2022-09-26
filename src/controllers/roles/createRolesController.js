@@ -7,7 +7,7 @@ const { singleResponse } = require("../../utils/response");
 
 
 // CONTROLLER
-module.exports = async (req, db, user, isAuth) => {
+module.exports = async (req, db, user, isAuth, TENANTID) => {
 
     // Validate Create Role Request
     const validate = await createRoleRequest(req);
@@ -16,7 +16,7 @@ module.exports = async (req, db, user, isAuth) => {
     }
 
     // CREATE ROLE
-    const data = await createRole(req, db, user, isAuth);
+    const data = await createRole(req, db, user, isAuth, TENANTID);
 
     return singleResponse(data);
 

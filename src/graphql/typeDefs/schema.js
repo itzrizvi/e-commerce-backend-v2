@@ -176,20 +176,13 @@ type Role {
     role_slug:String
     createdAt:String
     updatedAt:String
-}
-
-input RoleInput {
-    role: String
-}
-
-input RoleRecordInput {
-    uid: ID
-    role: String
+    tenant_id:String
 }
 
 type RoleOutput {
     isAuth:Boolean
-    message: String!
+    message: String
+    status:Boolean
     data: [Role]
 }
 
@@ -198,11 +191,12 @@ input CreateRoleInput {
 }
 
 type CreateRoleOutput {
-    roleNo:Float!
-    role:String!
-    roleUUID:String!
-    roleSlug:String!
-    message:String!
+    roleNo:Float
+    role:String
+    roleUUID:String
+    roleSlug:String
+    message:String
+    status:Boolean
 }
 
 

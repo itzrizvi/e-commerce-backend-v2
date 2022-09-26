@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
 
 
@@ -5,42 +6,36 @@ const { default: slugify } = require("slugify");
 // ROLE HELPER
 module.exports = {
     // GET ALL ROLES API
-    getAllRoles: async (db, user, isAuth) => {
+    getAllRoles: async (db, user, isAuth, TENANTID) => {
         // Return if No Auth
-        if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated" };
-        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, data: [] };
+        if (!user || !isAuth) return { message: "Not Authenticated", status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", status: false };
 
-        // CHECK ACCESS
-        const roleNo = user.role_no;
-        const checkRoleForAccess = await db.roles.findOne({ where: { role_no: roleNo } });
-
-        // CHECK ACCESS
-        if (checkRoleForAccess) {
+        try {
             // GET ALL ROLES
-            const getAllRoles = await db.roles.findAll();
+            const getAllRoles = await db.roles.findAll({ where: { tenant_id: TENANTID } });
 
             return {
                 data: getAllRoles,
                 isAuth: isAuth,
                 message: "All Roles GET Success!!!",
+                status: true
             }
-        } else {
-            return { message: "Not Authorized", isAuth: false, data: [] }
-        }
 
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
 
 
 
     },
     // CREATE ROLES API
-    createRole: async (req, db, user, isAuth) => {
-        // ROLE CHECK
-        const { role_no } = user;
-        const checkRole = await db.roles.findOne({ where: { role_no } });
-        if (!checkRole || checkRole.role_no === '0') return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" };
+    createRole: async (req, db, user, isAuth, TENANTID) => {
+
+        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
 
         // Auth Check
-        if (!isAuth) return { message: "Not Authorized", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" };
+        if (!isAuth) return { message: "Not Authorized", status: false };
 
 
         // GET DATA
@@ -55,7 +50,14 @@ module.exports = {
         });
 
         // Check The Role Is Already Taken or Not
-        const checkRoleExist = await db.roles.findOne({ where: { role_slug: role_slug } });
+        const checkRoleExist = await db.roles.findOne({
+            where: {
+                [Op.and]: [{
+                    role_slug: role_slug,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
 
         // Create Random String for Role No
         const roleNo = Math.ceil(Date.now() + Math.random());
@@ -66,7 +68,8 @@ module.exports = {
             const createrole = await db.roles.create({
                 role_no: roleNo,
                 role: role,
-                role_slug: role_slug
+                role_slug: role_slug,
+                tenant_id: TENANTID
             });
 
             return {
@@ -74,11 +77,12 @@ module.exports = {
                 role: createrole.role,
                 roleUUID: createrole.role_uuid,
                 roleSlug: createrole.role_slug,
-                message: "Successfully Created A Role!!!"
+                message: "Successfully Created A Role!!!",
+                status: true
             }
 
         } else {
-            return { message: "Already Have This Role", roleNo: 00, role: "No Role", roleUUID: "No UUID", roleSlug: "No Slug" }
+            return { message: "Already Have This Role", status: false }
         }
 
 

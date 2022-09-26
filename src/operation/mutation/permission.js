@@ -5,12 +5,14 @@ const { assignPermissionController } = require("../../controllers");
 // Permission Mutation
 module.exports = {
     // Assign Permision To Staff Mutation
-    assignPermission: async (root, args, { db, user, isAuth }, info) => {
+    assignPermission: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized" };
-        if (user.role_no === '0') return { message: "Not Authorized" };
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await assignPermissionController(args.data, db, user, isAuth);
+        return await assignPermissionController(args.data, db, user, isAuth, TENANTID);
     }
 }

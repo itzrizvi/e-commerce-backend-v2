@@ -217,6 +217,7 @@ input CategoryCreateInput {
 
 type CategoryCreateOutput {
     message:String
+    tenant_id:String
     status:Boolean
     creategoryName:String
     createdBy:String
@@ -263,6 +264,7 @@ type Category {
 type GetCategories {
     message:String
     status:Boolean
+    tenant_id:String
     categories: [Category]
 }
 

@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         staff_uuid: {
             type: DataTypes.UUID,
             allowNull: false
+        },
+        tenant_id: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
 
     }, {

@@ -1,10 +1,11 @@
 // All Requires
+const { Op } = require("sequelize");
 
 
 // Permission Helper
 module.exports = {
     // Assign Permission
-    assignPermission: async (req, db, user, isAuth) => {
+    assignPermission: async (req, db, user, isAuth, TENANTID) => {
         if (!user || !isAuth) return { message: "Not Authorized" } // If Not Auth or User
         if (user.role_no === '0') return { message: "Not Authorized" } // If Not Auth or Admin
 
@@ -16,13 +17,27 @@ module.exports = {
             const role_no = req.roleNo;
 
             // check if user exist in Permission Data Table
-            const checkUserOnPermission = await db.permissions_data.findOne({ where: { staff_uuid } });
+            const checkUserOnPermission = await db.permissions_data.findOne({
+                where: {
+                    [Op.and]: [{
+                        staff_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
             // If Not Exists
             if (!checkUserOnPermission) {
 
                 // Check Role By Role No
-                const roleQuery = await db.roles.findOne({ where: { role_no } });
+                const roleQuery = await db.roles.findOne({
+                    where: {
+                        [Op.and]: [{
+                            role_no,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
                 const role_slug = roleQuery.role_slug;
                 const role = roleQuery.role;
 
@@ -31,12 +46,21 @@ module.exports = {
                     permission_list_uuid: permission_list_uuid,
                     role_no: role_no,
                     role_slug: role_slug,
-                    staff_uuid: staff_uuid
+                    staff_uuid: staff_uuid,
+                    tenant_id: TENANTID
                 });
 
                 if (assignPermission) {
+
                     // Staff First Name
-                    const staffQuery = await db.users.findOne({ where: { uid: staff_uuid } });
+                    const staffQuery = await db.users.findOne({
+                        where: {
+                            [Op.and]: [{
+                                uid: staff_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
                     const first_name = staffQuery.first_name;
 
                     return {
@@ -46,7 +70,9 @@ module.exports = {
                         first_name: first_name,
                         role: role,
                         role_no: role_no,
-                        message: "Successfully Assigned Permission To The Staff!!"
+                        message: "Successfully Assigned Permission To The Staff!!",
+                        tenant_id: staffQuery.tenant_id,
+                        status: true
                     }
                 }
 
@@ -67,19 +93,48 @@ module.exports = {
                 const updateDoc = {
                     permission_list_uuid: newPermissionListUUID
                 }
+
                 // Update User
-                const updateUser = await db.permissions_data.update(updateDoc, { where: { staff_uuid } });
+                const updateUser = await db.permissions_data.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            staff_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
 
                 if (updateUser) {
 
                     // Query For Updated Permission Data
-                    const updatedStaffPermissionData = await db.permissions_data.findOne({ where: { staff_uuid } });
+                    const updatedStaffPermissionData = await db.permissions_data.findOne({
+                        where: {
+                            [Op.and]: [{
+                                staff_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
                     // Staff First Name
-                    const staffQuery = await db.users.findOne({ where: { uid: staff_uuid } });
+                    const staffQuery = await db.users.findOne({
+                        where: {
+                            [Op.and]: [{
+                                uid: staff_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
                     const first_name = staffQuery.first_name;
 
                     // Check Role By Role No
-                    const roleQuery = await db.roles.findOne({ where: { role_no } });
+                    const roleQuery = await db.roles.findOne({
+                        where: {
+                            [Op.and]: [{
+                                role_no,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
                     const role = roleQuery.role;
 
                     // Return Updated Data
@@ -90,7 +145,9 @@ module.exports = {
                         first_name: first_name,
                         role: role,
                         role_no: role_no,
-                        message: "Successfully Updated Permission To The Staff!!"
+                        message: "Successfully Updated Permission To The Staff!!",
+                        tenant_id: updatedStaffPermissionData.tenant_id,
+                        status: true
                     }
                 }
 
@@ -100,12 +157,12 @@ module.exports = {
 
         } catch (error) {
             if (error) {
-                return { message: "Something Went Wrong!!!" }
+                return { message: "Something Went Wrong!!!", status: false }
             }
         }
     },
     // GET ALL Permission By Staff
-    getAllPermissionByStaff: async (req, db, user, isAuth) => {
+    getAllPermissionByStaff: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", isAuth: false };
         if (user.role_no === '0') return { message: "Not Authorized", isAuth: false };
@@ -120,21 +177,45 @@ module.exports = {
             if (!db.users.hasAlias('roles')) {
                 await db.users.hasOne(db.roles, { sourceKey: 'role_no', foreignKey: 'role_no', as: 'roles' });
             }
-
+            // 
             // GET Staff Data
-            const getStaffDetailWithRole = await db.users.findOne({ include: [{ model: db.roles, as: 'roles' }], where: { uid: staffUUID } });
+            const getStaffDetailWithRole = await db.users.findOne({
+                include: [{ model: db.roles, as: 'roles' }],
+                where: {
+                    [Op.and]: [{
+                        uid: staffUUID,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
             // GET Permission Data 
-            const getPermissionData = await db.permissions_data.findOne({ where: { staff_uuid: staffUUID } });
+            const getPermissionData = await db.permissions_data.findOne({
+                where: {
+                    [Op.and]: [{
+                        staff_uuid: staffUUID,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
             const { permission_list_uuid } = getPermissionData;
             const permissionIDArray = permission_list_uuid.split("@");
-            // GET Feature Permission Data 
-            const getFeaturePermission = await db.feature_permission_list.findAll({ where: { feature_permission_uuid: permissionIDArray } });
+            // GET Feature Permission Data  
+            const getFeaturePermission = await db.feature_permission_list.findAll({
+                where: {
+                    [Op.and]: [{
+                        feature_permission_uuid: permissionIDArray,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
             // Return Final Data
             return {
                 isAuth: isAuth,
                 message: "Successfully GET ALL Permissions By Staff!!!",
                 staffData: getStaffDetailWithRole,
+                status: true,
+                tenant_id: TENANTID,
                 permissions_data: {
                     permission_uuid: getPermissionData.permission_uuid,
                     feature_permission_list: getFeaturePermission
@@ -144,7 +225,7 @@ module.exports = {
 
         } catch (error) {
             if (error) {
-                return { message: "Something Went Wrong!!!", isAuth: false }
+                return { message: "Something Went Wrong!!!", status: false }
             }
         }
     }

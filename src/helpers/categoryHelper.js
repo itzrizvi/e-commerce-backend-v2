@@ -39,7 +39,15 @@ module.exports = {
             const created_by = user.uid;
 
             // If Exist Category
-            const findExistCategory = await db.categories.findOne({ where: { [Op.and]: [{ cat_slug, cat_parent_id }] } });
+            const findExistCategory = await db.categories.findOne({
+                where: {
+                    [Op.and]: [{
+                        cat_slug,
+                        cat_parent_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
             // If Not Exist The Ctageory will be created
             if (!findExistCategory) {
@@ -64,6 +72,7 @@ module.exports = {
                     return {
                         message: "Successfully Created A Category!!!",
                         status: true,
+                        tenant_id: insertCategory.tenant_id,
                         creategoryName: insertCategory.cat_name,
                         createdBy: user.email
                     }
@@ -129,6 +138,7 @@ module.exports = {
             // Return Data
             return {
                 message: "Success",
+                tenant_id: TENANTID,
                 status: true,
                 categories: allCategories
             }

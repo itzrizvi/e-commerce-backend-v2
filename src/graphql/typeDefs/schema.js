@@ -216,8 +216,8 @@ input CategoryCreateInput {
 }
 
 type CategoryCreateOutput {
-    message:String!
-    status:Boolean!
+    message:String
+    status:Boolean
     creategoryName:String
     createdBy:String
 }
@@ -261,8 +261,8 @@ type Category {
 }
 
 type GetCategories {
-    message:String!
-    status:Boolean!
+    message:String
+    status:Boolean
     categories: [Category]
 }
 
@@ -274,10 +274,26 @@ input FeaturePermissionListInput {
     featureName:String!
 }
 type FeaturePermissionListOutput {
-    featureNameUUID:String!
+    featureNameUUID:String
     featureName:String
     featureNameSlug:String
-    message:String!
+    tenant_id:String
+    message:String
+    status:Boolean
+}
+
+type FeaturePermission {
+    feature_permission_uuid:UUID
+    feature_permission_name:String
+    feature_permission_slug:String
+}
+
+type GetALLFeaturePermissionOutput {
+    isAuth:Boolean
+    message: String
+    status:Boolean
+    tenant_id:String
+    data: [FeaturePermission]
 }
 
 input AssignPermissionInput {
@@ -293,20 +309,9 @@ type AssignPermissionOutput {
     first_name:String
     role:String
     role_no:Float
-    message:String!
-}
-
-
-type FeaturePermission {
-    feature_permission_uuid:UUID
-    feature_permission_name:String
-    feature_permission_slug:String
-}
-
-type GetALLFeaturePermissionOutput {
-    isAuth:Boolean
-    message: String!
-    data: [FeaturePermission]
+    tenant_id:String
+    message:String
+    status:Boolean
 }
 
 input GetPermisssionsByStaff {
@@ -320,7 +325,9 @@ type Permission {
 
 type GetPermisssionsByStaffOutput {
     isAuth:Boolean
-    message: String!
+    tenant_id:String
+    message: String
+    status:Boolean
     staffData: Staff
     permissions_data:Permission
 }

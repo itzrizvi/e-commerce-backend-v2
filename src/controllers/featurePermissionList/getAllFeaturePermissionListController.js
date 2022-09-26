@@ -2,12 +2,12 @@ const { getAllFeaturePermission } = require("../../helpers/featurePermissionList
 const { groupResponse } = require("../../utils/response");
 
 // GET ALL Feature Permission CONTROLLER
-module.exports = async (db, user, isAuth) => {
+module.exports = async (db, user, isAuth, TENANTID) => {
     // Return If No Auth
-    if (!user || !isAuth) return { message: "Not Authorized", isAuth: false, data: [] };
-    if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, data: [] };
+    if (!user || !isAuth) return { message: "Not Authorized", status: false };
+    if (user.role_no === '0') return { message: "Not Authorized", status: false };
 
-    const data = await getAllFeaturePermission(db, user, isAuth);
+    const data = await getAllFeaturePermission(db, user, isAuth, TENANTID);
 
     return groupResponse(data);
 }

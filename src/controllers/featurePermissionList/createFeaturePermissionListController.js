@@ -7,7 +7,7 @@ const { singleResponse } = require("../../utils/response");
 
 
 // CONTROLLER
-module.exports = async (req, db, user, isAuth) => {
+module.exports = async (req, db, user, isAuth, TENANTID) => {
 
     // Validate Create Role Request
     const validate = await createFeaturePermissionListRequest(req);
@@ -15,10 +15,10 @@ module.exports = async (req, db, user, isAuth) => {
         return singleResponse(validate.data);
     }
 
-    if (!user || !isAuth) return { featureNameUUID: "Null", message: "Not Authorized!!" } // If Not Auth or User
+    if (!user || !isAuth) return { message: "Not Authorized!!", status: false } // If Not Auth or User
 
     // CREATE ROLE
-    const data = await createFeaturePermission(req, db, user, isAuth);
+    const data = await createFeaturePermission(req, db, user, isAuth, TENANTID);
 
     return singleResponse(data);
 

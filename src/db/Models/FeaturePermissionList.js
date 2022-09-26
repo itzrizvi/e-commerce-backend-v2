@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         feature_permission_slug: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        tenant_id: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
 
     }, {

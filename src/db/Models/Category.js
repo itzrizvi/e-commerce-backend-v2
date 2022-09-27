@@ -54,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.UUID,
             allowNull: false
         },
+        is_featured: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

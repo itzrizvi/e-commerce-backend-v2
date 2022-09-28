@@ -25,6 +25,7 @@ module.exports = {
             const cat_image = req.categoryImage ? req.categoryImage : null;
             const cat_sort_order = req.categorySortOrder ? req.categorySortOrder : 0;
             const cat_status = req.categoryStatus ? req.categoryStatus : false;
+            const is_featured = req.isFeatured ? req.isFeatured : false;
 
             // Category Slug
             const cat_slug = slugify(`${cat_name}`, {
@@ -52,6 +53,9 @@ module.exports = {
             // If Not Exist The Ctageory will be created
             if (!findExistCategory) {
 
+                // IF IS FEATURED TRUE
+                if (is_featured && cat_parent_id) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
+
                 const insertCategory = await db.categories.create({
                     cat_name,
                     cat_slug,
@@ -64,7 +68,8 @@ module.exports = {
                     cat_sort_order,
                     cat_status,
                     created_by,
-                    tenant_id: TENANTID
+                    tenant_id: TENANTID,
+                    is_featured
                 });
 
                 // If Inserted Data

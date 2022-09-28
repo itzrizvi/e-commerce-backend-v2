@@ -213,6 +213,7 @@ input CategoryCreateInput {
     categoryImage:String
     categorySortOrder:Int
     categoryStatus:Boolean
+    isFeatured:Boolean
 }
 
 type CategoryCreateOutput {

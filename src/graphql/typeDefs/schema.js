@@ -269,6 +269,13 @@ type GetCategories {
     categories: [Category]
 }
 
+type GetFeaturedCategories {
+    message:String
+    status:Boolean
+    tenant_id:String
+    categories: [Category]
+}
+
 
 # Permission Based Input and Queries #########################################
 ##############################################################################
@@ -346,6 +353,7 @@ type Query {
     getAllFeaturePermission: GetALLFeaturePermissionOutput!
     getAllPermissionByStaff(query: GetPermisssionsByStaff): GetPermisssionsByStaffOutput!
     getAllCategories: GetCategories!
+    getFeaturedCategories: GetFeaturedCategories!
 }
 
 type Mutation {

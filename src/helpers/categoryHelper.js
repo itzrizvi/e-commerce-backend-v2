@@ -155,5 +155,67 @@ module.exports = {
             }
         }
 
+    },
+    // GET ALL Categories Helper
+    getFeaturedCategories: async (db, TENANTID) => {
+
+        try {
+            // Check If Has Alias with subcategories
+            if (!db.categories.hasAlias('subcategories')) {
+
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subcategories'
+                });
+            }
+
+            // Check If Has Alias with subsubcategories
+            if (!db.categories.hasAlias('subsubcategories')) {
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subsubcategories'
+                });
+
+            }
+
+            // All Featured Categories with Sub and Sub Sub Categories Query
+            const featuredCategories = await db.categories.findAll({
+                include: [ // IF WE DONT NEED SUB CATEGORIES ON FEATURED THEN WE SHOULD REMOVE INCLUDES ARGS FROM HERE
+                    { model: db.categories, as: 'subcategories' },
+                    {
+                        model: db.categories,
+                        as: 'subcategories',
+                        include: {
+                            model: db.categories,
+                            as: 'subsubcategories'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        cat_parent_id: null,
+                        is_featured: true,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Data
+            return {
+                message: "Success",
+                tenant_id: TENANTID,
+                status: true,
+                categories: featuredCategories
+            }
+
+
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong!!!", status: false }
+            }
+        }
+
     }
 }

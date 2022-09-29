@@ -156,7 +156,7 @@ module.exports = {
         }
 
     },
-    // GET ALL Categories Helper
+    // GET Featured Categories Helper
     getFeaturedCategories: async (db, TENANTID) => {
 
         try {

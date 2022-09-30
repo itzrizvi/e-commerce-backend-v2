@@ -4,4 +4,5 @@ module.exports = {
     ...require('./FeaturePermissionList'),
     ...require('./permissionQueries'),
     ...require('./categoryQueries'),
+    ...require('./productQueries'),
 }

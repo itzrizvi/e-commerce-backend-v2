@@ -3,8 +3,6 @@ const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
 
 
-
-
 // Product Helper
 module.exports = {
     // Add Product Helper
@@ -106,5 +104,9 @@ module.exports = {
                 return { message: "Something Went Wrong!!!", status: false }
             }
         }
+    },
+    // GET Single Product Helper
+    getSingleProduct: async (db, TENANTID) => {
+        console.log(TENANTID)
     }
 }

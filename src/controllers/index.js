@@ -6,4 +6,5 @@ module.exports = {
     ...require('./staffs'),
     ...require('./permission'),
     ...require('./categories'),
+    ...require('./products'),
 }

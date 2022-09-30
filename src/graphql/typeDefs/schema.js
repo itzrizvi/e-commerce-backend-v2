@@ -343,6 +343,69 @@ type GetPermisssionsByStaffOutput {
 }
 
 
+# Product Based Input and Types #########################################
+#########################################################################
+
+type Product {
+    product_id:UUID
+    product_name:String
+    product_slug:String
+    product_description:JSON
+    product_meta_tag_title:String
+    product_meta_tag_description:JSON
+    product_meta_tag_keywords:JSON
+    product_tags:JSON
+    product_image:String
+    product_image_gallery:JSON
+    product_sku:String
+    product_regular_price:Float
+    product_sale_price:Float
+    product_tax_included:Boolean
+    product_stock_quantity:Int
+    product_minimum_stock_quantity:Int
+    product_maximum_orders:Int
+    product_stock_status:String
+    product_available_from:String
+    product_status:String
+    product_barcode:String
+    tenant_id:String
+    product_category:UUID
+    added_by:UUID
+
+}
+
+input AddProductInput {
+    product_name:String
+    product_description:JSON
+    product_meta_tag_title:String
+    product_meta_tag_description:JSON
+    product_meta_tag_keywords:JSON
+    product_tags:JSON
+    product_image:String
+    product_image_gallery:JSON
+    product_sku:String
+    product_regular_price:Float
+    product_sale_price:Float
+    product_tax_included:Boolean
+    product_stock_quantity:Int
+    product_minimum_stock_quantity:Int
+    product_maximum_orders:Int
+    product_stock_status:String
+    product_available_from:String
+    product_status:String
+    product_category:UUID
+    product_barcode:String
+}
+
+
+type AddProductOutput {
+    message:String
+    status:Boolean
+    data:Product
+}
+
+
+
 
 # ROOT QUERIES AND MUTATIONS ###############################################
 ############################################################################
@@ -370,6 +433,7 @@ type Mutation {
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     assignPermission(data: AssignPermissionInput):AssignPermissionOutput!
+    addProduct(data: AddProductInput):AddProductOutput!
 }
 `;
 

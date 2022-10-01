@@ -4,9 +4,9 @@ const { singleResponse } = require("../../utils/response");
 
 
 // GET SINGLE PRODUCT DETAIL CONTROLLER
-module.exports = async (db, TENANTID) => {
+module.exports = async (req, db, TENANTID) => {
     // Sending Request to Helper
-    const data = await getSingleProduct(db, TENANTID);
+    const data = await getSingleProduct(req, db, TENANTID);
 
     // Final Response
     return singleResponse(data);

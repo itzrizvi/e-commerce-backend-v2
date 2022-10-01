@@ -404,9 +404,11 @@ type AddProductOutput {
     data:Product
 }
 
-type SingleProductDetails {
-    message:String
-    status:Boolean
+input SingleProductDetailsInput {
+    product_id:UUID
+}
+
+type SingleProduct {
     product_id:UUID
     product_name:String
     product_slug:String
@@ -429,8 +431,14 @@ type SingleProductDetails {
     product_status:String
     product_barcode:String
     tenant_id:String
-    product_category:Category
-    added_by:Staff
+    category: Category
+    createdBy: Staff
+}
+
+type SingleProductDetails {
+    message:String
+    status:Boolean
+    data: SingleProduct
 }
 
 
@@ -446,7 +454,7 @@ type Query {
     getAllPermissionByStaff(query: GetPermisssionsByStaff): GetPermisssionsByStaffOutput!
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
-    getSingleProduct: SingleProductDetails!
+    getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
 }
 
 type Mutation {

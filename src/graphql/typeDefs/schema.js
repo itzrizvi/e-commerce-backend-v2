@@ -492,6 +492,7 @@ type Query {
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
+    getProductList: GetProductList!
 }
 
 type Mutation {

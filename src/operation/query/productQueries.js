@@ -8,5 +8,6 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return to Controller
         return await getSingleProductController(args.query, db, TENANTID);
-    }
+    },
+
 }

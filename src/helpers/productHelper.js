@@ -175,6 +175,7 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Update Product Helper
     updateProduct: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block

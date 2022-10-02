@@ -114,6 +114,7 @@ module.exports = {
             // Product ID From Request
             const product_id = req.product_id;
 
+            // ### ASSOCIATION STARTS ### //
             // Check If Has Alias with Categories
             if (!db.products.hasAlias('category')) {
 
@@ -141,6 +142,7 @@ module.exports = {
                     as: 'roles'
                 });
             }
+            // ### ASSOCIATION ENDS ### //
 
             // Find Triggered Product
             const findProduct = await db.products.findOne({

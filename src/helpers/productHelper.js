@@ -242,5 +242,71 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET Product List Helper
+    getProductList: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Check If Has Alias with Categories
+            if (!db.products.hasAlias('category')) {
+
+                await db.products.hasOne(db.categories, {
+                    sourceKey: 'product_category',
+                    foreignKey: 'cat_id',
+                    as: 'category'
+                });
+            }
+            // Check If Has Alias with Users and Roles
+            if (!db.products.hasAlias('users') && !db.users.hasAlias('roles')) {
+
+                await db.products.hasOne(db.users, {
+                    sourceKey: 'added_by',
+                    foreignKey: 'uid',
+                    as: 'createdBy'
+                });
+            }
+
+            // Check If Has Alias With Roles
+            if (!db.users.hasAlias('roles')) {
+                await db.users.hasOne(db.roles, {
+                    sourceKey: 'role_no',
+                    foreignKey: 'role_no',
+                    as: 'roles'
+                });
+            }
+
+            // Find ALL Product
+            const allProducts = await db.products.findAll({
+                include: [
+                    { model: db.categories, as: 'category' },
+                    {
+                        model: db.users, as: 'createdBy',
+                        include: {
+                            model: db.roles,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: { tenant_id }
+            });
+
+            // Return If Success
+            if (allProducts) {
+                return {
+                    message: "Product List Success!!!",
+                    status: true,
+                    data: allProducts
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

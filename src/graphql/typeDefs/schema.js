@@ -473,6 +473,12 @@ type UpdateProductOutput {
 }
 
 
+type GetProductList {
+    message:String
+    status:Boolean
+    data:[SingleProduct]
+}
+
 
 
 # ROOT QUERIES AND MUTATIONS ###############################################

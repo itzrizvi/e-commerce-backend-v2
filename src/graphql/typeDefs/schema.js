@@ -441,6 +441,37 @@ type SingleProductDetails {
     data: SingleProduct
 }
 
+input UpdateProductInput {
+    product_id:UUID
+    product_name:String
+    product_slug:String
+    product_description:JSON
+    product_meta_tag_title:String
+    product_meta_tag_description:JSON
+    product_meta_tag_keywords:JSON
+    product_tags:JSON
+    product_image:String
+    product_image_gallery:JSON
+    product_sku:String
+    product_regular_price:Float
+    product_sale_price:Float
+    product_tax_included:Boolean
+    product_stock_quantity:Int
+    product_minimum_stock_quantity:Int
+    product_maximum_orders:Int
+    product_stock_status:String
+    product_available_from:String
+    product_status:String
+    product_category:UUID
+    product_barcode:String
+}
+
+type UpdateProductOutput {
+    message:String
+    status:Boolean
+    data:Product
+}
+
 
 
 
@@ -472,6 +503,7 @@ type Mutation {
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     assignPermission(data: AssignPermissionInput):AssignPermissionOutput!
     addProduct(data: AddProductInput):AddProductOutput!
+    updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }
 `;
 

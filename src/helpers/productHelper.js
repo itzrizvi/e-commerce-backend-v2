@@ -174,5 +174,72 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    updateProduct: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+
+            // Product ID From Request
+            const { product_id: productID } = req;
+            // Added By
+            const added_by = user.uid;
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Find Product
+            const findProduct = await db.products.findOne({
+                where: {
+                    [Op.and]: [{
+                        product_id: productID,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF FOUND PRODUCT
+            if (!findProduct) return { message: "Product Not Found!!!", status: false };
+
+            // Update Doc 
+            const { product_id, ...updateDoc } = req;
+            updateDoc["added_by"] = added_by;
+            updateDoc["tenant_id"] = tenant_id;
+
+            // Update Product
+            const updateProduct = await db.products.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        product_id: productID,
+                        tenant_id: TENANTID
+                    }]
+                },
+            });
+
+            // IF NOT Updated
+            if (!updateProduct) return { message: "Update Gone Wrong!!!", status: false };
+
+            // If Product Updated
+            const updatedProductFind = await db.products.findOne({
+                where: {
+                    [Op.and]: [{
+                        product_id: productID,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            return {
+                message: "Product Update Success!!!",
+                status: true,
+                data: updatedProductFind
+            }
+
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

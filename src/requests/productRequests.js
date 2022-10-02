@@ -32,6 +32,34 @@ const addProductRequest = (body) => {
 }
 
 
+// Update Product Request
+const updateProductRequest = (body) => {
+    rules = {
+        product_name: 'string',
+        product_slug: 'string',
+        product_description: 'string',
+        product_meta_tag_title: 'string',
+        product_meta_tag_description: 'string',
+        product_meta_tag_keywords: 'string',
+        product_tags: 'string',
+        product_image: 'string',
+        product_image_gallery: 'string',
+        product_sku: 'string',
+        product_regular_price: 'strict|numeric',
+        product_sale_price: 'strict|numeric',
+        product_tax_included: 'strict|boolean',
+        product_stock_quantity: 'strict|numeric',
+        product_minimum_stock_quantity: 'strict|numeric',
+        product_maximum_orders: 'strict|numeric',
+        product_stock_status: 'string',
+        product_available_from: 'string',
+        product_status: 'string',
+        product_category: 'string',
+        product_barcode: 'string'
+    }
+
+    return checkBody(body, rules);
+}
 
 // Check Validation
 const checkBody = (body, rules) => {
@@ -56,5 +84,6 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    addProductRequest
+    addProductRequest,
+    updateProductRequest
 }

@@ -203,6 +203,18 @@ type CreateRoleOutput {
     status:Boolean
 }
 
+input UpdateRoleInput {
+    role_uuid:UUID
+    role:String
+    role_status:Boolean
+}
+
+type UpdateRoleOutput {
+    message:String
+    status:Boolean
+    data:Role
+}
+
 
 # Permission Based Input and Queries #########################################
 ##############################################################################
@@ -510,6 +522,7 @@ type Mutation {
     forgotPassCodeMatch(data: ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
     createRole(data: CreateRoleInput): CreateRoleOutput!
+    updateRole(data: UpdateRoleInput): UpdateRoleOutput!
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     assignPermission(data: AssignPermissionInput):AssignPermissionOutput!

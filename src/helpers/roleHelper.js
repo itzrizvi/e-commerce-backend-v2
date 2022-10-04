@@ -13,57 +13,63 @@ module.exports = {
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
 
+        // Try Catch Block
+        try {
 
-        // GET DATA
-        const { role, role_status } = req;
-        // Create Slug
-        const role_slug = slugify(`${role}`, {
-            replacement: '-',
-            remove: /[*+~.()'"!:@]/g,
-            lower: true,
-            strict: true,
-            trim: true
-        });
-
-        // Check The Role Is Already Taken or Not
-        const checkRoleExist = await db.roles.findOne({
-            where: {
-                [Op.and]: [{
-                    role_slug: role_slug,
-                    tenant_id: TENANTID
-                }]
-            }
-        });
-
-        // Create Random String for Role No
-        const roleNo = Math.ceil(Date.now() + Math.random());
-
-
-        // If Not Exists then create
-        if (!checkRoleExist) {
-            const createrole = await db.roles.create({
-                role_no: roleNo,
-                role: role,
-                role_status: role_status,
-                role_slug: role_slug,
-                tenant_id: TENANTID
+            // GET DATA
+            const { role, role_status } = req;
+            // Create Slug
+            const role_slug = slugify(`${role}`, {
+                replacement: '-',
+                remove: /[*+~.()'"!:@]/g,
+                lower: true,
+                strict: true,
+                trim: true
             });
 
-            return {
-                roleNo: createrole.role_no,
-                role: createrole.role,
-                roleUUID: createrole.role_uuid,
-                roleSlug: createrole.role_slug,
-                role_status: createrole.role_status,
-                tenant_id: createrole.tenant_id,
-                message: "Successfully Created A Role!!!",
-                status: true
+            // Check The Role Is Already Taken or Not
+            const checkRoleExist = await db.roles.findOne({
+                where: {
+                    [Op.and]: [{
+                        role_slug: role_slug,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Create Random String for Role No
+            const roleNo = Math.ceil(Date.now() + Math.random());
+
+
+            // If Not Exists then create
+            if (!checkRoleExist) {
+                const createrole = await db.roles.create({
+                    role_no: roleNo,
+                    role: role,
+                    role_status: role_status,
+                    role_slug: role_slug,
+                    tenant_id: TENANTID
+                });
+
+                return {
+                    roleNo: createrole.role_no,
+                    role: createrole.role,
+                    roleUUID: createrole.role_uuid,
+                    roleSlug: createrole.role_slug,
+                    role_status: createrole.role_status,
+                    tenant_id: createrole.tenant_id,
+                    message: "Successfully Created A Role!!!",
+                    status: true
+                }
+
+            } else {
+                return { message: "Already Have This Role", status: false }
             }
 
-        } else {
-            return { message: "Already Have This Role", status: false }
-        }
 
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
 
     },
     // GET ALL ROLES API
@@ -90,4 +96,77 @@ module.exports = {
 
 
     },
+    // UPDATE ROLE HELPER
+    updateRole: async (req, db, user, isAuth, TENANTID) => {
+
+        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+
+        // Auth Check
+        if (!isAuth) return { message: "Not Authorized", status: false };
+
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const role_uuid = req.role_uuid;
+            const role = req.role;
+            const role_status = req.role_status;
+
+            // IF ROLE ALSO UPDATED THEN SLUG ALSO WILL BE UPDATED
+            let role_slug;
+            if (role) {
+                // Create Slug
+                role_slug = slugify(`${role}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
+            }
+
+            // Update Doc
+            const updateDoc = {
+                role,
+                role_slug,
+                role_status
+            }
+
+            // Update Role 
+            const updateRole = await db.roles.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        role_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF NOT UPDATED THEN RETURN
+            if (!updateRole) return { message: "Update Gone Wrong!!!", status: false }
+
+            // Find Updated Role
+            const updatedRole = await db.roles.findOne({
+                where: {
+                    [Op.and]: [{
+                        role_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Data
+            return {
+                message: "Role Updated Successfully!!!",
+                status: true,
+                data: updatedRole
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!", status: false }
+        }
+
+    }
 }

@@ -200,6 +200,72 @@ type CreateRoleOutput {
 }
 
 
+# Permission Based Input and Queries #########################################
+##############################################################################
+
+input FeaturePermissionListInput {
+    featureName:String!
+}
+
+type FeaturePermissionListOutput {
+    featureNameUUID:String
+    featureName:String
+    featureNameSlug:String
+    tenant_id:String
+    message:String
+    status:Boolean
+}
+
+type FeaturePermission {
+    feature_permission_uuid:UUID
+    feature_permission_name:String
+    feature_permission_slug:String
+}
+
+type GetALLFeaturePermissionOutput {
+    isAuth:Boolean
+    message: String
+    status:Boolean
+    tenant_id:String
+    data: [FeaturePermission]
+}
+
+input AssignPermissionInput {
+    permissionUUIDList:JSON!
+    roleUUID:UUID!
+    roleNo:Float!
+}
+
+type AssignPermissionOutput {
+    permission_uuid:UUID
+    permission_list_uuid:JSON
+    role_uuid:UUID
+    role:String
+    role_no:Float
+    tenant_id:String
+    message:String
+    status:Boolean
+}
+
+input GetPermisssionsByRole {
+    roleUUID:UUID!
+}
+
+type Permission {
+    permission_uuid:UUID
+    feature_permission_list:[FeaturePermission]
+}
+
+type GetPermisssionsByRoleOutput {
+    isAuth:Boolean
+    tenant_id:String
+    message:String
+    status:Boolean
+    roles:Role
+    permissions_data:Permission
+}
+
+
 # Category Based Input and Queries ###############################################
 ##################################################################################
 
@@ -274,72 +340,6 @@ type GetFeaturedCategories {
     status:Boolean
     tenant_id:String
     categories: [Category]
-}
-
-
-# Permission Based Input and Queries #########################################
-##############################################################################
-
-input FeaturePermissionListInput {
-    featureName:String!
-}
-type FeaturePermissionListOutput {
-    featureNameUUID:String
-    featureName:String
-    featureNameSlug:String
-    tenant_id:String
-    message:String
-    status:Boolean
-}
-
-type FeaturePermission {
-    feature_permission_uuid:UUID
-    feature_permission_name:String
-    feature_permission_slug:String
-}
-
-type GetALLFeaturePermissionOutput {
-    isAuth:Boolean
-    message: String
-    status:Boolean
-    tenant_id:String
-    data: [FeaturePermission]
-}
-
-input AssignPermissionInput {
-    permissionUUIDList:JSON!
-    staffUUID:UUID!
-    roleNo:Float!
-}
-
-type AssignPermissionOutput {
-    permission_uuid:UUID
-    permission_list_uuid:JSON
-    staff_uuid:UUID
-    first_name:String
-    role:String
-    role_no:Float
-    tenant_id:String
-    message:String
-    status:Boolean
-}
-
-input GetPermisssionsByStaff {
-    staffUUID:UUID!
-}
-
-type Permission {
-    permission_uuid:UUID
-    feature_permission_list:[FeaturePermission]
-}
-
-type GetPermisssionsByStaffOutput {
-    isAuth:Boolean
-    tenant_id:String
-    message: String
-    status:Boolean
-    staffData: Staff
-    permissions_data:Permission
 }
 
 
@@ -488,7 +488,7 @@ type Query {
     getAllRoles: RoleOutput!
     getAllStaff: GetALLStaffOutput!
     getAllFeaturePermission: GetALLFeaturePermissionOutput!
-    getAllPermissionByStaff(query: GetPermisssionsByStaff): GetPermisssionsByStaffOutput!
+    getAllPermissionByRole(query: GetPermisssionsByRole): GetPermisssionsByRoleOutput!
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!

@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSON,
             allowNull: false
         },
+        role_uuid: {
+            type: DataTypes.UUID,
+            allowNull: false
+        },
         role_no: {
             type: DataTypes.BIGINT,
             allowNull: false
@@ -20,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        staff_uuid: {
-            type: DataTypes.UUID,
+        role: {
+            type: DataTypes.STRING,
             allowNull: false
         },
         tenant_id: {

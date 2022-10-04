@@ -7,7 +7,7 @@ let rules = {}, request, response;
 const assignPermissionRequest = (body) => {
     rules = {
         permissionUUIDList: 'required|string',
-        staffUUID: 'required|string',
+        roleUUID: 'required|string',
         roleNo: 'required|strict|integer'
     }
 
@@ -15,9 +15,9 @@ const assignPermissionRequest = (body) => {
 }
 
 // GET All Permission By Staff 
-const getAllPermissionByStaffRequest = (body) => {
+const getAllPermissionByRoleRequest = (body) => {
     rules = {
-        staffUUID: 'required|string'
+        roleUUID: 'required|string'
     }
     return checkBody(body, rules);
 }
@@ -48,5 +48,5 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     assignPermissionRequest,
-    getAllPermissionByStaffRequest
+    getAllPermissionByRoleRequest
 }

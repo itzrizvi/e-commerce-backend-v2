@@ -13,14 +13,15 @@ module.exports = {
 
             // Data From Request
             const permission_list_uuid = req.permissionUUIDList;
-            const staff_uuid = req.staffUUID;
+            const role_uuid = req.roleUUID;
             const role_no = req.roleNo;
 
             // check if user exist in Permission Data Table
             const checkUserOnPermission = await db.permissions_data.findOne({
                 where: {
                     [Op.and]: [{
-                        staff_uuid,
+                        role_uuid,
+                        role_no,
                         tenant_id: TENANTID
                     }]
                 }
@@ -34,6 +35,7 @@ module.exports = {
                     where: {
                         [Op.and]: [{
                             role_no,
+                            role_uuid,
                             tenant_id: TENANTID
                         }]
                     }
@@ -46,107 +48,76 @@ module.exports = {
                     permission_list_uuid: permission_list_uuid,
                     role_no: role_no,
                     role_slug: role_slug,
-                    staff_uuid: staff_uuid,
+                    role_uuid: role_uuid,
+                    role: role,
                     tenant_id: TENANTID
                 });
 
                 if (assignPermission) {
 
-                    // Staff First Name
-                    const staffQuery = await db.users.findOne({
-                        where: {
-                            [Op.and]: [{
-                                uid: staff_uuid,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    });
-                    const first_name = staffQuery.first_name;
-
                     return {
                         permission_uuid: assignPermission.permission_uuid,
                         permission_list_uuid: assignPermission.permission_list_uuid,
-                        staff_uuid: staff_uuid,
-                        first_name: first_name,
-                        role: role,
-                        role_no: role_no,
-                        message: "Successfully Assigned Permission To The Staff!!",
-                        tenant_id: staffQuery.tenant_id,
+                        role_uuid: assignPermission.role_uuid,
+                        role: assignPermission.role,
+                        role_no: assignPermission.role_no,
+                        message: "Successfully Assigned Permission To The Role!!",
+                        tenant_id: assignPermission.tenant_id,
                         status: true
                     }
                 }
 
 
-            } else { // If User Has Some Permission Already Then Update
+            } else { // If Role Has Some Permission Already Then Update
 
-                // Get the Permission UUID LIST  and Split by @ For Arrays
-                const existingPermissionListUUID = checkUserOnPermission.permission_list_uuid.split("@");
-                const newReqPermissionListUUID = permission_list_uuid.split("@");
-                // Concate Array to Filter Duplicates
-                const allPermissionListUUIDArray = existingPermissionListUUID.concat(newReqPermissionListUUID);
-                // Filter Duplicates
-                const filterDuplicatePermissionUUID = [...new Set(allPermissionListUUIDArray)];
-                // Join by @ For Insert as JSON String
-                const newPermissionListUUID = filterDuplicatePermissionUUID.join("@");
+                // // Get the Permission UUID LIST  and Split by @ For Arrays
+                // const existingPermissionListUUID = checkUserOnPermission.permission_list_uuid.split("@");
+                // const newReqPermissionListUUID = permission_list_uuid.split("@");
+                // // Concate Array to Filter Duplicates
+                // const allPermissionListUUIDArray = existingPermissionListUUID.concat(newReqPermissionListUUID);
+                // // Filter Duplicates
+                // const filterDuplicatePermissionUUID = [...new Set(allPermissionListUUIDArray)];
+                // // Join by @ For Insert as JSON String
+                // const newPermissionListUUID = filterDuplicatePermissionUUID.join("@");
 
                 // Updating Doc
                 const updateDoc = {
-                    permission_list_uuid: newPermissionListUUID
+                    permission_list_uuid: permission_list_uuid
                 }
 
                 // Update User
-                const updateUser = await db.permissions_data.update(updateDoc, {
+                const updateRolePermission = await db.permissions_data.update(updateDoc, {
                     where: {
                         [Op.and]: [{
-                            staff_uuid,
+                            role_uuid,
+                            role_no,
                             tenant_id: TENANTID
                         }]
                     }
                 });
 
-                if (updateUser) {
+                if (updateRolePermission) {
 
                     // Query For Updated Permission Data
-                    const updatedStaffPermissionData = await db.permissions_data.findOne({
+                    const updatedRolePermissionData = await db.permissions_data.findOne({
                         where: {
                             [Op.and]: [{
-                                staff_uuid,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    });
-                    // Staff First Name
-                    const staffQuery = await db.users.findOne({
-                        where: {
-                            [Op.and]: [{
-                                uid: staff_uuid,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    });
-                    const first_name = staffQuery.first_name;
-
-                    // Check Role By Role No
-                    const roleQuery = await db.roles.findOne({
-                        where: {
-                            [Op.and]: [{
+                                role_uuid,
                                 role_no,
                                 tenant_id: TENANTID
                             }]
                         }
                     });
-                    const role = roleQuery.role;
 
                     // Return Updated Data
                     return {
-                        permission_uuid: updatedStaffPermissionData.permission_uuid,
-                        permission_list_uuid: updatedStaffPermissionData.permission_list_uuid,
-                        staff_uuid: updatedStaffPermissionData.staff_uuid,
-                        first_name: first_name,
-                        role: role,
-                        role_no: role_no,
+                        permission_uuid: updatedRolePermissionData.permission_uuid,
+                        permission_list_uuid: updatedRolePermissionData.permission_list_uuid,
+                        role_uuid: updatedRolePermissionData.role_uuid,
+                        role: updatedRolePermissionData.role,
+                        role_no: updatedRolePermissionData.role_no,
                         message: "Successfully Updated Permission To The Staff!!",
-                        tenant_id: updatedStaffPermissionData.tenant_id,
+                        tenant_id: updatedRolePermissionData.tenant_id,
                         status: true
                     }
                 }
@@ -162,41 +133,37 @@ module.exports = {
         }
     },
     // GET ALL Permission By Staff
-    getAllPermissionByStaff: async (req, db, user, isAuth, TENANTID) => {
+    getAllPermissionByRole: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", isAuth: false };
-        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false };
+        if (!user || !isAuth) return { message: "Not Authorized", isAuth: false, status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, status: false };
 
 
         try {
 
             // Staff UUID
-            const staffUUID = req.staffUUID;
+            const role_uuid = req.roleUUID;
 
             // Check If User Has Alias or Not 
-            if (!db.users.hasAlias('roles')) {
-                await db.users.hasOne(db.roles, { sourceKey: 'role_no', foreignKey: 'role_no', as: 'roles' });
+            if (!db.permissions_data.hasAlias('roles')) {
+                await db.permissions_data.hasOne(db.roles, { sourceKey: 'role_no', foreignKey: 'role_no', as: 'roles' });
             }
-            // 
-            // GET Staff Data
-            const getStaffDetailWithRole = await db.users.findOne({
+
+            // GET Permission Data and Role
+            const getPermissionData = await db.permissions_data.findOne({
                 include: [{ model: db.roles, as: 'roles' }],
                 where: {
                     [Op.and]: [{
-                        uid: staffUUID,
+                        role_uuid,
                         tenant_id: TENANTID
                     }]
                 }
             });
-            // GET Permission Data 
-            const getPermissionData = await db.permissions_data.findOne({
-                where: {
-                    [Op.and]: [{
-                        staff_uuid: staffUUID,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
+
+            // Check Have Permission
+            if (!getPermissionData) return { message: "No Permission Found For This Role", status: false }
+
+            // Feature Permission UUID from Permission Data
             const { permission_list_uuid } = getPermissionData;
             const permissionIDArray = permission_list_uuid.split("@");
             // GET Feature Permission Data  
@@ -212,10 +179,10 @@ module.exports = {
             // Return Final Data
             return {
                 isAuth: isAuth,
-                message: "Successfully GET ALL Permissions By Staff!!!",
-                staffData: getStaffDetailWithRole,
+                message: "Successfully GET ALL Permissions By Role!!!",
                 status: true,
                 tenant_id: TENANTID,
+                roles: getPermissionData,
                 permissions_data: {
                     permission_uuid: getPermissionData.permission_uuid,
                     feature_permission_list: getFeaturePermission

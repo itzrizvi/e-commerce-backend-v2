@@ -1,4 +1,4 @@
 module.exports = {
     assignPermissionController: require('./assignPermissionController'),
-    getAllPermissionByStaffController: require('./getAllPermissionByStaffController'),
+    getAllPermissionByRoleController: require('./getAllPermissionByRoleController'),
 }

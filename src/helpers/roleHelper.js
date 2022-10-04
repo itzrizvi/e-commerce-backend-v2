@@ -5,30 +5,6 @@ const { default: slugify } = require("slugify");
 
 // ROLE HELPER
 module.exports = {
-    // GET ALL ROLES API
-    getAllRoles: async (db, user, isAuth, TENANTID) => {
-        // Return if No Auth
-        if (!user || !isAuth) return { message: "Not Authenticated", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
-
-        try {
-            // GET ALL ROLES
-            const getAllRoles = await db.roles.findAll({ where: { tenant_id: TENANTID } });
-
-            return {
-                data: getAllRoles,
-                isAuth: isAuth,
-                message: "All Roles GET Success!!!",
-                status: true
-            }
-
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong", status: false }
-        }
-
-
-
-    },
     // CREATE ROLES API
     createRole: async (req, db, user, isAuth, TENANTID) => {
 
@@ -39,7 +15,7 @@ module.exports = {
 
 
         // GET DATA
-        const { role } = req;
+        const { role, role_status } = req;
         // Create Slug
         const role_slug = slugify(`${role}`, {
             replacement: '-',
@@ -68,6 +44,7 @@ module.exports = {
             const createrole = await db.roles.create({
                 role_no: roleNo,
                 role: role,
+                role_status: role_status,
                 role_slug: role_slug,
                 tenant_id: TENANTID
             });
@@ -77,6 +54,8 @@ module.exports = {
                 role: createrole.role,
                 roleUUID: createrole.role_uuid,
                 roleSlug: createrole.role_slug,
+                role_status: createrole.role_status,
+                tenant_id: createrole.tenant_id,
                 message: "Successfully Created A Role!!!",
                 status: true
             }
@@ -86,5 +65,29 @@ module.exports = {
         }
 
 
-    }
+    },
+    // GET ALL ROLES API
+    getAllRoles: async (db, user, isAuth, TENANTID) => {
+        // Return if No Auth
+        if (!user || !isAuth) return { message: "Not Authenticated", status: false };
+        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+
+        try {
+            // GET ALL ROLES
+            const getAllRoles = await db.roles.findAll({ where: { tenant_id: TENANTID } });
+
+            return {
+                data: getAllRoles,
+                isAuth: isAuth,
+                message: "All Roles GET Success!!!",
+                status: true
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
+
+
+
+    },
 }

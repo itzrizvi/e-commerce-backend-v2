@@ -164,7 +164,7 @@ module.exports = {
             if (!getPermissionData) return { message: "No Permission Found For This Role", status: false }
 
             // Feature Permission UUID from Permission Data
-            const { permission_list_uuid } = getPermissionData;
+            const { permission_list_uuid, roles } = getPermissionData;
             const permissionIDArray = permission_list_uuid.split("@");
             // GET Feature Permission Data  
             const getFeaturePermission = await db.feature_permission_list.findAll({
@@ -182,7 +182,7 @@ module.exports = {
                 message: "Successfully GET ALL Permissions By Role!!!",
                 status: true,
                 tenant_id: TENANTID,
-                roles: getPermissionData,
+                roles,
                 permissions_data: {
                     permission_uuid: getPermissionData.permission_uuid,
                     feature_permission_list: getFeaturePermission

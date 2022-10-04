@@ -6,7 +6,8 @@ let rules = {}, request, response;
 // CREATE ROLE REQUEST
 const createRoleRequest = (body) => {
     rules = {
-        role: 'required|string'
+        role: 'required|string',
+        role_status: 'required|strict|boolean'
     }
 
     return checkBody(body, rules);

@@ -4,8 +4,6 @@ const { createRoleRequest } = require("../../requests/roleRequests");
 const { singleResponse } = require("../../utils/response");
 
 
-
-
 // CONTROLLER
 module.exports = async (req, db, user, isAuth, TENANTID) => {
 

@@ -174,6 +174,7 @@ type Role {
     role_no: Float
     role:String
     role_slug:String
+    role_status:Boolean
     createdAt:String
     updatedAt:String
     tenant_id:String
@@ -188,6 +189,7 @@ type RoleOutput {
 
 input CreateRoleInput {
     role:String!
+    role_status:Boolean!
 }
 
 type CreateRoleOutput {
@@ -195,6 +197,8 @@ type CreateRoleOutput {
     role:String
     roleUUID:String
     roleSlug:String
+    role_status:Boolean
+    tenant_id:String
     message:String
     status:Boolean
 }

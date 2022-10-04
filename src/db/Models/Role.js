@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        role_status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

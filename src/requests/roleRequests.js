@@ -13,11 +13,21 @@ const createRoleRequest = (body) => {
     return checkBody(body, rules);
 }
 
-// CREATE ROLE REQUEST
+// UPDATE ROLE REQUEST
 const updateRoleRequest = (body) => {
     rules = {
+        role_uuid: 'string',
         role: 'string',
         role_status: 'strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+// DELETE ROLE REQUEST
+const deleteRoleRequest = (body) => {
+    rules = {
+        role_uuid: 'string'
     }
 
     return checkBody(body, rules);
@@ -48,5 +58,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createRoleRequest,
-    updateRoleRequest
+    updateRoleRequest,
+    deleteRoleRequest
 }

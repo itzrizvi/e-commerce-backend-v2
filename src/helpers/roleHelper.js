@@ -168,5 +168,40 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!", status: false }
         }
 
+    },
+    // DELETE ROLE HELPER
+    deleteRole: async (req, db, user, isAuth, TENANTID) => {
+        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+        // Auth Check
+        if (!isAuth) return { message: "Not Authorized", status: false };
+
+        // TRY CATCH BLOCK
+        try {
+            // Data From Request
+            const { role_uuid } = req;
+
+            // DELETE ROLE
+            const deleteRole = await db.roles.destroy({
+                where: {
+                    [Op.and]: [{
+                        role_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF NOT DELETED
+            if (!deleteRole) return { message: "Delete Gone Wrong!!!", status: false }
+
+            // Return
+            return {
+                message: "Role Deleted Successfully!!!",
+                status: true
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+
     }
 }

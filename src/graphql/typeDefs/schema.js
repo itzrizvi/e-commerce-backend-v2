@@ -215,6 +215,15 @@ type UpdateRoleOutput {
     data:Role
 }
 
+input DeleteRoleInput {
+    role_uuid:UUID
+}
+
+type DeleteRoleOutput {
+    message:String
+    status:Boolean
+}
+
 
 # Permission Based Input and Queries #########################################
 ##############################################################################
@@ -502,11 +511,15 @@ type GetProductList {
 
 type Query {
     getAllRoles: RoleOutput!
+
     getAllStaff: GetALLStaffOutput!
+
     getAllFeaturePermission: GetALLFeaturePermissionOutput!
     getAllPermissionByRole(query: GetPermisssionsByRole): GetPermisssionsByRoleOutput!
+
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
+
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
     getProductList: GetProductList!
 }
@@ -514,18 +527,27 @@ type Query {
 type Mutation {
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
+
     adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
+
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!
+
     forgotPassInit(data: ForgotPassInitInput):ForgotPassInitOutput!
     forgotPassCodeMatch(data: ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
+
     createRole(data: CreateRoleInput): CreateRoleOutput!
     updateRole(data: UpdateRoleInput): UpdateRoleOutput!
+    deleteRole(data: DeleteRoleInput): DeleteRoleOutput!
+
     createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
+
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
+    
     assignPermission(data: AssignPermissionInput):AssignPermissionOutput!
+
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }

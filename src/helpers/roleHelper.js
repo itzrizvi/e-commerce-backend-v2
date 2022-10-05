@@ -94,9 +94,15 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authenticated", status: false };
         if (user.role_no === '0') return { message: "Not Authorized", status: false };
 
+
+        // Try Catch Block
         try {
             // GET ALL ROLES
-            const getAllRoles = await db.roles.findAll({ where: { tenant_id: TENANTID } });
+            const getAllRoles = await db.roles.findAll({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
 
             return {
                 data: getAllRoles,
@@ -111,6 +117,42 @@ module.exports = {
 
 
 
+    },
+    // GET SINGLE ROLE HELPER
+    getSingleRole: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { role_uuid } = req;
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Find Role 
+            const findRole = await db.roles.findOne({
+                where: {
+                    [Op.and]: [{
+                        role_uuid,
+                        tenant_id
+                    }]
+                }
+            });
+
+            // If Not Found
+            if (!findRole) return { message: "Couldn't GET The Role", status: false }
+
+            // Return 
+            return {
+                message: "Role GET Success!!!",
+                status: true,
+                data: findRole
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     },
     // UPDATE ROLE HELPER
     updateRole: async (req, db, user, isAuth, TENANTID) => {
@@ -219,41 +261,6 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
 
-    },
-    // GET SINGLE ROLE HELPER
-    getSingleRole: async (req, db, user, isAuth, TENANTID) => {
-
-        // Try Catch Block
-        try {
-
-            // Data From Request
-            const { role_uuid } = req;
-
-            // TENANT ID
-            const tenant_id = TENANTID;
-
-            // Find Role 
-            const findRole = await db.roles.findOne({
-                where: {
-                    [Op.and]: [{
-                        role_uuid,
-                        tenant_id
-                    }]
-                }
-            });
-
-            // If Not Found
-            if (!findRole) return { message: "Couldn't GET The Role", status: false }
-
-            // Return 
-            return {
-                message: "Role GET Success!!!",
-                status: true,
-                data: findRole
-            }
-
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
-        }
     }
+
 }

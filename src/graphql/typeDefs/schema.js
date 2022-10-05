@@ -175,7 +175,6 @@ type Role {
     role:String
     role_slug:String
     role_status:Boolean
-    permissions:[FeaturePermission]
     createdAt:String
     updatedAt:String
     tenant_id:String

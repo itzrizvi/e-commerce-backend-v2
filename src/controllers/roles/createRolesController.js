@@ -1,5 +1,5 @@
 // ALL REQUIRES
-const { createRole } = require("../../helpers/roleHelper");
+const { createRoleWithPermission } = require("../../helpers/roleHelper");
 const { createRoleRequest } = require("../../requests/roleRequests");
 const { singleResponse } = require("../../utils/response");
 
@@ -14,7 +14,7 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
     }
 
     // CREATE ROLE
-    const data = await createRole(req, db, user, isAuth, TENANTID);
+    const data = await createRoleWithPermission(req, db, user, isAuth, TENANTID);
 
     return singleResponse(data);
 

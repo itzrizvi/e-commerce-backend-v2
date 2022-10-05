@@ -5,7 +5,7 @@ const { createRolesController, updateRoleController, deleteRoleController } = re
 // Role Mutation Start
 module.exports = {
     // Create Role Mutation
-    createRole: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+    createRoleWithPermission: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth

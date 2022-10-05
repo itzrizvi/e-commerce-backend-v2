@@ -6,7 +6,7 @@ const { default: slugify } = require("slugify");
 // ROLE HELPER
 module.exports = {
     // CREATE ROLES API
-    createRole: async (req, db, user, isAuth, TENANTID) => {
+    createRoleWithPermission: async (req, db, user, isAuth, TENANTID) => {
 
         if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
 
@@ -17,7 +17,7 @@ module.exports = {
         try {
 
             // GET DATA
-            const { role, role_status } = req;
+            const { role, role_status, permissionUUIDList } = req;
             // Create Slug
             const role_slug = slugify(`${role}`, {
                 replacement: '-',
@@ -48,7 +48,22 @@ module.exports = {
                     role: role,
                     role_status: role_status,
                     role_slug: role_slug,
+                    permission_list_uuid: permissionUUIDList,
                     tenant_id: TENANTID
+                });
+
+                // Return Formation
+                // Feature Permission UUID from Permission Data
+                const { permission_list_uuid } = createrole;
+                const permissionIDArray = permission_list_uuid.split("@");
+                // GET Feature Permission Data  
+                const getFeaturePermission = await db.feature_permission_list.findAll({
+                    where: {
+                        [Op.and]: [{
+                            feature_permission_uuid: permissionIDArray,
+                            tenant_id: TENANTID
+                        }]
+                    }
                 });
 
                 return {
@@ -57,8 +72,9 @@ module.exports = {
                     roleUUID: createrole.role_uuid,
                     roleSlug: createrole.role_slug,
                     role_status: createrole.role_status,
+                    permissions: getFeaturePermission,
                     tenant_id: createrole.tenant_id,
-                    message: "Successfully Created A Role!!!",
+                    message: "Successfully Created A Role With Permission!!!",
                     status: true
                 }
 

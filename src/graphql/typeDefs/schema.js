@@ -175,6 +175,7 @@ type Role {
     role:String
     role_slug:String
     role_status:Boolean
+    permissions:[FeaturePermission]
     createdAt:String
     updatedAt:String
     tenant_id:String
@@ -187,17 +188,19 @@ type RoleOutput {
     data: [Role]
 }
 
-input CreateRoleInput {
+input CreateRoleWithPermissionInput {
     role:String!
     role_status:Boolean!
+    permissionUUIDList:JSON!
 }
 
-type CreateRoleOutput {
+type CreateRoleWithPermissionOutput {
     roleNo:Float
     role:String
     roleUUID:String
     roleSlug:String
     role_status:Boolean
+    permissions:[FeaturePermission]
     tenant_id:String
     message:String
     status:Boolean
@@ -552,7 +555,7 @@ type Mutation {
     forgotPassCodeMatch(data: ForgotPassCodeMatchInput):ForgotPassCodeMatchOutput!
     forgotPassFinal(data: ForgotPassFinalInput):ForgotPassFinalOutput!
 
-    createRole(data: CreateRoleInput): CreateRoleOutput!
+    createRoleWithPermission(data: CreateRoleWithPermissionInput): CreateRoleWithPermissionOutput!
     updateRole(data: UpdateRoleInput): UpdateRoleOutput!
     deleteRole(data: DeleteRoleInput): DeleteRoleOutput!
 

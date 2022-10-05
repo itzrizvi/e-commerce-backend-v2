@@ -7,7 +7,8 @@ let rules = {}, request, response;
 const createRoleRequest = (body) => {
     rules = {
         role: 'required|string',
-        role_status: 'required|strict|boolean'
+        role_status: 'required|strict|boolean',
+        permissionUUIDList: 'required|string'
     }
 
     return checkBody(body, rules);

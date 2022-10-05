@@ -9,6 +9,7 @@ module.exports = {
 
         // Req Data
         const featureName = req.featureName;
+        const feature_permission_status = req.feature_permission_status;
 
         // Create Slug
         const featureNameSlug = slugify(`${featureName}`, {
@@ -36,6 +37,7 @@ module.exports = {
             const createFeatureOfPrmsn = await db.feature_permission_list.create({
                 feature_permission_name: featureName,
                 feature_permission_slug: featureNameSlug,
+                feature_permission_status,
                 tenant_id: TENANTID
             });
 
@@ -47,6 +49,7 @@ module.exports = {
                 message: "Created A Feature Of Permission List Successfully!!",
                 featureName: createFeatureOfPrmsn.feature_permission_name,
                 featureNameSlug: createFeatureOfPrmsn.feature_permission_slug,
+                feature_permission_status: createFeatureOfPrmsn.feature_permission_status,
                 tenant_id: createFeatureOfPrmsn.tenant_id
             }
 

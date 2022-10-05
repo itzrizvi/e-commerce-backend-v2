@@ -240,12 +240,14 @@ type GetSingleRoleOutput {
 
 input FeaturePermissionListInput {
     featureName:String!
+    feature_permission_status:Boolean!
 }
 
 type FeaturePermissionListOutput {
     featureNameUUID:String
     featureName:String
     featureNameSlug:String
+    feature_permission_status:Boolean
     tenant_id:String
     message:String
     status:Boolean
@@ -255,6 +257,7 @@ type FeaturePermission {
     feature_permission_uuid:UUID
     feature_permission_name:String
     feature_permission_slug:String
+    feature_permission_status:Boolean
 }
 
 type GetALLFeaturePermissionOutput {

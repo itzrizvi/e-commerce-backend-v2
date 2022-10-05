@@ -203,5 +203,41 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
 
+    },
+    // GET SINGLE ROLE HELPER
+    getSingleRole: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { role_uuid } = req;
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Find Role 
+            const findRole = await db.roles.findOne({
+                where: {
+                    [Op.and]: [{
+                        role_uuid,
+                        tenant_id
+                    }]
+                }
+            });
+
+            // If Not Found
+            if (!findRole) return { message: "Couldn't GET The Role", status: false }
+
+            // Return 
+            return {
+                message: "Role GET Success!!!",
+                status: true,
+                data: findRole
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

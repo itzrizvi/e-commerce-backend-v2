@@ -224,6 +224,16 @@ type DeleteRoleOutput {
     status:Boolean
 }
 
+input GetSingleRoleInput {
+    role_uuid:UUID
+}
+
+type GetSingleRoleOutput {
+    message:String
+    status:Boolean
+    data:Role
+}
+
 
 # Permission Based Input and Queries #########################################
 ##############################################################################
@@ -511,6 +521,7 @@ type GetProductList {
 
 type Query {
     getAllRoles: RoleOutput!
+    getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
 
     getAllStaff: GetALLStaffOutput!
 

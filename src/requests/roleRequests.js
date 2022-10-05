@@ -33,6 +33,15 @@ const deleteRoleRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET SINGLE ROLE REQUEST
+const getSingleRoleRequest = (body) => {
+    rules = {
+        role_uuid: 'string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 
 // Check Validation
@@ -59,5 +68,6 @@ const checkBody = (body, rules) => {
 module.exports = {
     createRoleRequest,
     updateRoleRequest,
-    deleteRoleRequest
+    deleteRoleRequest,
+    getSingleRoleRequest
 }

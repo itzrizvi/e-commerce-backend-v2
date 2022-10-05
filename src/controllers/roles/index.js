@@ -3,4 +3,5 @@ module.exports = {
     createRolesController: require("./createRolesController"),
     updateRoleController: require("./updateRoleController"),
     deleteRoleController: require("./deleteRoleController"),
+    getSingleRoleController: require("./getSingleRoleController"),
 }

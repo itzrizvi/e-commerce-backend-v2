@@ -55,6 +55,15 @@ module.exports = {
                 status: false,
             };
 
+            // IF USER STATUS IS FALSE
+            const isActive = user.user_status;
+            if (!isActive) {
+                return {
+                    message: "STAFF IS DISABLED",
+                    status: false
+                }
+            }
+
             // return jwt
             const authToken = jwt.sign(
                 { uid: user.uid, email: user.email, role_no: user.role_no },
@@ -71,6 +80,7 @@ module.exports = {
                 first_name: user.first_name,
                 last_name: user.last_name,
                 roleNo: checkRoleExist.role_no,
+                user_status: user.user_status,
                 status: true
             }
 
@@ -92,6 +102,7 @@ module.exports = {
         const email = req.email;
         const password = req.password;
         const role_no = req.roleNo;
+        const user_status = req.userStatus;
 
         // Find Role according to role_no
         const findRoleDetails = await db.roles.findOne({
@@ -128,6 +139,7 @@ module.exports = {
                 password: await bcrypt.hash(password, 10),
                 role_no: role_no,
                 verification_code: verificationCode,
+                user_status,
                 tenant_id: TENANTID
             });
 
@@ -158,8 +170,9 @@ module.exports = {
                     first_name: createStuff.first_name,
                     last_name: createStuff.last_name,
                     email: createStuff.email,
-                    message: "Successfully Registered a Stuff!!",
+                    message: "Successfully Registered a Staff!!",
                     emailVerified: createStuff.email_verified,
+                    user_status: createStuff.user_status,
                     updatedAt: createStuff.updatedAt,
                     createdAt: createStuff.createdAt,
                     roleNo: createStuff.role_no,
@@ -184,6 +197,7 @@ module.exports = {
                 password: await bcrypt.hash(password, 10),
                 role_no: role_no,
                 email_verified: false,
+                user_status,
                 verification_code: verificationCode
             }
 
@@ -238,6 +252,7 @@ module.exports = {
                     email: updatedStuffData.email,
                     message: "Successfully Updated and Registered as a Stuff!!",
                     emailVerified: updatedStuffData.email_verified,
+                    user_status: updatedStuffData.user_status,
                     updatedAt: updatedStuffData.updatedAt,
                     createdAt: updatedStuffData.createdAt,
                     roleNo: updatedStuffData.role_no,

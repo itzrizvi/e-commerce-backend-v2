@@ -28,6 +28,7 @@ type AuthPayload {
     email:String
     message:String
     emailVerified:Boolean
+    user_status:Boolean
     updatedAt:String
     createdAt:String
     status:Boolean
@@ -53,6 +54,7 @@ type AdminAuthPayload {
     email:String
     message:String
     emailVerified:Boolean
+    user_status:Boolean
     updatedAt:String
     createdAt:String
     roleNo:String
@@ -65,6 +67,7 @@ input AdminSignUpInput {
     email:String
     password:String
     roleNo:String
+    userStatus:Boolean
 }
 
 type AdminSignUpOutput {
@@ -75,6 +78,7 @@ type AdminSignUpOutput {
     email:String
     message:String
     emailVerified:Boolean
+    user_status:Boolean
     updatedAt:String
     createdAt:String
     roleNo:Float
@@ -89,6 +93,7 @@ type Staff {
     last_name:String
     email:String
     roles:Role
+    user_status:Boolean
     email_verified:Boolean
 }
 

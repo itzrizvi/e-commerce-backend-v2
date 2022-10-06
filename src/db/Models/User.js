@@ -43,11 +43,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0,
             allowNull: false
         },
-        // user_status: {
-        //     type: DataTypes.BOOLEAN,
-        //     defaultValue: true,
-        //     allowNull: false
-        // },
+        user_status: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+            allowNull: false
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

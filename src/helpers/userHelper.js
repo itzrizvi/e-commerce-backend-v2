@@ -19,6 +19,7 @@ module.exports = {
                 email,
                 password: await bcrypt.hash(password, 10),
                 verification_code: verificationCode,
+                user_status: true,
                 tenant_id: TENANTID
             });
 
@@ -47,6 +48,7 @@ module.exports = {
                 emailVerified: user.email_verified,
                 message: "Sign Up succesfull",
                 verificationCode: user.verification_code,
+                user_status: user.user_status,
                 updatedAt: user.createdAt,
                 createdAt: user.updatedAt,
                 tenant_id: user.tenant_id,
@@ -89,6 +91,15 @@ module.exports = {
                 };
             }
 
+            // IF USER STATUS IS FALSE
+            const isActive = user.user_status;
+            if (!isActive) {
+                return {
+                    message: "USER IS DISABLED",
+                    status: false
+                }
+            }
+
             // return jwt
             const authToken = jwt.sign(
                 { uid: user.uid, email: user.email },
@@ -105,6 +116,7 @@ module.exports = {
                 message: "Sign In succesfull",
                 emailVerified: user.email_verified,
                 verificationCode: user.verification_code,
+                user_status: user.user_status,
                 updatedAt: user.createdAt,
                 createdAt: user.updatedAt,
                 tenant_id: user.tenant_id,

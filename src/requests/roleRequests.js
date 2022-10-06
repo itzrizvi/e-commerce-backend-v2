@@ -19,7 +19,8 @@ const updateRoleRequest = (body) => {
     rules = {
         role_uuid: 'string',
         role: 'string',
-        role_status: 'strict|boolean'
+        role_status: 'strict|boolean',
+        permissionUUIDList: 'string'
     }
 
     return checkBody(body, rules);

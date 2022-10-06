@@ -189,6 +189,7 @@ module.exports = {
             const role_uuid = req.role_uuid;
             const role = req.role;
             const role_status = req.role_status;
+            const permissionUUIDList = req.permissionUUIDList;
 
             // IF ROLE ALSO UPDATED THEN SLUG ALSO WILL BE UPDATED
             let role_slug;
@@ -207,7 +208,8 @@ module.exports = {
             const updateDoc = {
                 role,
                 role_slug,
-                role_status
+                role_status,
+                permission_list_uuid: permissionUUIDList
             }
 
             // Update Role 
@@ -232,6 +234,26 @@ module.exports = {
                     }]
                 }
             });
+
+            // Feature Permission UUID from Permission Data
+            const { permission_list_uuid } = updatedRole;
+
+            // IF Not Found Permission List
+            if (!permission_list_uuid) return { message: "Updated Role With No Permissions!!!", status: true, data: updatedRole };
+
+            const permissionIDArray = permission_list_uuid.split("@");
+            // GET Feature Permission Data  
+            const getFeaturePermission = await db.feature_permission_list.findAll({
+                where: {
+                    [Op.and]: [{
+                        feature_permission_uuid: permissionIDArray,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Add Permission to Output Data
+            updatedRole["permissions"] = getFeaturePermission;
 
             // Return Data
             return {

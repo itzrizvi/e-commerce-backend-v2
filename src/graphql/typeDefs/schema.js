@@ -209,12 +209,13 @@ input UpdateRoleInput {
     role_uuid:UUID
     role:String
     role_status:Boolean
+    permissionUUIDList:JSON
 }
 
 type UpdateRoleOutput {
     message:String
     status:Boolean
-    data:Role
+    data:SingleRole
 }
 
 input DeleteRoleInput {

@@ -175,6 +175,7 @@ type Role {
     role:String
     role_slug:String
     role_status:Boolean
+    role_description:String
     createdAt:String
     updatedAt:String
     tenant_id:String
@@ -191,6 +192,7 @@ input CreateRoleWithPermissionInput {
     role:String!
     role_status:Boolean!
     permissionUUIDList:JSON!
+    roleDescription:String!
 }
 
 type CreateRoleWithPermissionOutput {
@@ -199,6 +201,7 @@ type CreateRoleWithPermissionOutput {
     roleUUID:String
     roleSlug:String
     role_status:Boolean
+    role_description:String
     permissions:[FeaturePermission]
     tenant_id:String
     message:String
@@ -210,6 +213,7 @@ input UpdateRoleInput {
     role:String
     role_status:Boolean
     permissionUUIDList:JSON
+    roleDescription:String
 }
 
 type UpdateRoleOutput {
@@ -233,6 +237,7 @@ type SingleRole {
     role:String
     role_slug:String
     role_status:Boolean
+    role_description:String
     permissions:[FeaturePermission]
     createdAt:String
     updatedAt:String

@@ -17,7 +17,7 @@ module.exports = {
         try {
 
             // GET DATA
-            const { role, role_status, permissionUUIDList } = req;
+            const { role, role_status, permissionUUIDList, roleDescription } = req;
             // Create Slug
             const role_slug = slugify(`${role}`, {
                 replacement: '-',
@@ -49,6 +49,7 @@ module.exports = {
                     role_status: role_status,
                     role_slug: role_slug,
                     permission_list_uuid: permissionUUIDList,
+                    role_description: roleDescription,
                     tenant_id: TENANTID
                 });
 
@@ -72,6 +73,7 @@ module.exports = {
                     roleUUID: createrole.role_uuid,
                     roleSlug: createrole.role_slug,
                     role_status: createrole.role_status,
+                    role_description: createrole.role_description,
                     permissions: getFeaturePermission,
                     tenant_id: createrole.tenant_id,
                     message: "Successfully Created A Role With Permission!!!",
@@ -190,6 +192,7 @@ module.exports = {
             const role = req.role;
             const role_status = req.role_status;
             const permissionUUIDList = req.permissionUUIDList;
+            const roleDescription = req.roleDescription;
 
             // IF ROLE ALSO UPDATED THEN SLUG ALSO WILL BE UPDATED
             let role_slug;
@@ -209,7 +212,8 @@ module.exports = {
                 role,
                 role_slug,
                 role_status,
-                permission_list_uuid: permissionUUIDList
+                permission_list_uuid: permissionUUIDList,
+                role_description: roleDescription
             }
 
             // Update Role 

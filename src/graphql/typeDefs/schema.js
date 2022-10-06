@@ -226,6 +226,18 @@ type DeleteRoleOutput {
     status:Boolean
 }
 
+type SingleRole {
+    role_uuid: UUID
+    role_no: Float
+    role:String
+    role_slug:String
+    role_status:Boolean
+    permissions:[FeaturePermission]
+    createdAt:String
+    updatedAt:String
+    tenant_id:String
+}
+
 input GetSingleRoleInput {
     role_uuid:UUID
 }
@@ -233,7 +245,7 @@ input GetSingleRoleInput {
 type GetSingleRoleOutput {
     message:String
     status:Boolean
-    data:Role
+    data:SingleRole
 }
 
 

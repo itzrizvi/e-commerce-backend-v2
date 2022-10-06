@@ -143,6 +143,26 @@ module.exports = {
             // If Not Found
             if (!findRole) return { message: "Couldn't GET The Role", status: false }
 
+            // Feature Permission UUID from Permission Data
+            const { permission_list_uuid } = findRole;
+
+            // IF Not Found Permission List
+            if (!permission_list_uuid) return { message: "Found Role With No Permissions!!!", status: true, data: findRole };
+
+            const permissionIDArray = permission_list_uuid.split("@");
+            // GET Feature Permission Data  
+            const getFeaturePermission = await db.feature_permission_list.findAll({
+                where: {
+                    [Op.and]: [{
+                        feature_permission_uuid: permissionIDArray,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Add Permission to Output Data
+            findRole["permissions"] = getFeaturePermission;
+
             // Return 
             return {
                 message: "Role GET Success!!!",

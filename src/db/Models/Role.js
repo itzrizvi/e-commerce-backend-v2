@@ -29,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        permission_list_uuid: {
-            type: DataTypes.JSON,
-            allowNull: true
-        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

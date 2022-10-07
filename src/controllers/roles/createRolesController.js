@@ -6,7 +6,6 @@ const { singleResponse } = require("../../utils/response");
 
 // CONTROLLER
 module.exports = async (req, db, user, isAuth, TENANTID) => {
-
     // Validate Create Role Request
     const validate = await createRoleRequest(req);
     if (!validate.success) {

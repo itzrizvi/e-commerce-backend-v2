@@ -104,6 +104,8 @@ type GetALLStaffOutput {
     status:Boolean
 }
 
+##input GetSingleAdminInput 
+
 
 
 
@@ -184,10 +186,10 @@ type Role {
     createdAt:String
     updatedAt:String
     tenant_id:String
+    permissions:[PermissionData]
 }
 
 type RoleOutput {
-    isAuth:Boolean
     message: String
     status:Boolean
     data: [Role]
@@ -196,18 +198,11 @@ type RoleOutput {
 input CreateRoleWithPermissionInput {
     role:String!
     role_status:Boolean!
-    permissionUUIDList:JSON!
     roleDescription:String!
+    permissionsData:JSON!
 }
 
 type CreateRoleWithPermissionOutput {
-    roleNo:Float
-    role:String
-    roleUUID:String
-    roleSlug:String
-    role_status:Boolean
-    role_description:String
-    permissions:[FeaturePermission]
     tenant_id:String
     message:String
     status:Boolean
@@ -217,14 +212,14 @@ input UpdateRoleInput {
     role_uuid:UUID
     role:String
     role_status:Boolean
-    permissionUUIDList:JSON
     roleDescription:String
+    permissionsData:JSON
 }
 
 type UpdateRoleOutput {
     message:String
     status:Boolean
-    data:SingleRole
+    tenant_id:String
 }
 
 input DeleteRoleInput {
@@ -243,7 +238,7 @@ type SingleRole {
     role_slug:String
     role_status:Boolean
     role_description:String
-    permissions:[FeaturePermission]
+    permissions:[PermissionData]
     createdAt:String
     updatedAt:String
     tenant_id:String
@@ -263,69 +258,45 @@ type GetSingleRoleOutput {
 # Permission Based Input and Queries #########################################
 ##############################################################################
 
-input FeaturePermissionListInput {
-    featureName:String!
-    feature_permission_status:Boolean!
+type PermissionData {
+    permission_data_uuid:UUID
+    role_no:Int
+    role_slug:String
+    tenant_id:String
+    role_uuid:UUID
+    edit_access:Boolean
+    read_access:Boolean
+    rolesPermission:RolesPermission
 }
 
-type FeaturePermissionListOutput {
-    featureNameUUID:String
-    featureName:String
-    featureNameSlug:String
-    feature_permission_status:Boolean
+input RolesPermissionInput {
+    permissionName:String!
+    permissionStatus:Boolean!
+}
+
+type RolesPermissionOutput {
+    rolesPermissionUUID:String
+    rolesPermissionName:String
+    rolesPermissionNameSlug:String
+    rolesPermissionStatus:Boolean
     tenant_id:String
     message:String
     status:Boolean
 }
 
-type FeaturePermission {
-    feature_permission_uuid:UUID
-    feature_permission_name:String
-    feature_permission_slug:String
-    feature_permission_status:Boolean
+type RolesPermission {
+    roles_permission_uuid:UUID
+    roles_permission_name:String
+    roles_permission_slug:String
+    roles_permission_status:Boolean
 }
 
-type GetALLFeaturePermissionOutput {
+type GetAllRolesPermission {
     isAuth:Boolean
     message: String
     status:Boolean
     tenant_id:String
-    data: [FeaturePermission]
-}
-
-input AssignPermissionInput {
-    permissionUUIDList:JSON!
-    roleUUID:UUID!
-    roleNo:Float!
-}
-
-type AssignPermissionOutput {
-    permission_uuid:UUID
-    permission_list_uuid:JSON
-    role_uuid:UUID
-    role:String
-    role_no:Float
-    tenant_id:String
-    message:String
-    status:Boolean
-}
-
-input GetPermisssionsByRole {
-    roleUUID:UUID!
-}
-
-type Permission {
-    permission_uuid:UUID
-    feature_permission_list:[FeaturePermission]
-}
-
-type GetPermisssionsByRoleOutput {
-    isAuth:Boolean
-    tenant_id:String
-    message:String
-    status:Boolean
-    roles:Role
-    permissions_data:Permission
+    data: [RolesPermission]
 }
 
 
@@ -551,10 +522,9 @@ type Query {
     getAllRoles: RoleOutput!
     getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
 
-    getAllStaff: GetALLStaffOutput!
+    getAllRolesPermission: GetAllRolesPermission!
 
-    getAllFeaturePermission: GetALLFeaturePermissionOutput!
-    getAllPermissionByRole(query: GetPermisssionsByRole): GetPermisssionsByRoleOutput!
+    getAllStaff: GetALLStaffOutput!
 
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
@@ -581,11 +551,10 @@ type Mutation {
     updateRole(data: UpdateRoleInput): UpdateRoleOutput!
     deleteRole(data: DeleteRoleInput): DeleteRoleOutput!
 
-    createFeaturePermission(data: FeaturePermissionListInput):FeaturePermissionListOutput!
+    createRolesPermission(data: RolesPermissionInput):RolesPermissionOutput!
 
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     
-    assignPermission(data: AssignPermissionInput):AssignPermissionOutput!
 
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!

@@ -1,0 +1,4 @@
+module.exports = {
+    createRolesPermissionController: require("./createRolesPermissionController"),
+    getAllRolesPermissionController: require("./getAllRolesPermissionController"),
+}

@@ -15,9 +15,9 @@ module.exports = {
 
         // Try Catch Block
         try {
-
             // GET DATA
-            const { role, role_status, permissionUUIDList, roleDescription } = req;
+            const { role, role_status, permissionsData, roleDescription } = req;
+
             // Create Slug
             const role_slug = slugify(`${role}`, {
                 replacement: '-',
@@ -48,37 +48,38 @@ module.exports = {
                     role: role,
                     role_status: role_status,
                     role_slug: role_slug,
-                    permission_list_uuid: permissionUUIDList,
                     role_description: roleDescription,
                     tenant_id: TENANTID
                 });
 
-                // Return Formation
-                // Feature Permission UUID from Permission Data
-                const { permission_list_uuid } = createrole;
-                const permissionIDArray = permission_list_uuid.split("@");
-                // GET Feature Permission Data  
-                const getFeaturePermission = await db.feature_permission_list.findAll({
-                    where: {
-                        [Op.and]: [{
-                            feature_permission_uuid: permissionIDArray,
-                            tenant_id: TENANTID
-                        }]
-                    }
-                });
+                // If Created Role
+                if (createrole) {
+                    // Loop For Assign Other Values to Permissions
+                    permissionsData.forEach(element => {
+                        element.role_uuid = createrole.role_uuid;
+                        element.role_no = createrole.role_no;
+                        element.role_slug = createrole.role_slug;
+                        element.role = createrole.role;
+                        element.tenant_id = createrole.tenant_id;
 
-                return {
-                    roleNo: createrole.role_no,
-                    role: createrole.role,
-                    roleUUID: createrole.role_uuid,
-                    roleSlug: createrole.role_slug,
-                    role_status: createrole.role_status,
-                    role_description: createrole.role_description,
-                    permissions: getFeaturePermission,
-                    tenant_id: createrole.tenant_id,
-                    message: "Successfully Created A Role With Permission!!!",
-                    status: true
+                    });
+
+                    // Permissions Bulk Create
+                    const permissionCreate = await db.permissions_data.bulkCreate(permissionsData);
+                    if (!permissionCreate) return { message: "Permission Creation Failed", status: false }
+
+
+                    return {
+                        tenant_id: createrole.tenant_id,
+                        message: "Successfully Created A Role With Permission!!!",
+                        status: true
+                    }
+
+
+                } else {
+                    return { message: "Role Creation Failed", status: false }
                 }
+
 
             } else {
                 return { message: "Already Have This Role", status: false }
@@ -100,16 +101,31 @@ module.exports = {
         // Try Catch Block
         try {
             // GET ALL ROLES
-            const getAllRoles = await db.roles.findAll({
+            // Check If User Has Alias or Not 
+            if (!db.roles.hasAlias('permissions_data') && !db.roles.hasAlias('permissions')) {
+                await db.roles.hasMany(db.permissions_data, { sourceKey: 'role_uuid', foreignKey: 'role_uuid', as: 'permissions' });
+            }
+
+            // Check If User Has Alias or Not 
+            if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_uuid', foreignKey: 'roles_permission_uuid', as: 'rolesPermission' });
+            }
+
+            // Find All Roles With permissions
+            const findAllRoleandPermissions = await db.roles.findAll({
+                include: [{
+                    model: db.permissions_data, as: 'permissions',
+                    include: [{ model: db.roles_permission, as: 'rolesPermission' }]
+                }],
                 where: {
                     tenant_id: TENANTID
                 }
-            });
+            })
 
+            // Return Formation
             return {
-                data: getAllRoles,
-                isAuth: isAuth,
-                message: "All Roles GET Success!!!",
+                data: findAllRoleandPermissions,
+                message: "All Roles And Permissions GET Success!!!",
                 status: true
             }
 
@@ -132,44 +148,36 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
-            // Find Role 
-            const findRole = await db.roles.findOne({
+
+            // Check If User Has Alias or Not 
+            if (!db.roles.hasAlias('permissions_data') && !db.roles.hasAlias('permissions')) {
+                await db.roles.hasMany(db.permissions_data, { sourceKey: 'role_uuid', foreignKey: 'role_uuid', as: 'permissions' });
+            }
+
+            // Check If User Has Alias or Not 
+            if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_uuid', foreignKey: 'roles_permission_uuid', as: 'rolesPermission' });
+            }
+
+            // Find Single Role With Permission
+            const findRoleandPermission = await db.roles.findOne({
+                include: [{
+                    model: db.permissions_data, as: 'permissions',
+                    include: [{ model: db.roles_permission, as: 'rolesPermission' }]
+                }],
                 where: {
                     [Op.and]: [{
                         role_uuid,
                         tenant_id
                     }]
                 }
-            });
+            })
 
-            // If Not Found
-            if (!findRole) return { message: "Couldn't GET The Role", status: false }
-
-            // Feature Permission UUID from Permission Data
-            const { permission_list_uuid } = findRole;
-
-            // IF Not Found Permission List
-            if (!permission_list_uuid) return { message: "Found Role With No Permissions!!!", status: true, data: findRole };
-
-            const permissionIDArray = permission_list_uuid.split("@");
-            // GET Feature Permission Data  
-            const getFeaturePermission = await db.feature_permission_list.findAll({
-                where: {
-                    [Op.and]: [{
-                        feature_permission_uuid: permissionIDArray,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-            // Add Permission to Output Data
-            findRole["permissions"] = getFeaturePermission;
-
-            // Return 
+            // Return Formation
             return {
-                message: "Role GET Success!!!",
+                message: "Role With Permissions GET Success!!!",
                 status: true,
-                data: findRole
+                data: findRoleandPermission
             }
 
         } catch (error) {
@@ -191,7 +199,7 @@ module.exports = {
             const role_uuid = req.role_uuid;
             const role = req.role;
             const role_status = req.role_status;
-            const permissionUUIDList = req.permissionUUIDList;
+            const permissionsData = req.permissionsData;
             const roleDescription = req.roleDescription;
 
             // IF ROLE ALSO UPDATED THEN SLUG ALSO WILL BE UPDATED
@@ -212,7 +220,6 @@ module.exports = {
                 role,
                 role_slug,
                 role_status,
-                permission_list_uuid: permissionUUIDList,
                 role_description: roleDescription
             }
 
@@ -229,41 +236,38 @@ module.exports = {
             // IF NOT UPDATED THEN RETURN
             if (!updateRole) return { message: "Update Gone Wrong!!!", status: false }
 
-            // Find Updated Role
-            const updatedRole = await db.roles.findOne({
+            // Find Targeted Role
+            const findTargetedRole = await db.roles.findOne({
                 where: {
                     [Op.and]: [{
                         role_uuid,
                         tenant_id: TENANTID
                     }]
                 }
+            })
+
+
+            // Loop For Assign Other Values to Permissions
+            permissionsData.forEach(element => {
+                element.role_uuid = findTargetedRole.role_uuid;
+                element.role_no = findTargetedRole.role_no;
+                element.role_slug = findTargetedRole.role_slug;
+                element.role = findTargetedRole.role;
+                element.tenant_id = findTargetedRole.tenant_id;
+
             });
-
-            // Feature Permission UUID from Permission Data
-            const { permission_list_uuid } = updatedRole;
-
-            // IF Not Found Permission List
-            if (!permission_list_uuid) return { message: "Updated Role With No Permissions!!!", status: true, data: updatedRole };
-
-            const permissionIDArray = permission_list_uuid.split("@");
-            // GET Feature Permission Data  
-            const getFeaturePermission = await db.feature_permission_list.findAll({
-                where: {
-                    [Op.and]: [{
-                        feature_permission_uuid: permissionIDArray,
-                        tenant_id: TENANTID
-                    }]
-                }
+            // Update Permission
+            const permissionUpdate = await db.permissions_data.bulkCreate(permissionsData, {
+                updateOnDuplicate: ["edit_access", "read_access", "role", "role_slug"]
             });
+            if (!permissionUpdate) return { message: "Permission Update Failed", status: false }
 
-            // Add Permission to Output Data
-            updatedRole["permissions"] = getFeaturePermission;
 
             // Return Data
             return {
-                message: "Role Updated Successfully!!!",
+                message: "Role and Permission Updated Successfully!!!",
                 status: true,
-                data: updatedRole
+                tenant_id: findTargetedRole.tenant_id
             }
 
 

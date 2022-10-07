@@ -1,8 +1,7 @@
 module.exports = {
     ...require('./role'),
     ...require('./staff'),
-    ...require('./FeaturePermissionList'),
-    ...require('./permissionQueries'),
+    ...require('./rolesPermissionQueries'),
     ...require('./categoryQueries'),
     ...require('./productQueries'),
 }

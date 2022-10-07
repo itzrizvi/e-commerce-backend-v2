@@ -7,8 +7,9 @@ let rules = {}, request, response;
 const createRoleRequest = (body) => {
     rules = {
         role: 'required|string',
+        roleDescription: 'required|string',
         role_status: 'required|strict|boolean',
-        permissionUUIDList: 'required|string'
+        permissionsData: 'required|array'
     }
 
     return checkBody(body, rules);
@@ -19,8 +20,9 @@ const updateRoleRequest = (body) => {
     rules = {
         role_uuid: 'string',
         role: 'string',
+        roleDescription: 'string',
         role_status: 'strict|boolean',
-        permissionUUIDList: 'string'
+        permissionsData: 'array'
     }
 
     return checkBody(body, rules);

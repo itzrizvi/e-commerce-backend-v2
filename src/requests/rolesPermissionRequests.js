@@ -4,7 +4,7 @@ const { make } = require('simple-body-validator');
 let rules = {}, request, response;
 
 // Feature Permission List REQUEST
-const createFeaturePermissionListRequest = (body) => {
+const createRolesPermissionRequest = (body) => {
     rules = {
         featureName: 'required|string'
     }
@@ -37,5 +37,5 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    createFeaturePermissionListRequest,
+    createRolesPermissionRequest,
 }

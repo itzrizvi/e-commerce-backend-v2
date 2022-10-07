@@ -2,8 +2,7 @@ module.exports = {
     ...require('./user'),
     ...require('./role'),
     ...require('./admin'),
-    ...require('./featurePermissionList'),
+    ...require('./rolesPermission'),
     ...require('./category'),
-    ...require('./permission'),
     ...require('./product'),
 }

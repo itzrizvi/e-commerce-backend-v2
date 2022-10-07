@@ -1,22 +1,22 @@
 // Feature Permission List Model
 module.exports = (sequelize, DataTypes) => {
 
-    const FeaturePermissionList = sequelize.define("feature_permission_list", {
-        feature_permission_uuid: {
+    const RolesPermission = sequelize.define("roles_permission", {
+        roles_permission_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        feature_permission_name: {
+        roles_permission_name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        feature_permission_slug: {
+        roles_permission_slug: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        feature_permission_status: {
+        roles_permission_status: {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'feature_permission_list',
+        tableName: 'roles_permission',
     })
 
-    return FeaturePermissionList
+    return RolesPermission
 }

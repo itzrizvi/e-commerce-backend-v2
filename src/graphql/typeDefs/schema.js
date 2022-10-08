@@ -263,7 +263,7 @@ type GetSingleRoleOutput {
 }
 
 
-# Permission Based Input and Queries #########################################
+# Roles Permission Based Input and Queries #########################################
 ##############################################################################
 
 type PermissionData {
@@ -282,10 +282,6 @@ input RolesPermissionInput {
 }
 
 type RolesPermissionOutput {
-    rolesPermissionUUID:String
-    rolesPermissionName:String
-    rolesPermissionNameSlug:String
-    rolesPermissionStatus:Boolean
     tenant_id:String
     message:String
     status:Boolean
@@ -309,11 +305,26 @@ type GetAllRolesPermission {
     data: [RolesPermission]
 }
 
-type GetSingleRolesPermission {
+input GetSingleRolesPermissionInput {
+    roles_permission_uuid:UUID!
+}
+type GetSingleRolesPermissionOutput {
     message:String
     tenant_id:String
     status:Boolean
     data:RolesPermission
+}
+
+input UpdateRolesPermissionInput {
+    roles_permission_uuid:UUID!
+    roles_permission_name:String
+    roles_permission_status:Boolean
+}
+
+type UpdateRolesPermissionOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
 }
 
 # Category Based Input and Queries ###############################################
@@ -539,7 +550,7 @@ type Query {
     getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
 
     getAllRolesPermission: GetAllRolesPermission!
-    getSingleRolesPermission: GetSingleRolesPermission!
+    getSingleRolesPermission(query: GetSingleRolesPermissionInput): GetSingleRolesPermissionOutput!
 
     getAllStaff: GetALLStaffOutput!
 
@@ -570,6 +581,7 @@ type Mutation {
     deleteRole(data: DeleteRoleInput): DeleteRoleOutput!
 
     createRolesPermission(data: RolesPermissionInput):RolesPermissionOutput!
+    updateRolesPermission(data: UpdateRolesPermissionInput):UpdateRolesPermissionOutput
 
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     

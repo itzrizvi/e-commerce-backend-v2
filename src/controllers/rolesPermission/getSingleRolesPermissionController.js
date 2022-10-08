@@ -1,12 +1,20 @@
 // All Requires
+const { getSingleRolesPermission } = require("../../helpers/rolesPermissionHelper");
+const { getSingleRolesPermissionRequest } = require("../../requests/rolesPermissionRequests");
+const { singleResponse } = require("../../utils/response");
 
-// GET ALL Feature Permission CONTROLLER
-module.exports = async (db, user, isAuth, TENANTID) => {
-    // // Return If No Auth
-    // if (!user || !isAuth) return { message: "Not Authorized", status: false };
-    // if (user.role_no === '0') return { message: "Not Authorized", status: false };
 
-    // const data = await getAllRolesPermission(db, user, isAuth, TENANTID);
+// GET Single Roles Permission CONTROLLER
+module.exports = async (req, db, user, isAuth, TENANTID) => {
 
-    // return groupResponse(data);
+    // Validate GET Single Role Request
+    const validate = await getSingleRolesPermissionRequest(req);
+    if (!validate.success) {
+        return singleResponse(validate.data);
+    }
+
+    // GET SINGLE ROLE
+    const data = await getSingleRolesPermission(req, db, user, isAuth, TENANTID);
+
+    return singleResponse(data);
 }

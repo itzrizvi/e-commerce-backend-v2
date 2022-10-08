@@ -3,10 +3,31 @@
 const { make } = require('simple-body-validator');
 let rules = {}, request, response;
 
-// Feature Permission List REQUEST
+// Roles Permission List REQUEST
 const createRolesPermissionRequest = (body) => {
     rules = {
-        featureName: 'required|string'
+        permissionName: 'required|string',
+        permissionStatus: 'required|boolean',
+    }
+
+    return checkBody(body, rules);
+}
+
+// Roles Permission GET SINGLE REQUEST
+const getSingleRolesPermissionRequest = (body) => {
+    rules = {
+        roles_permission_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+// Roles Permission Update REQUEST
+const updateRolesPermissionRequest = (body) => {
+    rules = {
+        roles_permission_uuid: 'required|string',
+        roles_permission_name: 'string',
+        roles_permission_status: 'boolean',
     }
 
     return checkBody(body, rules);
@@ -38,4 +59,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createRolesPermissionRequest,
+    getSingleRolesPermissionRequest,
+    updateRolesPermissionRequest
 }

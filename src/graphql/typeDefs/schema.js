@@ -289,6 +289,9 @@ type RolesPermission {
     roles_permission_name:String
     roles_permission_slug:String
     roles_permission_status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
 }
 
 type GetAllRolesPermission {
@@ -299,6 +302,12 @@ type GetAllRolesPermission {
     data: [RolesPermission]
 }
 
+type GetSingleRolesPermission {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:RolesPermission
+}
 
 # Category Based Input and Queries ###############################################
 ##################################################################################
@@ -523,6 +532,7 @@ type Query {
     getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
 
     getAllRolesPermission: GetAllRolesPermission!
+    getSingleRolesPermission: GetSingleRolesPermission!
 
     getAllStaff: GetALLStaffOutput!
 

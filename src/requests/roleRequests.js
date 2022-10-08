@@ -21,8 +21,16 @@ const updateRoleRequest = (body) => {
         role_uuid: 'string',
         role: 'string',
         roleDescription: 'string',
-        role_status: 'strict|boolean',
-        permissionsData: 'array'
+        role_status: 'strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+// UPDATE ROLE Permissions REQUEST
+const updateRolePermissionsRequest = (body) => {
+    rules = {
+        permissionsData: 'object'
     }
 
     return checkBody(body, rules);
@@ -73,5 +81,6 @@ module.exports = {
     createRoleRequest,
     updateRoleRequest,
     deleteRoleRequest,
-    getSingleRoleRequest
+    getSingleRoleRequest,
+    updateRolePermissionsRequest
 }

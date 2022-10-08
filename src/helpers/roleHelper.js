@@ -58,8 +58,6 @@ module.exports = {
                     permissionsData.forEach(element => {
                         element.role_uuid = createrole.role_uuid;
                         element.role_no = createrole.role_no;
-                        element.role_slug = createrole.role_slug;
-                        element.role = createrole.role;
                         element.tenant_id = createrole.tenant_id;
 
                     });
@@ -199,7 +197,6 @@ module.exports = {
             const role_uuid = req.role_uuid;
             const role = req.role;
             const role_status = req.role_status;
-            const permissionsData = req.permissionsData;
             const roleDescription = req.roleDescription;
 
             // IF ROLE ALSO UPDATED THEN SLUG ALSO WILL BE UPDATED
@@ -244,23 +241,7 @@ module.exports = {
                         tenant_id: TENANTID
                     }]
                 }
-            })
-
-
-            // Loop For Assign Other Values to Permissions
-            permissionsData.forEach(element => {
-                element.role_uuid = findTargetedRole.role_uuid;
-                element.role_no = findTargetedRole.role_no;
-                element.role_slug = findTargetedRole.role_slug;
-                element.role = findTargetedRole.role;
-                element.tenant_id = findTargetedRole.tenant_id;
-
             });
-            // Update Permission
-            const permissionUpdate = await db.permissions_data.bulkCreate(permissionsData, {
-                updateOnDuplicate: ["edit_access", "read_access", "role", "role_slug"]
-            });
-            if (!permissionUpdate) return { message: "Permission Update Failed", status: false }
 
 
             // Return Data
@@ -268,6 +249,55 @@ module.exports = {
                 message: "Role and Permission Updated Successfully!!!",
                 status: true,
                 tenant_id: findTargetedRole.tenant_id
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!", status: false }
+        }
+
+    },
+    // UPDATE ROLE PERMISSIONS HELPER
+    updateRolePermissions: async (req, db, user, isAuth, TENANTID) => {
+
+        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+
+        // Auth Check
+        if (!isAuth) return { message: "Not Authorized", status: false };
+
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const permissionsData = req.permissionsData;
+            const { role_uuid, permission_uuid, read_access, edit_access } = permissionsData;
+
+            // Update Doc
+            const permissionsUpdateDoc = {
+                read_access,
+                edit_access
+            }
+
+            // Find and Update 
+            const permissionDataUpdate = await db.permissions_data.update(permissionsUpdateDoc, {
+                where: {
+                    [Op.and]: [{
+                        role_uuid,
+                        permission_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // If not updated
+            if (!permissionDataUpdate) return { message: "Update Went Wrong!!!", status: false }
+
+            // Return Data
+            return {
+                message: "Permission Updated Successfully For this Role!!!",
+                status: true,
+                tenant_id: TENANTID
             }
 
 

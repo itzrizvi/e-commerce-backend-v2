@@ -213,10 +213,18 @@ input UpdateRoleInput {
     role:String
     role_status:Boolean
     roleDescription:String
-    permissionsData:JSON
 }
 
 type UpdateRoleOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+}
+
+input UpdateRolePermissionsInput {
+    permissionsData:JSONObject
+}
+type UpdateRolePermissionsOutput {
     message:String
     status:Boolean
     tenant_id:String
@@ -261,7 +269,6 @@ type GetSingleRoleOutput {
 type PermissionData {
     permission_data_uuid:UUID
     role_no:Int
-    role_slug:String
     tenant_id:String
     role_uuid:UUID
     edit_access:Boolean
@@ -559,6 +566,7 @@ type Mutation {
 
     createRoleWithPermission(data: CreateRoleWithPermissionInput): CreateRoleWithPermissionOutput!
     updateRole(data: UpdateRoleInput): UpdateRoleOutput!
+    updateRolePermissions(data: UpdateRolePermissionsInput):UpdateRolePermissionsOutput!
     deleteRole(data: DeleteRoleInput): DeleteRoleOutput!
 
     createRolesPermission(data: RolesPermissionInput):RolesPermissionOutput!

@@ -16,5 +16,14 @@ module.exports = {
             message: "Multiple File uploaded successfully!",
             images: imagesUrl
         }
+    },
+    deleteSingle: (_, {file}) => {
+        deleteFile(file)
+        return { message: "File Delete successfully!" }
+    },
+    deleteMultiple: async (_, {files}) => {
+        const deleted = await deleteFiles(files)
+        if(deleted) return { message: "Files Delete successfully!" }
+        else return { message: "Files Delete failed!" }
     }
 }

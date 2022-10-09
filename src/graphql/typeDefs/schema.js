@@ -58,7 +58,6 @@ type AdminAuthPayload {
     user_status:Boolean
     updatedAt:String
     createdAt:String
-    roleNo:String
     status:Boolean
 }
 

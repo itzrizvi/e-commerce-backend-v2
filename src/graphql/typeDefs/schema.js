@@ -1,12 +1,12 @@
 const { gql } = require('apollo-server-express');
-// const uploadTypeDefs = require("../typeDefs/uploadTypes");
+const uploadTypeDefs = require("../typeDefs/uploadTypes");
 
 const typeDefs = gql`
 
 scalar JSON
 scalar JSONObject
 scalar UUID
-# scalar Upload
+scalar Upload
 
 
 # User Based Input and Queries #######################################################
@@ -587,9 +587,9 @@ type Mutation {
 `;
 
 
-module.exports = typeDefs;
+// module.exports = typeDefs;
 
-// module.exports = [
-//     typeDefs,
-//     uploadTypeDefs
-// ]
+module.exports = [
+    typeDefs,
+    uploadTypeDefs
+]

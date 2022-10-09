@@ -17,10 +17,12 @@ const s3 = new S3({
     secretAccessKey
   })
 
-module.exports.singleFileUpload = async (file, folder = '') => {
+module.exports.singleFileUpload = async (file, folder = '', fn = '') => {
     const {createReadStream, filename} = await file;
     const stream = createReadStream();
     var {ext, name} = parse(filename);
+    if(fn == '') name = `${Math.floor((Math.random() * 10000) + 1)}`;
+    else name = fn
     name = `${Math.floor((Math.random() * 10000) + 1)}`;
     const fileName = `${name}-${Date.now()}${ext}`
     let url = join(__dirname, `../../tmp/${fileName}`);
@@ -36,13 +38,14 @@ module.exports.singleFileUpload = async (file, folder = '') => {
     return upload
 } // This is single readfile
 
-module.exports.multipleFileUpload = async (file, folder= '') => {
+module.exports.multipleFileUpload = async (file, folder= '', fn = '') => {
     let fileUrl = [];
     for (let i = 0; i < file.length; i++) {
         const {createReadStream, filename} = await file[i];
         const stream = createReadStream();
         var {ext, name} = parse(filename);
-        name = `${Math.floor((Math.random() * 10000) + 1)}`;
+        if(fn == '') name = `${Math.floor((Math.random() * 10000) + 1)}`;
+        else name = fn
         const fileName = `${name}-${Date.now()}${ext}`
         let url = join(__dirname, `../../tmp/${fileName}`);
         const imageStream = createWriteStream(url)

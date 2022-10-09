@@ -56,26 +56,26 @@ async function startApolloServer() {
     const server = new ApolloServer({
         typeDefs: typeDefs,
         resolvers: resolvers,
-        // csrfPrevention: true,
-        // uploads: true,
-        // playground: true,
-        // introspection: true,
-        // tracing: true,
-        // context: ({ req }) => {
-        //     let { isAuth, user, TENANTID } = req;
-        //     return {
-        //         req,
-        //         isAuth,
-        //         user,
-        //         db,
-        //         TENANTID
-        //     }
-        // },
-        // cache: 'bounded',
-        // plugins: [
-        //     ApolloServerPluginLandingPageGraphQLPlayground(), // FOR DISABLE Apollo STUDIO
-        //     ApolloServerPluginLandingPageDisabled() // FOR DISABLE Apollo STUDIO
-        // ]
+        csrfPrevention: false,
+        uploads: true,
+        playground: true,
+        introspection: true,
+        tracing: true,
+        context: ({ req }) => {
+            let { isAuth, user, TENANTID } = req;
+            return {
+                req,
+                isAuth,
+                user,
+                db,
+                TENANTID
+            }
+        },
+        cache: 'bounded',
+        plugins: [
+            ApolloServerPluginLandingPageGraphQLPlayground(), // FOR DISABLE Apollo STUDIO
+            ApolloServerPluginLandingPageDisabled() // FOR DISABLE Apollo STUDIO
+        ]
 
     });
     app.use(graphqlUploadExpress());

@@ -21,9 +21,9 @@ module.exports.singleFileUpload = async (file, folder = '', fn = '') => {
     const {createReadStream, filename} = await file;
     const stream = createReadStream();
     var {ext, name} = parse(filename);
+    console.log(fn);
     if(fn == '') name = `${Math.floor((Math.random() * 10000) + 1)}`;
     else name = fn
-    name = `${Math.floor((Math.random() * 10000) + 1)}`;
     const fileName = `${name}-${Date.now()}${ext}`
     let url = join(__dirname, `../../tmp/${fileName}`);
     const imageStream = createWriteStream(url)

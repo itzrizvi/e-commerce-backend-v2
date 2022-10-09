@@ -2,7 +2,7 @@ const { singleFileUpload, multipleFileUpload } = require("../../utils/fileUpload
 
 module.exports = {
     singleUpload: async (_, {file}) => {
-        const imageUrl = await singleFileUpload(file, 'product/thumbnail');
+        const imageUrl = await singleFileUpload(file, 'product/thumbnail', 'xffsdfsghgdgfsfdg');
         console.log(imageUrl);
         return {
             message: "Single file uploaded successfully!",

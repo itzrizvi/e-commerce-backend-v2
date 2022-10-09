@@ -8,6 +8,13 @@ scalar JSONObject
 scalar UUID
 scalar Upload
 
+# Common Output Type #################################################################
+######################################################################################
+type CommonOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+}
 
 # User Based Input and Queries #######################################################
 ######################################################################################
@@ -94,7 +101,14 @@ type GetALLStaffOutput {
     status:Boolean
 }
 
-##input GetSingleAdminInput 
+input UpdateAdminInput {
+    uid:UUID!
+    first_name:String
+    last_name:String
+    password:String
+    roleUUID:JSON
+    user_status:Boolean
+}
 
 
 
@@ -561,6 +575,7 @@ type Mutation {
 
     adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
+    adminUpdate(data: UpdateAdminInput): CommonOutput!
 
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!

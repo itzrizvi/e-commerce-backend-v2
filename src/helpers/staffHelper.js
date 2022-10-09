@@ -1,5 +1,6 @@
+// All requires
 const { Op } = require("sequelize");
-
+const bcrypt = require('bcrypt');
 
 // STUFF HELPER
 module.exports = {
@@ -44,6 +45,82 @@ module.exports = {
         }
 
 
+    },
+    // Admin/ Staff Update 
+    adminUpdate: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+            // Data From Request
+            const { uid, first_name, last_name, password, roleUUID, user_status } = req;
+
+            // Update User Table Doc
+            const updateUserDoc = {
+                first_name,
+                last_name,
+                password: await bcrypt.hash(password, 10),
+                user_status
+            }
+
+            // Update User Table 
+            const updateAdminUser = await db.users.update(updateUserDoc, {
+                where: {
+                    [Op.and]: [{
+                        uid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (updateAdminUser) { // IF USER UPDATED
+
+                // ROLE ALSO UPDATED
+                if (roleUUID) {
+                    // Loop For Assign Other Values to Role Data
+                    roleUUID.forEach(element => {
+                        element.tenant_id = TENANTID;
+                        element.admin_uuid = uid;
+                    });
+
+                    // Delete Previous Entry
+                    const deletePreviousEntry = await db.admin_roles.destroy({
+                        where: {
+                            [Op.and]: [{
+                                admin_uuid: uid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    // If Not Deleted
+                    if (!deletePreviousEntry) return { message: "Previous Admin Role Delete Failed!!!!", status: false }
+
+                    // Update Admin Roles Bulk
+                    const adminRolesDataUpdate = await db.admin_roles.bulkCreate(roleUUID);
+                    if (!adminRolesDataUpdate) return { message: "Admin Role Data Udpate Failed", status: false }
+
+                    // Return
+                    return {
+                        message: "Role and Admin Update Success!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
+
+
+                } else {
+                    // Return 
+                    return {
+                        message: "Admin Update Success!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
+                }
+
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

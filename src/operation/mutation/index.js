@@ -6,4 +6,5 @@ module.exports = {
     ...require('./category'),
     ...require('./product'),
     ...require('./fileUpload'),
+    ...require('./staff'),
 }

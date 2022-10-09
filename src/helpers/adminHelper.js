@@ -140,7 +140,7 @@ module.exports = {
                         element.admin_uuid = createStuff.uid;
                     });
 
-                    // Permissions Bulk Create
+                    // Admin Roles Save Bulk
                     const adminRolesDataSave = await db.admin_roles.bulkCreate(roleUUID);
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 

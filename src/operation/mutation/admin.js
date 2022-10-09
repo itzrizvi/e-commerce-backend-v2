@@ -3,7 +3,7 @@ const { adminSignInController, adminSignUpController } = require("../../controll
 
 
 
-// Admin Mutation 
+// Admin Auth Based Mutation 
 module.exports = {
     // Admin Sign In
     adminSignIn: async (root, { email, password }, { db, TENANTID }, info) => {

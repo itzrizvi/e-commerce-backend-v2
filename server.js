@@ -13,8 +13,8 @@ const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
 const { ApolloServerPluginLandingPageGraphQLPlayground,
     ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
-// const { graphqlUploadExpress } = require('graphql-upload');
-// const { getFileStream } = require('./src/utils/fileUpload');
+const { graphqlUploadExpress } = require("graphql-upload-minimal");
+const { getFileStream } = require('./src/utils/fileUpload');
 
 // CREATE SERVER APP
 const app = express();
@@ -78,7 +78,7 @@ async function startApolloServer() {
         ]
 
     });
-    // app.use(graphqlUploadExpress());
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
     await server.start();
     server.applyMiddleware({ app });
     app.use((req, res) => {

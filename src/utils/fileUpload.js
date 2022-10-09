@@ -21,9 +21,9 @@ module.exports.singleFileUpload = async (file, folder = '', fn = '') => {
     const {createReadStream, filename} = await file;
     const stream = createReadStream();
     var {ext, name} = parse(filename);
+    console.log(fn);
     if(fn == '') name = `${Math.floor((Math.random() * 10000) + 1)}`;
     else name = fn
-    name = `${Math.floor((Math.random() * 10000) + 1)}`;
     const fileName = `${name}-${Date.now()}${ext}`
     let url = join(__dirname, `../../tmp/${fileName}`);
     const imageStream = createWriteStream(url)
@@ -81,3 +81,28 @@ module.exports.multipleFileUpload = async (file, folder= '', fn = '') => {
     });
   }
   exports.getFileStream = getFileStream
+
+
+// Delete Single file from aws
+  module.exports.deleteFile = (file) => {
+    const uploadParams = {
+        Bucket: bucketName,
+        Key: file
+      }
+    return s3.deleteObject(uploadParams).promise()
+  }
+
+  // Delete Multiple file
+  module.exports.deleteFiles = async (files) => {
+    const uploadParams = {
+        Bucket: bucketName,
+        Delete:{
+          Objects:[]
+        }
+      }
+      files.forEach((objectKey) => uploadParams.Delete.Objects.push({
+        Key:objectKey
+    }));
+
+    return await s3.deleteObjects(uploadParams).promise()
+} 

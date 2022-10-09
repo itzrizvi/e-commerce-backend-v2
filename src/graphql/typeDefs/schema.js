@@ -551,7 +551,6 @@ type SuccessMessage {
 ############################################################################
 
 type Query {
-    _:String
     getAllRoles: RoleOutput!
     getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
 
@@ -568,7 +567,6 @@ type Query {
 }
 
 type Mutation {
-    _:String
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
 
@@ -601,4 +599,7 @@ type Mutation {
 
 // module.exports = typeDefs;
 
-module.exports = [typeDefs, uploadTypeDefs]
+module.exports = [
+    typeDefs, 
+    uploadTypeDefs
+]

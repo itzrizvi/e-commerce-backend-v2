@@ -39,7 +39,7 @@ app.use(onReqTokenGenerate)
 app.use(onReqTenantCheck)
 
 // Get file from aws
-app.get('/images/*', getFileStream)
+// app.get('/images/*', getFileStream)
 
 
 // //

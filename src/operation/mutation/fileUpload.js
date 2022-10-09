@@ -9,7 +9,7 @@ module.exports = {
             image: imageUrl
         }
     },
-    multipleUpload: async (_, {file}) => {
+    multipleUpload: async (_, { file }) => {
         const imagesUrl = await multipleFileUpload(file, 'test/multiple');
         console.log(imagesUrl);
         return {

@@ -7,7 +7,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", isAuth: false, data: [], status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
 
 
         // Return To Controller

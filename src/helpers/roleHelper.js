@@ -8,7 +8,7 @@ module.exports = {
     // CREATE ROLES API
     createRoleWithPermission: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
@@ -93,7 +93,7 @@ module.exports = {
     getAllRoles: async (db, user, isAuth, TENANTID) => {
         // Return if No Auth
         if (!user || !isAuth) return { message: "Not Authenticated", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
 
         // Try Catch Block
@@ -185,7 +185,7 @@ module.exports = {
     // UPDATE ROLE HELPER
     updateRole: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
@@ -261,7 +261,7 @@ module.exports = {
     // UPDATE ROLE PERMISSIONS HELPER
     updateRolePermissions: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
@@ -309,7 +309,7 @@ module.exports = {
     },
     // DELETE ROLE HELPER
     deleteRole: async (req, db, user, isAuth, TENANTID) => {
-        if (!user.role_no || user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
 

@@ -14,6 +14,7 @@ const resolvers = require('./src/graphql/resolvers');
 const { ApolloServerPluginLandingPageGraphQLPlayground,
     ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
 const { graphqlUploadExpress } = require('graphql-upload');
+const { getFileStream } = require('./src/utils/fileUpload');
 
 // CREATE SERVER APP
 const app = express();
@@ -21,7 +22,6 @@ const app = express();
 // Middlewares Require
 const onReqTokenGenerate = require('./src/middlewares/onReqTokenGenerator');
 const onReqTenantCheck = require('./src/middlewares/onReqTenantCheckMiddleware');
-const { getFileStream } = require('./src/utils/fileUpload');
 
 
 // MIDDLWARES ARRAY

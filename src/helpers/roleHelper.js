@@ -279,8 +279,8 @@ module.exports = {
                 edit_access
             }
 
-            // Find and Update 
-            const permissionDataUpdate = await db.permissions_data.update(permissionsUpdateDoc, {
+            // Check The Permission is New or not
+            const checkIsNewPermission = await db.permissions_data.findOne({
                 where: {
                     [Op.and]: [{
                         role_uuid,
@@ -288,17 +288,68 @@ module.exports = {
                         tenant_id: TENANTID
                     }]
                 }
-            });
+            })
 
-            // If not updated
-            if (!permissionDataUpdate) return { message: "Update Went Wrong!!!", status: false }
+            if (!checkIsNewPermission) {
 
-            // Return Data
-            return {
-                message: "Permission Updated Successfully For this Role!!!",
-                status: true,
-                tenant_id: TENANTID
+                // GET ROLE NO
+                const findRoleNo = await db.roles.findOne({
+                    where: {
+                        [Op.and]: [{
+                            role_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Role No
+                const { role_no } = findRoleNo;
+
+                // Create Permission Data 
+                const creareRolePermissionsData = {
+                    role_no,
+                    role_uuid,
+                    permission_uuid,
+                    edit_access,
+                    read_access,
+                    tenant_id: TENANTID
+                }
+
+                // Save Role Permission
+                const saveRolePermission = await db.permissions_data.create(creareRolePermissionsData);
+                if (!saveRolePermission) return { message: "Failed to Add New Permission to this Role", status: false }
+
+                // Return Data
+                return {
+                    message: "New Permission Added Successfully For this Role!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+
+            } else {
+                // Find and Update 
+                const permissionDataUpdate = await db.permissions_data.update(permissionsUpdateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            role_uuid,
+                            permission_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // If not updated
+                if (!permissionDataUpdate) return { message: "Update Went Wrong!!!", status: false }
+
+                // Return Data
+                return {
+                    message: "Permission Updated Successfully For this Role!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
             }
+
+
 
 
 

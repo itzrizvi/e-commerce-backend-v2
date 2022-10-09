@@ -59,7 +59,7 @@ module.exports = {
     getAllRolesPermission: async (db, user, isAuth, TENANTID) => {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
 
         try {
@@ -85,7 +85,7 @@ module.exports = {
     getSingleRolesPermission: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Try Catch Block
         try {
@@ -124,7 +124,7 @@ module.exports = {
     updateRolesPermission: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Try Catch Block
         try {

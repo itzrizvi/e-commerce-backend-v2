@@ -1,12 +1,12 @@
 const { gql } = require('apollo-server-express');
-const uploadTypeDefs = require("../typeDefs/uploadTypes");
+// const uploadTypeDefs = require("../typeDefs/uploadTypes");
 
 const typeDefs = gql`
 
 scalar JSON
 scalar JSONObject
 scalar UUID
-scalar Upload
+# scalar Upload
 
 
 # User Based Input and Queries #######################################################
@@ -63,37 +63,27 @@ type AdminAuthPayload {
 }
 
 input AdminSignUpInput {
-    first_name:String
-    last_name:String
-    email:String
-    password:String
-    roleNo:String
-    userStatus:Boolean
+    first_name:String!
+    last_name:String!
+    email:String!
+    password:String!
+    roleUUID:JSON!
+    userStatus:Boolean!
 }
 
 type AdminSignUpOutput {
-    authToken:String
-    uid:String
-    first_name:String
-    last_name:String
-    email:String
     message:String
-    emailVerified:Boolean
-    user_status:Boolean
-    updatedAt:String
-    createdAt:String
-    roleNo:Float
-    role:String
-    roleSlug:String
     status:Boolean
+    tenant_id:String
 }
+
 
 type Staff {
     uid:UUID
     first_name:String
     last_name:String
     email:String
-    roles:Role
+    roles:[Role]
     user_status:Boolean
     email_verified:Boolean
 }
@@ -597,9 +587,9 @@ type Mutation {
 `;
 
 
-// module.exports = typeDefs;
+module.exports = typeDefs;
 
-module.exports = [
-    typeDefs, 
-    uploadTypeDefs
-]
+// module.exports = [
+//     typeDefs,
+//     uploadTypeDefs
+// ]

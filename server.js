@@ -13,8 +13,8 @@ const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
 const { ApolloServerPluginLandingPageGraphQLPlayground,
     ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
-const { graphqlUploadExpress } = require('graphql-upload');
-const { getFileStream } = require('./src/utils/fileUpload');
+// const { graphqlUploadExpress } = require('graphql-upload');
+// const { getFileStream } = require('./src/utils/fileUpload');
 
 // CREATE SERVER APP
 const app = express();
@@ -39,7 +39,7 @@ app.use(onReqTokenGenerate)
 app.use(onReqTenantCheck)
 
 // Get file from aws
-app.get('/images/*', getFileStream)
+// app.get('/images/*', getFileStream)
 
 
 // //
@@ -78,7 +78,7 @@ async function startApolloServer() {
         ]
 
     });
-    app.use(graphqlUploadExpress());
+    // app.use(graphqlUploadExpress());
     await server.start();
     server.applyMiddleware({ app });
     app.use((req, res) => {

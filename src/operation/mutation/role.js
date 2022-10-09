@@ -10,7 +10,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
         // Send to Controller
         return await createRolesController(args.data, db, user, isAuth, TENANTID);
     },
@@ -20,7 +20,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
         return await updateRoleController(args.data, db, user, isAuth, TENANTID);
@@ -31,7 +31,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false };
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
         return await updateRolePermissionsController(args.data, db, user, isAuth, TENANTID);
@@ -43,7 +43,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return TO Controller
         return await deleteRoleController(args.data, db, user, isAuth, TENANTID);

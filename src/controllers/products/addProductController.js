@@ -14,7 +14,7 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
 
     // Return If No Auth
     if (!user || !isAuth) return { message: "Not Authorized", status: false };
-    if (user.role_no === '0') return { message: "Not Authorized", status: false };
+    if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
     // Helper
     const data = await addProduct(req, db, user, isAuth, TENANTID);

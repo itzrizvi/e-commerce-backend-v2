@@ -23,7 +23,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth and No Role
         if (!user || !isAuth) return { message: "Not Authorized", email: args.data.email, status: false };
-        if (user.role_no === '0') return { message: "Not Authorized", email: args.data.email, status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", email: args.data.email, status: false };
 
 
         // Return To Controller

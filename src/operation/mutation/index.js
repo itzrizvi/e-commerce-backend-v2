@@ -5,5 +5,5 @@ module.exports = {
     ...require('./rolesPermission'),
     ...require('./category'),
     ...require('./product'),
-    // ...require('./fileUpload'),
+    ...require('./fileUpload'),
 }

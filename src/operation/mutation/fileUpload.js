@@ -1,4 +1,4 @@
-const { singleFileUpload, multipleFileUpload } = require("../../utils/fileUpload");
+const { singleFileUpload, multipleFileUpload, deleteFile, deleteFiles } = require("../../utils/fileUpload");
 
 module.exports = {
     singleUpload: async (_, {file}) => {

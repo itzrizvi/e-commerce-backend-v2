@@ -81,3 +81,28 @@ module.exports.multipleFileUpload = async (file, folder= '', fn = '') => {
     });
   }
   exports.getFileStream = getFileStream
+
+
+// Delete Single file from aws
+  module.exports.deleteFile = (file) => {
+    const uploadParams = {
+        Bucket: bucketName,
+        Key: file
+      }
+    return s3.deleteObject(uploadParams).promise()
+  }
+
+  // Delete Multiple file
+  module.exports.deleteFiles = async (files) => {
+    const uploadParams = {
+        Bucket: bucketName,
+        Delete:{
+          Objects:[]
+        }
+      }
+      files.forEach((objectKey) => uploadParams.Delete.Objects.push({
+        Key:objectKey
+    }));
+
+    return await s3.deleteObjects(uploadParams).promise()
+} 

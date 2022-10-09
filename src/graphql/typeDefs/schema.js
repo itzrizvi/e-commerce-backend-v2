@@ -1,11 +1,12 @@
 const { gql } = require('apollo-server-express');
-
+const uploadTypeDefs = require("../typeDefs/uploadTypes");
 
 const typeDefs = gql`
 
 scalar JSON
 scalar JSONObject
 scalar UUID
+scalar Upload
 
 
 # User Based Input and Queries #######################################################
@@ -540,12 +541,17 @@ type GetProductList {
     data:[SingleProduct]
 }
 
+type SuccessMessage {
+    message: String
+}
+
 
 
 # ROOT QUERIES AND MUTATIONS ###############################################
 ############################################################################
 
 type Query {
+    _:String
     getAllRoles: RoleOutput!
     getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
 
@@ -562,6 +568,7 @@ type Query {
 }
 
 type Mutation {
+    _:String
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
 
@@ -592,4 +599,6 @@ type Mutation {
 `;
 
 
-module.exports = typeDefs;
+// module.exports = typeDefs;
+
+module.exports = [typeDefs, uploadTypeDefs]

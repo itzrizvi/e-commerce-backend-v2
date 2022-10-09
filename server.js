@@ -13,7 +13,7 @@ const typeDefs = require('./src/graphql/typeDefs/schema');
 const resolvers = require('./src/graphql/resolvers');
 const { ApolloServerPluginLandingPageGraphQLPlayground,
     ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
-
+const { graphqlUploadExpress } = require('graphql-upload');
 
 // CREATE SERVER APP
 const app = express();
@@ -21,8 +21,7 @@ const app = express();
 // Middlewares Require
 const onReqTokenGenerate = require('./src/middlewares/onReqTokenGenerator');
 const onReqTenantCheck = require('./src/middlewares/onReqTenantCheckMiddleware');
-
-
+const { getFileStream } = require('./src/utils/fileUpload');
 
 
 // MIDDLWARES ARRAY
@@ -39,6 +38,9 @@ app.use(middlewares); // Middlewares Using
 app.use(onReqTokenGenerate)
 app.use(onReqTenantCheck)
 
+// Get file from aws
+app.get('/images/*', getFileStream)
+
 
 // //
 // // Encrypt
@@ -54,30 +56,30 @@ async function startApolloServer() {
     const server = new ApolloServer({
         typeDefs: typeDefs,
         resolvers: resolvers,
-        csrfPrevention: true,
-        uploads: true,
-        playground: true,
-        introspection: true,
-        tracing: true,
-        context: ({ req }) => {
-            let { isAuth, user, TENANTID } = req;
-            return {
-                req,
-                isAuth,
-                user,
-                db,
-                TENANTID
-            }
-        },
-        cache: 'bounded',
-        plugins: [
-            ApolloServerPluginLandingPageGraphQLPlayground(), // FOR DISABLE Apollo STUDIO
-            ApolloServerPluginLandingPageDisabled() // FOR DISABLE Apollo STUDIO
-        ]
+        // csrfPrevention: true,
+        // uploads: true,
+        // playground: true,
+        // introspection: true,
+        // tracing: true,
+        // context: ({ req }) => {
+        //     let { isAuth, user, TENANTID } = req;
+        //     return {
+        //         req,
+        //         isAuth,
+        //         user,
+        //         db,
+        //         TENANTID
+        //     }
+        // },
+        // cache: 'bounded',
+        // plugins: [
+        //     ApolloServerPluginLandingPageGraphQLPlayground(), // FOR DISABLE Apollo STUDIO
+        //     ApolloServerPluginLandingPageDisabled() // FOR DISABLE Apollo STUDIO
+        // ]
 
     });
+    app.use(graphqlUploadExpress());
     await server.start();
-
     server.applyMiddleware({ app });
     app.use((req, res) => {
         res.status(200);

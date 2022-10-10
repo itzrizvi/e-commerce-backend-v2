@@ -54,11 +54,17 @@ module.exports = {
             // Data From Request
             const { uid, first_name, last_name, password, roleUUID, user_status } = req;
 
+            // if Password available
+            let encryptPassword;
+            if (password) {
+                encryptPassword = await bcrypt.hash(password, 10);
+            }
+
             // Update User Table Doc
             const updateUserDoc = {
                 first_name,
                 last_name,
-                password: await bcrypt.hash(password, 10),
+                password: encryptPassword,
                 user_status
             }
 

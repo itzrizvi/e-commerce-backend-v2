@@ -360,6 +360,8 @@ type Brand {
     image_key:String
     image_ext:String
     tenant_id:String
+    createdAt:String
+    updatedAt:String
     categories:[Category]
 }
 

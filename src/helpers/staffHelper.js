@@ -13,7 +13,7 @@ module.exports = {
         // Try Catch Block
         try {
 
-
+            // Associations MANY TO MANY
             db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
             db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
 

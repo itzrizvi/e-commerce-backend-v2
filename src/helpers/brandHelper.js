@@ -1,10 +1,10 @@
 // BRAND HELPER REQUIRES
 const { default: slugify } = require("slugify");
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 
 // BRAND HELPER
 module.exports = {
-    // Create Brand HELPER
+    // Create Brand HELPER ->>>>>> TODO ADD IMAGE
     createBrand: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block
@@ -69,6 +69,68 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET ALL BRANDS
+    getAllBrands: async (db, user, isAuth, TENANTID) => {
+        // TRY CATCH BLOCK
+        try {
+
+            // Associations MANY TO MANY
+            db.brands.belongsToMany(db.categories, { through: db.brand_categories, sourceKey: 'brand_uuid', foreignKey: 'brand_uuid' });
+            db.categories.belongsToMany(db.brands, { through: db.brand_categories, sourceKey: 'cat_id', foreignKey: 'cat_id' });
+
+            // Check If Has Alias with subcategories
+            if (!db.categories.hasAlias('subcategories')) {
+
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subcategories'
+                });
+            }
+
+            // Check If Has Alias with subsubcategories
+            if (!db.categories.hasAlias('subsubcategories')) {
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subsubcategories'
+                });
+
+            }
+
+            // GET ALL BRANDS QUERY
+            const getAllBrands = await db.brands.findAll({
+                where: {
+                    tenant_id: TENANTID
+                },
+                include: [
+                    {
+                        model: db.categories,
+                        include: {
+                            model: db.categories,
+                            as: 'subcategories',
+                            include: {
+                                model: db.categories,
+                                as: 'subsubcategories'
+                            }
+                        }
+                    }
+                ],
+                order: [['brand_name', 'ASC'], [db.categories, 'cat_name', 'ASC']]
+            });
+
+            // Return Formation
+            return {
+                data: getAllBrands,
+                message: "All Brands With Categories GET Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
         }
     }
 }

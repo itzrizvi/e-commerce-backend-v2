@@ -4,4 +4,5 @@ module.exports = {
     ...require('./rolesPermissionQueries'),
     ...require('./categoryQueries'),
     ...require('./productQueries'),
+    ...require('./brandQueries'),
 }

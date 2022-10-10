@@ -372,6 +372,12 @@ input BrandCreateInput {
     categories:JSON!
 }
 
+type GetAllBrands{
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[Brand]
+}
 
 
 
@@ -407,7 +413,7 @@ type SubSubCategory {
     cat_id:UUID
     cat_name:String
     cat_slug:String
-    cat_descriptipn:JSON
+    cat_description:JSON
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
@@ -419,7 +425,7 @@ type SubCategory {
     cat_id:UUID
     cat_name:String
     cat_slug:String
-    cat_descriptipn:JSON
+    cat_description:JSON
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
@@ -432,7 +438,7 @@ type Category {
     cat_id:UUID!
     cat_name:String!
     cat_slug:String!
-    cat_descriptipn:JSON
+    cat_description:JSON
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
@@ -610,6 +616,8 @@ type Query {
 
     getAllStaff: GetALLStaffOutput!
     getSingleAdmin(query: GetSingleAdminInput): GetSingleAdminOutput!
+
+    getAllBrands: GetAllBrands!
 
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!

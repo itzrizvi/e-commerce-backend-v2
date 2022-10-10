@@ -110,6 +110,17 @@ input UpdateAdminInput {
     user_status:Boolean
 }
 
+input GetSingleAdminInput {
+    uid:UUID!
+}
+
+type GetSingleAdminOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:Staff
+}
+
 
 
 
@@ -561,6 +572,7 @@ type Query {
     getSingleRolesPermission(query: GetSingleRolesPermissionInput): GetSingleRolesPermissionOutput!
 
     getAllStaff: GetALLStaffOutput!
+    getSingleAdmin(query: GetSingleAdminInput): GetSingleAdminOutput!
 
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!

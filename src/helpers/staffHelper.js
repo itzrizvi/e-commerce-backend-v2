@@ -127,6 +127,45 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET SINGLE Admin/Staff
+    getSingleAdmin: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // UID from Request
+            const { uid } = req;
+
+            // Accociation with 3 tables
+            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
+            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+
+            // GET ALL STAFF QUERY
+            const getAdmin = await db.users.findOne({
+                where: {
+                    [Op.and]: [{
+                        uid,
+                        tenant_id: TENANTID
+                    }]
+
+                },
+                include: db.roles
+            });
+
+            // Return Formation
+            return {
+                data: getAdmin,
+                message: "All Staff GET Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

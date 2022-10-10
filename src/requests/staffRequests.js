@@ -19,6 +19,16 @@ const updateAdminRequest = (body) => {
 }
 
 
+// GET SINGLE ADMIN/STAFF  REQUEST
+const getSingleAdminRequest = (body) => {
+    rules = {
+        uid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
 // Check Staff/Admin Req Body
 const checkBody = (body, rules) => {
 
@@ -40,5 +50,6 @@ const checkBody = (body, rules) => {
 }
 
 module.exports = {
-    updateAdminRequest
+    updateAdminRequest,
+    getSingleAdminRequest
 }

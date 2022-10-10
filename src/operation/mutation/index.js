@@ -7,4 +7,5 @@ module.exports = {
     ...require('./product'),
     ...require('./fileUpload'),
     ...require('./staff'),
+    ...require('./brand'),
 }

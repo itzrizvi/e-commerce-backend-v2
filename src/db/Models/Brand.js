@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: true
         },
+        brand_sort_order: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

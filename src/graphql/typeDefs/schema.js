@@ -348,6 +348,37 @@ type UpdateRolesPermissionOutput {
     status:Boolean
 }
 
+# Brand Based Input and Queries ###############################################
+###############################################################################
+
+type Brand {
+    brand_uuid:UUID
+    brand_name:String
+    brand_slug:String
+    brand_description:String
+    brand_status:Boolean
+    image_key:String
+    image_ext:String
+    tenant_id:String
+    categories:[Category]
+}
+
+input BrandCreateInput {
+    brandName:String!
+    brandDescription:String
+    brandStatus:Boolean
+    brandImage:Upload
+    brandSortOrder:Int!
+    categories:JSON!
+}
+
+
+
+
+
+
+
+
 # Category Based Input and Queries ###############################################
 ##################################################################################
 
@@ -611,9 +642,10 @@ type Mutation {
     createRolesPermission(data: RolesPermissionInput):RolesPermissionOutput!
     updateRolesPermission(data: UpdateRolesPermissionInput):UpdateRolesPermissionOutput
 
+    createBrand(data: BrandCreateInput):CommonOutput!
+
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     
-
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }

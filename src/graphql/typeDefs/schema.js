@@ -121,6 +121,12 @@ type GetSingleAdminOutput {
     data:Staff
 }
 
+input AdminPasswordChangeInput {
+    uid:UUID!
+    oldPassword:String!
+    newPassword:String!
+}
+
 
 
 
@@ -588,6 +594,7 @@ type Mutation {
     adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
     adminUpdate(data: UpdateAdminInput): CommonOutput!
+    adminPasswordChange(data: AdminPasswordChangeInput): CommonOutput!
 
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!
     resendVerificationEmail(data: resendVerificationEmailInput):resendVerifyEmailOutput!

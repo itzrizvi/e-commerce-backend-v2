@@ -168,6 +168,60 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // Admin/Staff Password Change
+    adminPasswordChange: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+            // Data From Request 
+            const { uid, oldPassword, newPassword } = req;
+
+            // FIND ADMIN FIRST
+            const findAdmin = await db.users.findOne({
+                where: {
+                    [Op.and]: [{
+                        uid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // GET OLD PASSWORD FROM DB
+            const { password } = findAdmin;
+
+            // Check Old Password Is Matching or Not
+            const isMatched = await bcrypt.compare(oldPassword, password);
+            // IF NOT MATCHED
+            if (!isMatched) return { message: "Unauthorized Request!!!", status: false };
+
+            // Update Password Doc
+            const updatePassDoc = {
+                password: await bcrypt.hash(newPassword, 10)
+            }
+
+            // Update With New Password
+            const updateAdmin = await db.users.update(updatePassDoc, {
+                where: {
+                    [Op.and]: [{
+                        uid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (updateAdmin) {
+                return {
+                    message: "Password Updated Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+
+                }
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

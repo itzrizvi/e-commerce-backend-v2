@@ -18,7 +18,6 @@ const updateAdminRequest = (body) => {
     return checkBody(body, rules);
 }
 
-
 // GET SINGLE ADMIN/STAFF  REQUEST
 const getSingleAdminRequest = (body) => {
     rules = {
@@ -28,6 +27,16 @@ const getSingleAdminRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// ADMIN/STAFF PASSWORD CHANGE  REQUEST
+const adminPasswordChangeRequest = (body) => {
+    rules = {
+        uid: 'required|string',
+        oldPassword: 'required|string|min:6',
+        newPassword: 'required|string|min:6',
+    }
+
+    return checkBody(body, rules);
+}
 
 // Check Staff/Admin Req Body
 const checkBody = (body, rules) => {
@@ -51,5 +60,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     updateAdminRequest,
-    getSingleAdminRequest
+    getSingleAdminRequest,
+    adminPasswordChangeRequest
 }

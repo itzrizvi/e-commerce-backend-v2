@@ -113,11 +113,16 @@ module.exports = {
             const findAllRoleandPermissions = await db.roles.findAll({
                 include: [{
                     model: db.permissions_data, as: 'permissions',
-                    include: [{ model: db.roles_permission, as: 'rolesPermission' }]
+                    include: [{ model: db.roles_permission, as: 'rolesPermission' }],
+                    separate: true,
+                    order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
                 }],
                 where: {
                     tenant_id: TENANTID
-                }
+                },
+                order: [
+                    ['role', 'ASC']
+                ],
             })
 
             // Return Formation
@@ -159,10 +164,12 @@ module.exports = {
 
             // Find Single Role With Permission
             const findRoleandPermission = await db.roles.findOne({
-                include: [{
+                include: {
                     model: db.permissions_data, as: 'permissions',
-                    include: [{ model: db.roles_permission, as: 'rolesPermission' }]
-                }],
+                    include: { model: db.roles_permission, as: 'rolesPermission' },
+                    separate: true,
+                    order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
+                },
                 where: {
                     [Op.and]: [{
                         role_uuid,

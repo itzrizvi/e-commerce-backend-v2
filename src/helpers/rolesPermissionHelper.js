@@ -64,7 +64,12 @@ module.exports = {
 
         try {
             // GET ALL Feature Permissions Query
-            const allRolesPermission = await db.roles_permission.findAll({ where: { tenant_id: TENANTID } });
+            const allRolesPermission = await db.roles_permission.findAll({
+                where: { tenant_id: TENANTID },
+                order: [
+                    ['roles_permission_name', 'ASC']
+                ]
+            });
             // Return Data
             return {
                 isAuth: isAuth,

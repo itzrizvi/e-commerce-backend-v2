@@ -26,7 +26,8 @@ module.exports = {
                     }]
 
                 },
-                include: db.roles
+                include: db.roles,
+                order: [['first_name', 'ASC'], [db.roles, 'role', 'ASC']]
             });
 
             // Return Formation
@@ -150,7 +151,8 @@ module.exports = {
                     }]
 
                 },
-                include: db.roles
+                include: db.roles,
+                order: [[db.roles, 'role', 'ASC']]
             });
 
             // Return Formation

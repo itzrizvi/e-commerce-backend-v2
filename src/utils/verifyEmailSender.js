@@ -13,7 +13,7 @@ exports.verifierEmail = async (data) => {
 
     // Message Data to Send Email
     const message = {
-        from: "Prime Server Parts",
+        from: "no-reply@primeserverparts.com",
         to: data.email,
         subject: data.subject,
         text: data.message

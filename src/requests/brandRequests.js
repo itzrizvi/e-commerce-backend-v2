@@ -17,6 +17,15 @@ const createBrandRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET SINGLE BRAND REQUEST
+const getSingleBrandRequest = (body) => {
+    rules = {
+        brand_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 // Check Staff/Admin Req Body
 const checkBody = (body, rules) => {
@@ -39,5 +48,6 @@ const checkBody = (body, rules) => {
 }
 
 module.exports = {
-    createBrandRequest
+    createBrandRequest,
+    getSingleBrandRequest
 }

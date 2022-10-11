@@ -359,6 +359,7 @@ type Brand {
     brand_status:Boolean
     image_key:String
     image_ext:String
+    image_folder:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -379,6 +380,17 @@ type GetAllBrands{
     tenant_id:String
     status:Boolean
     data:[Brand]
+}
+
+input GetSingleBrandInput {
+    brand_uuid:UUID
+}
+
+type GetSingleBrandOutput{
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:Brand
 }
 
 
@@ -620,6 +632,7 @@ type Query {
     getSingleAdmin(query: GetSingleAdminInput): GetSingleAdminOutput!
 
     getAllBrands: GetAllBrands!
+    getSingleBrand(query: GetSingleBrandInput):GetSingleBrandOutput!
 
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!

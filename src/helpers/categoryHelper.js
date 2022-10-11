@@ -9,8 +9,6 @@ const { default: slugify } = require("slugify");
 module.exports = {
     // Create Category Helper ->>>>>> TODO IMAGE 
     createCategory: async (req, db, user, isAuth, TENANTID) => {
-
-        console.log(req)
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };

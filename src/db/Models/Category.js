@@ -36,9 +36,18 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSON,
             allowNull: true
         },
-        cat_image: {
-            type: DataTypes.STRING(255),
-            allowNull: true
+        image_key: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        image_ext: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        image_folder: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: ''
         },
         cat_sort_order: {
             type: DataTypes.INTEGER,

@@ -397,7 +397,7 @@ input CategoryCreateInput {
     categoryMetaTagTitle:String
     categoryMetaTagDescription:JSON
     categoryMetaTagKeywords:JSON
-    categoryImage:String
+    categoryImage:Upload
     categorySortOrder:Int
     categoryStatus:Boolean
     isFeatured:Boolean

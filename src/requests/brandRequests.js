@@ -17,6 +17,31 @@ const createBrandRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET SINGLE BRAND REQUEST
+const getSingleBrandRequest = (body) => {
+    rules = {
+        brand_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+// Update BRAND REQUEST
+const updateBrandRequest = (body) => {
+    rules = {
+        brand_uuid: 'required|string',
+        brand_name: 'string',
+        brand_description: 'string',
+        brand_status: 'strict|boolean',
+        brand_sort_order: 'strict|integer',
+        // brandImage: 'strict',
+        categories: 'array',
+    }
+
+    return checkBody(body, rules);
+}
+
 
 // Check Staff/Admin Req Body
 const checkBody = (body, rules) => {
@@ -39,5 +64,7 @@ const checkBody = (body, rules) => {
 }
 
 module.exports = {
-    createBrandRequest
+    createBrandRequest,
+    getSingleBrandRequest,
+    updateBrandRequest
 }

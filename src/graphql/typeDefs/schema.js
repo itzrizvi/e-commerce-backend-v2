@@ -357,8 +357,10 @@ type Brand {
     brand_slug:String
     brand_description:String
     brand_status:Boolean
+    brand_sort_order:Int
     image_key:String
     image_ext:String
+    image_folder:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -381,7 +383,26 @@ type GetAllBrands{
     data:[Brand]
 }
 
+input GetSingleBrandInput {
+    brand_uuid:UUID
+}
 
+type GetSingleBrandOutput{
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:Brand
+}
+
+input UpdateBrandInput {
+    brand_uuid:UUID!
+    brand_name:String
+    brand_status:Boolean
+    brand_description:String
+    brand_sort_order:Int
+    brandImage:Upload
+    categories:JSON
+}
 
 
 
@@ -620,6 +641,7 @@ type Query {
     getSingleAdmin(query: GetSingleAdminInput): GetSingleAdminOutput!
 
     getAllBrands: GetAllBrands!
+    getSingleBrand(query: GetSingleBrandInput):GetSingleBrandOutput!
 
     getAllCategories: GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
@@ -653,6 +675,7 @@ type Mutation {
     updateRolesPermission(data: UpdateRolesPermissionInput):UpdateRolesPermissionOutput
 
     createBrand(data: BrandCreateInput):CommonOutput!
+    updateBrand(data: UpdateBrandInput):CommonOutput!
 
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     

@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        image_folder: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: ''
+        },
         brand_status: {
             type: DataTypes.BOOLEAN,
             allowNull: true

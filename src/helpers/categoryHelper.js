@@ -7,8 +7,10 @@ const { default: slugify } = require("slugify");
 
 // Category Helper
 module.exports = {
-    // Create Category Helper
+    // Create Category Helper ->>>>>> TODO IMAGE 
     createCategory: async (req, db, user, isAuth, TENANTID) => {
+
+        console.log(req)
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -22,7 +24,7 @@ module.exports = {
             const cat_meta_tag_title = req.categoryMetaTagTitle ? req.categoryMetaTagTitle : null;
             const cat_meta_tag_description = req.categoryMetaTagDescription ? req.categoryMetaTagDescription : null;
             const cat_meta_tag_keywords = req.categoryMetaTagKeywords ? req.categoryMetaTagKeywords : null;
-            const cat_image = req.categoryImage ? req.categoryImage : null;
+            // const cat_image = req.categoryImage ? req.categoryImage : null;
             const cat_sort_order = req.categorySortOrder ? req.categorySortOrder : 0;
             const cat_status = req.categoryStatus ? req.categoryStatus : false;
             const is_featured = req.isFeatured ? req.isFeatured : false;
@@ -64,7 +66,9 @@ module.exports = {
                     cat_meta_tag_title,
                     cat_meta_tag_description,
                     cat_meta_tag_keywords,
-                    cat_image,
+                    image_key: "100001",
+                    image_ext: ".png",
+                    image_folder: 'thumbnail',
                     cat_sort_order,
                     cat_status,
                     created_by,

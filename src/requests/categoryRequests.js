@@ -12,7 +12,7 @@ const createCategoryRequest = (body) => {
         categoryMetaTagTitle: 'string',
         categoryMetaTagDescription: 'string',
         categoryMetaTagKeywords: 'string',
-        categoryImage: 'required|string',
+        // categoryImage: 'string',
         categorySortOrder: 'strict|integer',
         categoryStatus: 'strict|boolean'
     }

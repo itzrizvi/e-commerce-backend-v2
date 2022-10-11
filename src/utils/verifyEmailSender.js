@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer'); // Node Mailer
 exports.verifierEmail = async (data) => {
     // Transport Creator From Nodemailer
     const transport = nodemailer.createTransport({
+        service: "Gmail",
         host: process.env.NODEMAILER_HOST,
         port: process.env.NODEMAILER_PORT,
         auth: {
@@ -13,7 +14,7 @@ exports.verifierEmail = async (data) => {
 
     // Message Data to Send Email
     const message = {
-        from: "no-reply@primeserverparts.com",
+        from: process.env.NODEMAILER_FROM_EMAIL + "<" + process.env.NODEMAILER_FROM_EMAIL + ">",
         to: data.email,
         subject: data.subject,
         text: data.message

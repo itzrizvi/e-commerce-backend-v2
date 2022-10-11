@@ -2,7 +2,8 @@ const { singleFileUpload, multipleFileUpload, deleteFile, deleteFiles } = requir
 
 module.exports = {
     singleUpload: async (_, {file}) => {
-        const imageUrl = await singleFileUpload(file, 'product/thumbnail', '1000');
+        const imageUrl = await singleFileUpload(file, 'brand', '1000');
+        console.log(imageUrl);
         return {
             message: "Single file uploaded successfully!",
             image: imageUrl
@@ -10,6 +11,7 @@ module.exports = {
     },
     multipleUpload: async (_, { file }) => {
         const imagesUrl = await multipleFileUpload(file, '', '1000');
+        console.log(imagesUrl);
         return {
             message: "Multiple File uploaded successfully!",
             images: imagesUrl

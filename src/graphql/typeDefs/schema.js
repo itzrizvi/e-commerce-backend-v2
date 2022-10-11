@@ -357,6 +357,7 @@ type Brand {
     brand_slug:String
     brand_description:String
     brand_status:Boolean
+    brand_sort_order:Int
     image_key:String
     image_ext:String
     image_folder:String
@@ -393,7 +394,15 @@ type GetSingleBrandOutput{
     data:Brand
 }
 
-
+input UpdateBrandInput {
+    brand_uuid:UUID!
+    brand_name:String
+    brand_status:Boolean
+    brand_description:String
+    brand_sort_order:Int
+    brandImage:Upload
+    categories:JSON
+}
 
 
 
@@ -666,6 +675,7 @@ type Mutation {
     updateRolesPermission(data: UpdateRolesPermissionInput):UpdateRolesPermissionOutput
 
     createBrand(data: BrandCreateInput):CommonOutput!
+    updateBrand(data: UpdateBrandInput):CommonOutput!
 
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     

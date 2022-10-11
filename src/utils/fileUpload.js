@@ -87,11 +87,11 @@ module.exports.multipleFileUpload = async (file, folder= '', fn = '') => {
 
 // Delete Single file from aws
   module.exports.deleteFile = (folder, key, ext) => {
-    const uploadParams = {
-        Bucket: writeBucketName,
-        Key: folder + key + "." + ext
-      }
-    s3.deleteObject(uploadParams).promise()
+    // const uploadParams = {
+    //     Bucket: writeBucketName,
+    //     Key: folder + key + "." + ext
+    //   }
+    // s3.deleteObject(uploadParams).promise()
     const uploadParams2 = {
       Bucket: readBucketName,
       Key: folder + key + "." + ext
@@ -110,18 +110,18 @@ module.exports.multipleFileUpload = async (file, folder= '', fn = '') => {
 
   // Delete Multiple file
   module.exports.deleteFiles = (files) => {
-    const uploadParams = {
-        Bucket: writeBucketName,
-        Delete:{
-          Objects:[]
-        }
-      }
-      files.forEach((object) => {
-          uploadParams.Delete.Objects.push({
-            Key: object.folder + object.key + "." + object.ext
-          })
-      });
-    s3.deleteObjects(uploadParams).promise()
+    // const uploadParams = {
+    //     Bucket: writeBucketName,
+    //     Delete:{
+    //       Objects:[]
+    //     }
+    //   }
+    //   files.forEach((object) => {
+    //       uploadParams.Delete.Objects.push({
+    //         Key: object.folder + object.key + "." + object.ext
+    //       })
+    //   });
+    // s3.deleteObjects(uploadParams).promise()
 
 
     const uploadParams2 = {

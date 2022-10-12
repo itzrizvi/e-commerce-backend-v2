@@ -7,17 +7,17 @@ const baseName = basename(__filename);
 //Database connection with dialect of postgres specifying the database we are using
 
 // DB CONFIGS
-const database = process.env.DB_NAME;
-const user = process.env.DB_USER;
-const password = process.env.DB_PASS;
-const host = process.env.HOST;
-const port = process.env.DB_PORT
+// const database = process.env.DB_NAME;
+// const user = process.env.DB_USER;
+// const password = process.env.DB_PASS;
+// const host = process.env.HOST;
+// const port = process.env.DB_PORT
 // -----------------------------
-// const database = process.env.RDS_DB_NAME;
-// const user = process.env.RDS_USERNAME;
-// const password = process.env.RDS_PASSWORD;
-// const host = process.env.RDS_HOSTNAME;
-// const port = process.env.RDS_PORT;
+const database = process.env.RDS_DB_NAME;
+const user = process.env.RDS_USERNAME;
+const password = process.env.RDS_PASSWORD;
+const host = process.env.RDS_HOSTNAME;
+const port = process.env.RDS_PORT;
 
 const db = {}
 const sequelize = new Sequelize(database, user, password, {

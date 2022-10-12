@@ -506,7 +506,6 @@ input UpdateCategoryInput {
     is_featured:Boolean
     cat_sort_order:Int
     mark_as_main_category:Boolean
-    image:Upload
 }
 
 
@@ -704,7 +703,7 @@ type Mutation {
     updateBrand(data: UpdateBrandInput, file:Upload):CommonOutput!
 
     createCategory(data: CategoryCreateInput, file:Upload): CommonOutput!
-    updateCategory(data: UpdateCategoryInput): CommonOutput!
+    updateCategory(data: UpdateCategoryInput, file:Upload): CommonOutput!
     
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!

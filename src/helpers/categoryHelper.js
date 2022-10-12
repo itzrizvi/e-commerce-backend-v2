@@ -1,7 +1,7 @@
 // All Requires
 const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
-const { singleFileUpload } = require("../utils/fileUpload");
+const { singleFileUpload, deleteFile } = require("../utils/fileUpload");
 const config = require('config');
 
 
@@ -321,7 +321,7 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // Update Category Helper ->>>>>>>> TODO IMAGE
+    // Update Category Helper
     updateCategory: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block
@@ -379,7 +379,6 @@ module.exports = {
                 cat_meta_tag_title,
                 cat_meta_tag_description,
                 cat_meta_tag_keywords,
-                image: "1000000.jpg",
                 cat_sort_order,
                 cat_status,
                 is_featured
@@ -397,6 +396,57 @@ module.exports = {
 
             // IF NOT UPDATED THEN RETURN
             if (!updateCategory) return { message: "Update Gone Wrong!!!", status: false };
+
+            // Find Category to Get Image Name
+            const findCategory = await db.categories.findOne({
+                where: {
+                    [Op.and]: [{
+                        cat_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF Image Also Updated
+            if (image && findCategory.image) {
+
+                // Delete Previous S3 Image For this Category
+                const category_image_src = config.get("AWS.CATEGORY_IMG_SRC").split("/")
+                const category_image_bucketName = category_image_src[0];
+                const category_image_folder = category_image_src.slice(1);
+                await deleteFile({ idf: cat_id, folder: category_image_folder, fileName: findCategory.image, bucketName: category_image_bucketName });
+
+            }
+
+            // Upload New Image to S3
+            if (image) {
+
+                // Upload Image to AWS S3
+                const category_image_src = config.get("AWS.CATEGORY_IMG_SRC").split("/")
+                const category_image_bucketName = category_image_src[0];
+                const category_image_folder = category_image_src.slice(1);
+                const imageUrl = await singleFileUpload({ file: image, idf: cat_id, folder: category_image_folder, fileName: cat_id, bucketName: category_image_bucketName });
+                if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
+
+                // Update Category with New Image Name
+                const imageName = imageUrl.Key.split('/').slice(-1)[0];
+
+                // Find and Update Category Image Name By UUID
+                const categoryImageUpdate = {
+                    image: imageName
+                }
+                // Update Brand Image
+                const updateCategory = await db.categories.update(categoryImageUpdate, {
+                    where: {
+                        [Op.and]: [{
+                            cat_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                // If not updated
+                if (!updateCategory) return { message: "New Image Name Couldnt Be Updated Properly!!!", status: false }
+            }
 
             // Return Data
             return {

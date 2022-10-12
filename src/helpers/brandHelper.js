@@ -240,7 +240,7 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // UPDATE BRAND ->>>>>>> TODO ADD IMAGE
+    // UPDATE BRAND 
     updateBrand: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
@@ -299,7 +299,7 @@ module.exports = {
             });
 
             // IF Image Also Updated
-            if (image) {
+            if (image && findBrand.image) {
                 // Delete Previous S3 Image For this Brand
                 const brand_image_src = config.get("AWS.BRAND_IMG_DEST").split("/");
                 const brand_image_bucketName = brand_image_src[0];

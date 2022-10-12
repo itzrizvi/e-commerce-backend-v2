@@ -1,5 +1,5 @@
 // All Requires
-const { getAllCategoriesController, getFeaturedCategoriesController } = require("../../controllers")
+const { getAllCategoriesController, getFeaturedCategoriesController, getSingleCategoryController } = require("../../controllers")
 
 
 module.exports = {
@@ -16,5 +16,13 @@ module.exports = {
 
         // Return To Controller
         return await getFeaturedCategoriesController(db, TENANTID);
+    },
+    // GET All Featured Category
+    getSingleCategory: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // TENANT ID CHECK
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await getSingleCategoryController(args.query, db, user, isAuth, TENANTID);
     }
 }

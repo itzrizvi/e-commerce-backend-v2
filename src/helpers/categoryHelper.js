@@ -22,7 +22,7 @@ module.exports = {
             const cat_meta_tag_title = req.categoryMetaTagTitle ? req.categoryMetaTagTitle : null;
             const cat_meta_tag_description = req.categoryMetaTagDescription ? req.categoryMetaTagDescription : null;
             const cat_meta_tag_keywords = req.categoryMetaTagKeywords ? req.categoryMetaTagKeywords : null;
-            // const cat_image = req.categoryImage ? req.categoryImage : null;
+            // const image = req.categoryImage ? req.categoryImage : null;
             const cat_sort_order = req.categorySortOrder ? req.categorySortOrder : 0;
             const cat_status = req.categoryStatus ? req.categoryStatus : false;
             const is_featured = req.isFeatured ? req.isFeatured : false;
@@ -64,9 +64,7 @@ module.exports = {
                     cat_meta_tag_title,
                     cat_meta_tag_description,
                     cat_meta_tag_keywords,
-                    image_key: "100001",
-                    image_ext: ".png",
-                    image_folder: 'thumbnail',
+                    image: "100001.jpg",
                     cat_sort_order,
                     cat_status,
                     created_by,
@@ -131,9 +129,12 @@ module.exports = {
                         include: {
                             model: db.categories,
                             as: 'subsubcategories'
-                        }
+                        },
+                        separate: true,
+                        order: [[{ model: db.categories, as: 'subsubcategories' }, 'cat_name', 'ASC']]
                     }
                 ],
+                order: [['cat_name', 'ASC']],
                 where: {
                     [Op.and]: [{
                         cat_parent_id: null,
@@ -219,5 +220,68 @@ module.exports = {
             }
         }
 
+    },
+    getSingleCategory: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+            // Cat UUID From Request
+            const { cat_id } = req;
+
+            // Check If Has Alias with subcategories
+            if (!db.categories.hasAlias('subcategories')) {
+
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subcategories'
+                });
+            }
+
+            // Check If Has Alias with subsubcategories
+            if (!db.categories.hasAlias('subsubcategories')) {
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subsubcategories'
+                });
+
+            }
+
+            // All Categories with Sub and Sub Sub Categories Query
+            const findSingleCategory = await db.categories.findOne({
+                include: [
+                    { model: db.categories, as: 'subcategories' },
+                    {
+                        model: db.categories,
+                        as: 'subcategories',
+                        include: {
+                            model: db.categories,
+                            as: 'subsubcategories'
+                        },
+                        separate: true,
+                        order: [[{ model: db.categories, as: 'subsubcategories' }, 'cat_name', 'ASC']]
+                    }
+                ],
+                order: [['cat_name', 'ASC']],
+                where: {
+                    [Op.and]: [{
+                        cat_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Data
+            return {
+                message: "GET Single Category Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                category: findSingleCategory
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

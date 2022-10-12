@@ -20,6 +20,15 @@ const createCategoryRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET SINGLE CATEGORY REQUEST
+const getSingleCategoryRequest = (body) => {
+    rules = {
+        cat_id: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 
 // Check Validation
@@ -45,5 +54,6 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    createCategoryRequest
+    createCategoryRequest,
+    getSingleCategoryRequest
 }

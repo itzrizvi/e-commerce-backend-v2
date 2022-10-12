@@ -221,6 +221,7 @@ module.exports = {
         }
 
     },
+    // GET SINGLE Category
     getSingleCategory: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block
@@ -279,6 +280,95 @@ module.exports = {
                 status: true,
                 category: findSingleCategory
             }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // Update Category Helper ->>>>>>>> TODO IMAGE
+    updateCategory: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { cat_id,
+                cat_name,
+                cat_description,
+                cat_meta_tag_title,
+                cat_meta_tag_description,
+                cat_meta_tag_keywords,
+                cat_status,
+                cat_parent_id,
+                is_featured,
+                cat_sort_order,
+                mark_as_main_category,
+                image } = req;
+
+            // IF CATEGORY NAME ALSO UPDATED THEN SLUG ALSO WILL BE UPDATED
+            let cat_slug;
+            if (cat_name) {
+                // Create Slug
+                cat_slug = slugify(`${cat_name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
+            }
+
+            // Find To See If The Category Has any parent before
+            const checkHasParent = await db.categories.findOne({
+                where: {
+                    [Op.and]: [{
+                        cat_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF IS FEATURED TRUE
+            if (!mark_as_main_category) {
+                if (is_featured && (checkHasParent.cat_parent_id || cat_parent_id)) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
+            }
+
+
+            // Update Doc For Category Update
+            const updateDoc = {
+                cat_name,
+                cat_slug,
+                cat_description,
+                cat_parent_id: mark_as_main_category ? null : cat_parent_id,  // If Need to Make Child To Main Category
+                cat_meta_tag_title,
+                cat_meta_tag_description,
+                cat_meta_tag_keywords,
+                image: "1000000.jpg",
+                cat_sort_order,
+                cat_status,
+                is_featured
+            }
+
+            // Update Category
+            const updateCategory = await db.categories.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        cat_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF NOT UPDATED THEN RETURN
+            if (!updateCategory) return { message: "Update Gone Wrong!!!", status: false };
+
+            // Return Data
+            return {
+                message: "Category Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }

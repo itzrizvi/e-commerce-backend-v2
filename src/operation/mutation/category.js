@@ -1,5 +1,5 @@
 // All Requires
-const { createCategoryController } = require("../../controllers");
+const { createCategoryController, updateCategoryController } = require("../../controllers");
 
 
 // Role Mutation Start
@@ -22,6 +22,6 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        // return await createCategoryController(args.data, db, user, isAuth, TENANTID);
+        return await updateCategoryController(args.data, db, user, isAuth, TENANTID);
     }
 }

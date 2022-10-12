@@ -443,6 +443,7 @@ type SubSubCategory {
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
+    is_featured:Boolean
     tenant_id:String
     cat_parent_id:UUID
 }
@@ -458,6 +459,7 @@ type SubCategory {
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
+    is_featured:Boolean
     tenant_id:String
     cat_parent_id:UUID
     subsubcategories:[SubSubCategory]
@@ -474,6 +476,7 @@ type Category {
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
+    is_featured:Boolean
     tenant_id:String
     cat_parent_id:UUID
     subcategories:[SubCategory]
@@ -515,6 +518,7 @@ input UpdateCategoryInput {
     cat_parent_id:UUID
     is_featured:Boolean
     cat_sort_order:Int
+    mark_as_main_category:Boolean
     image:Upload
 }
 

@@ -3,4 +3,5 @@ module.exports = {
     getAllCategoriesController: require('./getAllCategoriesController'),
     getFeaturedCategoriesController: require('./getFeaturedCategoriesController'),
     getSingleCategoryController: require('./getSingleCateoryController'),
+    updateCategoryController: require('./updateCategoryController'),
 }

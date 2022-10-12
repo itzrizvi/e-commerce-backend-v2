@@ -6,8 +6,13 @@
         "HOST": "localhost",
         "PORT": 5000
     },
-    "AWS":{
-        "IMAGE_SIZE": ["128x128", "400x400", "800x800", "1200x1200"],
+    "AWS": {
+        "IMAGE_SIZE": [
+            "128x128",
+            "400x400",
+            "800x800",
+            "1200x1200"
+        ],
         "WRITE_BUCKET": "psp-image-storage",
         "READ_BUCKET": "psp-image-storage-resize",
         "BUCKET_REGION": "us-east-1",
@@ -17,15 +22,15 @@
         "PRODUCT_IMG_GALLERY_DEST": "psp-image-storage-resize/product/image/gallery",
         "PRODUCT_VDO_SRC": "psp-image-storage/product/video",
         "PRODUCT_VDO_DEST": "psp-image-storage-resize/product/video",
-        "PRODUCT_IMG_IDF":"partno",
+        "PRODUCT_IMG_IDF": "partno",
         "BRAND_IMG_SRC": "psp-image-storage/brand",
         "BRAND_IMG_DEST": "psp-image-storage-resize/brand",
-        "BRND_IMG_IDF":"uuid",
+        "BRND_IMG_IDF": "brand_uuid",
         "CATEGORY_IMG_SRC": "psp-image-storage/category",
         "CATEGORY_IMG_DEST": "psp-image-storage-resize/category",
-        "CATEGORY_IMG_IDF":"uuid",
+        "CATEGORY_IMG_IDF": "cat_id",
         "USER_IMG_SRC": "psp-image-storage/user",
         "USER_IMG_DEST": "psp-image-storage-resize/user",
-        "USER_IMG_IDF":"uuid"
+        "USER_IMG_IDF": "uuid"
     }
 }

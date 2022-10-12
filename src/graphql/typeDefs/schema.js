@@ -358,9 +358,7 @@ type Brand {
     brand_description:String
     brand_status:Boolean
     brand_sort_order:Int
-    image_key:String
-    image_ext:String
-    image_folder:String
+    image:Upload
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -371,7 +369,6 @@ input BrandCreateInput {
     brandName:String!
     brandDescription:String
     brandStatus:Boolean
-    brandImage:Upload
     brandSortOrder:Int!
     categories:JSON!
 }
@@ -400,7 +397,6 @@ input UpdateBrandInput {
     brand_status:Boolean
     brand_description:String
     brand_sort_order:Int
-    brandImage:Upload
     categories:JSON
 }
 
@@ -713,8 +709,8 @@ type Mutation {
     createRolesPermission(data: RolesPermissionInput):RolesPermissionOutput!
     updateRolesPermission(data: UpdateRolesPermissionInput):UpdateRolesPermissionOutput
 
-    createBrand(data: BrandCreateInput):CommonOutput!
-    updateBrand(data: UpdateBrandInput):CommonOutput!
+    createBrand(data: BrandCreateInput, file:Upload):CommonOutput!
+    updateBrand(data: UpdateBrandInput, file:Upload):CommonOutput!
 
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
     updateCategory(data: UpdateCategoryInput): CommonOutput!

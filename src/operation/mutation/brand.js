@@ -12,6 +12,8 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
+        // Merging File To Args Data
+        args.data.image = args.file;
 
         // Return To Controller
         return await createBrandController(args.data, db, user, isAuth, TENANTID);
@@ -24,6 +26,8 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
+        // Merging File To Args Data
+        args.data.image = args.file;
 
         // Return To Controller
         return await updateBrandController(args.data, db, user, isAuth, TENANTID);

@@ -38,9 +38,7 @@ module.exports = {
                 brand_name: brandName,
                 brand_slug,
                 brand_description: brandDescription,
-                image_key: "100001",
-                image_ext: ".png",
-                image_folder: 'thumbnail',
+                image: "100001.jpg",
                 brand_status: brandStatus,
                 brand_sort_order: brandSortOrder,
                 tenant_id: TENANTID

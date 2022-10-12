@@ -437,9 +437,13 @@ type SubSubCategory {
     cat_name:String
     cat_slug:String
     cat_description:JSON
+    cat_meta_tag_title:String
+    cat_meta_tag_description:JSON
+    cat_meta_tag_keywords:JSON
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
+    is_featured:Boolean
     tenant_id:String
     cat_parent_id:UUID
 }
@@ -449,9 +453,13 @@ type SubCategory {
     cat_name:String
     cat_slug:String
     cat_description:JSON
+    cat_meta_tag_title:String
+    cat_meta_tag_description:JSON
+    cat_meta_tag_keywords:JSON
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
+    is_featured:Boolean
     tenant_id:String
     cat_parent_id:UUID
     subsubcategories:[SubSubCategory]
@@ -462,9 +470,13 @@ type Category {
     cat_name:String!
     cat_slug:String!
     cat_description:JSON
+    cat_meta_tag_title:String
+    cat_meta_tag_description:JSON
+    cat_meta_tag_keywords:JSON
     cat_image:String
     cat_sort_order:Int
     cat_status:Boolean
+    is_featured:Boolean
     tenant_id:String
     cat_parent_id:UUID
     subcategories:[SubCategory]
@@ -477,11 +489,37 @@ type GetCategories {
     categories: [Category]
 }
 
+input GetSingleCategoryInput {
+    cat_id:UUID
+}
+
+type GetSingleCategoryOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    category:Category
+}
+
 type GetFeaturedCategories {
     message:String
     status:Boolean
     tenant_id:String
     categories: [Category]
+}
+
+input UpdateCategoryInput {
+    cat_id:UUID!
+    cat_name:String
+    cat_description:JSON
+    cat_meta_tag_title:String
+    cat_meta_tag_description:JSON
+    cat_meta_tag_keywords:JSON
+    cat_status:Boolean
+    cat_parent_id:UUID
+    is_featured:Boolean
+    cat_sort_order:Int
+    mark_as_main_category:Boolean
+    image:Upload
 }
 
 
@@ -644,6 +682,7 @@ type Query {
     getSingleBrand(query: GetSingleBrandInput):GetSingleBrandOutput!
 
     getAllCategories: GetCategories!
+    getSingleCategory(query: GetSingleCategoryInput): GetSingleCategoryOutput!
     getFeaturedCategories: GetFeaturedCategories!
 
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
@@ -678,6 +717,7 @@ type Mutation {
     updateBrand(data: UpdateBrandInput):CommonOutput!
 
     createCategory(data: CategoryCreateInput): CategoryCreateOutput!
+    updateCategory(data: UpdateCategoryInput): CommonOutput!
     
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!

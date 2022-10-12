@@ -12,9 +12,37 @@ const createCategoryRequest = (body) => {
         categoryMetaTagTitle: 'string',
         categoryMetaTagDescription: 'string',
         categoryMetaTagKeywords: 'string',
-        // categoryImage: 'string',
         categorySortOrder: 'strict|integer',
         categoryStatus: 'strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+// GET SINGLE CATEGORY REQUEST
+const getSingleCategoryRequest = (body) => {
+    rules = {
+        cat_id: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+// UPDATE CATEGORY REQUEST
+const updateCategoryRequest = (body) => {
+    rules = {
+        cat_id: 'required|string',
+        cat_name: 'string',
+        cat_description: 'string',
+        cat_meta_tag_title: 'string',
+        cat_meta_tag_description: 'string',
+        cat_meta_tag_keywords: 'string',
+        cat_status: 'strict|boolean',
+        cat_parent_id: 'string',
+        is_featured: 'strict|boolean',
+        cat_sort_order: 'strict|integer',
+        mark_as_main_category: 'strict|boolean'
     }
 
     return checkBody(body, rules);
@@ -45,5 +73,7 @@ const checkBody = (body, rules) => {
 
 
 module.exports = {
-    createCategoryRequest
+    createCategoryRequest,
+    getSingleCategoryRequest,
+    updateCategoryRequest
 }

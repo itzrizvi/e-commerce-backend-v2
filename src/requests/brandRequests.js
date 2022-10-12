@@ -35,7 +35,6 @@ const updateBrandRequest = (body) => {
         brand_description: 'string',
         brand_status: 'strict|boolean',
         brand_sort_order: 'strict|integer',
-        // brandImage: 'strict',
         categories: 'array',
     }
 

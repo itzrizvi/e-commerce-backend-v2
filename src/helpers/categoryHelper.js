@@ -1,13 +1,15 @@
 // All Requires
 const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
+const { singleFileUpload } = require("../utils/fileUpload");
+const config = require('config');
 
 
 
 
 // Category Helper
 module.exports = {
-    // Create Category Helper ->>>>>> TODO IMAGE 
+    // Create Category Helper
     createCategory: async (req, db, user, isAuth, TENANTID) => {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -22,10 +24,10 @@ module.exports = {
             const cat_meta_tag_title = req.categoryMetaTagTitle ? req.categoryMetaTagTitle : null;
             const cat_meta_tag_description = req.categoryMetaTagDescription ? req.categoryMetaTagDescription : null;
             const cat_meta_tag_keywords = req.categoryMetaTagKeywords ? req.categoryMetaTagKeywords : null;
-            // const image = req.categoryImage ? req.categoryImage : null;
             const cat_sort_order = req.categorySortOrder ? req.categorySortOrder : 0;
             const cat_status = req.categoryStatus ? req.categoryStatus : false;
             const is_featured = req.isFeatured ? req.isFeatured : false;
+            const { image } = req;
 
             // Category Slug
             const cat_slug = slugify(`${cat_name}`, {
@@ -64,7 +66,7 @@ module.exports = {
                     cat_meta_tag_title,
                     cat_meta_tag_description,
                     cat_meta_tag_keywords,
-                    image: "100001.jpg",
+                    image: null,
                     cat_sort_order,
                     cat_status,
                     created_by,
@@ -72,14 +74,48 @@ module.exports = {
                     is_featured
                 });
 
+                if (!insertCategory) return { message: "Theres an Error When Creating the Category!!!", status: false }; // If Not Inserted
+
+                // If Image is Available
+                let imageName;
+                if (image) {
+
+                    // Upload Image to AWS S3
+                    const category_image_src = config.get("AWS.CATEGORY_IMG_SRC").split("/")
+                    const category_image_bucketName = category_image_src[0];
+                    const category_image_folder = category_image_src.slice(1);
+                    const imageUrl = await singleFileUpload({ file: image, idf: insertCategory.cat_id, folder: category_image_folder, fileName: insertCategory.cat_id, bucketName: category_image_bucketName });
+                    if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
+
+
+                    // Update Category with Image Name
+                    imageName = imageUrl.Key.split('/').slice(-1)[0];
+                }
+                // Find and Update Category Image Name By UUID
+                const categoryImageUpdate = {
+                    image: imageName
+                }
+                const updateCategory = await db.categories.update(categoryImageUpdate, {
+                    where: {
+                        [Op.and]: [{
+                            cat_id: insertCategory.cat_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
                 // If Inserted Data
-                if (insertCategory) {
+                if (updateCategory) {
                     return {
                         message: "Successfully Created A Category!!!",
                         status: true,
-                        tenant_id: insertCategory.tenant_id,
-                        creategoryName: insertCategory.cat_name,
-                        createdBy: user.email
+                        tenant_id: insertCategory.tenant_id
+                    }
+                } else {
+                    return {
+                        message: "Category Create Failed!!!",
+                        status: false,
+                        tenant_id: TENANTID
                     }
                 }
 

@@ -49,16 +49,21 @@ module.exports = {
 
             // IF Not Created
             if (!createBrand) return { message: "Couldnt Created The Brand", status: false };
-            // Upload Image to AWS S3
-            const brand_image_src = config.get("AWS.BRAND_IMG_SRC").split("/")
-            const brand_image_bucketName = brand_image_src[0]
-            const brand_image_folder = brand_image_src.slice(1)
-            const imageUrl = await singleFileUpload({ file: image, idf: createBrand.brand_uuid, folder: brand_image_folder, fileName: createBrand.brand_uuid, bucketName: brand_image_bucketName });
-            if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
+            // If Image is Available
+            let imageName;
+            if (image) {
+                // Upload Image to AWS S3
+                const brand_image_src = config.get("AWS.BRAND_IMG_SRC").split("/")
+                const brand_image_bucketName = brand_image_src[0]
+                const brand_image_folder = brand_image_src.slice(1)
+                const imageUrl = await singleFileUpload({ file: image, idf: createBrand.brand_uuid, folder: brand_image_folder, fileName: createBrand.brand_uuid, bucketName: brand_image_bucketName });
+                if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
-            // Update Brand with Image Name
-            const imageName = imageUrl.Key.split('/').slice(-1)[0];
+                // Update Brand with Image Name
+                imageName = imageUrl.Key.split('/').slice(-1)[0];
+            }
+
 
             // Find and Update Brand Image Name By UUID
             const brandImageUpdate = {

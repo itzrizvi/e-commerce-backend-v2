@@ -11,6 +11,9 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
+        // Merging File To Args Data
+        args.data.image = args.file;
+
         // Return To Controller
         return await createCategoryController(args.data, db, user, isAuth, TENANTID);
     },
@@ -20,6 +23,9 @@ module.exports = {
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Merging File To Args Data
+        args.data.image = args.file;
 
         // Return To Controller
         return await updateCategoryController(args.data, db, user, isAuth, TENANTID);

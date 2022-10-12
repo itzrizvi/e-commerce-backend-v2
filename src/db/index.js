@@ -12,6 +12,14 @@ const password = config.get('SERVER.PASSWORD');
 const host = config.get('SERVER.HOST');
 const port = config.get('SERVER.PORT');
 
+// DO NOT REMOVE-----####
+// const database = process.env.RDS_DB_NAME;
+// const user = process.env.RDS_USERNAME;
+// const password = process.env.RDS_PASSWORD;
+// const host = process.env.RDS_HOSTNAME;
+// const port = process.env.RDS_PORT;
+// DO NOT REMOVE-----####
+
 const db = {}
 const sequelize = new Sequelize(database, user, password, {
     host: host,

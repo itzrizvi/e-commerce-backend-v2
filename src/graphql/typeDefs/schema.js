@@ -414,18 +414,9 @@ input CategoryCreateInput {
     categoryMetaTagTitle:String
     categoryMetaTagDescription:JSON
     categoryMetaTagKeywords:JSON
-    categoryImage:Upload
     categorySortOrder:Int
     categoryStatus:Boolean
     isFeatured:Boolean
-}
-
-type CategoryCreateOutput {
-    message:String
-    tenant_id:String
-    status:Boolean
-    creategoryName:String
-    createdBy:String
 }
 
 type SubSubCategory {
@@ -712,7 +703,7 @@ type Mutation {
     createBrand(data: BrandCreateInput, file:Upload):CommonOutput!
     updateBrand(data: UpdateBrandInput, file:Upload):CommonOutput!
 
-    createCategory(data: CategoryCreateInput): CategoryCreateOutput!
+    createCategory(data: CategoryCreateInput, file:Upload): CommonOutput!
     updateCategory(data: UpdateCategoryInput): CommonOutput!
     
     addProduct(data: AddProductInput):AddProductOutput!

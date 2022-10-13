@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        image: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
 
     }, {

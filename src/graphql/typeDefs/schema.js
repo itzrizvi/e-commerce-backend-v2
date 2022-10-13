@@ -683,7 +683,7 @@ type Mutation {
 
     adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
-    adminUpdate(data: UpdateAdminInput): CommonOutput!
+    adminUpdate(data: UpdateAdminInput, file:Upload): CommonOutput!
     adminPasswordChange(data: AdminPasswordChangeInput): CommonOutput!
 
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!

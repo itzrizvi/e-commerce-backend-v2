@@ -1,6 +1,8 @@
 // All requires
 const { Op } = require("sequelize");
 const bcrypt = require('bcrypt');
+const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
+const config = require('config');
 
 // STUFF HELPER
 module.exports = {
@@ -53,7 +55,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { uid, first_name, last_name, password, roleUUID, user_status } = req;
+            const { uid, first_name, last_name, password, roleUUID, user_status, image } = req;
 
             // if Password available
             let encryptPassword;
@@ -66,7 +68,8 @@ module.exports = {
                 first_name,
                 last_name,
                 password: encryptPassword,
-                user_status
+                user_status,
+                image: null
             }
 
             // Update User Table 
@@ -80,6 +83,55 @@ module.exports = {
             });
 
             if (updateAdminUser) { // IF USER UPDATED
+
+                // Find User to Get Image Name
+                const findUser = await db.users.findOne({
+                    where: {
+                        [Op.and]: [{
+                            uid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // IF Image Also Updated
+                if (image && findUser.image) {
+                    // Delete Previous S3 Image For this User
+                    const user_image_src = config.get("AWS.USER_IMG_DEST").split("/");
+                    const user_image_bucketName = user_image_src[0];
+                    const user_image_folder = user_image_src.slice(1);
+                    await deleteFile({ idf: uid, folder: user_image_folder, fileName: findUser.image, bucketName: user_image_bucketName });
+                }
+
+                // Upload New Image to S3
+                if (image) {
+                    // Upload Image to AWS S3
+                    const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
+                    const user_image_bucketName = user_image_src[0];
+                    const user_image_folder = user_image_src.slice(1);
+                    const imageUrl = await singleFileUpload({ file: image, idf: uid, folder: user_image_folder, fileName: uid, bucketName: user_image_bucketName });
+                    if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
+
+                    // Update Brand with New Image Name
+                    const imageName = imageUrl.Key.split('/').slice(-1)[0];
+                    console.log(imageName)
+                    // Find and Update Brand Image Name By UUID
+                    const userImageUpdate = {
+                        image: imageName
+                    }
+                    // Update Brand Image
+                    const updateUser = await db.users.update(userImageUpdate, {
+                        where: {
+                            [Op.and]: [{
+                                uid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    // If not updated
+                    if (!updateUser) return { message: "New Image Name Couldnt Be Updated Properly!!!", status: false }
+                }
+
 
                 // ROLE ALSO UPDATED
                 if (roleUUID) {

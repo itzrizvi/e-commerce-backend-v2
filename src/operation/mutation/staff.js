@@ -2,7 +2,6 @@
 const { updateAdminController, adminPasswordChangeController } = require("../../controllers");
 
 
-
 // Stuff/Admin BASED Mutation
 module.exports = {
     // Admin/Staff Update
@@ -13,6 +12,8 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
+        // Merging File To Args Data
+        args.data.image = args.file;
 
         // Return To Controller
         return await updateAdminController(args.data, db, user, isAuth, TENANTID);

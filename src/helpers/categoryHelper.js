@@ -411,7 +411,7 @@ module.exports = {
             if (image && findCategory.image) {
 
                 // Delete Previous S3 Image For this Category
-                const category_image_src = config.get("AWS.CATEGORY_IMG_SRC").split("/")
+                const category_image_src = config.get("AWS.CATEGORY_IMG_DEST").split("/")
                 const category_image_bucketName = category_image_src[0];
                 const category_image_folder = category_image_src.slice(1);
                 await deleteFile({ idf: cat_id, folder: category_image_folder, fileName: findCategory.image, bucketName: category_image_bucketName });

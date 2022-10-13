@@ -358,7 +358,7 @@ type Brand {
     brand_description:String
     brand_status:Boolean
     brand_sort_order:Int
-    image:Upload
+    image:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -427,7 +427,7 @@ type SubSubCategory {
     cat_meta_tag_title:String
     cat_meta_tag_description:JSON
     cat_meta_tag_keywords:JSON
-    cat_image:String
+    image:String
     cat_sort_order:Int
     cat_status:Boolean
     is_featured:Boolean
@@ -443,7 +443,7 @@ type SubCategory {
     cat_meta_tag_title:String
     cat_meta_tag_description:JSON
     cat_meta_tag_keywords:JSON
-    cat_image:String
+    image:String
     cat_sort_order:Int
     cat_status:Boolean
     is_featured:Boolean
@@ -460,7 +460,7 @@ type Category {
     cat_meta_tag_title:String
     cat_meta_tag_description:JSON
     cat_meta_tag_keywords:JSON
-    cat_image:String
+    image:String
     cat_sort_order:Int
     cat_status:Boolean
     is_featured:Boolean
@@ -669,6 +669,8 @@ type Query {
 
     getAllCategories: GetCategories!
     getSingleCategory(query: GetSingleCategoryInput): GetSingleCategoryOutput!
+    getParentCategories:GetCategories!
+    getParentChildCategories:GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
 
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!

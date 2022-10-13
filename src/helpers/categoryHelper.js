@@ -459,5 +459,87 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // Get Parent Categories Helper
+    getParentCategories: async (db, user, isAuth, TENANTID) => {
+
+        // Try Catch
+        try {
+
+            // All Parent Categories Query
+            const getParentCategories = await db.categories.findAll({
+                order: [['cat_name', 'ASC']],
+                where: {
+                    [Op.and]: [{
+                        cat_parent_id: null,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Data
+            return {
+                message: "All Parent Categories GET Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                categories: getParentCategories
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wromg!!!", status: false }
+        }
+    },
+    // Get Parent Child Categories
+    getParentChildCategories: async (db, user, isAuth, TENANTID) => {
+        // Tr Catch 
+        try {
+            // Check If Has Alias with subcategories
+            if (!db.categories.hasAlias('subcategories')) {
+
+                await db.categories.hasMany(db.categories, {
+                    targetKey: 'cat_id',
+                    foreignKey: 'cat_parent_id',
+                    as: 'subcategories'
+                });
+            }
+
+            // All Categories with Sub and Sub Sub Categories Query
+            const findAllCategories = await db.categories.findAll({
+                include: [
+                    { model: db.categories, as: 'subcategories' }
+                ],
+                order: [['cat_name', 'ASC']],
+                where: {
+                    [Op.and]: [{
+                        cat_parent_id: null,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Get First Two Steps of Categories
+            const allParentChildCategories = findAllCategories;
+            findAllCategories.forEach(async (elementOne) => {
+                await elementOne.subcategories.forEach(async (elementTwo) => {
+                    await allParentChildCategories.push(elementTwo);
+                });
+            });
+
+            // Return Data
+            return {
+                message: "Success",
+                tenant_id: TENANTID,
+                status: true,
+                categories: allParentChildCategories
+            }
+
+
+
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong!!!", status: false }
+            }
+        }
     }
 }

@@ -4,4 +4,6 @@ module.exports = {
     getFeaturedCategoriesController: require('./getFeaturedCategoriesController'),
     getSingleCategoryController: require('./getSingleCateoryController'),
     updateCategoryController: require('./updateCategoryController'),
+    getParentCategoriesController: require('./getParentCategoriesController'),
+    getParentChildCategoriesController: require('./getParentChildCategoriesController'),
 }

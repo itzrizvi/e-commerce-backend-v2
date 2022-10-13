@@ -1,5 +1,9 @@
 // All Requires
-const { getAllCategoriesController, getFeaturedCategoriesController, getSingleCategoryController } = require("../../controllers")
+const { getAllCategoriesController,
+    getFeaturedCategoriesController,
+    getSingleCategoryController,
+    getParentCategoriesController,
+    getParentChildCategoriesController } = require("../../controllers")
 
 
 module.exports = {
@@ -24,5 +28,21 @@ module.exports = {
 
         // Return To Controller
         return await getSingleCategoryController(args.query, db, user, isAuth, TENANTID);
+    },
+    // GET Parent Categories
+    getParentCategories: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // TENANT ID CHECK
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await getParentCategoriesController(db, user, isAuth, TENANTID);
+    },
+    // GET Parent and a Child Categories
+    getParentChildCategories: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // TENANT ID CHECK
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await getParentChildCategoriesController(db, user, isAuth, TENANTID);
     }
 }

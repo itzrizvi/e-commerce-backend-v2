@@ -114,7 +114,7 @@ module.exports = {
 
                     // Update Brand with New Image Name
                     const imageName = imageUrl.Key.split('/').slice(-1)[0];
-                    console.log(imageName)
+
                     // Find and Update Brand Image Name By UUID
                     const userImageUpdate = {
                         image: imageName

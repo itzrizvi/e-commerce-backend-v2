@@ -7,4 +7,5 @@ module.exports = {
     ...require('./categories'),
     ...require('./products'),
     ...require('./brands'),
+    ...require('./attributeGroup'),
 }

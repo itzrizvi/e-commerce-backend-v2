@@ -514,6 +514,7 @@ input UpdateCategoryInput {
 input CreateAttributeGroupInput{
     attr_group_name:String!
     attrgroup_sortorder:Int!
+    attrgroup_status:Boolean!
 }
 
 

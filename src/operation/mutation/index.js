@@ -8,4 +8,5 @@ module.exports = {
     ...require('./fileUpload'),
     ...require('./staff'),
     ...require('./brand'),
+    ...require('./attributeGroup'),
 }

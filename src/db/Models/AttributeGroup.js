@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        attrgroup_status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

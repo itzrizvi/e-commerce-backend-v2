@@ -513,7 +513,7 @@ input UpdateCategoryInput {
 
 input CreateAttributeGroupInput{
     attr_group_name:String!
-    cat_sort_order:Int!
+    attrgroup_sortorder:Int!
 }
 
 
@@ -715,6 +715,8 @@ type Mutation {
 
     createCategory(data: CategoryCreateInput, file:Upload): CommonOutput!
     updateCategory(data: UpdateCategoryInput, file:Upload): CommonOutput!
+
+    createAttrGroup(data: CreateAttributeGroupInput):CommonOutput!
     
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!

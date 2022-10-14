@@ -402,8 +402,6 @@ input UpdateBrandInput {
 
 
 
-
-
 # Category Based Input and Queries ###############################################
 ##################################################################################
 
@@ -507,6 +505,17 @@ input UpdateCategoryInput {
     cat_sort_order:Int
     mark_as_main_category:Boolean
 }
+
+
+
+# Product Attribute Based Input and Types ###############################
+#########################################################################
+
+input CreateAttributeGroupInput{
+    attr_group_name:String!
+    cat_sort_order:Int!
+}
+
 
 
 # Product Based Input and Types #########################################

@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const bcrypt = require('bcrypt');
 const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
+const { verifierEmail } = require("../utils/verifyEmailSender");
 
 // STUFF HELPER
 module.exports = {
@@ -93,6 +94,27 @@ module.exports = {
                         }]
                     }
                 });
+
+                // If Password is Also Changed Changed
+                let mailData
+                if (password) {
+                    // Setting Up Data for EMAIL SENDER
+                    mailData = {
+                        email: findUser.email,
+                        subject: "Password Changed on Prime Server Parts",
+                        message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
+                    }
+                } else {
+                    // Setting Up Data for EMAIL SENDER
+                    mailData = {
+                        email: findUser.email,
+                        subject: "Account Update on Prime Server Parts",
+                        message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
+                    }
+                }
+
+                // SENDING EMAIL
+                await verifierEmail(mailData);
 
                 // IF Image Also Updated
                 if (image && findUser.image) {
@@ -263,6 +285,27 @@ module.exports = {
             });
 
             if (updateAdmin) {
+
+                // Find User to Get Image Name
+                const findUser = await db.users.findOne({
+                    where: {
+                        [Op.and]: [{
+                            uid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                // If Update Success
+                // Setting Up Data for EMAIL SENDER
+                const mailData = {
+                    email: findUser.email,
+                    subject: "Password Changed on Prime Server Parts",
+                    message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
+                }
+                // SENDING EMAIL
+                await verifierEmail(mailData);
+
+                // Return Formation
                 return {
                     message: "Password Updated Successfully!!!",
                     status: true,

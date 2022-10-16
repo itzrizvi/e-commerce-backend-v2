@@ -517,6 +517,13 @@ input CreateAttributeGroupInput{
     attrgroup_status:Boolean!
 }
 
+input UpdateAttributeGroupInput{
+    attr_group_uuid:UUID!
+    attr_group_name:String
+    attrgroup_sortorder:Int
+    attrgroup_status:Boolean
+}
+
 
 
 # Product Based Input and Types #########################################
@@ -718,6 +725,7 @@ type Mutation {
     updateCategory(data: UpdateCategoryInput, file:Upload): CommonOutput!
 
     createAttrGroup(data: CreateAttributeGroupInput):CommonOutput!
+    updateAttrGroup(data: UpdateAttributeGroupInput):CommonOutput!
     
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!

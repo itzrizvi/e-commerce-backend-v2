@@ -4,11 +4,25 @@ const { make } = require('simple-body-validator');
 let rules = {}, request, response;
 
 
-// CREATE BRAND REQUEST
+// CREATE Attr Group REQUEST
 const createAttrGroupRequest = (body) => {
     rules = {
         attr_group_name: 'required|string',
-        attrgroup_sortorder: 'required|strict|integer'
+        attrgroup_sortorder: 'required|strict|integer',
+        attrgroup_status: 'required|strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+// Update ATTR Group  REQUEST
+const updateAttrGroupRequest = (body) => {
+    rules = {
+        attr_group_uuid: 'required|string',
+        attr_group_name: 'string',
+        attrgroup_sortorder: 'strict|integer',
+        attrgroup_status: 'strict|boolean'
     }
 
     return checkBody(body, rules);
@@ -38,4 +52,5 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createAttrGroupRequest,
+    updateAttrGroupRequest
 }

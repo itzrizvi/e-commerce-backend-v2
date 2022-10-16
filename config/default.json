@@ -4,7 +4,7 @@
         "USER": "rizvi",
         "PASSWORD": "PaBronx1995",
         "HOST": "localhost",
-        "PORT": 5000
+        "PORT": 5432
     },
     "AWS": {
         "IMAGE_SIZE": [

@@ -159,5 +159,47 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // Get Single ATTR HELPER
+    getSingleAttribute: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { attribute_uuid } = req;
+
+            // Association with Attribute Group and Attributes
+            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+                await db.attributes.hasOne(db.attr_groups, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attribute_group' });
+            }
+
+            // GET ALL ATTR
+            const getAttribute = await db.attributes.findOne({
+                where: {
+                    attribute_uuid,
+                    tenant_id: TENANTID
+                },
+                include: [{
+                    model: db.attr_groups, as: 'attribute_group'
+                }],
+                order: [
+                    ['attribute_name', 'ASC']
+                ],
+            });
+
+            // Return 
+            return {
+                message: "Get Attribute Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getAttribute
+            }
+
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

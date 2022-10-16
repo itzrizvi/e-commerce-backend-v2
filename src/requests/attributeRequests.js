@@ -62,6 +62,17 @@ const updateAttributeRequest = (body) => {
 }
 
 
+// GET Single ATTR Request
+const getSingleAttributeRequest = (body) => {
+    rules = {
+        attribute_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+
 
 
 // Check Attribute Req Body
@@ -89,5 +100,6 @@ module.exports = {
     updateAttrGroupRequest,
     getSingleAttrGroupRequest,
     createAttributeRequest,
-    updateAttributeRequest
+    updateAttributeRequest,
+    getSingleAttributeRequest
 }

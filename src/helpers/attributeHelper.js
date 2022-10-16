@@ -173,7 +173,7 @@ module.exports = {
                 await db.attributes.hasOne(db.attr_groups, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attribute_group' });
             }
 
-            // GET ALL ATTR
+            // GET Single ATTR
             const getAttribute = await db.attributes.findOne({
                 where: {
                     attribute_uuid,

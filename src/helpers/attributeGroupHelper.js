@@ -115,12 +115,23 @@ module.exports = {
         // Try Catch Block
         try {
 
-            // ASSOCIATION WITH ATTR AND OTHER TABLE ->>>>>>>>>>> TODO
+            // Association with Attribute Group and Attributes
+            if (!db.attr_groups.hasAlias('attributes')) {
+                await db.attr_groups.hasMany(db.attributes, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attributes' });
+            }
+
             // GET ALL ATTR GROUPS
             const allAttrGroups = await db.attr_groups.findAll({
                 where: {
                     tenant_id: TENANTID
-                }
+                },
+                include: [{
+                    model: db.attributes, as: 'attributes'
+                }],
+                order: [
+                    ['attr_group_name', 'ASC'],
+                    [{ model: db.attributes }, 'attribute_name', 'ASC']
+                ],
             });
 
             // Return 
@@ -143,8 +154,10 @@ module.exports = {
             // Data From Request
             const { attr_group_uuid } = req;
 
-
-            // ASSOCIATION WITH OTHER TABLES ->>>>>>>>> TODO
+            // Association with Attribute Group and Attributes
+            if (!db.attr_groups.hasAlias('attributes')) {
+                await db.attr_groups.hasMany(db.attributes, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attributes' });
+            }
             // GET Single ATTR Group
             const singleAttrGroup = await db.attr_groups.findOne({
                 where: {
@@ -152,7 +165,14 @@ module.exports = {
                         attr_group_uuid,
                         tenant_id: TENANTID
                     }]
-                }
+                },
+                include: [{
+                    model: db.attributes, as: 'attributes'
+                }],
+                order: [
+                    ['attr_group_name', 'ASC'],
+                    [{ model: db.attributes }, 'attribute_name', 'ASC']
+                ],
             });
 
             // return 

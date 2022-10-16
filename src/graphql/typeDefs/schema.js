@@ -101,6 +101,7 @@ input UpdateAdminInput {
     password:String
     roleUUID:JSON
     user_status:Boolean
+    sendEmail:Boolean!
 }
 
 input GetSingleAdminInput {
@@ -528,6 +529,7 @@ type AttributeGroup {
     tenant_id:String
     createdAt:String
     updatedAt:String
+    attributes:[Attribute]
 }
 
 type GetAllAttrGroups{
@@ -564,6 +566,16 @@ input UpdateAttributeInput{
     attr_group_uuid:UUID
 }
 
+type Attribute {
+    attribute_uuid:UUID
+    attribute_name:String
+    attribute_slug:String
+    attribute_status:Boolean
+    attr_group_uuid:UUID
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
 
 
 

@@ -575,6 +575,14 @@ type Attribute {
     tenant_id:String
     createdAt:String
     updatedAt:String
+    attribute_group:AttributeGroup
+}
+
+type GetAllAttributes {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[Attribute]
 }
 
 

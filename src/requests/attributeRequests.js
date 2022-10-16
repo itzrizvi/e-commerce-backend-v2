@@ -15,7 +15,6 @@ const createAttrGroupRequest = (body) => {
     return checkBody(body, rules);
 }
 
-
 // Update ATTR Group  REQUEST
 const updateAttrGroupRequest = (body) => {
     rules = {

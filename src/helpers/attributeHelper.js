@@ -122,5 +122,42 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // Get All ATTR HELPER
+    getAllAttributes: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Association with Attribute Group and Attributes
+            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+                await db.attributes.hasOne(db.attr_groups, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attribute_group' });
+            }
+
+            // GET ALL ATTR
+            const getAllAttributes = await db.attributes.findAll({
+                where: {
+                    tenant_id: TENANTID
+                },
+                include: [{
+                    model: db.attr_groups, as: 'attribute_group'
+                }],
+                order: [
+                    ['attribute_name', 'ASC']
+                ],
+            });
+
+            // Return 
+            return {
+                message: "All Get Attributes Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getAllAttributes
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

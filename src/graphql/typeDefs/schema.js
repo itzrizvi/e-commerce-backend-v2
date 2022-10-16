@@ -754,6 +754,8 @@ type Query {
     getAllAttrGroups: GetAllAttrGroups!
     getSingleAttrGroup(query: GetSingleAttrGroupInput): GetSingleAttrGroup!
 
+    getAllAttributes:GetAllAttributes!
+
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
     getProductList: GetProductList!
 }

@@ -6,4 +6,5 @@ module.exports = {
     ...require('./productQueries'),
     ...require('./brandQueries'),
     ...require('./attributeGroupQueries'),
+    ...require('./attributeQueries'),
 }

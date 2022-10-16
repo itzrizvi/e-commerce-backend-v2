@@ -524,6 +524,24 @@ input UpdateAttributeGroupInput{
     attrgroup_status:Boolean
 }
 
+type AttributeGroup {
+    attr_group_uuid:UUID
+    attr_group_name:String
+    attr_group_slug:String
+    attrgroup_sortorder:Int
+    attrgroup_status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type GetAllAttrGroups{
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[AttributeGroup]
+}
+
 
 
 # Product Based Input and Types #########################################
@@ -689,6 +707,8 @@ type Query {
     getParentCategories:GetCategories!
     getParentChildCategories:GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
+
+    getAllAttrGroups: GetAllAttrGroups!
 
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
     getProductList: GetProductList!

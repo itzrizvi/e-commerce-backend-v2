@@ -109,6 +109,32 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET ALL ATTR GROUP HELPER
+    getAllAttrGroups: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // ASSOCIATION WITH ATTR AND OTHER TABLE ->>>>>>>>>>> TODO
+            // GET ALL ATTR GROUPS
+            const allAttrGroups = await db.attr_groups.findAll({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Return 
+            return {
+                message: "All Get Attribute Group Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: allAttrGroups
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+
     }
 
 }

@@ -28,6 +28,15 @@ const updateAttrGroupRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET Single ATTR Group Request
+const getSingleAttrGroupRequest = (body) => {
+    rules = {
+        attr_group_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 
 // Check Attribute Req Body
@@ -52,5 +61,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createAttrGroupRequest,
-    updateAttrGroupRequest
+    updateAttrGroupRequest,
+    getSingleAttrGroupRequest
 }

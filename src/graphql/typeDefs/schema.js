@@ -542,6 +542,17 @@ type GetAllAttrGroups{
     data:[AttributeGroup]
 }
 
+input GetSingleAttrGroupInput{
+    attr_group_uuid:UUID!
+}
+
+type GetSingleAttrGroup {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:AttributeGroup
+}
+
 
 
 # Product Based Input and Types #########################################
@@ -709,6 +720,7 @@ type Query {
     getFeaturedCategories: GetFeaturedCategories!
 
     getAllAttrGroups: GetAllAttrGroups!
+    getSingleAttrGroup(query: GetSingleAttrGroupInput): GetSingleAttrGroup!
 
     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
     getProductList: GetProductList!

@@ -135,6 +135,37 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
 
+    },
+    getSingleAttrGroup: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { attr_group_uuid } = req;
+
+
+            // ASSOCIATION WITH OTHER TABLES ->>>>>>>>> TODO
+            // GET Single ATTR Group
+            const singleAttrGroup = await db.attr_groups.findOne({
+                where: {
+                    [Op.and]: [{
+                        attr_group_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // return 
+            return {
+                message: "GET Single Attribute Group Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: singleAttrGroup
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

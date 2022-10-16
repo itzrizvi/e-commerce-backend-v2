@@ -19,14 +19,6 @@ type CommonOutput {
 # User Based Input and Queries #######################################################
 ######################################################################################
 
-type User {
-    uid:ID,
-    id:ID
-    first_name:String
-    last_name:String
-    email:String
-    password:String
-}
 
 type AuthPayload {
     authToken: String
@@ -75,6 +67,7 @@ input AdminSignUpInput {
     password:String!
     roleUUID:JSON!
     userStatus:Boolean!
+    sendEmail:Boolean!
 }
 
 type AdminSignUpOutput {

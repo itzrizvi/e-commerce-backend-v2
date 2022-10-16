@@ -99,6 +99,8 @@ module.exports = {
             const has_role = 1;
             const user_status = req.userStatus;
             const roleUUID = req.roleUUID;
+            // SEND EMAIL REQUEST
+            const { sendEmail } = req;
 
 
             // Check User Already Exist
@@ -144,15 +146,19 @@ module.exports = {
                     const adminRolesDataSave = await db.admin_roles.bulkCreate(roleUUID);
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 
-                    // Setting Up Data for EMAIL SENDER
-                    const mailData = {
-                        email: createStuff.email,
-                        subject: "Admin Verification Code From Primer Server Parts",
-                        message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
+                    // IF SEND EMAIL IS TRUE
+                    if (sendEmail) {
+                        // Setting Up Data for EMAIL SENDER
+                        const mailData = {
+                            email: createStuff.email,
+                            subject: "Admin Verification Code From Primer Server Parts",
+                            message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
+                        }
+
+                        // SENDING EMAIL
+                        await verifierEmail(mailData);
                     }
 
-                    // SENDING EMAIL
-                    await verifierEmail(mailData);
 
                     return {
                         message: "Successfully Registered a Staff and Saved Role Data!!",
@@ -215,16 +221,18 @@ module.exports = {
 
                     const { email: updatedStuffEmail, verification_code: updatedStuffVerficationCode } = updatedStuffData;
 
-                    // Setting Up Data for EMAIL SENDER
-                    const mailData = {
-                        email: updatedStuffEmail,
-                        subject: "Admin Updated Verification Code From Primer Server Parts",
-                        message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
+                    // IF SEND EMAIL IS TRUE
+                    if (sendEmail) {
+                        // Setting Up Data for EMAIL SENDER
+                        const mailData = {
+                            email: updatedStuffEmail,
+                            subject: "Admin Updated Verification Code From Primer Server Parts",
+                            message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
+                        }
+
+                        // SENDING EMAIL
+                        await verifierEmail(mailData);
                     }
-
-                    // SENDING EMAIL
-                    await verifierEmail(mailData);
-
 
                     // Return Final Data
                     return {

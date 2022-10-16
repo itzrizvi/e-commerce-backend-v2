@@ -56,7 +56,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { uid, first_name, last_name, password, roleUUID, user_status, image } = req;
+            const { uid, first_name, last_name, password, roleUUID, user_status, image, sendEmail } = req;
 
             // if Password available
             let encryptPassword;
@@ -95,26 +95,31 @@ module.exports = {
                     }
                 });
 
-                // If Password is Also Changed Changed
-                let mailData
-                if (password) {
-                    // Setting Up Data for EMAIL SENDER
-                    mailData = {
-                        email: findUser.email,
-                        subject: "Password Changed on Prime Server Parts",
-                        message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
+                // IF SEND EMAIL IS TRUE
+                if (sendEmail) {
+                    // If Password is Also Changed Changed
+                    let mailData
+                    if (password) {
+                        // Setting Up Data for EMAIL SENDER
+                        mailData = {
+                            email: findUser.email,
+                            subject: "Password Changed on Prime Server Parts",
+                            message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
+                        }
+                    } else {
+                        // Setting Up Data for EMAIL SENDER
+                        mailData = {
+                            email: findUser.email,
+                            subject: "Account Update on Prime Server Parts",
+                            message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
+                        }
                     }
-                } else {
-                    // Setting Up Data for EMAIL SENDER
-                    mailData = {
-                        email: findUser.email,
-                        subject: "Account Update on Prime Server Parts",
-                        message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
-                    }
+
+                    // SENDING EMAIL
+                    await verifierEmail(mailData);
                 }
 
-                // SENDING EMAIL
-                await verifierEmail(mailData);
+
 
                 // IF Image Also Updated
                 if (image && findUser.image) {

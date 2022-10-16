@@ -13,6 +13,7 @@ const updateAdminRequest = (body) => {
         password: 'string',
         roleUUID: 'array',
         user_status: 'boolean',
+        sendEmail: 'required|boolean'
     }
 
     return checkBody(body, rules);

@@ -21,8 +21,10 @@ const adminSignUpRequest = (body) => {
         first_name: 'required|string',
         last_name: 'required|string',
         email: 'required|email',
-        password: 'string|min:6',
-        roleUUID: 'required|array'
+        password: 'required|string|min:6',
+        roleUUID: 'required|array',
+        userStatus: 'required|boolean',
+        sendEmail: 'required|boolean'
     }
 
     return checkBody(body, rules);

@@ -48,7 +48,7 @@ module.exports = {
 
             // Return Formation
             return {
-                message: "Attribute Created Successfully!!!",
+                message: "Attribute Group Created Successfully!!!",
                 status: true,
                 tenant_id: createAttrGroup.tenant_id
             }

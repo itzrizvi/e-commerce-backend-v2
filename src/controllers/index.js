@@ -8,4 +8,5 @@ module.exports = {
     ...require('./products'),
     ...require('./brands'),
     ...require('./attributeGroup'),
+    ...require('./attribute'),
 }

@@ -504,6 +504,8 @@ input UpdateCategoryInput {
 # Product Attribute Based Input and Types ###############################
 #########################################################################
 
+#### ATTRIBUTE GROUP ######################
+
 input CreateAttributeGroupInput{
     attr_group_name:String!
     attrgroup_sortorder:Int!
@@ -545,6 +547,23 @@ type GetSingleAttrGroup {
     tenant_id:String
     data:AttributeGroup
 }
+
+
+#### ATTRIBUTE ############################
+
+input CreateAttributeInput{
+    attribute_name:String!
+    attribute_status:Boolean!
+    attr_group_uuid:UUID!
+}
+
+input UpdateAttributeInput{
+    attribute_uuid:UUID!
+    attribute_name:String
+    attribute_status:Boolean
+    attr_group_uuid:UUID
+}
+
 
 
 
@@ -751,6 +770,9 @@ type Mutation {
 
     createAttrGroup(data: CreateAttributeGroupInput):CommonOutput!
     updateAttrGroup(data: UpdateAttributeGroupInput):CommonOutput!
+
+    createAttribute(data: CreateAttributeInput):CommonOutput!
+    updateAttribute(data: UpdateAttributeInput):CommonOutput!
     
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!

@@ -158,6 +158,36 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET Single Customer Group Helper
+    getSingleCustomerGroup: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { customer_group_uuid } = req;
+
+            // GET Single Customer Group
+            const singleCustomerGroup = await db.customer_groups.findOne({
+                where: {
+                    [Op.and]: [{
+                        customer_group_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // return 
+            return {
+                message: "GET Single Customer Group Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: singleCustomerGroup
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

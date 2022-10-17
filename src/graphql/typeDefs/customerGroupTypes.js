@@ -40,6 +40,17 @@ type GetAllCustomerGroupsOutput {
     data:[CustomerGroup]
 }
 
+input GetSingleCustomerGroupInput {
+    customer_group_uuid:UUID!
+}
+
+type GetSingleCustomerGroupOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:CustomerGroup
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -52,6 +63,7 @@ extend type Mutation {
 
 extend type Query {
     getAllCustomerGroups:GetAllCustomerGroupsOutput!
+    getSingleCustomerGroup(query: GetSingleCustomerGroupInput):GetSingleCustomerGroupOutput!
 }
 
 

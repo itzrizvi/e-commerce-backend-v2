@@ -1,4 +1,4 @@
-// Feature Permission List Model
+// Brand Categories Model
 module.exports = (sequelize, DataTypes) => {
 
     const BrandCategories = sequelize.define("brand_categories", {

@@ -1,4 +1,4 @@
-//user model
+// Role model
 module.exports = (sequelize, DataTypes) => {
 
     const Role = sequelize.define("roles", {

@@ -13,6 +13,14 @@ input CreateCustomerGroupInput {
     customergroup_status:Boolean!
 }
 
+input UpdateCustomerGroupInput {
+    customer_group_uuid:UUID!
+    customer_group_name:String
+    customergroup_description:String
+    customergroup_sortorder:Int
+    customergroup_status:Boolean
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -20,6 +28,7 @@ input CreateCustomerGroupInput {
 
 extend type Mutation {
     createCustomerGroup(data: CreateCustomerGroupInput):CommonOutput!
+    updateCustomerGroup(data: UpdateCustomerGroupInput):CommonOutput!
 }
 
 # extend type Query {

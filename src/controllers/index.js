@@ -9,4 +9,5 @@ module.exports = {
     ...require('./brands'),
     ...require('./attributeGroup'),
     ...require('./attribute'),
+    ...require('./customerGroup'),
 }

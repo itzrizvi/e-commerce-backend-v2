@@ -98,6 +98,8 @@ type GetSingleAttribute {
 }
 
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
 

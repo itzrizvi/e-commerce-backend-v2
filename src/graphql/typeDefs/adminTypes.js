@@ -82,6 +82,8 @@ input AdminPasswordChangeInput {
 }
 
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     adminSignUp(data: AdminSignUpInput): AdminSignUpOutput!

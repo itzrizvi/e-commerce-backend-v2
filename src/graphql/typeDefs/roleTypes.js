@@ -93,6 +93,8 @@ type GetSingleRoleOutput {
 }
 
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     createRoleWithPermission(data: CreateRoleWithPermissionInput): CreateRoleWithPermissionOutput!

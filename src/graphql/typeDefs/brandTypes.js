@@ -56,7 +56,8 @@ input UpdateBrandInput {
 }
 
 
-
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 extend type Mutation {
     createBrand(data: BrandCreateInput, file:Upload):CommonOutput!
     updateBrand(data: UpdateBrandInput, file:Upload):CommonOutput!

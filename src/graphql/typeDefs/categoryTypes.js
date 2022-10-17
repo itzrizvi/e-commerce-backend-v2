@@ -107,7 +107,8 @@ input UpdateCategoryInput {
     mark_as_main_category:Boolean
 }
 
-
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     createCategory(data: CategoryCreateInput, file:Upload): CommonOutput!

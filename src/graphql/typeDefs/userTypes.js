@@ -28,6 +28,8 @@ input UserInput {
     password:String
 }
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     userSignUp(data: UserInput): AuthPayload!

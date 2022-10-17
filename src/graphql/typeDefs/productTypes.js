@@ -140,6 +140,8 @@ type GetProductList {
 }
 
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     addProduct(data: AddProductInput):AddProductOutput!

@@ -68,6 +68,8 @@ type UpdateRolesPermissionOutput {
 }
 
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     createRolesPermission(data: RolesPermissionInput):RolesPermissionOutput!

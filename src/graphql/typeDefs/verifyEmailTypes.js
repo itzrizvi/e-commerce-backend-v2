@@ -28,7 +28,8 @@ type resendVerifyEmailOutput {
     email:String
 }
 
-
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     verifyEmail(data: VerifyEmailInput): VerifyEmailOutput!

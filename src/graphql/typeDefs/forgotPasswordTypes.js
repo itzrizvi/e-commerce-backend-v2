@@ -41,6 +41,8 @@ type ForgotPassFinalOutput {
 }
 
 
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
 
 extend type Mutation {
     forgotPassInit(data: ForgotPassInitInput):ForgotPassInitOutput!

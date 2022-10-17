@@ -4,4 +4,5 @@ module.exports = {
     emailVerifyController: require("./emailVerificationController"),
     resendVerificationEmailController: require("./resendEmailVerificationController"),
     forgotPasswordController: require("./forgotPasswordController"),
+    validateToken: require("./validateToken")
 }

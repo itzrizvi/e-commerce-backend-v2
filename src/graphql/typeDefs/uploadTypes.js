@@ -8,6 +8,6 @@ module.exports = gql`
         deleteMultiple(names: [String]!): SuccessMessage
     }
     type SuccessMessage {
-        message: String,
+        message: String
     }
 `;

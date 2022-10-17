@@ -9,4 +9,5 @@ module.exports = {
     ...require('./staff'),
     ...require('./brand'),
     ...require('./attributeGroup'),
+    ...require('./banner'),
 }

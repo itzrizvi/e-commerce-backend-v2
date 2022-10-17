@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server-express');
 const uploadTypeDefs = require("../typeDefs/uploadTypes");
+const bannerTypes = require("../typeDefs/bannerTypes");
 
 const typeDefs = gql`
 
@@ -39,6 +40,10 @@ input UserInput {
     last_name:String
     email:String
     password:String
+}
+
+type TokenOutput{
+    status: Boolean!
 }
 
 
@@ -720,6 +725,7 @@ type Query {
 }
 
 type Mutation {
+    validateToken(token: String): TokenOutput!
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
 
@@ -762,5 +768,6 @@ type Mutation {
 
 module.exports = [
     typeDefs,
-    uploadTypeDefs
+    uploadTypeDefs,
+    bannerTypes
 ]

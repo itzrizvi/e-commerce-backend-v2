@@ -21,6 +21,25 @@ input UpdateCustomerGroupInput {
     customergroup_status:Boolean
 }
 
+type CustomerGroup {
+    customer_group_uuid:UUID
+    customer_group_name:String
+    customer_group_slug:String
+    customergroup_description:String
+    customergroup_sortorder:Int
+    customergroup_status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type GetAllCustomerGroupsOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[CustomerGroup]
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -31,9 +50,9 @@ extend type Mutation {
     updateCustomerGroup(data: UpdateCustomerGroupInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getAllCustomerGroups:GetAllCustomerGroupsOutput!
+}
 
 
 `;

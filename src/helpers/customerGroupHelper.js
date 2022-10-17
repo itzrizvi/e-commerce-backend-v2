@@ -131,6 +131,33 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // Get All Customer Group Helper
+    getAllCustomerGroups: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // GET ALL Customer GROUPS
+            const allCustomerGroups = await db.customer_groups.findAll({
+                where: {
+                    tenant_id: TENANTID
+                },
+                order: [
+                    ['customer_group_name', 'ASC']
+                ],
+            });
+
+            // Return 
+            return {
+                message: "All Get Customer Group Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: allCustomerGroups
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

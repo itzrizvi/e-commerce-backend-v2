@@ -29,14 +29,14 @@ const updateCustomerGroupRequest = (body) => {
     return checkBody(body, rules);
 }
 
-// // GET Single ATTR Group Request
-// const getSingleAttrGroupRequest = (body) => {
-//     rules = {
-//         attr_group_uuid: 'required|string'
-//     }
+// GET Single Customer Group Request
+const getSingleCustomerGroupRequest = (body) => {
+    rules = {
+        customer_group_uuid: 'required|string'
+    }
 
-//     return checkBody(body, rules);
-// }
+    return checkBody(body, rules);
+}
 
 
 
@@ -62,5 +62,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createCustomerGroupGroupRequest,
-    updateCustomerGroupRequest
+    updateCustomerGroupRequest,
+    getSingleCustomerGroupRequest
 }

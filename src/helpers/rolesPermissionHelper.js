@@ -151,6 +151,19 @@ module.exports = {
                     strict: true,
                     trim: true
                 });
+
+                // Check If Already Feature is Exists In the Permission List Table
+                const findPermissionExists = await db.roles_permission.findOne({
+                    where: {
+                        [Op.and]: [{
+                            roles_permission_slug: rolesPermissionNameSlug,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                if (findPermissionExists) return { message: "This Role Permission Already Exists!!!", status: false }
+
             }
 
             // Update Doc

@@ -85,6 +85,9 @@ module.exports = {
                             attribute_slug,
                             attr_group_uuid,
                             tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            attribute_uuid
                         }]
                     }
                 });

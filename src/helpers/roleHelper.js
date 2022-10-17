@@ -217,6 +217,22 @@ module.exports = {
                     strict: true,
                     trim: true
                 });
+
+
+                // Check The Role Is Already Taken or Not
+                const checkRoleExist = await db.roles.findOne({
+                    where: {
+                        [Op.and]: [{
+                            role_slug: role_slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            role_uuid
+                        }]
+                    }
+                });
+
+                if (checkRoleExist) return { message: "Already Have This Role", status: false }
             }
 
             // Update Doc

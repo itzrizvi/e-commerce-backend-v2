@@ -9,7 +9,7 @@ module.exports = {
 
         // Try Catch Block
         try {
-            // Data From 
+            // Data From Request
             const { attr_group_name, attrgroup_sortorder, attrgroup_status } = req;
 
             // Slugify Attr Group Name
@@ -21,7 +21,7 @@ module.exports = {
                 trim: true
             });
 
-            // Check If Already Exist the Brand
+            // Check If Already Exist the Attribute Group
             const checkExistence = await db.attr_groups.findOne({
                 where: {
                     [Op.and]: [{
@@ -77,6 +77,22 @@ module.exports = {
                     strict: true,
                     trim: true
                 });
+
+                // Check If Already Exist the Attribute Group
+                const checkExistence = await db.attr_groups.findOne({
+                    where: {
+                        [Op.and]: [{
+                            attr_group_slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            attr_group_uuid
+                        }]
+                    }
+                });
+
+                // If Found Attr Group
+                if (checkExistence) return { message: "Already Have This Attribute Group!!!", status: false };
             }
 
             // Update Doc for Attr Group
@@ -147,6 +163,7 @@ module.exports = {
         }
 
     },
+    // GET SINGLE ATTR GROUP HELPER
     getSingleAttrGroup: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {

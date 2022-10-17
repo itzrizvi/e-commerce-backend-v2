@@ -264,6 +264,23 @@ module.exports = {
                     strict: true,
                     trim: true
                 });
+
+
+                // Check If Already Exist the Brand
+                const checkExistence = await db.brands.findOne({
+                    where: {
+                        [Op.and]: [{
+                            brand_slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            brand_uuid
+                        }]
+                    }
+                });
+
+                // If Found Brand
+                if (checkExistence) return { message: "Already Have This Brand!!!", status: false };
             };
 
             // Update Doc

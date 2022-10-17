@@ -1,27 +1,31 @@
-// Attribute Model
+// Customer Group Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Attributes = sequelize.define("attributes", {
-        attribute_uuid: {
+    const CustomerGroup = sequelize.define("customer_groups", {
+        customer_group_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        attribute_name: {
+        customer_group_name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        attribute_slug: {
+        customer_group_slug: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        attribute_status: {
+        customergroup_description: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        customergroup_sortorder: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        customergroup_status: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
-        },
-        attr_group_uuid: {
-            type: DataTypes.UUID,
             allowNull: false
         },
         tenant_id: {
@@ -32,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'attributes',
+        tableName: 'customer_groups',
     })
 
-    return Attributes
+    return CustomerGroup
 }

@@ -1,4 +1,4 @@
-// Feature Permission List Model
+// Attribute Group Model
 module.exports = (sequelize, DataTypes) => {
 
     const AttrGroup = sequelize.define("attr_groups", {

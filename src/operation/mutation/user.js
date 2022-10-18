@@ -3,6 +3,7 @@ const { userSignUpController,
     userSignInController,
     emailVerifyController,
     resendVerificationEmailController,
+    validateToken,
     forgotPasswordController } = require('../../controllers');
 
 const { forgotPasswordInitController,
@@ -62,5 +63,11 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
 
         return await forgotPasswordFinalController(args.data, db, TENANTID);
+    },
+    // Token Validate
+    validateToken: async (root, args, { db, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        return await validateToken(args.token, db);
     }
 }

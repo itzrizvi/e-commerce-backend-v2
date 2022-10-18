@@ -11,7 +11,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Req
-            const { banner_name, banner_status} = req;
+            const { banner_name, banner_status } = req;
             // Slugify  with Banner name
             const banner_slug = slugify(banner_name, {
                 replacement: '-',
@@ -69,7 +69,7 @@ module.exports = {
         }
     },
     createBannerImage: async (req, db, user, isAuth, TENANTID) => {
-        const {banner_id, title, link, sort_order, image} = req
+        const { banner_id, title, link, sort_order, image } = req
         // If Image is Available
         let imageName;
         if (image) {
@@ -98,11 +98,11 @@ module.exports = {
             return {
                 message: "Successfully Created Brand Image!",
                 data: {
-                    banner_uuid:createBannerImage.banner_uuid,
-                    banner_id:createBannerImage.id,
-                    title:createBannerImage.title,
-                    link:createBannerImage.link,
-                    sort_order:createBannerImage.sort_order,
+                    banner_uuid: createBannerImage.banner_uuid,
+                    banner_id: createBannerImage.id,
+                    title: createBannerImage.title,
+                    link: createBannerImage.link,
+                    sort_order: createBannerImage.sort_order,
                 },
                 status: true
             }

@@ -1,14 +1,20 @@
 const { gql } = require("apollo-server-express");
 
 module.exports = gql`
-    extend type Mutation {
-        addBanner(data: BannerInput): BannerOutput
-        addBannerImage(data: BannerImageInput!): BannerImageOutput
-    }
+
+# Banner Slider Based Input and Queries ##############################################
+######################################################################################
+
 
     input BannerInput{
         banner_name: String!
         banner_status: Boolean!
+    }
+
+    type BannerOutput {
+        message: String!
+        status: Boolean!
+        data: Banner
     }
 
     input BannerImageInput{
@@ -17,12 +23,6 @@ module.exports = gql`
         link: String
         sort_order: Int!
         image: Upload!
-    }
-
-    type BannerOutput {
-        message: String!
-        status: Boolean!
-        data: Banner
     }
 
     type BannerImageOutput {
@@ -46,4 +46,14 @@ module.exports = gql`
         link: String
         sort_order: Int!
     }
+
+
+# Extended QUERIES AND MUTATIONS ######################################
+#######################################################################
+
+    extend type Mutation {
+        addBanner(data: BannerInput): BannerOutput
+        addBannerImage(data: BannerImageInput!): BannerImageOutput
+    }
+
 `;

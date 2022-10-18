@@ -47,6 +47,13 @@ module.exports = gql`
         sort_order: Int!
     }
 
+    input UpdateBannerInput {
+        banner_uuid: UUID!
+        banner_name: String
+        banner_status: Boolean
+    }
+
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -54,6 +61,7 @@ module.exports = gql`
     extend type Mutation {
         addBanner(data: BannerInput): BannerOutput
         addBannerImage(data: BannerImageInput!): BannerImageOutput
+        updateBanner(data: UpdateBannerInput):CommonOutput!
     }
 
 `;

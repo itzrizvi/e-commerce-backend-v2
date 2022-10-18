@@ -14,6 +14,17 @@ const createBannerRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// Update Banner REQUEST
+const updateBannerRequest = (body) => {
+    rules = {
+        banner_uuid: 'required|string',
+        banner_name: 'string',
+        banner_status: 'strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
 // CREATE Banner REQUEST
 const createBannerImageRequest = (body) => {
     rules = {
@@ -41,5 +52,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createBannerRequest,
-    createBannerImageRequest
+    createBannerImageRequest,
+    updateBannerRequest
 }

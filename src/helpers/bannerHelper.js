@@ -68,6 +68,7 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Create Banner Image Helper
     createBannerImage: async (req, db, user, isAuth, TENANTID) => {
         const { banner_id, title, link, sort_order, image } = req
         // If Image is Available
@@ -113,6 +114,71 @@ module.exports = {
                 message: "Banner Image Failed!!",
                 status: false
             }
+        }
+    },
+    // Update Banner Helper
+    updateBanner: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+            // Data From Request 
+            const { banner_uuid, banner_name, banner_status } = req;
+
+            // Create New Slug If Banner name is also Updating
+            let banner_slug;
+            if (banner_name) {
+                // Slugify Banner Name
+                banner_slug = slugify(`${banner_name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
+
+                // Check If Already Exist the Banner
+                const checkExistence = await db.banners.findOne({
+                    where: {
+                        [Op.and]: [{
+                            banner_slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            banner_uuid
+                        }]
+                    }
+                });
+
+                // If Found Banner
+                if (checkExistence) return { message: "This Banner is Already Exists!!!", status: false };
+            }
+
+            // Update Doc for Banner
+            const updateDoc = {
+                banner_name,
+                banner_slug,
+                banner_status
+            }
+
+            // Update Banner
+            const updateBnr = await db.banners.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        banner_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateBnr) return { message: "Couldnt Update the Banner!!!", status: false }
+
+            // Return Formation
+            return {
+                message: "Banner Update Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     }
 }

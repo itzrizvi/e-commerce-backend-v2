@@ -100,7 +100,7 @@ module.exports = {
                 message: "Successfully Created Brand Image!",
                 data: {
                     banner_uuid: createBannerImage.banner_uuid,
-                    banner_id: createBannerImage.id,
+                    banner_id: createBannerImage.banner_id,
                     title: createBannerImage.title,
                     link: createBannerImage.link,
                     sort_order: createBannerImage.sort_order,

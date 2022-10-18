@@ -1,4 +1,4 @@
-// Feature Permission List Model
+// Admin Roles Model
 module.exports = (sequelize, DataTypes) => {
 
     const AdminRoles = sequelize.define("admin_roles", {

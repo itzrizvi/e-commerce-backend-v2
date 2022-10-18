@@ -1,7 +1,21 @@
 const { gql } = require('apollo-server-express');
+// All Type Defs
 const uploadTypeDefs = require("../typeDefs/uploadTypes");
 const bannerTypes = require("../typeDefs/bannerTypes");
+const userTypeDefs = require("./userTypes");
+const adminTypeDefs = require("./adminTypes");
+const verifyEmailTypeDefs = require("./verifyEmailTypes");
+const forgotPasswordTypeDefs = require("./forgotPasswordTypes");
+const roleTypeDefs = require("./roleTypes");
+const rolesPermissionTypeDefs = require("./rolesPermissionTypes");
+const brandTypeDefs = require("./brandTypes");
+const categoryTypeDefs = require("./categoryTypes");
+const attributeTypeDefs = require("./attributeTypes");
+const productTypeDefs = require("./productTypes");
+const customerGroupTypeDefs = require("./customerGroupTypes");
 
+
+// Type Defs and Scalars
 const typeDefs = gql`
 
 scalar JSON
@@ -17,6 +31,7 @@ type CommonOutput {
     tenant_id:String
 }
 
+<<<<<<< HEAD
 # User Based Input and Queries #######################################################
 ######################################################################################
 
@@ -689,15 +704,17 @@ type GetProductList {
     data:[SingleProduct]
 }
 
+=======
+>>>>>>> main
 type SuccessMessage {
     message: String
 }
 
 
-
 # ROOT QUERIES AND MUTATIONS ###############################################
 ############################################################################
 
+<<<<<<< HEAD
 type Query {
     getAllRoles: RoleOutput!
     getSingleRole(query: GetSingleRoleInput): GetSingleRoleOutput!
@@ -761,13 +778,29 @@ type Mutation {
     addProduct(data: AddProductInput):AddProductOutput!
     updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }
+=======
+type Query 
+type Mutation 
+>>>>>>> main
 `;
 
-
-// module.exports = typeDefs;
-
+// Export Type Defs
 module.exports = [
     typeDefs,
     uploadTypeDefs,
+<<<<<<< HEAD
     bannerTypes
+=======
+    userTypeDefs,
+    adminTypeDefs,
+    verifyEmailTypeDefs,
+    forgotPasswordTypeDefs,
+    roleTypeDefs,
+    rolesPermissionTypeDefs,
+    brandTypeDefs,
+    categoryTypeDefs,
+    attributeTypeDefs,
+    productTypeDefs,
+    customerGroupTypeDefs
+>>>>>>> main
 ]

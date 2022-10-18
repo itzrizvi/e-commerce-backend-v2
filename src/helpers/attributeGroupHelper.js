@@ -9,7 +9,7 @@ module.exports = {
 
         // Try Catch Block
         try {
-            // Data From 
+            // Data From Request
             const { attr_group_name, attrgroup_sortorder, attrgroup_status } = req;
 
             // Slugify Attr Group Name
@@ -21,7 +21,7 @@ module.exports = {
                 trim: true
             });
 
-            // Check If Already Exist the Brand
+            // Check If Already Exist the Attribute Group
             const checkExistence = await db.attr_groups.findOne({
                 where: {
                     [Op.and]: [{
@@ -48,7 +48,7 @@ module.exports = {
 
             // Return Formation
             return {
-                message: "Attribute Created Successfully!!!",
+                message: "Attribute Group Created Successfully!!!",
                 status: true,
                 tenant_id: createAttrGroup.tenant_id
             }
@@ -77,6 +77,22 @@ module.exports = {
                     strict: true,
                     trim: true
                 });
+
+                // Check If Already Exist the Attribute Group
+                const checkExistence = await db.attr_groups.findOne({
+                    where: {
+                        [Op.and]: [{
+                            attr_group_slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            attr_group_uuid
+                        }]
+                    }
+                });
+
+                // If Found Attr Group
+                if (checkExistence) return { message: "Already Have This Attribute Group!!!", status: false };
             }
 
             // Update Doc for Attr Group
@@ -115,12 +131,23 @@ module.exports = {
         // Try Catch Block
         try {
 
-            // ASSOCIATION WITH ATTR AND OTHER TABLE ->>>>>>>>>>> TODO
+            // Association with Attribute Group and Attributes
+            if (!db.attr_groups.hasAlias('attributes')) {
+                await db.attr_groups.hasMany(db.attributes, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attributes' });
+            }
+
             // GET ALL ATTR GROUPS
             const allAttrGroups = await db.attr_groups.findAll({
                 where: {
                     tenant_id: TENANTID
-                }
+                },
+                include: [{
+                    model: db.attributes, as: 'attributes'
+                }],
+                order: [
+                    ['attr_group_name', 'ASC'],
+                    [{ model: db.attributes }, 'attribute_name', 'ASC']
+                ],
             });
 
             // Return 
@@ -136,6 +163,7 @@ module.exports = {
         }
 
     },
+    // GET SINGLE ATTR GROUP HELPER
     getSingleAttrGroup: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
@@ -143,8 +171,10 @@ module.exports = {
             // Data From Request
             const { attr_group_uuid } = req;
 
-
-            // ASSOCIATION WITH OTHER TABLES ->>>>>>>>> TODO
+            // Association with Attribute Group and Attributes
+            if (!db.attr_groups.hasAlias('attributes')) {
+                await db.attr_groups.hasMany(db.attributes, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attributes' });
+            }
             // GET Single ATTR Group
             const singleAttrGroup = await db.attr_groups.findOne({
                 where: {
@@ -152,7 +182,14 @@ module.exports = {
                         attr_group_uuid,
                         tenant_id: TENANTID
                     }]
-                }
+                },
+                include: [{
+                    model: db.attributes, as: 'attributes'
+                }],
+                order: [
+                    ['attr_group_name', 'ASC'],
+                    [{ model: db.attributes }, 'attribute_name', 'ASC']
+                ],
             });
 
             // return 

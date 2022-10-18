@@ -1,4 +1,4 @@
-// Feature Permission List Model
+// Brand Model
 module.exports = (sequelize, DataTypes) => {
 
     const Brands = sequelize.define("brands", {

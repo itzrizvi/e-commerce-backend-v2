@@ -1,4 +1,4 @@
-// Category Model
+// Product Model
 module.exports = (sequelize, DataTypes) => {
 
     const Product = sequelize.define("products", {

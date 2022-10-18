@@ -1,4 +1,4 @@
-// Feature Permission List Model
+// Permission Model
 module.exports = (sequelize, DataTypes) => {
 
     const Permissions = sequelize.define("permissions_data", {

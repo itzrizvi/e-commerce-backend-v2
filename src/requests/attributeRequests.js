@@ -15,7 +15,6 @@ const createAttrGroupRequest = (body) => {
     return checkBody(body, rules);
 }
 
-
 // Update ATTR Group  REQUEST
 const updateAttrGroupRequest = (body) => {
     rules = {
@@ -36,6 +35,43 @@ const getSingleAttrGroupRequest = (body) => {
 
     return checkBody(body, rules);
 }
+
+
+// CREATE Attr REQUEST
+const createAttributeRequest = (body) => {
+    rules = {
+        attribute_name: 'required|string',
+        attr_group_uuid: 'required|string',
+        attribute_status: 'required|strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+// UPDATE Attr REQUEST
+const updateAttributeRequest = (body) => {
+    rules = {
+        attribute_uuid: 'required|string',
+        attribute_name: 'string',
+        attr_group_uuid: 'string',
+        attribute_status: 'strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+// GET Single ATTR Request
+const getSingleAttributeRequest = (body) => {
+    rules = {
+        attribute_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
 
 
 
@@ -62,5 +98,8 @@ const checkBody = (body, rules) => {
 module.exports = {
     createAttrGroupRequest,
     updateAttrGroupRequest,
-    getSingleAttrGroupRequest
+    getSingleAttrGroupRequest,
+    createAttributeRequest,
+    updateAttributeRequest,
+    getSingleAttributeRequest
 }

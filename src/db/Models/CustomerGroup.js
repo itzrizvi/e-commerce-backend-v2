@@ -1,31 +1,30 @@
-// Role model
+// Customer Group Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Role = sequelize.define("roles", {
-        role_uuid: {
+    const CustomerGroup = sequelize.define("customer_groups", {
+        customer_group_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        role_no: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-            defaultValue: 0
-        },
-        role: {
+        customer_group_name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        role_slug: {
+        customer_group_slug: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        role_description: {
+        customergroup_description: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        role_status: {
+        customergroup_sortorder: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        customergroup_status: {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
@@ -37,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'roles',
+        tableName: 'customer_groups',
     })
 
-    return Role
+    return CustomerGroup
 }

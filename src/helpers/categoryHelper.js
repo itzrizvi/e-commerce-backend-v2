@@ -352,6 +352,22 @@ module.exports = {
                     strict: true,
                     trim: true
                 });
+
+                // If Exist Category
+                const findExistCategory = await db.categories.findOne({
+                    where: {
+                        [Op.and]: [{
+                            cat_slug,
+                            cat_parent_id,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            cat_id
+                        }]
+                    }
+                });
+
+                if (findExistCategory) return { message: "This Category Already Exists!!!", status: false }
             }
 
             // Find To See If The Category Has any parent before

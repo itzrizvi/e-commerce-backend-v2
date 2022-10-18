@@ -1,18 +1,26 @@
-// Brand Categories Model
+// Attribute Model
 module.exports = (sequelize, DataTypes) => {
 
-    const BrandCategories = sequelize.define("brand_categories", {
-        brand_categories_uuid: {
+    const Attributes = sequelize.define("attributes", {
+        attribute_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        brand_uuid: {
-            type: DataTypes.UUID,
+        attribute_name: {
+            type: DataTypes.STRING,
             allowNull: false
         },
-        cat_id: {
+        attribute_slug: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        attribute_status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
+        },
+        attr_group_uuid: {
             type: DataTypes.UUID,
             allowNull: false
         },
@@ -24,8 +32,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'brand_categories',
+        tableName: 'attributes',
     })
 
-    return BrandCategories
+    return Attributes
 }

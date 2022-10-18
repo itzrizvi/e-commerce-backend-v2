@@ -36,7 +36,10 @@ module.exports = gql`
         banner_name: String
         banner_slug: String
         banner_status: Boolean!
-        tenant_id: Int
+        tenant_id: String
+        createdAt: String
+        updatedAt: String
+        bannerimages:[BannerImage]
     }
 
     type BannerImage{
@@ -46,6 +49,9 @@ module.exports = gql`
         image:String
         link: String
         sort_order: Int!
+        tenant_id: String
+        createdAt: String
+        updatedAt: String
     }
 
     input UpdateBannerInput {
@@ -63,6 +69,17 @@ module.exports = gql`
         image: Upload
     }
 
+    input GetSingleBannerInput {
+        banner_uuid: UUID!
+    }
+
+    type GetSingleBannerOutput {
+        message: String
+        status: Boolean
+        tenant_id: String
+        data:Banner
+    }
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -73,5 +90,10 @@ module.exports = gql`
         updateBanner(data: UpdateBannerInput):CommonOutput!
         updateBannerImage(data: UpdateBannerImageInput):CommonOutput!
     }
+
+    extend type Query {
+        getSingleBanner(query: GetSingleBannerInput):GetSingleBannerOutput!
+    }
+
 
 `;

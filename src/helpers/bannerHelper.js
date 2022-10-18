@@ -280,5 +280,44 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET SINGLE BANNER
+    getSingleBanner: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { banner_uuid } = req;
+
+            // Association with Banner and Banner Images
+            if (!db.banners.hasAlias('banner_images') && !db.banners.hasAlias('bannerimages')) {
+                await db.banners.hasMany(db.banner_images, { sourceKey: 'banner_uuid', foreignKey: 'banner_id', as: 'bannerimages' });
+            }
+
+            // GET Single Banner
+            const getBanner = await db.banners.findOne({
+                where: {
+                    banner_uuid,
+                    tenant_id: TENANTID
+                },
+                include: [{
+                    model: db.banner_images, as: 'bannerimages'
+                }]
+            });
+
+            // Return 
+            return {
+                message: "Get Single Banner Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getBanner
+            }
+
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

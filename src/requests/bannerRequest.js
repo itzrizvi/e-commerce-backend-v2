@@ -25,7 +25,18 @@ const updateBannerRequest = (body) => {
     return checkBody(body, rules);
 }
 
-// CREATE Banner REQUEST
+// GET SINGLE Banner REQUEST
+const getSingleBannerRequest = (body) => {
+    rules = {
+        banner_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
+
+
+// CREATE Banner Image REQUEST
 const createBannerImageRequest = (body) => {
     rules = {
         banner_id: 'required|string',
@@ -36,7 +47,7 @@ const createBannerImageRequest = (body) => {
     return checkBody(body, rules);
 }
 
-// UPDATE Banner REQUEST
+// UPDATE Banner Image REQUEST
 const updateBannerImageRequest = (body) => {
     rules = {
         banner_uuid: 'required|string',
@@ -47,6 +58,8 @@ const updateBannerImageRequest = (body) => {
 
     return checkBody(body, rules);
 }
+
+
 
 // Check Staff/Admin Req Body
 const checkBody = (body, rules) => {
@@ -66,5 +79,6 @@ module.exports = {
     createBannerRequest,
     createBannerImageRequest,
     updateBannerRequest,
-    updateBannerImageRequest
+    updateBannerImageRequest,
+    getSingleBannerRequest
 }

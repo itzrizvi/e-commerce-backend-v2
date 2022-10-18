@@ -313,8 +313,37 @@ module.exports = {
                 data: getBanner
             }
 
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET ALL BANNERS HELPER
+    getAllBanners: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
 
+            // Association with Banner and Banner Images
+            if (!db.banners.hasAlias('banner_images') && !db.banners.hasAlias('bannerimages')) {
+                await db.banners.hasMany(db.banner_images, { sourceKey: 'banner_uuid', foreignKey: 'banner_id', as: 'bannerimages' });
+            }
 
+            // GET All Banners
+            const getallbanner = await db.banners.findAll({
+                where: {
+                    tenant_id: TENANTID
+                },
+                include: [{
+                    model: db.banner_images, as: 'bannerimages'
+                }]
+            });
+
+            // Return 
+            return {
+                message: "Get All Banners Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getallbanner
+            }
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }

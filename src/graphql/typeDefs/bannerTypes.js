@@ -80,6 +80,13 @@ module.exports = gql`
         data:Banner
     }
 
+    type GetAllBanners {
+        message: String
+        status: Boolean
+        tenant_id: String
+        data:[Banner]
+    }
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -93,6 +100,7 @@ module.exports = gql`
 
     extend type Query {
         getSingleBanner(query: GetSingleBannerInput):GetSingleBannerOutput!
+        getAllBanners:GetAllBanners!
     }
 
 

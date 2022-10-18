@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        banner_uuid: {
+        banner_id: {
             type: DataTypes.UUID,
             allowNull: false,
         },
@@ -33,12 +33,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
 
-    }, 
-    {
-        timestamps: true,
-        freezeTableName: true,
-        tableName: 'banner_images',
-    })
+    },
+        {
+            timestamps: true,
+            freezeTableName: true,
+            tableName: 'banner_images',
+        })
 
     return BannerImages
 }

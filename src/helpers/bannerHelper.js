@@ -85,7 +85,7 @@ module.exports = {
 
         // Create Banner Image
         const createBannerImage = await db.banner_images.create({
-            banner_uuid: banner_id,
+            banner_id,
             title,
             link,
             image: imageName,

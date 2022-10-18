@@ -12,7 +12,6 @@ module.exports = {
         return await createBannerController(args.data, db, user, isAuth, TENANTID);
     },
     addBannerImage: async (root, args, { db, user, isAuth, TENANTID }, info) => {
-        console.log(args);
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth

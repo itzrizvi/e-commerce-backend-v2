@@ -180,5 +180,105 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // Update Banner Image HELPER
+    updateBannerImage: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+            // Data From Request
+            const { banner_uuid,
+                banner_id,
+                title,
+                link,
+                sort_order,
+                image } = req;
+
+
+            // Update Doc
+            const updateDoc = {
+                title,
+                link,
+                sort_order
+            }
+
+            // Update Banner Image Details
+            const updateBannerimage = await db.banner_images.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        banner_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF NOT UPDATED THEN RETURN
+            if (!updateBannerimage) return { message: "Update Gone Wrong!!!", status: false };
+
+            // Find Banner Image to Get Image Name
+            const findBannerImage = await db.banner_images.findOne({
+                where: {
+                    [Op.and]: [{
+                        banner_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF Image Also Updated
+            if (image && findBannerImage.image) {
+                // Delete Previous S3 Image For this Banner Slide
+                const banner_image_src = config.get("AWS.BANNER_IMG_DEST").split("/");
+                const banner_image_bucketName = banner_image_src[0];
+                const banner_image_folder = banner_image_src.slice(1);
+                await deleteFile({ idf: banner_id, folder: banner_image_folder, fileName: findBannerImage.image, bucketName: banner_image_bucketName });
+            }
+
+            // Upload New Image to S3
+            if (image) {
+                // Upload Image to AWS S3
+                const banner_image_src = config.get("AWS.BANNER_IMG_SRC").split("/")
+                const banner_image_bucketName = banner_image_src[0];
+                const banner_image_folder = banner_image_src.slice(1);
+                const imageUrl = await singleFileUpload({ file: image, idf: banner_id, folder: banner_image_folder, bucketName: banner_image_bucketName });
+                if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
+
+                // Update Banner Slide with New Image Name
+                const imageName = imageUrl.Key.split('/').slice(-1)[0];
+
+                // Find and Update Banner Image Name By UUID
+                const bannerImageUpdate = {
+                    image: imageName
+                }
+                // Update Banner Image
+                const updateBannerImg = await db.banner_images.update(bannerImageUpdate, {
+                    where: {
+                        [Op.and]: [{
+                            banner_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                // If not updated
+                if (!updateBannerImg) return { message: "New Image Name Couldnt Be Updated Properly!!!", status: false }
+
+                // Return
+                return {
+                    message: "Banner Slide Updated With New Image!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            } else {
+                // Return
+                return {
+                    message: "Banner Slide Updated With New Details!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

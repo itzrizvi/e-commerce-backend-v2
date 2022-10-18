@@ -54,11 +54,13 @@ module.exports = gql`
         banner_status: Boolean
     }
 
-    input UpdateBannerImage {
+    input UpdateBannerImageInput {
         banner_uuid: UUID!
+        banner_id: UUID!
         title: String
         link: String
         sort_order: Int
+        image: Upload
     }
 
 
@@ -69,6 +71,7 @@ module.exports = gql`
         addBanner(data: BannerInput): BannerOutput
         addBannerImage(data: BannerImageInput!): BannerImageOutput
         updateBanner(data: UpdateBannerInput):CommonOutput!
+        updateBannerImage(data: UpdateBannerImageInput):CommonOutput!
     }
 
 `;

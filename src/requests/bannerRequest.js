@@ -36,6 +36,18 @@ const createBannerImageRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// UPDATE Banner REQUEST
+const updateBannerImageRequest = (body) => {
+    rules = {
+        banner_uuid: 'required|string',
+        title: 'string',
+        link: 'string',
+        sort_order: 'numeric'
+    }
+
+    return checkBody(body, rules);
+}
+
 // Check Staff/Admin Req Body
 const checkBody = (body, rules) => {
     request = body;
@@ -53,5 +65,6 @@ const checkBody = (body, rules) => {
 module.exports = {
     createBannerRequest,
     createBannerImageRequest,
-    updateBannerRequest
+    updateBannerRequest,
+    updateBannerImageRequest
 }

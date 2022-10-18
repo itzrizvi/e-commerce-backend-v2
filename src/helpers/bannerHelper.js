@@ -97,7 +97,7 @@ module.exports = {
         if (createBannerImage) {
             // Return Formation
             return {
-                message: "Successfully Created Brand Image!",
+                message: "Successfully Created Banner Image!",
                 data: {
                     banner_uuid: createBannerImage.banner_uuid,
                     banner_id: createBannerImage.banner_id,

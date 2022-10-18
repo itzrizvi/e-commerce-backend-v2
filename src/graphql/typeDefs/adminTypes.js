@@ -42,6 +42,7 @@ type Staff {
     first_name:String
     last_name:String
     email:String
+    image:String
     roles:[Role]
     user_status:Boolean
     email_verified:Boolean

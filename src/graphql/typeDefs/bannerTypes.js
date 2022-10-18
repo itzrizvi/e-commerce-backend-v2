@@ -43,6 +43,7 @@ module.exports = gql`
         banner_uuid: UUID!
         banner_id: UUID!
         title: String!
+        image:String
         link: String
         sort_order: Int!
     }
@@ -53,6 +54,12 @@ module.exports = gql`
         banner_status: Boolean
     }
 
+    input UpdateBannerImage {
+        banner_uuid: UUID!
+        title: String
+        link: String
+        sort_order: Int
+    }
 
 
 # Extended QUERIES AND MUTATIONS ######################################

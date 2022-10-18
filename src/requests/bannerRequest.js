@@ -34,6 +34,15 @@ const getSingleBannerRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET Banner By Slug REQUEST
+const getBannerBySlugRequest = (body) => {
+    rules = {
+        banner_slug: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 
 // CREATE Banner Image REQUEST
@@ -80,5 +89,6 @@ module.exports = {
     createBannerImageRequest,
     updateBannerRequest,
     updateBannerImageRequest,
-    getSingleBannerRequest
+    getSingleBannerRequest,
+    getBannerBySlugRequest
 }

@@ -348,5 +348,41 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET BANNER BY SLUG HELPER
+    getBannerBySlug: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { banner_slug } = req;
+
+            // Association with Banner and Banner Images
+            if (!db.banners.hasAlias('banner_images') && !db.banners.hasAlias('bannerimages')) {
+                await db.banners.hasMany(db.banner_images, { sourceKey: 'banner_uuid', foreignKey: 'banner_id', as: 'bannerimages' });
+            }
+
+            // GET Banner By SLUG
+            const getBanner = await db.banners.findOne({
+                where: {
+                    banner_slug,
+                    tenant_id: TENANTID
+                },
+                include: [{
+                    model: db.banner_images, as: 'bannerimages'
+                }]
+            });
+
+            // Return 
+            return {
+                message: "Get Banner By Slug Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getBanner
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

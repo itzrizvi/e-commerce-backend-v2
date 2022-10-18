@@ -8,10 +8,18 @@ let rules = {}, request, response;
 const createBannerRequest = (body) => {
     rules = {
         banner_name: 'required|string',
-        banner_status: 'required|strict|boolean',
-        banner_image: 'required|array',
-        "banner_image.title": "required|string",
-        "banner_image.sort_order": "required|numeric"
+        banner_status: 'required|strict|boolean'
+    }
+
+    return checkBody(body, rules);
+}
+
+// CREATE Banner REQUEST
+const createBannerImageRequest = (body) => {
+    rules = {
+        banner_id: 'required|string',
+        title: 'required|string',
+        sort_order: 'required|numeric'
     }
 
     return checkBody(body, rules);
@@ -32,5 +40,6 @@ const checkBody = (body, rules) => {
 }
 
 module.exports = {
-    createBannerRequest
+    createBannerRequest,
+    createBannerImageRequest
 }

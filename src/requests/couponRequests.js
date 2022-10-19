@@ -53,6 +53,15 @@ const getSingleCouponRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET SINGLE COUPON BY CODE REQUEST
+const getSingleCouponByCodeRequest = (body) => {
+    rules = {
+        coupon_code: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 // Check Coupon Req Body
 const checkBody = (body, rules) => {
@@ -77,5 +86,6 @@ const checkBody = (body, rules) => {
 module.exports = {
     createCouponRequest,
     updateCouponRequest,
-    getSingleCouponRequest
+    getSingleCouponRequest,
+    getSingleCouponByCodeRequest
 }

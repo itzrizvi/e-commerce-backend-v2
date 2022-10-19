@@ -64,6 +64,17 @@ module.exports = gql`
         data: Coupon
     }
 
+    input GetSingleCouponByCodeInput {
+        coupon_code: String!
+    }
+
+    type GetSingleCouponByCodeOutput {
+        message: String
+        status: Boolean
+        tenant_id: String
+        data: Coupon
+    }
+
 
 
 
@@ -78,6 +89,7 @@ extend type Mutation {
 
 extend type Query {
     getSingleCoupon(query:GetSingleCouponInput):GetSingleCouponOutput!
+    getSingleCouponByCode(query:GetSingleCouponByCodeInput):GetSingleCouponByCodeOutput!
 }
 
 

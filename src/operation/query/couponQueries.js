@@ -1,5 +1,5 @@
 // COUPON BASED QUERY
-const { getSingleCouponController } = require("../../controllers");
+const { getSingleCouponController, getSingleCouponByCodeController } = require("../../controllers");
 
 // COUPON QUERIES
 module.exports = {
@@ -14,5 +14,13 @@ module.exports = {
         // Return To Controller
         return await getSingleCouponController(args.query, db, user, isAuth, TENANTID);
     },
+    // GET SINGLE COUPON BY CODE
+    getSingleCouponByCode: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await getSingleCouponByCodeController(args.query, db, user, isAuth, TENANTID);
+    }
 
 }

@@ -211,6 +211,37 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET SINGLE COUPON BY CODE (PUBLIC)
+    getSingleCouponByCode: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { coupon_code } = req;
+
+            // GET Single COUPON BY CODE
+            const getsinglecouponbycode = await db.coupons.findOne({
+                where: {
+                    [Op.and]: [{
+                        coupon_code,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return 
+            return {
+                message: "Get Single Coupon By Coupon Code Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getsinglecouponbycode
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

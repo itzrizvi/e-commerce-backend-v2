@@ -13,6 +13,7 @@ const categoryTypeDefs = require("./categoryTypes");
 const attributeTypeDefs = require("./attributeTypes");
 const productTypeDefs = require("./productTypes");
 const customerGroupTypeDefs = require("./customerGroupTypes");
+const couponTypeDefs = require("./couponTypes");
 
 
 // Type Defs and Scalars
@@ -64,5 +65,6 @@ module.exports = [
     categoryTypeDefs,
     attributeTypeDefs,
     productTypeDefs,
-    customerGroupTypeDefs
+    customerGroupTypeDefs,
+    couponTypeDefs
 ]

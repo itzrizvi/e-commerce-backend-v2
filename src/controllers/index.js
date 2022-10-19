@@ -11,4 +11,5 @@ module.exports = {
     ...require('./banner'),
     ...require('./attribute'),
     ...require('./customerGroup'),
+    ...require('./coupon'),
 }

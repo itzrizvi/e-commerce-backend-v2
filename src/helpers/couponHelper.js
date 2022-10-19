@@ -1,0 +1,82 @@
+// All requires
+const { Op } = require("sequelize");
+
+// COUPON HELPER
+module.exports = {
+    // CREATE COUPON HELPER
+    createCoupon: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+            // Data From Request
+            const { coupon_name,
+                coupon_code,
+                coupon_description,
+                coupon_type,
+                coupon_amount,
+                coupon_maxamount,
+                coupon_minamount,
+                coupon_startdate,
+                coupon_enddate,
+                coupon_status,
+                coupon_sortorder } = req;
+
+            // Check Start Date and End Date
+            if (new Date(coupon_startdate) > new Date(coupon_enddate)) {
+                return { message: "Cannot Set Coupon While Coupon Start Date is Greater Than End Date!!!", status: false }
+            }
+
+            // Check Coupon End Date
+            if (new Date(coupon_enddate) < new Date()) {
+                return { message: "Cannot Set Coupon End Date Lower than Present Date", status: false }
+            }
+
+            // Check If Already Exist the COUPON
+            const checkExistence = await db.coupons.findOne({
+                where: {
+                    [Op.and]: [{
+                        coupon_code,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            // If Found COUPON
+            if (checkExistence) return { message: "Already Have This Coupon!!!", status: false };
+
+
+            // Create COUPON
+            const createcoupon = await db.coupons.create({
+                coupon_name,
+                coupon_code,
+                coupon_description,
+                coupon_type,
+                coupon_amount,
+                coupon_maxamount,
+                coupon_minamount,
+                coupon_startdate,
+                coupon_enddate,
+                coupon_status,
+                coupon_sortorder,
+                tenant_id: TENANTID
+            });
+            if (!createcoupon) return { message: "Couldnt Create Coupon!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Coupon Created Successfully!!!",
+                status: true,
+                tenant_id: createcoupon.tenant_id
+            }
+
+
+        } catch (error) {
+            if (error) {
+                return { message: "Something Went Wrong!!!", isAuth: false, data: [], status: false }
+            }
+        }
+
+
+    }
+
+}

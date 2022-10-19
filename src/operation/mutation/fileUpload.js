@@ -8,7 +8,6 @@ module.exports = {
         const brand_image_folder = brand_image_src.slice(1)
         const brand_img_idf = config.get('AWS.BRND_IMG_IDF')
         const imageUrl = await singleFileUpload({ file, idf: brand_img_idf, folder: brand_image_folder, fileName: brand_img_idf, bucketName: brand_image_bucketName });
-        console.log(imageUrl);
         return {
             file: imageUrl,
             message: "Single file uploaded successfully!"
@@ -21,7 +20,6 @@ module.exports = {
         const brand_img_idf = config.get('AWS.BRND_IMG_IDF')
 
         const imagesUrl = await multipleFileUpload({ file, idf: brand_img_idf, folder: brand_image_folder, fileName: brand_img_idf, bucketName: brand_image_bucketName });
-        console.log(imagesUrl);
         return {
             message: "Multiple File uploaded successfully!"
         }

@@ -44,6 +44,15 @@ const updateCouponRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// GET SINGLE COUPON REQUEST
+const getSingleCouponRequest = (body) => {
+    rules = {
+        coupon_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 // Check Coupon Req Body
 const checkBody = (body, rules) => {
@@ -67,5 +76,6 @@ const checkBody = (body, rules) => {
 
 module.exports = {
     createCouponRequest,
-    updateCouponRequest
+    updateCouponRequest,
+    getSingleCouponRequest
 }

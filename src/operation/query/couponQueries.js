@@ -1,5 +1,5 @@
 // COUPON BASED QUERY
-const { } = require("../../controllers");
+const { getSingleCouponController } = require("../../controllers");
 
 // COUPON QUERIES
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        // return await getSingleAttributeController(args.query, db, user, isAuth, TENANTID);
+        return await getSingleCouponController(args.query, db, user, isAuth, TENANTID);
     },
 
 }

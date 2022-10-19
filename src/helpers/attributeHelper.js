@@ -199,8 +199,6 @@ module.exports = {
             }
 
 
-
-
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }

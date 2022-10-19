@@ -77,20 +77,18 @@ module.exports = gql`
 
 
 
-
-
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
-extend type Mutation {
-    createCoupon(data:CreateCouponInput):CommonOutput!
-    updateCoupon(data:UpdateCouponInput):CommonOutput!
-}
+    extend type Mutation {
+        createCoupon(data:CreateCouponInput):CommonOutput!
+        updateCoupon(data:UpdateCouponInput):CommonOutput!
+    }
 
-extend type Query {
-    getSingleCoupon(query:GetSingleCouponInput):GetSingleCouponOutput!
-    getSingleCouponByCode(query:GetSingleCouponByCodeInput):GetSingleCouponByCodeOutput!
-}
+    extend type Query {
+        getSingleCoupon(query:GetSingleCouponInput):GetSingleCouponOutput!
+        getSingleCouponByCode(query:GetSingleCouponByCodeInput):GetSingleCouponByCodeOutput!
+    }
 
 
 `;

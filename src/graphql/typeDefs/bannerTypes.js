@@ -98,6 +98,10 @@ module.exports = gql`
         data:Banner
     }
 
+    input DeleteBannerImageInput {
+        banner_uuid: UUID!
+    }
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -107,6 +111,7 @@ module.exports = gql`
         addBannerImage(data: BannerImageInput!): BannerImageOutput
         updateBanner(data: UpdateBannerInput):CommonOutput!
         updateBannerImage(data: UpdateBannerImageInput):CommonOutput!
+        deleteBannerImage(data: DeleteBannerImageInput):CommonOutput!
     }
 
     extend type Query {

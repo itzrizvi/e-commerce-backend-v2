@@ -68,6 +68,15 @@ const updateBannerImageRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// DELETE Banner Image REQUEST
+const deleteBannerImageRequest = (body) => {
+    rules = {
+        banner_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 
 
 // Check Staff/Admin Req Body
@@ -90,5 +99,6 @@ module.exports = {
     updateBannerRequest,
     updateBannerImageRequest,
     getSingleBannerRequest,
-    getBannerBySlugRequest
+    getBannerBySlugRequest,
+    deleteBannerImageRequest
 }

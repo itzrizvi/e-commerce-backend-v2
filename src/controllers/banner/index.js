@@ -6,4 +6,5 @@ module.exports = {
     getBannerBySlugController: require("./getBannerBySlugController"),
     createBannerImageController: require("./createBannerImageController"),
     updateBannerImageController: require("./updateBannerImageController"),
+    deleteBannerImageController: require("./deleteBannerImageController"),
 }

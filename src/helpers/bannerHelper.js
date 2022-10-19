@@ -384,5 +384,55 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // DELETE Banner Image HELPER
+    deleteBannerImage: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { banner_uuid } = req;
+
+            // Find Banner Image to Get Image Name
+            const findBannerImage = await db.banner_images.findOne({
+                where: {
+                    [Op.and]: [{
+                        banner_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findBannerImage) return { message: "Couldnt Found Banner Image!!!", status: false }
+
+            // IF Image Found
+            if (findBannerImage.image) {
+                // Delete Previous S3 Image For this Banner Slide
+                const banner_image_src = config.get("AWS.BANNER_IMG_DEST").split("/");
+                const banner_image_bucketName = banner_image_src[0];
+                const banner_image_folder = banner_image_src.slice(1);
+                await deleteFile({ idf: findBannerImage.banner_id, folder: banner_image_folder, fileName: findBannerImage.image, bucketName: banner_image_bucketName });
+            }
+
+            // Delete Banner Image
+            const deletebannerimage = await db.banner_images.destroy({
+                where: {
+                    [Op.and]: [{
+                        banner_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!deletebannerimage) return { message: "Couldnt Delete Banner Image!!!", status: false }
+
+            // Return 
+            return {
+                message: "Banner Image Delete Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

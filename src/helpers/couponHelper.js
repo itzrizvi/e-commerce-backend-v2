@@ -242,6 +242,31 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    // GET ALL COUPONS (PUBLIC)
+    getAllCoupons: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // GET ALL COUPONS
+            const getallcoupons = await db.coupons.findAll({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Return 
+            return {
+                message: "Get All Coupons Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getallcoupons
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 
 }

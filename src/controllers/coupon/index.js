@@ -3,4 +3,5 @@ module.exports = {
     updateCouponController: require("./updateCouponController"),
     getSingleCouponController: require("./getSingleCouponController"),
     getSingleCouponByCodeController: require("./getSingleCouponByCodeController"),
+    getAllCouponsController: require("./getAllCouponsController"),
 }

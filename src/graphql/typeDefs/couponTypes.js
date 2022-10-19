@@ -75,6 +75,13 @@ module.exports = gql`
         data: Coupon
     }
 
+    type GetAllCoupons {
+        message: String
+        status: Boolean
+        tenant_id: String
+        data: [Coupon]
+    }
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -88,6 +95,7 @@ module.exports = gql`
     extend type Query {
         getSingleCoupon(query:GetSingleCouponInput):GetSingleCouponOutput!
         getSingleCouponByCode(query:GetSingleCouponByCodeInput):GetSingleCouponByCodeOutput!
+        getAllCoupons:GetAllCoupons!
     }
 
 

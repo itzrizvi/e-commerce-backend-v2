@@ -24,6 +24,27 @@ const createCouponRequest = (body) => {
 }
 
 
+// UPDATE COUPON REQUEST
+const updateCouponRequest = (body) => {
+    rules = {
+        coupon_uuid: 'required|string',
+        coupon_name: 'string',
+        coupon_code: 'string',
+        coupon_type: 'string',
+        coupon_startdate: 'string',
+        coupon_enddate: 'string',
+        coupon_description: 'string',
+        coupon_amount: 'strict|numeric',
+        coupon_maxamount: 'strict|numeric',
+        coupon_minamount: 'strict|numeric',
+        coupon_status: 'strict|boolean',
+        coupon_sortorder: 'strict|integer'
+    }
+
+    return checkBody(body, rules);
+}
+
+
 // Check Coupon Req Body
 const checkBody = (body, rules) => {
 
@@ -45,5 +66,6 @@ const checkBody = (body, rules) => {
 }
 
 module.exports = {
-    createCouponRequest
+    createCouponRequest,
+    updateCouponRequest
 }

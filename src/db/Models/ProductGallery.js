@@ -1,23 +1,21 @@
+// Product Gallery Model
+
 module.exports = (sequelize, DataTypes) => {
 
-    const Banners = sequelize.define("banners", {
-        banner_uuid: {
+    const ProductGallery = sequelize.define("product_gallery", {
+        prod_gallery_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        banner_name: {
-            type: DataTypes.STRING,
+        prod_uuid: {
+            type: DataTypes.UUID,
             allowNull: false
         },
-        banner_slug: {
+        prod_image: {
             type: DataTypes.STRING,
             allowNull: false
-        },
-        banner_status: {
-            type: DataTypes.BOOLEAN,
-            allowNull: true
         },
         tenant_id: {
             type: DataTypes.STRING,
@@ -28,8 +26,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             timestamps: true,
             freezeTableName: true,
-            tableName: 'banners',
+            tableName: 'product_gallery',
         })
 
-    return Banners
+    return ProductGallery
 }

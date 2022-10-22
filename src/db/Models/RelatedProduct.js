@@ -1,23 +1,20 @@
+// Related Product Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Banners = sequelize.define("banners", {
-        banner_uuid: {
+    const RelatedProduct = sequelize.define("related_product", {
+        related_prod_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        banner_name: {
-            type: DataTypes.STRING,
+        base_prod_uuid: {
+            type: DataTypes.UUID,
             allowNull: false
         },
-        banner_slug: {
-            type: DataTypes.STRING,
+        prod_uuid: {
+            type: DataTypes.UUID,
             allowNull: false
-        },
-        banner_status: {
-            type: DataTypes.BOOLEAN,
-            allowNull: true
         },
         tenant_id: {
             type: DataTypes.STRING,
@@ -28,8 +25,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             timestamps: true,
             freezeTableName: true,
-            tableName: 'banners',
+            tableName: 'related_product',
         })
 
-    return Banners
+    return RelatedProduct
 }

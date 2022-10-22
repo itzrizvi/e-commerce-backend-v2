@@ -2,99 +2,115 @@
 module.exports = (sequelize, DataTypes) => {
 
     const Product = sequelize.define("products", {
-        product_id: {
+        prod_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4
         },
-        product_name: {
+        prod_name: {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        product_slug: {
+        prod_slug: {
             type: DataTypes.TEXT,
             allowNull: false
         },
-        product_description: {
+        prod_long_desc: {
             type: DataTypes.JSON,
             allowNull: false
         },
-        product_meta_tag_title: {
+        prod_short_desc: {
+            type: DataTypes.JSON,
+            allowNull: false
+        },
+        prod_meta_title: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        product_meta_tag_description: {
+        prod_meta_desc: {
             type: DataTypes.JSON,
             allowNull: true
         },
-        product_meta_tag_keywords: {
+        prod_meta_keywords: {
             type: DataTypes.JSON,
             allowNull: true
         },
-        product_tags: {
+        prod_tags: {
             type: DataTypes.JSON,
             allowNull: true
         },
-        product_image: {
-            type: DataTypes.STRING(255),
+        prod_category: {
+            type: DataTypes.UUID,
             allowNull: false
         },
-        product_image_gallery: {
-            type: DataTypes.JSON,
+        prod_regular_price: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        prod_sale_price: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+            defaultValue: 0
+        },
+        discount_type_uuid: {
+            type: DataTypes.UUID,
             allowNull: true
         },
-        product_sku: {
+        brand_uuid: {
+            type: DataTypes.UUID,
+            allowNull: false
+        },
+        attr_group_uuid: {
+            type: DataTypes.UUID,
+            allowNull: true
+        },
+        prod_model: {
             type: DataTypes.STRING,
-            allowNull: false
-        },
-        product_regular_price: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        product_sale_price: {
-            type: DataTypes.FLOAT,
             allowNull: true
         },
-        product_tax_included: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        prod_sku: {
+            type: DataTypes.STRING,
             allowNull: true
         },
-        product_stock_quantity: {
+        dimension_uuid: {
+            type: DataTypes.UUID,
+            allowNull: true
+        },
+        prod_weight: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        prod_weight_class: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        prod_min_quantity: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
         },
-        product_minimum_stock_quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            defaultValue: 0
+        prod_subtract_stock: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         },
-        product_maximum_orders: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            defaultValue: 0
-        },
-        product_stock_status: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        product_available_from: {
+        prod_outofstock_status: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        product_status: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        product_category: {
-            type: DataTypes.UUID,
-            allowNull: false
-        },
-        product_barcode: {
-            type: DataTypes.STRING,
+        prod_available_from: {
+            type: DataTypes.DATE,
             allowNull: true
+        },
+        prod_tax_included: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
+        prod_thumbnail: {
+            type: DataTypes.STRING,
+            allowNull: false
         },
         added_by: {
             type: DataTypes.UUID,

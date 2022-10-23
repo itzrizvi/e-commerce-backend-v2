@@ -12,4 +12,5 @@ module.exports = {
     ...require('./bannerQueries'),
     ...require('./couponQueries'),
     ...require('./ratingQueries'),
+    ...require('./vendorQueries'),
 }

@@ -61,10 +61,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.UUID,
             allowNull: false
         },
-        attr_group_uuid: {
-            type: DataTypes.UUID,
-            allowNull: true
-        },
         prod_model: {
             type: DataTypes.STRING,
             allowNull: true
@@ -85,28 +81,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        prod_min_quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0
-        },
-        prod_subtract_stock: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false
-        },
         prod_outofstock_status: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false,
+            defaultValue: "Out Of Stock"
         },
-        prod_available_from: {
-            type: DataTypes.DATE,
-            allowNull: true
-        },
-        prod_tax_included: {
+        prod_status: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: false
+            defaultValue: true
         },
         prod_thumbnail: {
             type: DataTypes.STRING,

@@ -17,11 +17,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        vendor_uuid: {
+        purchase_order_uuid: {
             type: DataTypes.UUID,
             allowNull: true
         },
-        vendor_type: {
+        input_type: {
             type: DataTypes.ENUM("purchase", "split"),
             allowNull: false
         },

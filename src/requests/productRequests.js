@@ -6,26 +6,28 @@ let rules = {}, request, response;
 // Add Product REQUEST
 const addProductRequest = (body) => {
     rules = {
-        product_name: 'required|string',
-        product_description: 'required|string',
-        product_meta_tag_title: 'string',
-        product_meta_tag_description: 'string',
-        product_meta_tag_keywords: 'string',
-        product_tags: 'string',
-        product_image: 'required|string',
-        product_image_gallery: 'string',
-        product_sku: 'required|string',
-        product_regular_price: 'required|strict|numeric',
-        product_sale_price: 'strict|numeric',
-        product_tax_included: 'strict|boolean',
-        product_stock_quantity: 'required|strict|numeric',
-        product_minimum_stock_quantity: 'strict|numeric',
-        product_maximum_orders: 'strict|numeric',
-        product_stock_status: 'required|string',
-        product_available_from: 'string',
-        product_status: 'required|string',
-        product_category: 'required|string',
-        product_barcode: 'string'
+        prod_name: 'required|string',
+        prod_long_desc: 'required|string',
+        prod_short_desc: 'required|string',
+        prod_meta_title: 'string',
+        prod_meta_desc: 'string',
+        prod_meta_keywords: 'string',
+        prod_tags: 'string',
+        prod_regular_price: 'required|strict|numeric',
+        prod_sale_price: 'strict|numeric',
+        prod_model: 'string',
+        prod_sku: 'required|string',
+        brand_uuid: 'required|string',
+        prod_category: 'required|string',
+        related_product: 'array',
+        prod_weight: 'string',
+        prod_weight_class: 'string',
+        prod_status: 'required|boolean',
+        prod_outofstock_status: 'required|string',
+        dimensions: 'object',
+        discount_type: 'object',
+        product_attributes: 'array',
+        partof_product: 'array'
     }
 
     return checkBody(body, rules);

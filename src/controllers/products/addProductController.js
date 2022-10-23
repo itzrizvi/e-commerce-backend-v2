@@ -6,12 +6,11 @@ const { singleResponse } = require("../../utils/response");
 // Add Product Controller
 module.exports = async (req, db, user, isAuth, TENANTID) => {
 
-    // Validate Create Role Request
+    // Validate Add Product Request
     const validate = await addProductRequest(req);
     if (!validate.success) {
         return singleResponse(validate.data);
     }
-
     // Return If No Auth
     if (!user || !isAuth) return { message: "Not Authorized", status: false };
     if (user.has_role === '0') return { message: "Not Authorized", status: false };

@@ -1,6 +1,8 @@
 // All Requires
 const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
+const { singleFileUpload, multipleFileUpload } = require("../utils/fileUpload");
+const config = require('config');
 
 
 // Product Helper
@@ -12,30 +14,34 @@ module.exports = {
         try {
 
             // Data From Request
-            const product_name = req.product_name;
-            const product_description = req.product_description;
-            const product_meta_tag_title = req.product_meta_tag_title ? req.product_meta_tag_title : null;
-            const product_meta_tag_description = req.product_meta_tag_description ? req.product_meta_tag_description : null;
-            const product_meta_tag_keywords = req.product_meta_tag_keywords ? req.product_meta_tag_keywords : null;
-            const product_tags = req.product_tags ? req.product_tags : null;
-            const product_image = req.product_image;
-            const product_image_gallery = req.product_image_gallery ? req.product_image_gallery : null;
-            const product_sku = req.product_sku;
-            const product_regular_price = req.product_regular_price;
-            const product_sale_price = req.product_sale_price ? req.product_sale_price : null;
-            const product_tax_included = req.product_tax_included ? req.product_tax_included : null;
-            const product_stock_quantity = req.product_stock_quantity;
-            const product_minimum_stock_quantity = req.product_minimum_stock_quantity ? req.product_minimum_stock_quantity : null;
-            const product_maximum_orders = req.product_maximum_orders ? req.product_maximum_orders : null;
-            const product_stock_status = req.product_stock_status;
-            const product_available_from = req.product_available_from ? req.product_available_from : null;
-            const product_status = req.product_status;
-            const product_category = req.product_category;
-            const product_barcode = req.product_barcode ? req.product_barcode : null;
-            const tenant_id = TENANTID;
+            const { prod_name,
+                prod_long_desc,
+                prod_short_desc,
+                prod_meta_title,
+                prod_meta_desc,
+                prod_meta_keywords,
+                prod_tags,
+                prod_regular_price,
+                prod_sale_price,
+                prod_model,
+                prod_sku,
+                brand_uuid,
+                prod_category,
+                prod_weight,
+                prod_weight_class,
+                prod_outofstock_status,
+                prod_status,
+                related_product,
+                prod_thumbnail,
+                prod_gallery,
+                dimensions,
+                discount_type,
+                product_attributes,
+                partof_product } = req;
+
 
             // Product Slug
-            const product_slug = slugify(`${product_name}`, {
+            const prod_slug = slugify(`${prod_name}`, {
                 replacement: '-',
                 remove: /[*+~.()'"!:@]/g,
                 lower: true,
@@ -43,58 +49,141 @@ module.exports = {
                 trim: true
             });
 
-            // Added By
-            const added_by = user.uid;
-
-            // Check the Product is Already There
-            const findProductExist = await db.products.findOne({
+            // Check Existence
+            const checkExists = await db.products.findOne({
                 where: {
                     [Op.and]: [{
-                        product_slug,
-                        product_sku,
-                        tenant_id,
-                        product_category
+                        prod_slug,
+                        prod_sku,
+                        tenant_id: TENANTID
                     }]
                 }
             });
+            if (checkExists) return { message: "Already Have This Product!!!", status: false };
 
-            // If Found Then Return
-            if (findProductExist) return { message: "This Product Already Added!!!", status: false };
+            // Discount Type Insertion
+            let discount_type_uuid;
+            if (discount_type) {
+                // Insert Data In Discount Type Table
+                discount_type.tenant_id = TENANTID;
+                const insertDiscountType = await db.discount_type.create(discount_type);
+                if (!insertDiscountType) return { message: "Discount Table Data Insert Failed!!", status: false };
 
-            // Add Product
-            const productAdd = await db.products.create({
-                product_name,
-                product_slug,
-                product_description,
-                product_meta_tag_title,
-                product_meta_tag_description,
-                product_meta_tag_keywords,
-                product_tags,
-                product_image,
-                product_image_gallery,
-                product_sku,
-                product_regular_price,
-                product_sale_price,
-                product_tax_included,
-                product_stock_quantity,
-                product_minimum_stock_quantity,
-                product_maximum_orders,
-                product_stock_status,
-                product_available_from,
-                product_status,
-                product_category,
-                product_barcode,
-                tenant_id,
-                added_by
+                // Discount Type UUID
+                discount_type_uuid = insertDiscountType.discount_type_uuid
+            }
+
+            // Dimensions Table Data Insertion
+            let dimension_uuid;
+            if (dimensions) {
+                // Insert Data In Dimension Table
+                dimensions.tenant_id = TENANTID;
+                const insertDimension = await db.product_dimension.create(dimensions);
+                if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
+
+                // Discount Type UUID
+                dimension_uuid = insertDimension.prod_dimension_uuid
+            }
+
+            // Create Product Without Image First
+            const createProduct = await db.products.create({
+                prod_name,
+                prod_slug,
+                prod_long_desc,
+                prod_short_desc,
+                prod_meta_title,
+                prod_meta_desc,
+                prod_meta_keywords,
+                prod_tags,
+                prod_regular_price,
+                prod_sale_price,
+                prod_model,
+                prod_sku,
+                brand_uuid,
+                prod_category,
+                prod_weight,
+                prod_weight_class,
+                prod_outofstock_status,
+                prod_status,
+                discount_type_uuid,
+                dimension_uuid,
+                prod_thumbnail: "demo.jpg",
+                added_by: user.uid,
+                tenant_id: TENANTID
             });
+            if (!createProduct) return { message: "Product Create Failed!!!", status: false }
 
-            // Add Product Data Return
-            if (productAdd) {
-                return {
-                    message: "Product Added Successfully!!!",
-                    status: true,
-                    data: productAdd
+
+
+            // Upload Product Thumbnail
+            let thumbName;
+            // Upload Image to AWS S3
+            const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
+            const product_image_bucketName = product_image_src[0];
+            const product_image_folder = product_image_src.slice(1).join("/");
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_uuid, folder: product_image_folder, fileName: createProduct.prod_uuid, bucketName: product_image_bucketName });
+            if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
+
+            // Update Product with Thumbnail Name
+            thumbName = imageUrl.Key.split('/').slice(-1)[0];
+            // Find and Update Product Thumb Name By UUID
+            const productThumbUpdate = {
+                prod_thumbnail: thumbName
+            }
+            const updateProductWithThumb = await db.products.update(productThumbUpdate, {
+                where: {
+                    [Op.and]: [{
+                        prod_uuid: createProduct.prod_uuid,
+                        tenant_id: TENANTID
+                    }]
                 }
+            });
+            if (!updateProductWithThumb) return { message: "Product Create By Thumbnail Failed!!!", status: false }
+
+
+            // If Product Gallery Images are Available
+            if (prod_gallery) {
+                // Upload Product Thumbnail
+                let gallery = [];
+                // Upload Image to AWS S3
+                const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
+                const product_gallery_bucketName = product_gallery_src[0];
+                const product_gallery_folder = product_gallery_src.slice(1).join("/");
+                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_uuid, folder: product_gallery_folder, fileName: createProduct.prod_uuid, bucketName: product_gallery_bucketName });
+                if (!imageUrl) return { message: "Gallery Images Couldnt Uploaded Properly!!!", status: false };
+
+                // Assign Values To Gallery Array For Bulk Create
+                imageUrl.forEach(async (galleryImg) => {
+                    await gallery.push({ prod_image: galleryImg.upload.Key.split('/').slice(-1)[0], prod_uuid: createProduct.prod_uuid, tenant_id: TENANTID });
+                });
+
+                // If Gallery Array Created Successfully then Bulk Create In Product Gallery Table
+                if (gallery) {
+                    // Product Gallery Save Bulk
+                    const prodGalleryImgSave = await db.product_gallery.bulkCreate(gallery);
+                    if (!prodGalleryImgSave) return { message: "Product Gallery Images Save Failed!!!", status: false }
+                }
+
+            }
+
+            // Product Attribuites Table Data Insertion
+            if (product_attributes) {
+                // Loop For Assign Other Values to Product Attribites Data
+                product_attributes.forEach(element => {
+                    element.tenant_id = TENANTID;
+                    element.prod_uuid = createProduct.prod_uuid;
+                });
+
+                // Product Attributes Save Bulk
+                const prodAttributesDataSave = await db.product_attributes.bulkCreate(product_attributes);
+                if (!prodAttributesDataSave) return { message: "Product Attributes Data Save Failed", status: false }
+            }
+
+            // Return Formation
+            return {
+                message: "Product Added Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
             }
 
 

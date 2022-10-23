@@ -4,8 +4,6 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
     type Rating {
         rating_uuid: UUID
-        user: User
-        product: Product
         rating_title:String
         rating_description:String
         rating:Float
@@ -19,7 +17,7 @@ module.exports = gql`
         first_name:String
         last_name:String
         email:String
-        emailVerified:Boolean
+        email_verified:Boolean
         user_status:Boolean
         updatedAt:String
         createdAt:String
@@ -51,9 +49,16 @@ module.exports = gql`
         description: String
     }
 
-    input GetAllRatingInput{
-        user_uuid: UUID
-        product_uuid: UUID
+    input GetAllRatingByUserInput{
+        user_uuid: UUID!
+    }
+    
+    input GetAllRatingByProductInput{
+        product_uuid: UUID!
+    }
+
+    input GetSingleRatingInput{
+        rating_uuid: UUID!
     }
 
     type CreateRatingOutput {
@@ -65,6 +70,12 @@ module.exports = gql`
     type getAllRatingOutput{
         message:String
         status:Boolean
+        data: [Rating]
+    }
+
+    type getSingleRatingOutput{
+        message:String
+        status:Boolean
         data: Rating
     }
 
@@ -73,6 +84,8 @@ module.exports = gql`
     }
 
     extend type Query {
-        getAllRating(query: GetAllRatingInput): Rating!
+        getAllRatingByUser(query: GetAllRatingByUserInput): getAllRatingOutput!
+        getAllRatingByProduct(query: GetAllRatingByProductInput): getAllRatingOutput!
+        getSingleRating(query: GetSingleRatingInput): getSingleRatingOutput!
     }
 `;

@@ -50,37 +50,46 @@ module.exports = {
         }
 
     },
-    getAllRating: async (req, db, user, isAuth, TENANTID) => {
+    getAllRatingByUser: async (req, db, user, isAuth, TENANTID) => {
          // Try Catch Block
-        //  try {
+         try {
             // GET ALL Rating
             // GET DATA
-            const { user_uuid, product_uuid } = req;
-            // Check If User Has Alias or Not 
-            if (!db.rating.hasAlias('user')) {
-                await db.rating.hasOne(db.users, { sourceKey: 'user_id', foreignKey: 'uid', as: 'user' });
-            }
-
-            // Check If User Has Alias or Not 
-            if (!db.rating.hasAlias('product')) {
-                await db.rating.hasOne(db.products, { sourceKey: 'prod_uuid', foreignKey: 'product_id', as: 'product' });
-            }
+            const { user_uuid } = req;
 
             // Find All Roles With permissions
             const findAllRating = await db.rating.findAll({
-                include: [
-                    {
-                        model: db.users,
-                        as: 'user'
-                    },
-                    {
-                        model: db.products,
-                        as: 'product'
-                    },
-                ],
                 where: {
                     tenant_id: TENANTID,
-                    user_id: user_uuid,
+                    user_id: user_uuid
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+            })
+
+            // Return Formation
+            return {
+                data: findAllRating,
+                message: "All Rating Get Successfully by User ID!!!",
+                status: true
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
+    },
+    getAllRatingByProduct: async (req, db, user, isAuth, TENANTID) => {
+         // Try Catch Block
+         try {
+            // GET ALL Rating
+            // GET DATA
+            const { product_uuid } = req;
+
+            // Find All Roles With permissions
+            const findAllRating = await db.rating.findAll({
+                where: {
+                    tenant_id: TENANTID,
                     product_id: product_uuid
                 },
                 order: [
@@ -91,12 +100,41 @@ module.exports = {
             // Return Formation
             return {
                 data: findAllRating,
-                message: "All Roles And Permissions GET Success!!!",
+                message: "All Rating Get Successfully by Product ID!!!",
                 status: true
             }
 
-        // } catch (error) {
-        //     if (error) return { message: "Something Went Wrong", status: false }
-        // }
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
+    },
+    getSingleRating: async (req, db, user, isAuth, TENANTID) => {
+         // Try Catch Block
+         try {
+            // GET Rating
+            // GET DATA
+            const { rating_uuid } = req;
+
+            // Find All Roles With permissions
+            const findRating = await db.rating.findOne({
+                where: {
+                    tenant_id: TENANTID,
+                    rating_uuid
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+            })
+
+            // Return Formation
+            return {
+                data: findRating,
+                message: "Single Rating Get Successfully!!!",
+                status: true
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
     }
 }

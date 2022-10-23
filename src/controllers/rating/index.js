@@ -1,4 +1,6 @@
 module.exports = {
     createRatingController: require("./createRatingController"),
-    getAllRatingController: require("./getAllRatingController"),
+    getAllRatingByUserController: require("./getAllRatingByUserController"),
+    getAllRatingByProductController: require("./getAllRatingByProductController"),
+    getSingleRatingController: require("./getSingleRatingController"),
 }

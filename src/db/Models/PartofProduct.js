@@ -1,22 +1,24 @@
+// Part of Product Model
+
 module.exports = (sequelize, DataTypes) => {
 
-    const Banners = sequelize.define("banners", {
-        banner_uuid: {
+    const PartOfProduct = sequelize.define("partof_product", {
+        partof_product_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        banner_name: {
-            type: DataTypes.STRING,
+        prod_uuid: {
+            type: DataTypes.UUID,
             allowNull: false
         },
-        banner_slug: {
-            type: DataTypes.STRING,
-            allowNull: false
+        prod_quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
-        banner_status: {
-            type: DataTypes.BOOLEAN,
+        parent_prod_uuid: {
+            type: DataTypes.UUID,
             allowNull: true
         },
         tenant_id: {
@@ -28,8 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             timestamps: true,
             freezeTableName: true,
-            tableName: 'banners',
+            tableName: 'partof_product',
         })
 
-    return Banners
+    return PartOfProduct
 }

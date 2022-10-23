@@ -98,20 +98,25 @@ module.exports = {
                 coupon_sortorder } = req;
 
 
-            // Check If Already Exist the COUPON
-            const checkExistence = await db.coupons.findOne({
-                where: {
-                    [Op.and]: [{
-                        coupon_code,
-                        tenant_id: TENANTID
-                    }],
-                    [Op.not]: [{
-                        coupon_uuid
-                    }]
-                }
-            });
-            // If Found COUPON
-            if (checkExistence) return { message: "Already Have This COUPON!!!", status: false };
+            if (coupon_code) {
+                // Check If Already Exist the COUPON
+                const checkExistence = await db.coupons.findOne({
+                    where: {
+                        [Op.and]: [{
+                            coupon_code,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            coupon_uuid
+                        }]
+                    }
+                });
+
+
+                // If Found COUPON
+                if (checkExistence) return { message: "Already Have This COUPON!!!", status: false };
+            }
+
 
             // Find Coupon
             const findCoupon = await db.coupons.findOne({

@@ -1,22 +1,28 @@
+// Product Dimension Model
+
 module.exports = (sequelize, DataTypes) => {
 
-    const Banners = sequelize.define("banners", {
-        banner_uuid: {
+    const ProductDimension = sequelize.define("product_dimension", {
+        prod_dimension_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        banner_name: {
+        length: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        banner_slug: {
+        width: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        banner_status: {
-            type: DataTypes.BOOLEAN,
+        height: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        dimension_class: {
+            type: DataTypes.STRING,
             allowNull: true
         },
         tenant_id: {
@@ -28,8 +34,8 @@ module.exports = (sequelize, DataTypes) => {
         {
             timestamps: true,
             freezeTableName: true,
-            tableName: 'banners',
+            tableName: 'product_dimension',
         })
 
-    return Banners
+    return ProductDimension
 }

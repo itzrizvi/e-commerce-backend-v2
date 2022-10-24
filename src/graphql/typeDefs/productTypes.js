@@ -66,6 +66,28 @@ input AddProductInput {
     partof_product:JSON # Part of Product Table Properties Will Come as an Object
 }
 
+type ProductForList {
+    prod_uuid:UUID
+    prod_name:String
+    prod_slug:String
+    prod_regular_price:Float
+    prod_sale_price:Float
+    prod_model:String
+    prod_sku:String
+    prod_status:Boolean
+    prod_outofstock_status:String
+    prod_thumbnail:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type GetAllProducts {
+    message:String!
+    status:Boolean!
+    tenant_id:String
+    data:[ProductForList]
+}
 
 # input SingleProductDetailsInput {
 #     product_id:UUID
@@ -151,10 +173,10 @@ extend type Mutation {
     # updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }
 
-# extend type Query {
-#     getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
-#     getProductList: GetProductList!
-# }
+extend type Query {
+    # getSingleProduct(query: SingleProductDetailsInput): SingleProductDetails!
+    getProductList: GetAllProducts!
+}
 
 
 `;

@@ -378,56 +378,20 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
-            // ### ASSOCIATION STARTS ### //
-            // Check If Has Alias with Categories
-            if (!db.products.hasAlias('category')) {
-
-                await db.products.hasOne(db.categories, {
-                    sourceKey: 'product_category',
-                    foreignKey: 'cat_id',
-                    as: 'category'
-                });
-            }
-            // Check If Has Alias with Users and Roles
-            if (!db.products.hasAlias('users') && !db.users.hasAlias('roles')) {
-
-                await db.products.hasOne(db.users, {
-                    sourceKey: 'added_by',
-                    foreignKey: 'uid',
-                    as: 'createdBy'
-                });
-            }
-
-            // Check If Has Alias With Roles
-            if (!db.users.hasAlias('roles')) {
-                await db.users.hasOne(db.roles, {
-                    sourceKey: 'role_no',
-                    foreignKey: 'role_no',
-                    as: 'roles'
-                });
-            }
-            // ### ASSOCIATION ENDS ### //
-
             // Find ALL Product
             const allProducts = await db.products.findAll({
-                include: [
-                    { model: db.categories, as: 'category' },
-                    {
-                        model: db.users, as: 'createdBy',
-                        include: {
-                            model: db.roles,
-                            as: 'roles'
-                        }
-                    }
+                where: { tenant_id },
+                order: [
+                    ['prod_slug', 'ASC']
                 ],
-                where: { tenant_id }
             });
 
             // Return If Success
             if (allProducts) {
                 return {
-                    message: "Product List Success!!!",
+                    message: "Get Product List Success!!!",
                     status: true,
+                    tenant_id: TENANTID,
                     data: allProducts
                 }
             }

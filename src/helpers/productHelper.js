@@ -181,8 +181,38 @@ module.exports = {
 
                 // Product Attributes Save Bulk
                 const prodAttributesDataSave = await db.product_attributes.bulkCreate(product_attributes);
-                if (!prodAttributesDataSave) return { message: "Product Attributes Data Save Failed", status: false }
+                if (!prodAttributesDataSave) return { message: "Product Attributes Data Save Failed!!!", status: false }
             }
+
+
+            // If Related Products Are Available For Add
+            if (related_product) {
+                let relatedProducts = [];
+                related_product.forEach(async (productUUID) => {
+                    await relatedProducts.push({ prod_uuid: productUUID, base_prod_uuid: createProduct.prod_uuid, tenant_id: TENANTID });
+                });
+
+                if (relatedProducts) {
+                    // Related Product Save Bulk
+                    const relatedProdSave = await db.related_product.bulkCreate(relatedProducts);
+                    if (!relatedProdSave) return { message: "Related Products Save Failed!!!", status: false }
+                }
+            }
+
+            // If Part of Product Available
+            if (partof_product) {
+
+                partof_product.forEach(part => {
+                    part.parent_prod_uuid = createProduct.prod_uuid;
+                    part.tenant_id = TENANTID;
+                });
+
+                // Part Of Product Save Bulk
+                const partOfProdSave = await db.partof_product.bulkCreate(partof_product);
+                if (!partOfProdSave) return { message: "Part Of Products Save Failed!!!", status: false }
+
+            }
+
 
             // Return Formation
             return {

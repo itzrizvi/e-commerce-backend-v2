@@ -54,12 +54,17 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         prod_slug,
+                        tenant_id: TENANTID
+                    }],
+                    [Op.and]: [{
                         prod_sku,
                         tenant_id: TENANTID
-                    }]
+                    }],
+
                 }
             });
             if (checkExists) return { message: "Already Have This Product!!!", status: false };
+
 
             // Discount Type Insertion
             let discount_type_uuid;

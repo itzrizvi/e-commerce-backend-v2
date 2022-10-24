@@ -6,12 +6,11 @@ let rules = {}, request, response;
 // CREATE Vendor REQUEST
 const createVendorRequest = (body) => {
     rules = {
-        vendor_name: 'required|string',
+        vendor_contact_person: 'required|string',
         vendor_email: 'required|email',
-        vendor_address: 'required|string',
-        vendor_city: 'required|string',
-        vendor_country: 'required|string',
         vendor_status: 'required|boolean',
+        billing_address: 'required|array',
+        shippping_address: 'required|array',
     }
 
     return checkBody(body, rules);
@@ -21,12 +20,11 @@ const createVendorRequest = (body) => {
 const updateVendorRequest = (body) => {
     rules = {
         vendor_uuid: 'required|string',
-        vendor_name: 'required|string',
+        vendor_contact_person: 'required|string',
         vendor_email: 'required|email',
-        vendor_address: 'required|string',
-        vendor_city: 'required|string',
-        vendor_country: 'required|string',
         vendor_status: 'required|boolean',
+        billing_address: 'required|array',
+        shippping_address: 'required|array',
     }
 
     return checkBody(body, rules);

@@ -3,12 +3,16 @@ const { getSingleProductController, getProductListController } = require("../../
 
 
 module.exports = {
-    // // GET Single Product Details
-    // getSingleProduct: async (root, args, { db, TENANTID }, info) => {
-    //     if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
-    //     // Return to Controller
-    //     return await getSingleProductController(args.query, db, TENANTID);
-    // },
+    // GET Single Product Query
+    getSingleProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return to Controller
+        return await getSingleProductController(args.query, db, TENANTID);
+    },
     // GET Product List
     getProductList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID

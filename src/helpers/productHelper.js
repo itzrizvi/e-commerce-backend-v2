@@ -233,73 +233,214 @@ module.exports = {
     getSingleProduct: async (req, db, TENANTID) => {
 
         // Try Catch Block
-        try {
+        // try {
 
-            // Product ID From Request
-            const product_id = req.product_id;
+        // Product ID From Request
+        const prod_uuid = req.prod_uuid;
 
-            // ### ASSOCIATION STARTS ### //
-            // Check If Has Alias with Categories
-            if (!db.products.hasAlias('category')) {
+        // ### ASSOCIATION STARTS ### //
+        // Check If Has Alias with Categories
+        if (!db.products.hasAlias('category')) {
 
-                await db.products.hasOne(db.categories, {
-                    sourceKey: 'product_category',
-                    foreignKey: 'cat_id',
-                    as: 'category'
-                });
-            }
-            // Check If Has Alias with Users and Roles
-            if (!db.products.hasAlias('users') && !db.users.hasAlias('roles')) {
+            await db.products.hasOne(db.categories, {
+                sourceKey: 'prod_category',
+                foreignKey: 'cat_id',
+                as: 'category'
+            });
+        }
+        // Check If Has Alias with Users and Roles
+        if (!db.products.hasAlias('users') && !db.users.hasAlias('roles')) {
 
-                await db.products.hasOne(db.users, {
-                    sourceKey: 'added_by',
-                    foreignKey: 'uid',
-                    as: 'createdBy'
-                });
-            }
+            await db.products.hasOne(db.users, {
+                sourceKey: 'added_by',
+                foreignKey: 'uid',
+                as: 'created_by'
+            });
+        }
 
-            // Check If Has Alias With Roles
-            if (!db.users.hasAlias('roles')) {
-                await db.users.hasOne(db.roles, {
-                    sourceKey: 'role_no',
-                    foreignKey: 'role_no',
-                    as: 'roles'
-                });
-            }
-            // ### ASSOCIATION ENDS ### //
+        // Created By Associations
+        db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
+        db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
 
-            // Find Triggered Product
-            const findProduct = await db.products.findOne({
-                include: [
-                    { model: db.categories, as: 'category' },
-                    {
-                        model: db.users, as: 'createdBy',
+        // Product Gallery Associations
+        if (!db.products.hasAlias('product_gallery') && !db.products.hasAlias('gallery')) {
+
+            await db.products.hasMany(db.product_gallery, {
+                sourceKey: 'prod_uuid',
+                foreignKey: 'prod_uuid',
+                as: 'gallery'
+            });
+        }
+
+        // Discount Type + Customer Group Association
+        if (!db.products.hasAlias('discount_type')) {
+
+            await db.products.hasOne(db.discount_type, {
+                sourceKey: 'discount_type_uuid',
+                foreignKey: 'discount_type_uuid',
+                as: 'discount_type'
+            });
+        }
+
+        if (!db.discount_type.hasAlias('customer_groups') && !db.discount_type.hasAlias('customer_group')) {
+
+            await db.discount_type.hasOne(db.customer_groups, {
+                sourceKey: 'customer_group_uuid',
+                foreignKey: 'customer_group_uuid',
+                as: 'customer_group'
+            });
+        }
+
+        // Dimension Table Association with Product
+        if (!db.products.hasAlias('product_dimension') && !db.products.hasAlias('dimensions')) {
+
+            await db.products.hasOne(db.product_dimension, {
+                sourceKey: 'dimension_uuid',
+                foreignKey: 'prod_dimension_uuid',
+                as: 'dimensions'
+            });
+        }
+        // Brand Table Association with Product
+        if (!db.products.hasAlias('brands') && !db.products.hasAlias('brand')) {
+
+            await db.products.hasOne(db.brands, {
+                sourceKey: 'brand_uuid',
+                foreignKey: 'brand_uuid',
+                as: 'brand'
+            });
+        }
+
+        // Part of Product Table Association with Product
+        if (!db.products.hasAlias('partof_product') && !db.products.hasAlias('part_of_products')) {
+
+            await db.products.hasMany(db.partof_product, {
+                sourceKey: 'prod_uuid',
+                foreignKey: 'parent_prod_uuid',
+                as: 'part_of_products'
+            });
+        }
+        if (!db.partof_product.hasAlias('products') && !db.partof_product.hasAlias('part_product')) {
+
+            await db.partof_product.hasOne(db.products, {
+                sourceKey: 'prod_uuid',
+                foreignKey: 'prod_uuid',
+                as: 'part_product'
+            });
+        }
+
+        // Product Attributes Table Association with Product
+        if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+
+            await db.products.hasMany(db.product_attributes, {
+                sourceKey: 'prod_uuid',
+                foreignKey: 'prod_uuid',
+                as: 'prod_attributes'
+            });
+        }
+        if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+
+            await db.product_attributes.hasOne(db.attributes, {
+                sourceKey: 'attribute_uuid',
+                foreignKey: 'attribute_uuid',
+                as: 'attribute_data'
+            });
+        }
+
+        // Association with Attribute Group and Attributes
+        if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+            await db.attributes.hasOne(db.attr_groups, {
+                sourceKey: 'attr_group_uuid',
+                foreignKey: 'attr_group_uuid',
+                as: 'attribute_group'
+            });
+        }
+
+        // Association with Attribute Group and Attributes
+        if (!db.products.hasAlias('related_product') && !db.products.hasAlias('related_products')) {
+            await db.products.hasMany(db.related_product, {
+                sourceKey: 'prod_uuid',
+                foreignKey: 'base_prod_uuid',
+                as: 'related_products'
+            });
+        }
+
+        if (!db.related_product.hasAlias('products') && !db.related_product.hasAlias('related_prod')) {
+            await db.related_product.hasOne(db.products, {
+                sourceKey: 'prod_uuid',
+                foreignKey: 'prod_uuid',
+                as: 'related_prod'
+            });
+        }
+        // ### ASSOCIATION ENDS ### //
+
+        // Find Triggered Product
+        const findProduct = await db.products.findOne({
+            include: [
+                { model: db.categories, as: 'category' },
+                { model: db.product_gallery, as: 'gallery' },
+                { model: db.product_dimension, as: 'dimensions' },
+                { model: db.brands, as: 'brand' },
+                {
+                    model: db.users, as: 'created_by',
+                    include: {
+                        model: db.roles,
+                        as: 'roles'
+                    }
+                },
+                {
+                    model: db.discount_type, as: 'discount_type',
+                    include: {
+                        model: db.customer_groups,
+                        as: 'customer_group'
+                    }
+                },
+                {
+                    model: db.partof_product, as: 'part_of_products',
+                    include: {
+                        model: db.products,
+                        as: 'part_product'
+                    }
+                },
+                {
+                    model: db.product_attributes, as: 'prod_attributes',
+                    include: {
+                        model: db.attributes,
+                        as: 'attribute_data',
                         include: {
-                            model: db.roles,
-                            as: 'roles'
+                            model: db.attr_groups,
+                            as: 'attribute_group'
                         }
                     }
-                ],
-                where: {
-                    [Op.and]: [{
-                        product_id,
-                        tenant_id: TENANTID
-                    }]
                 },
-            });
+                {
+                    model: db.related_product, as: 'related_products',
+                    include: {
+                        model: db.products,
+                        as: 'related_prod'
+                    }
+                },
+            ],
+            where: {
+                [Op.and]: [{
+                    prod_uuid,
+                    tenant_id: TENANTID
+                }]
+            },
+        });
 
-            // Return Final Data
-            return {
-                message: "Get Product Details Success!!!",
-                status: true,
-                data: findProduct
-            }
-
-
-
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+        // Return Final Data
+        return {
+            message: "Get Single Product Success!!!",
+            tenant_id: TENANTID,
+            status: true,
+            data: findProduct
         }
+
+
+
+        // } catch (error) {
+        //     if (error) return { message: "Something Went Wrong!!!", status: false }
+        // }
     },
     // Update Product Helper
     updateProduct: async (req, db, user, isAuth, TENANTID) => {

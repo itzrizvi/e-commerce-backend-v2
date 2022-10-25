@@ -14,4 +14,5 @@ module.exports = {
     ...require('./coupon'),
     ...require('./rating'),
     ...require('./vendor'),
+    ...require('./customer'),
 }

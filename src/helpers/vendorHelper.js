@@ -12,9 +12,6 @@ module.exports = {
             // GET DATA
             const { vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shippping_address, vendor_status } = req;
 
-            // Need to implement this user buy or not this product after order module finished
-            // To DO
-
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {

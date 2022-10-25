@@ -8,7 +8,7 @@ module.exports = gql`
 
 type PermissionData {
     permission_data_uuid:UUID
-    role_no:Int
+    role_no:Float
     tenant_id:String
     role_uuid:UUID
     edit_access:Boolean

@@ -72,6 +72,15 @@ const getSingleProductRequest = (body) => {
     return checkBody(body, rules);
 }
 
+// Update Product Thumbnail Request
+const updateThumbnailRequest = (body) => {
+    rules = {
+        prod_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 // Check Validation
 const checkBody = (body, rules) => {
 
@@ -97,5 +106,6 @@ const checkBody = (body, rules) => {
 module.exports = {
     addProductRequest,
     updateProductRequest,
-    getSingleProductRequest
+    getSingleProductRequest,
+    updateThumbnailRequest
 }

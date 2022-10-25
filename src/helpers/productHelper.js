@@ -1,7 +1,7 @@
 // All Requires
 const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
-const { singleFileUpload, multipleFileUpload } = require("../utils/fileUpload");
+const { singleFileUpload, multipleFileUpload, deleteFile } = require("../utils/fileUpload");
 const config = require('config');
 
 
@@ -442,6 +442,38 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // GET Product List Helper
+    getProductList: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Find ALL Product
+            const allProducts = await db.products.findAll({
+                where: { tenant_id },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (allProducts) {
+                return {
+                    message: "Get Product List Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allProducts
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
     // Update Product Helper
     updateProduct: async (req, db, user, isAuth, TENANTID) => {
 
@@ -510,32 +542,76 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // GET Product List Helper
-    getProductList: async (db, TENANTID) => {
-
+    // Update Thumbnail
+    updateThumbnail: async (req, db, TENANTID) => {
         // Try Catch Block
         try {
 
-            // TENANT ID
-            const tenant_id = TENANTID;
+            // Data From Request
+            const { prod_uuid, prod_thumbnail } = req;
+            console.log(req)
 
-            // Find ALL Product
-            const allProducts = await db.products.findAll({
-                where: { tenant_id },
-                order: [
-                    ['prod_slug', 'ASC']
-                ],
+            // Find The Product
+
+            // Check Existence
+            const findProduct = await db.products.findOne({
+                where: {
+                    [Op.and]: [{
+                        prod_uuid,
+                        tenant_id: TENANTID
+                    }]
+
+                }
             });
 
-            // Return If Success
-            if (allProducts) {
-                return {
-                    message: "Get Product List Success!!!",
-                    status: true,
-                    tenant_id: TENANTID,
-                    data: allProducts
-                }
+            console.log("OK 1")
+
+            // Delete Previous Thumbnail for Update Thumbnail
+            if (prod_thumbnail) {
+                // Delete Previous S3 Image From Product Folder
+                const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_DEST").split("/")
+                const product_image_bucketName = product_image_src[0];
+                const product_image_folder = product_image_src.slice(1).join("/");
+                await deleteFile({ idf: prod_uuid, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
             }
+
+            console.log("OK 2")
+            // Upload New Product Thumbnail
+            let thumbName;
+            // Upload New Image to AWS S3
+            const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
+            const product_image_bucketName = product_image_src[0];
+            const product_image_folder = product_image_src.slice(1).join("/");
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findProduct.prod_uuid, bucketName: product_image_bucketName });
+            if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
+
+            // Update Product with New Thumbnail Name
+            thumbName = imageUrl.Key.split('/').slice(-1)[0];
+
+            console.log(thumbName)
+
+            // Find and Update Product Thumb Name By UUID
+            const productThumbUpdate = {
+                prod_thumbnail: thumbName
+            }
+            const updateProductWithThumb = await db.products.update(productThumbUpdate, {
+                where: {
+                    [Op.and]: [{
+                        prod_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateProductWithThumb) return { message: "Product Thumbnail Update Failed!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Product Thumbnail Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
 
 
         } catch (error) {

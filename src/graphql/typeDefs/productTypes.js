@@ -131,7 +131,7 @@ type GetAllProducts {
 }
 
 input GetSingleProductInput {
-    prod_uuid:UUID
+    prod_uuid:UUID!
 }
 
 type GetSingleProductOutput {
@@ -139,6 +139,11 @@ type GetSingleProductOutput {
     status:Boolean
     tenant_id:String
     data: Product
+}
+
+input UpdateThumbnailInput {
+    prod_uuid:UUID!
+    prod_thumbnail:Upload!
 }
 
 # input UpdateProductInput {
@@ -185,6 +190,7 @@ type GetSingleProductOutput {
 
 extend type Mutation {
     addProduct(data: AddProductInput):CommonOutput!
+    updateThumbnail(data: UpdateThumbnailInput):CommonOutput!
     # updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }
 

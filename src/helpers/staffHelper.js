@@ -212,41 +212,60 @@ module.exports = {
     getSingleAdmin: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block
-        try {
+        // try {
 
-            // UID from Request
-            const { uid } = req;
+        // UID from Request
+        const { uid } = req;
 
-            // Accociation with 3 tables
-            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
-            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+        // Accociation with 3 tables
+        db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
+        db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
 
-            // GET ALL STAFF QUERY
-            const getAdmin = await db.users.findOne({
-                where: {
-                    [Op.and]: [{
-                        uid,
-                        tenant_id: TENANTID
-                    }]
-
-                },
-                include: db.roles,
-                order: [[db.roles, 'role', 'ASC']]
-            });
-
-            // Return Formation
-            return {
-                data: getAdmin,
-                message: "All Staff GET Success!!!",
-                status: true,
-                tenant_id: TENANTID
-            }
-
-
-
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+        // Check If User Has Alias or Not 
+        if (!db.roles.hasAlias('permissions_data') && !db.roles.hasAlias('permissions')) {
+            await db.roles.hasMany(db.permissions_data, { sourceKey: 'role_uuid', foreignKey: 'role_uuid', as: 'permissions' });
         }
+
+        // Check If User Has Alias or Not 
+        if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
+            await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_uuid', foreignKey: 'roles_permission_uuid', as: 'rolesPermission' });
+        }
+
+        // GET ALL STAFF QUERY
+        const getAdmin = await db.users.findOne({
+            where: {
+                [Op.and]: [{
+                    uid,
+                    tenant_id: TENANTID
+                }]
+
+            },
+            include: {
+                model: db.roles, as: 'roles',
+                include: {
+                    model: db.permissions_data, as: 'permissions',
+                    include: { model: db.roles_permission, as: 'rolesPermission' },
+                    separate: true,
+                    order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
+                },
+            },
+
+            order: [[db.roles, 'role', 'ASC']]
+        });
+
+        // Return Formation
+        return {
+            data: getAdmin,
+            message: "Single Staff/Admin GET Success!!!",
+            status: true,
+            tenant_id: TENANTID
+        }
+
+
+
+        // } catch (error) {
+        //     if (error) return { message: "Something Went Wrong!!!", status: false }
+        // }
     },
     // Admin/Staff Password Change
     adminPasswordChange: async (req, db, user, isAuth, TENANTID) => {

@@ -3,4 +3,5 @@ module.exports = {
     getSingleProductController: require('./getSingleProductController'),
     updateProductController: require('./updateProductController'),
     getProductListController: require('./getProductListController'),
+    updateThumbnailController: require('./updateThumbnailController'),
 }

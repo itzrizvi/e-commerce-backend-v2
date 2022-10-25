@@ -549,11 +549,8 @@ module.exports = {
 
             // Data From Request
             const { prod_uuid, prod_thumbnail } = req;
-            console.log(req)
 
             // Find The Product
-
-            // Check Existence
             const findProduct = await db.products.findOne({
                 where: {
                     [Op.and]: [{
@@ -564,8 +561,6 @@ module.exports = {
                 }
             });
 
-            console.log("OK 1")
-
             // Delete Previous Thumbnail for Update Thumbnail
             if (prod_thumbnail) {
                 // Delete Previous S3 Image From Product Folder
@@ -575,7 +570,6 @@ module.exports = {
                 await deleteFile({ idf: prod_uuid, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
             }
 
-            console.log("OK 2")
             // Upload New Product Thumbnail
             let thumbName;
             // Upload New Image to AWS S3
@@ -587,8 +581,6 @@ module.exports = {
 
             // Update Product with New Thumbnail Name
             thumbName = imageUrl.Key.split('/').slice(-1)[0];
-
-            console.log(thumbName)
 
             // Find and Update Product Thumb Name By UUID
             const productThumbUpdate = {
@@ -617,5 +609,6 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
-    }
+    },
+    // 
 }

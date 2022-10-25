@@ -23,7 +23,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await updateThumbnailController(args.data, db, user, isAuth, TENANTID);
+        return await updateThumbnailController(args.data, db, TENANTID);
     },
     // // Update Product Mutation
     // updateProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {

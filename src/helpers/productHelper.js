@@ -376,33 +376,33 @@ module.exports = {
             // Find Triggered Product
             const findProduct = await db.products.findOne({
                 include: [
-                    { model: db.categories, as: 'category' },
-                    { model: db.product_gallery, as: 'gallery' },
-                    { model: db.product_dimension, as: 'dimensions' },
-                    { model: db.brands, as: 'brand' },
+                    { model: db.categories, as: 'category' }, // Include Product Category
+                    { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
+                    { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
+                    { model: db.brands, as: 'brand' }, // Inlcude Brand
                     {
-                        model: db.users, as: 'created_by',
+                        model: db.users, as: 'created_by', // Include User who created the product and his roles
                         include: {
                             model: db.roles,
                             as: 'roles'
                         }
                     },
                     {
-                        model: db.discount_type, as: 'discount_type',
+                        model: db.discount_type, as: 'discount_type', // Include Discount Types Along with Customer Groups
                         include: {
                             model: db.customer_groups,
                             as: 'customer_group'
                         }
                     },
                     {
-                        model: db.partof_product, as: 'part_of_products',
+                        model: db.partof_product, as: 'part_of_products', // Include Part of Product along with Part Products
                         include: {
                             model: db.products,
                             as: 'part_product'
                         }
                     },
                     {
-                        model: db.product_attributes, as: 'prod_attributes',
+                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
                             model: db.attributes,
                             as: 'attribute_data',
@@ -413,7 +413,7 @@ module.exports = {
                         }
                     },
                     {
-                        model: db.related_product, as: 'related_products',
+                        model: db.related_product, as: 'related_products', // Include Related Products
                         include: {
                             model: db.products,
                             as: 'related_prod'

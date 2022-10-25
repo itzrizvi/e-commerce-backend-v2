@@ -1,8 +1,8 @@
 // ShippingAddress model
 module.exports = (sequelize, DataTypes) => {
 
-    const ShippingAddress = sequelize.define("shippping_address", {
-        shippping_uuid: {
+    const ShippingAddress = sequelize.define("shipping_address", {
+        shipping_uuid: {
             type: DataTypes.UUID,
             primaryKey: true,
             allowNull: false,
@@ -16,19 +16,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        shippping_address: {
+        shipping_address: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        shippping_city: {
+        shipping_city: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        shippping_PO_code: {
+        shipping_PO_code: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        shippping_country: {
+        shipping_country: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
         freezeTableName: true,
-        tableName: 'shippping_address',
+        tableName: 'shipping_address',
     })
 
     return ShippingAddress

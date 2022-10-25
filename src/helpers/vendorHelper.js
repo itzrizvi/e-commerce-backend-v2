@@ -10,7 +10,7 @@ module.exports = {
 
         try {
             // GET DATA
-            const { vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shippping_address, vendor_status } = req;
+            const { vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req;
 
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
@@ -51,16 +51,16 @@ module.exports = {
                     });
                 });
 
-                shippping_address.forEach(ele => {
-                    const { shippping_address, shippping_city, shippping_PO_code, shippping_country } = ele
-                    db.shippping_address.create({
+                shipping_address.forEach(ele => {
+                    const { shipping_address, shipping_city, shipping_PO_code, shipping_country } = ele
+                    db.shipping_address.create({
                         ref_id: createVendor.vendor_uuid,
                         ref_model: "vendor",
                         tenant_id: TENANTID,
-                        shippping_address,
-                        shippping_city,
-                        shippping_PO_code,
-                        shippping_country
+                        shipping_address,
+                        shipping_city,
+                        shipping_PO_code,
+                        shipping_country
                     });
                 });
 
@@ -88,7 +88,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { vendor_uuid, vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shippping_address, vendor_status } = req
+            const { vendor_uuid, vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req
 
 
             // Check The Vendor Is Already Taken or Not
@@ -163,31 +163,31 @@ module.exports = {
                 }
             });
 
-            shippping_address.forEach(ele => {
-                const { shippping_address, shippping_city, shippping_PO_code, shippping_country, shippping_uuid } = ele
-                if (shippping_uuid) {
-                    db.shippping_address.update({
-                        shippping_address,
-                        shippping_city,
-                        shippping_PO_code,
-                        shippping_country
+            shipping_address.forEach(ele => {
+                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_uuid } = ele
+                if (shipping_uuid) {
+                    db.shipping_address.update({
+                        shipping_address,
+                        shipping_city,
+                        shipping_PO_code,
+                        shipping_country
                     }, {
                         where: {
                             [Op.and]: [{
-                                shippping_uuid,
+                                shipping_uuid,
                                 tenant_id: TENANTID
                             }]
                         }
                     });
                 } else {
-                    db.shippping_address.create({
+                    db.shipping_address.create({
                         ref_id: vendor_uuid,
                         ref_model: "vendor",
                         tenant_id: TENANTID,
-                        shippping_address,
-                        shippping_city,
-                        shippping_PO_code,
-                        shippping_country
+                        shipping_address,
+                        shipping_city,
+                        shipping_PO_code,
+                        shipping_country
                     });
                 }
             });
@@ -273,8 +273,8 @@ module.exports = {
             }
     
     
-            if (!db.vendor.hasAlias('shippping_address')) {
-                await db.vendor.hasMany(db.shippping_address,
+            if (!db.vendor.hasAlias('shipping_address')) {
+                await db.vendor.hasMany(db.shipping_address,
                     {
                         sourceKey: 'vendor_uuid',
                         foreignKey: 'ref_id',
@@ -296,7 +296,7 @@ module.exports = {
                         separate: true,
                     },
                     {
-                        model: db.shippping_address,
+                        model: db.shipping_address,
                         separate: true,
                     }
                 ],
@@ -343,8 +343,8 @@ module.exports = {
         }
 
 
-        if (!db.vendor.hasAlias('shippping_address')) {
-            await db.vendor.hasMany(db.shippping_address,
+        if (!db.vendor.hasAlias('shipping_address')) {
+            await db.vendor.hasMany(db.shipping_address,
                 {
                     sourceKey: 'vendor_uuid',
                     foreignKey: 'ref_id',
@@ -363,7 +363,7 @@ module.exports = {
                     separate: true,
                 },
                 {
-                    model: db.shippping_address,
+                    model: db.shipping_address,
                     separate: true,
                 }
             ],

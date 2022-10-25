@@ -10,7 +10,7 @@ const createVendorRequest = (body) => {
         vendor_email: 'required|email',
         vendor_status: 'required|boolean',
         billing_address: 'required|array',
-        shippping_address: 'required|array',
+        shipping_address: 'required|array',
     }
 
     return checkBody(body, rules);
@@ -24,7 +24,7 @@ const updateVendorRequest = (body) => {
         vendor_email: 'required|email',
         vendor_status: 'required|boolean',
         billing_address: 'required|array',
-        shippping_address: 'required|array',
+        shipping_address: 'required|array',
     }
 
     return checkBody(body, rules);

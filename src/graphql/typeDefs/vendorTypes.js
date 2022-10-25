@@ -19,14 +19,14 @@ type Vendor{
     vendor_FAX_no: String
     vendor_status: Boolean!
     billing_addresses: [BillingAddressOutput]
-    shippping_addresses: [ShippingAddressOutput]
+    shipping_addresses: [ShippingAddressOutput]
 }
 
 input ShippingAddress{
-    shippping_address: String!
-    shippping_city: String!
-    shippping_PO_code: String!
-    shippping_country: String!
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
 }
 
 input BillingAddress{
@@ -37,11 +37,11 @@ input BillingAddress{
 }
 
 type ShippingAddressOutput{
-    shippping_uuid: UUID
-    shippping_address: String!
-    shippping_city: String!
-    shippping_PO_code: String!
-    shippping_country: String!
+    shipping_uuid: UUID
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
 }
 
 type BillingAddressOutput{
@@ -53,15 +53,15 @@ type BillingAddressOutput{
 }
 
 input UpdateShippingAddress{
-    shippping_uuid: UUID
-    shippping_address: String!
-    shippping_city: String!
-    shippping_PO_code: String!
-    shippping_country: String!
+    shipping_uuid: UUID!
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
 }
 
 input UpdateBillingAddress{
-    billing_uuid: UUID
+    billing_uuid: UUID!
     billing_address: String!
     billing_city: String!
     billing_PO_code: String!
@@ -79,7 +79,7 @@ input CreateVendorInput{
     vendor_TAX_ID: String
     vendor_FAX_no: String
     billing_address: [BillingAddress]!
-    shippping_address: [ShippingAddress]!
+    shipping_address: [ShippingAddress]!
 }
 
 input UpdateVendorInput{
@@ -94,7 +94,7 @@ input UpdateVendorInput{
     vendor_TAX_ID: String
     vendor_FAX_no: String
     billing_address: [UpdateBillingAddress]!
-    shippping_address: [UpdateShippingAddress]!
+    shipping_address: [UpdateShippingAddress]!
 }
 
 input UpdateVendorStatusInput{

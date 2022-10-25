@@ -22,7 +22,9 @@ type Customer{
     email: String!
     email_verified: Boolean!
     user_status: Boolean!
-    image: String!
+    image: String
+    billing_addresses: [BillingAddressOutput]
+    shipping_addresses: [ShippingAddressOutput]
 }
 
 type CreateCustomerOutput{
@@ -36,10 +38,41 @@ type getAllCustomerOutput{
     data: [Customer]!
 }
 
+type SingleCustomerOutput{
+    status: Boolean!
+    message: String!
+    data: Customer!
+}
+
+input GetSingleCustomerInput{
+    customer_uuid: UUID!
+}
+
+input CustomerShippingAddress{
+    customer_uuid: UUID!
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
+}
+
+input CustomerBillingAddress{
+    customer_uuid: UUID!
+    billing_address: String!
+    billing_city: String!
+    billing_PO_code: String!
+    billing_country: String!
+}
+
 extend type Mutation {
     addCustomer(data: CustomerInput): CreateCustomerOutput!
+    addCustomerBillingAddress(data: CustomerBillingAddress): CreateCustomerOutput!
+    addCustomerShippingAddress(data: CustomerShippingAddress): CreateCustomerOutput!
+    updateCustomerBillingAddress(data: UpdateBillingAddress): CreateCustomerOutput!
+    updateCustomerShippingAddress(data: UpdateShippingAddress): CreateCustomerOutput!
 }
 extend type Query {
-    getAllUser: getAllCustomerOutput!
+    getAllCustomer: getAllCustomerOutput!
+    getSingleCustomer(query: GetSingleCustomerInput): SingleCustomerOutput!
 }
 `;

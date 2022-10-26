@@ -56,19 +56,37 @@ module.exports = {
                     [Op.and]: [{
                         prod_slug,
                         tenant_id: TENANTID
-                    }],
-                    [Op.and]: [{
-                        prod_sku,
-                        tenant_id: TENANTID
-                    }],
-                    [Op.and]: [{
-                        prod_partnum,
-                        tenant_id: TENANTID
-                    }],
-
+                    }]
                 }
             });
             if (checkExists) return { message: "Already Have This Product!!!", status: false };
+
+            // If SKU Exists
+            if (prod_sku) {
+                // Check Existence
+                const checkSKUExists = await db.products.findOne({
+                    where: {
+                        [Op.and]: [{
+                            prod_sku,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (checkSKUExists) return { message: "Already Have This SKU In Product!!!", status: false };
+            }
+            // If Part Number Exists
+            if (prod_partnum) {
+                // Check Existence
+                const checkPNExists = await db.products.findOne({
+                    where: {
+                        [Op.and]: [{
+                            prod_partnum,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (checkPNExists) return { message: "Already Have This Part Number In Product!!!", status: false };
+            }
 
 
             // Dimensions Table Data Insertion
@@ -481,67 +499,264 @@ module.exports = {
         }
     },
     // Update Product Helper
-    updateProduct: async (req, db, user, isAuth, TENANTID) => {
+    updateProduct: async (req, db, user, TENANTID) => {
 
         // Try Catch Block
         try {
 
+            // Data From Request
+            const { prod_uuid,
+                prod_name,
+                prod_long_desc,
+                prod_short_desc,
+                prod_meta_title,
+                prod_meta_desc,
+                prod_meta_keywords,
+                prod_tags,
+                prod_regular_price,
+                prod_sale_price,
+                prod_partnum,
+                prod_sku,
+                brand_uuid,
+                prod_category,
+                prod_weight,
+                prod_weight_class,
+                prod_status,
+                taxable,
+                prod_outofstock_status,
+                related_product,
+                dimensions,
+                discount_type,
+                product_attributes,
+                partof_product } = req;
 
-            // Product ID From Request
-            const { product_id: productID } = req;
-            // Added By
-            const added_by = user.uid;
-            // TENANT ID
-            const tenant_id = TENANTID;
-
-            // Find Product
-            const findProduct = await db.products.findOne({
+            // FIND TARGETED PRODUCT
+            const findProd = await db.products.findOne({
                 where: {
                     [Op.and]: [{
-                        product_id: productID,
+                        prod_uuid,
                         tenant_id: TENANTID
                     }]
                 }
-            });
+            })
 
-            // IF FOUND PRODUCT
-            if (!findProduct) return { message: "Product Not Found!!!", status: false };
+            // If Product Name is Also Updated
+            let prod_slug;
+            if (prod_name) {
+                // Product Slug
+                prod_slug = slugify(`${prod_name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
 
-            // Update Doc 
-            const { product_id, ...updateDoc } = req;
-            updateDoc["added_by"] = added_by;
-            updateDoc["tenant_id"] = tenant_id;
-
-            // Update Product
-            const updateProduct = await db.products.update(updateDoc, {
-                where: {
-                    [Op.and]: [{
-                        product_id: productID,
-                        tenant_id: TENANTID
-                    }]
-                },
-            });
-
-            // IF NOT Updated
-            if (!updateProduct) return { message: "Update Gone Wrong!!!", status: false };
-
-            // If Product Updated
-            const updatedProductFind = await db.products.findOne({
-                where: {
-                    [Op.and]: [{
-                        product_id: productID,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-            return {
-                message: "Product Update Success!!!",
-                status: true,
-                data: updatedProductFind
+                // Check Existence
+                const checkSlugExists = await db.products.findOne({
+                    where: {
+                        [Op.and]: [{
+                            prod_slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            prod_uuid
+                        }]
+                    }
+                });
+                if (checkSlugExists) return { message: "Already Have This Product!!!", status: false };
             }
 
+            // If SKU Updated
+            if (prod_sku) {
+                // Check Existence
+                const checkSKUExists = await db.products.findOne({
+                    where: {
+                        [Op.and]: [{
+                            prod_sku,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            prod_uuid
+                        }]
+                    }
+                });
+                if (checkSKUExists) return { message: "Already Have This SKU In Product!!!", status: false };
+            }
+            // If Part Number Updated
+            if (prod_partnum) {
+                // Check Existence
+                const checkPNExists = await db.products.findOne({
+                    where: {
+                        [Op.and]: [{
+                            prod_partnum,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            prod_uuid
+                        }]
+                    }
+                });
+                if (checkPNExists) return { message: "Already Have This Part Number In Product!!!", status: false };
+            }
+            // If Dimension Updated 
+            let dimension_uuid;
+            if (dimensions) {
+                dimensions.tenant_id = TENANTID;
+                // If Dimension Already Have Created
+                if (findProd.dimension_uuid) {
+                    // Update Dimension
+                    const updateDimension = await db.product_dimension.update(dimensions, {
+                        where: {
+                            [Op.and]: [{
+                                prod_dimension_uuid: findProd.dimension_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    if (!updateDimension) return { message: "Product Dimension Couldnt Updated!!!", status: false }
 
+                } else { // If Not Have Dimensions
+
+                    const insertDimension = await db.product_dimension.create(dimensions);
+                    if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
+
+                    // Discount Type UUID
+                    dimension_uuid = insertDimension.prod_dimension_uuid
+                }
+
+            }
+            // If Related Product is Updated
+            if (related_product && related_product.length > 0) {
+                // Delete Previous Entry
+                const deletePreviousEntry = await db.related_product.destroy({
+                    where: {
+                        [Op.and]: [{
+                            base_prod_uuid: prod_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                let newRelatedProducts = [];
+                related_product.forEach(async (productUUID) => {
+                    await newRelatedProducts.push({ prod_uuid: productUUID, base_prod_uuid: prod_uuid, tenant_id: TENANTID });
+                });
+
+                if (newRelatedProducts) {
+                    // New Related Product Save Bulk
+                    const newRelatedProdSave = await db.related_product.bulkCreate(newRelatedProducts);
+                    if (!newRelatedProdSave) return { message: "Related Products Update Failed!!!", status: false }
+                }
+            }
+            // If Discount Type of Product is Updated
+            if (discount_type && discount_type.length > 0) {
+                // Delete Previous Entry
+                const deletePreviousEntry = await db.discount_type.destroy({
+                    where: {
+                        [Op.and]: [{
+                            prod_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Loop For Assign Other Values to Discount Type  Data
+                discount_type.forEach(element => {
+                    element.tenant_id = TENANTID;
+                    element.prod_uuid = prod_uuid;
+                });
+                // Insert Data In Discount Type Table
+                const insertNewDiscountTypes = await db.discount_type.bulkCreate(discount_type);
+                if (!insertNewDiscountTypes) return { message: "Updated Discount Type Data Insert Failed!!", status: false };
+            }
+            // If Product Attributes is Updated
+            if (product_attributes && product_attributes.length > 0) {
+                // Delete Previous Entry
+                const deletePreviousEntry = await db.product_attributes.destroy({
+                    where: {
+                        [Op.and]: [{
+                            prod_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Loop For Assign Other Values to Product Attribites Data
+                product_attributes.forEach(element => {
+                    element.tenant_id = TENANTID;
+                    element.prod_uuid = prod_uuid;
+                });
+
+                // Product Attributes Save Bulk
+                const newProdAttributesDataSave = await db.product_attributes.bulkCreate(product_attributes);
+                if (!newProdAttributesDataSave) return { message: "Updated Product Attributes Data Save Failed!!!", status: false }
+            }
+            // If Part of Product is Updated
+            if (partof_product && partof_product.length > 0) {
+                // Delete Previous Entry
+                const deletePreviousEntry = await db.partof_product.destroy({
+                    where: {
+                        [Op.and]: [{
+                            parent_prod_uuid: prod_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                partof_product.forEach(part => {
+                    part.parent_prod_uuid = prod_uuid;
+                    part.tenant_id = TENANTID;
+                });
+
+                // Part Of Product Save Bulk
+                const newPartOfProdSave = await db.partof_product.bulkCreate(partof_product);
+                if (!newPartOfProdSave) return { message: "Updated Part Of Products Data Save Failed!!!", status: false }
+            }
+
+            // Final Update Doc For Product Table
+            const prodUpdateDoc = {
+                prod_name,
+                prod_slug,
+                prod_long_desc,
+                prod_short_desc,
+                prod_meta_title,
+                prod_meta_desc,
+                prod_meta_keywords,
+                prod_tags,
+                prod_regular_price,
+                prod_sale_price,
+                prod_partnum,
+                prod_sku,
+                brand_uuid,
+                prod_category,
+                prod_weight,
+                prod_weight_class,
+                prod_status,
+                taxable,
+                prod_outofstock_status,
+                dimension_uuid,
+                added_by: user.uid
+            }
+
+            // Update Product
+            const updateProd = await db.products.update(prodUpdateDoc, {
+                where: {
+                    [Op.and]: [{
+                        prod_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateProd) return { message: "Product Update Failed!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Product Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
 
 
         } catch (error) {

@@ -4,7 +4,7 @@ const { updateProductRequest } = require("../../requests/productRequests");
 const { singleResponse } = require("../../utils/response");
 
 // Update Product Controller
-module.exports = async (req, db, user, isAuth, TENANTID) => {
+module.exports = async (req, db, user, TENANTID) => {
 
     // Validate Create Role Request
     const validate = await updateProductRequest(req);
@@ -13,11 +13,10 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
     }
 
     // Return If No Auth
-    if (!user || !isAuth) return { message: "Not Authorized", status: false };
     if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
     // Helper
-    const data = await updateProduct(req, db, user, isAuth, TENANTID);
+    const data = await updateProduct(req, db, user, TENANTID);
 
     // Return Data
     return singleResponse(data);

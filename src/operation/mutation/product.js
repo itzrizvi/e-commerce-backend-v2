@@ -57,6 +57,6 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await updateProductController(args.data, db, user, isAuth, TENANTID);
+        return await updateProductController(args.data, db, user, TENANTID);
     },
 }

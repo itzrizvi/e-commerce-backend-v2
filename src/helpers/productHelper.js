@@ -172,7 +172,7 @@ module.exports = {
             }
 
             // Product Attribuites Table Data Insertion
-            if (product_attributes) {
+            if (product_attributes && product_attributes.length > 0) {
                 // Loop For Assign Other Values to Product Attribites Data
                 product_attributes.forEach(element => {
                     element.tenant_id = TENANTID;
@@ -186,7 +186,7 @@ module.exports = {
 
 
             // If Related Products Are Available For Add
-            if (related_product) {
+            if (related_product && related_product.length > 0) {
                 let relatedProducts = [];
                 related_product.forEach(async (productUUID) => {
                     await relatedProducts.push({ prod_uuid: productUUID, base_prod_uuid: createProduct.prod_uuid, tenant_id: TENANTID });
@@ -200,7 +200,7 @@ module.exports = {
             }
 
             // If Part of Product Available
-            if (partof_product) {
+            if (partof_product && partof_product.length > 0) {
 
                 partof_product.forEach(part => {
                     part.parent_prod_uuid = createProduct.prod_uuid;
@@ -542,7 +542,7 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // Update Thumbnail
+    // Update Thumbnail Helper
     updateThumbnail: async (req, db, TENANTID) => {
         // Try Catch Block
         try {
@@ -603,6 +603,67 @@ module.exports = {
                 status: true,
                 tenant_id: TENANTID
             }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // Delete Gallery Helper
+    deleteGalleryImage: async (req, db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { prod_uuid, prod_gallery_uuid } = req;
+
+
+            // Find Product Gallery
+            const findGallery = await db.product_gallery.findOne({
+                where: {
+                    [Op.and]: [{
+                        prod_gallery_uuid,
+                        prod_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findGallery) return { message: "Couldnt Find The Gallery From DB!!!", status: false }
+
+            if (findGallery) {
+                // Delete Gallery S3 Image From Product Folder
+                const product_image_src = config.get("AWS.PRODUCT_IMG_GALLERY_DEST").split("/")
+                const product_image_bucketName = product_image_src[0];
+                const product_image_folder = product_image_src.slice(1).join("/");
+                await deleteFile({ idf: prod_uuid, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
+
+            } else {
+                return {
+                    message: "Gallery Image Couldnt Deleted From S3!!!",
+                    status: false,
+                    tenant_id: TENANTID
+                }
+            }
+
+            // Delete Gallery Image From DB
+            const deleteGlryImgFromDB = await db.product_gallery.destroy({
+                where: {
+                    [Op.and]: [{
+                        prod_gallery_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!deleteGlryImgFromDB) return { message: "Gallery Image Delete Failed From DB!!!", status: false }
+
+            // Return Formation
+            return {
+                message: "Gallery Image Deleted Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
 
 
 

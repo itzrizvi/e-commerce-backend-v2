@@ -146,43 +146,15 @@ input UpdateThumbnailInput {
     prod_thumbnail:Upload!
 }
 
-# input UpdateProductInput {
-#     product_id:UUID
-#     product_name:String
-#     product_slug:String
-#     product_description:JSON
-#     product_meta_tag_title:String
-#     product_meta_tag_description:JSON
-#     product_meta_tag_keywords:JSON
-#     product_tags:JSON
-#     product_image:String
-#     product_image_gallery:JSON
-#     product_sku:String
-#     product_regular_price:Float
-#     product_sale_price:Float
-#     product_tax_included:Boolean
-#     product_stock_quantity:Int
-#     product_minimum_stock_quantity:Int
-#     product_maximum_orders:Int
-#     product_stock_status:String
-#     product_available_from:String
-#     product_status:String
-#     product_category:UUID
-#     product_barcode:String
-# }
+input GalleryImageDeleteInput {
+    prod_uuid:UUID!
+    prod_gallery_uuid:UUID!
+}
 
-# type UpdateProductOutput {
-#     message:String
-#     status:Boolean
-#     data:Product
-# }
-
-
-# type GetProductList {
-#     message:String
-#     status:Boolean
-#     data:[SingleProduct]
-# }
+input GalleryImageUploadInput {
+    prod_uuid:UUID!
+    gallery_img:Upload!
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -191,6 +163,8 @@ input UpdateThumbnailInput {
 extend type Mutation {
     addProduct(data: AddProductInput):CommonOutput!
     updateThumbnail(data: UpdateThumbnailInput):CommonOutput!
+    deleteGalleryImage(data: GalleryImageDeleteInput):CommonOutput!
+    uploadGalleryImage(data: GalleryImageUploadInput):CommonOutput!
     # updateProduct(data: UpdateProductInput):UpdateProductOutput!
 }
 

@@ -2,7 +2,8 @@
 const { addProductController,
     updateProductController,
     updateThumbnailController,
-    deleteGalleryImageController } = require("../../controllers");
+    deleteGalleryImageController,
+    uploadGalleryImageController } = require("../../controllers");
 
 
 // Product Mutations
@@ -46,7 +47,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        // return await deleteGalleryImageController(args.data, db, TENANTID);
+        return await uploadGalleryImageController(args.data, db, TENANTID);
     },
     // // Update Product Mutation
     // updateProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {

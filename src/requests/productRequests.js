@@ -91,6 +91,16 @@ const deleteGalleryImageRequest = (body) => {
     return checkBody(body, rules);
 }
 
+
+// Upload Product Gallery Image Request
+const uploadGalleryImageRequest = (body) => {
+    rules = {
+        prod_uuid: 'required|string'
+    }
+
+    return checkBody(body, rules);
+}
+
 // Check Validation
 const checkBody = (body, rules) => {
 
@@ -118,5 +128,6 @@ module.exports = {
     updateProductRequest,
     getSingleProductRequest,
     updateThumbnailRequest,
-    deleteGalleryImageRequest
+    deleteGalleryImageRequest,
+    uploadGalleryImageRequest
 }

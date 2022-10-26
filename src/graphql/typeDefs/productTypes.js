@@ -153,7 +153,7 @@ input GalleryImageDeleteInput {
 
 input GalleryImageUploadInput {
     prod_uuid:UUID!
-    gallery_img:Upload!
+    gallery_img:[Upload!]
 }
 
 

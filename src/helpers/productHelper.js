@@ -148,7 +148,7 @@ module.exports = {
 
             // If Product Gallery Images are Available
             if (prod_gallery) {
-                // Upload Product Thumbnail
+                // Upload Product Gallery
                 let gallery = [];
                 // Upload Image to AWS S3
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
@@ -671,5 +671,66 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // 
+    // Upload New Gallery Image
+    uploadGalleryImage: async (req, db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { prod_uuid, gallery_img } = req;
+
+            // Find Product
+            const findProduct = await db.products.findOne({
+                where: {
+                    [Op.and]: [{
+                        prod_uuid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findProduct) return { message: "Couldnt Found This Product!!!", status: false };
+
+
+            if (gallery_img) {
+                // Upload New Gallery Image
+                let gallery = [];
+                // Upload Image to AWS S3
+                const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
+                const product_gallery_bucketName = product_gallery_src[0];
+                const product_gallery_folder = product_gallery_src.slice(1).join("/");
+                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_uuid, folder: product_gallery_folder, fileName: findProduct.prod_uuid, bucketName: product_gallery_bucketName });
+                if (!imageUrl) return { message: "New Gallery Image Couldnt Uploaded Properly!!!", status: false };
+
+                // Assign Values To Gallery Array For Bulk Create
+                imageUrl.forEach(async (galleryImg) => {
+                    await gallery.push({ prod_image: galleryImg.upload.Key.split('/').slice(-1)[0], prod_uuid: findProduct.prod_uuid, tenant_id: TENANTID });
+                });
+
+                // If Gallery Array Created Successfully then Bulk Create In Product Gallery Table
+                if (gallery && gallery.length > 0) {
+                    // Product Gallery Save Bulk
+                    const prodGalleryImgSave = await db.product_gallery.bulkCreate(gallery);
+                    if (!prodGalleryImgSave) return { message: "New Product Gallery Image Save Failed!!!", status: false }
+                }
+
+                // Return Formation
+                return {
+                    message: "New Gallery Image Added Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+
+            } else {
+                return {
+                    message: "You Didnt Uploaded Gallery Image!!!",
+                    status: false
+                }
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    }
 }

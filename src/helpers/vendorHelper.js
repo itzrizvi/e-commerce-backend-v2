@@ -8,12 +8,9 @@ module.exports = {
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
 
-        try{
+        try {
             // GET DATA
-            const { vendor_name, vendor_company_name, vendor_email, vendor_description, vendor_address, vendor_city, vendor_country, vendor_status } = req;
-
-            // Need to implement this user buy or not this product after order module finished
-            // To DO
+            const { vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req;
 
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
@@ -26,20 +23,47 @@ module.exports = {
             });
 
             if (checkVendorExist) return { message: "Vendor already exists!", status: false }
-
             const createVendor = await db.vendor.create({
-                vendor_name,
+                vendor_contact_person,
                 vendor_company_name,
                 vendor_email,
                 vendor_description,
-                vendor_address,
-                vendor_city,
-                vendor_country,
+                vendor_phone_number,
+                vendor_EIN_no,
+                vendor_TAX_ID,
+                vendor_FAX_no,
                 vendor_status,
                 tenant_id: TENANTID
             });
 
-            if(createVendor){
+            if (createVendor) {
+
+                billing_address.forEach(ele => {
+                    const { billing_address, billing_city, billing_PO_code, billing_country } = ele
+                    db.billing_address.create({
+                        ref_id: createVendor.vendor_uuid,
+                        ref_model: "vendor",
+                        tenant_id: TENANTID,
+                        billing_address,
+                        billing_city,
+                        billing_PO_code,
+                        billing_country
+                    });
+                });
+
+                shipping_address.forEach(ele => {
+                    const { shipping_address, shipping_city, shipping_PO_code, shipping_country } = ele
+                    db.shipping_address.create({
+                        ref_id: createVendor.vendor_uuid,
+                        ref_model: "vendor",
+                        tenant_id: TENANTID,
+                        shipping_address,
+                        shipping_city,
+                        shipping_PO_code,
+                        shipping_country
+                    });
+                });
+
                 return {
                     tenant_id: createVendor.tenant_id,
                     message: "Successfully Created Vendor.",
@@ -47,7 +71,7 @@ module.exports = {
                 }
             }
 
-        }catch (error) {
+        } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
 
@@ -64,7 +88,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const {vendor_uuid, vendor_name, vendor_company_name, vendor_email, vendor_description, vendor_address, vendor_city, vendor_country, vendor_status} = req
+            const { vendor_uuid, vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req
 
 
             // Check The Vendor Is Already Taken or Not
@@ -81,18 +105,19 @@ module.exports = {
             });
 
             if (checkVendorExist) return { message: "Already Have This Vendor", status: false }
-            
+
 
             // Update Doc
             const updateDoc = {
-                vendor_name,
+                vendor_contact_person,
                 vendor_company_name,
                 vendor_email,
                 vendor_description,
-                vendor_address,
-                vendor_city,
-                vendor_country,
-                vendor_status
+                vendor_phone_number,
+                vendor_EIN_no,
+                vendor_TAX_ID,
+                vendor_FAX_no,
+                vendor_status,
             }
 
             // Update Vendor 
@@ -108,14 +133,71 @@ module.exports = {
             // IF NOT UPDATED THEN RETURN
             if (!updateVendor) return { message: "Update Gone Wrong!!!", status: false }
 
+            billing_address.forEach(ele => {
+                const { billing_address, billing_city, billing_PO_code, billing_country, billing_uuid } = ele
+
+                if (billing_uuid) {
+                    db.billing_address.update({
+                        billing_address,
+                        billing_city,
+                        billing_PO_code,
+                        billing_country
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                billing_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                } else {
+                    db.billing_address.create({
+                        ref_id: vendor_uuid,
+                        ref_model: "vendor",
+                        tenant_id: TENANTID,
+                        billing_address,
+                        billing_city,
+                        billing_PO_code,
+                        billing_country
+                    });
+                }
+            });
+
+            shipping_address.forEach(ele => {
+                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_uuid } = ele
+                if (shipping_uuid) {
+                    db.shipping_address.update({
+                        shipping_address,
+                        shipping_city,
+                        shipping_PO_code,
+                        shipping_country
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                shipping_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                } else {
+                    db.shipping_address.create({
+                        ref_id: vendor_uuid,
+                        ref_model: "vendor",
+                        tenant_id: TENANTID,
+                        shipping_address,
+                        shipping_city,
+                        shipping_PO_code,
+                        shipping_country
+                    });
+                }
+            });
+
             // Return Data
             return {
                 message: "Vendor Updated Successfully!!!",
                 status: true,
                 tenant_id: updateVendor.tenant_id
             }
-
-
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!", status: false }
@@ -134,7 +216,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const {vendor_uuid, vendor_status} = req
+            const { vendor_uuid, vendor_status } = req
 
             // Update Doc
             const updateDoc = {
@@ -175,15 +257,49 @@ module.exports = {
         // Return if No Auth
         if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
-        console.log(TENANTID);
         // Try Catch Block
         try {
+
+            if (!db.vendor.hasAlias('billing_address')) {
+                await db.vendor.hasMany(db.billing_address,
+                    {
+                        sourceKey: 'vendor_uuid',
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        }
+                    });
+            }
+    
+    
+            if (!db.vendor.hasAlias('shipping_address')) {
+                await db.vendor.hasMany(db.shipping_address,
+                    {
+                        sourceKey: 'vendor_uuid',
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        }
+                    });
+            }
 
             // Data From Request
             const { vendor_uuid } = req;
 
             // GET Single Vendor BY CODE
             const getsinglevendor = await db.vendor.findOne({
+                include: [
+                    {
+                        model: db.billing_address,
+                        separate: true,
+                    },
+                    {
+                        model: db.shipping_address,
+                        separate: true,
+                    }
+                ],
                 where: {
                     [Op.and]: [{
                         vendor_uuid,
@@ -214,20 +330,55 @@ module.exports = {
 
         // Try Catch Block
         try {
-            // GET ALL Vendor
-            const getallvendor = await db.vendor.findAll({
-                where: {
-                    tenant_id: TENANTID
-                }
-            });
+        if (!db.vendor.hasAlias('billing_address')) {
+            await db.vendor.hasMany(db.billing_address,
+                {
+                    sourceKey: 'vendor_uuid',
+                    foreignKey: 'ref_id',
+                    constraints: false,
+                    scope: {
+                        ref_model: 'vendor'
+                    }
+                });
+        }
 
-            // Return 
-            return {
-                message: "Get All Vendor Success!!!",
-                status: true,
-                tenant_id: TENANTID,
-                data: getallvendor
+
+        if (!db.vendor.hasAlias('shipping_address')) {
+            await db.vendor.hasMany(db.shipping_address,
+                {
+                    sourceKey: 'vendor_uuid',
+                    foreignKey: 'ref_id',
+                    constraints: false,
+                    scope: {
+                        ref_model: 'vendor'
+                    }
+                });
+        }
+
+        // GET ALL Vendor
+        const getallvendor = await db.vendor.findAll({
+            include: [
+                {
+                    model: db.billing_address,
+                    separate: true,
+                },
+                {
+                    model: db.shipping_address,
+                    separate: true,
+                }
+            ],
+            where: {
+                tenant_id: TENANTID
             }
+        });
+
+        // Return 
+        return {
+            message: "Get All Vendor Success!!!",
+            status: true,
+            tenant_id: TENANTID,
+            data: getallvendor
+        }
 
 
         } catch (error) {

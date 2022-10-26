@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         verification_code: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         forgot_password_code: {
             type: DataTypes.INTEGER,

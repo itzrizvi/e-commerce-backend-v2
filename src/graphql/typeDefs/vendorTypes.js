@@ -9,37 +9,92 @@ module.exports = gql`
 
 type Vendor{
     vendor_uuid: UUID!
-    vendor_name: String!
+    vendor_contact_person: String!
     vendor_company_name: String
     vendor_email: String!
     vendor_description: String
-    vendor_address: String!
-    vendor_city: String!
-    vendor_country: String!
+    vendor_phone_number: String
+    vendor_EIN_no: String
+    vendor_TAX_ID: String
+    vendor_FAX_no: String
     vendor_status: Boolean!
+    billing_addresses: [BillingAddressOutput]
+    shipping_addresses: [ShippingAddressOutput]
+}
+
+input ShippingAddress{
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
+}
+
+input BillingAddress{
+    billing_address: String!
+    billing_city: String!
+    billing_PO_code: String!
+    billing_country: String!
+}
+
+type ShippingAddressOutput{
+    shipping_uuid: UUID
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
+}
+
+type BillingAddressOutput{
+    billing_uuid: UUID
+    billing_address: String!
+    billing_city: String!
+    billing_PO_code: String!
+    billing_country: String!
+}
+
+input UpdateShippingAddress{
+    shipping_uuid: UUID!
+    shipping_address: String!
+    shipping_city: String!
+    shipping_PO_code: String!
+    shipping_country: String!
+}
+
+input UpdateBillingAddress{
+    billing_uuid: UUID!
+    billing_address: String!
+    billing_city: String!
+    billing_PO_code: String!
+    billing_country: String!
 }
 
 input CreateVendorInput{
-    vendor_name: String!
+    vendor_contact_person: String!
     vendor_company_name: String
     vendor_email: String!
     vendor_description: String
-    vendor_address: String!
-    vendor_city: String!
-    vendor_country: String!
     vendor_status: Boolean!
+    vendor_phone_number: String
+    vendor_EIN_no: String
+    vendor_TAX_ID: String
+    vendor_FAX_no: String
+    billing_address: [BillingAddress]!
+    shipping_address: [ShippingAddress]!
 }
 
 input UpdateVendorInput{
     vendor_uuid: UUID!
-    vendor_name: String!
+    vendor_contact_person: String!
     vendor_company_name: String
     vendor_email: String!
     vendor_description: String
-    vendor_address: String!
-    vendor_city: String!
-    vendor_country: String!
     vendor_status: Boolean!
+    vendor_phone_number: String
+    vendor_EIN_no: String
+    vendor_TAX_ID: String
+    vendor_FAX_no: String
+    billing_address: [UpdateBillingAddress]!
+    shipping_address: [UpdateShippingAddress]!
 }
 
 input UpdateVendorStatusInput{

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
-        vendor_name: {
+        vendor_contact_person: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -21,21 +21,25 @@ module.exports = (sequelize, DataTypes) => {
             isEmail: true,
             allowNull: false
         },
-        vendor_description: {
+        vendor_phone_number: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_address: {
+        vendor_EIN_no: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        vendor_city: {
+        vendor_TAX_ID: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        vendor_country: {
+        vendor_FAX_no: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
+        },
+        vendor_description: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         vendor_status: {
             type: DataTypes.BOOLEAN,
@@ -45,7 +49,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         }
-
     }, {
         timestamps: true,
         freezeTableName: true,

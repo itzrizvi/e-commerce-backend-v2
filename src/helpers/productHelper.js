@@ -137,7 +137,7 @@ module.exports = {
             const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
             const product_image_bucketName = product_image_src[0];
             const product_image_folder = product_image_src.slice(1).join("/");
-            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_uuid, folder: product_image_folder, fileName: createProduct.prod_uuid, bucketName: product_image_bucketName });
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_sku, folder: product_image_folder, fileName: createProduct.prod_sku, bucketName: product_image_bucketName });
             if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
             // Update Product with Thumbnail Name
@@ -165,7 +165,7 @@ module.exports = {
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
                 const product_gallery_bucketName = product_gallery_src[0];
                 const product_gallery_folder = product_gallery_src.slice(1).join("/");
-                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_uuid, folder: product_gallery_folder, fileName: createProduct.prod_uuid, bucketName: product_gallery_bucketName });
+                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_sku, folder: product_gallery_folder, fileName: createProduct.prod_sku, bucketName: product_gallery_bucketName });
                 if (!imageUrl) return { message: "Gallery Images Couldnt Uploaded Properly!!!", status: false };
 
                 // Assign Values To Gallery Array For Bulk Create
@@ -788,7 +788,7 @@ module.exports = {
                 const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_DEST").split("/")
                 const product_image_bucketName = product_image_src[0];
                 const product_image_folder = product_image_src.slice(1).join("/");
-                await deleteFile({ idf: prod_uuid, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
+                await deleteFile({ idf: findProduct.prod_sku, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
             }
 
             // Upload New Product Thumbnail
@@ -797,7 +797,7 @@ module.exports = {
             const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
             const product_image_bucketName = product_image_src[0];
             const product_image_folder = product_image_src.slice(1).join("/");
-            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findProduct.prod_uuid, bucketName: product_image_bucketName });
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_sku, folder: product_image_folder, fileName: findProduct.prod_sku, bucketName: product_image_bucketName });
             if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
             // Update Product with New Thumbnail Name
@@ -852,12 +852,23 @@ module.exports = {
             });
             if (!findGallery) return { message: "Couldnt Find The Gallery From DB!!!", status: false }
 
+            // Find The Product
+            const findProduct = await db.products.findOne({
+                where: {
+                    [Op.and]: [{
+                        prod_uuid,
+                        tenant_id: TENANTID
+                    }]
+
+                }
+            });
+
             if (findGallery) {
                 // Delete Gallery S3 Image From Product Folder
                 const product_image_src = config.get("AWS.PRODUCT_IMG_GALLERY_DEST").split("/")
                 const product_image_bucketName = product_image_src[0];
                 const product_image_folder = product_image_src.slice(1).join("/");
-                await deleteFile({ idf: prod_uuid, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
+                await deleteFile({ idf: findProduct.prod_sku, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
 
             } else {
                 return {
@@ -919,7 +930,7 @@ module.exports = {
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
                 const product_gallery_bucketName = product_gallery_src[0];
                 const product_gallery_folder = product_gallery_src.slice(1).join("/");
-                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_uuid, folder: product_gallery_folder, fileName: findProduct.prod_uuid, bucketName: product_gallery_bucketName });
+                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_sku, folder: product_gallery_folder, fileName: findProduct.prod_sku, bucketName: product_gallery_bucketName });
                 if (!imageUrl) return { message: "New Gallery Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Assign Values To Gallery Array For Bulk Create

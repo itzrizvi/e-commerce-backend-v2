@@ -23,7 +23,7 @@ module.exports = {
                 prod_tags,
                 prod_regular_price,
                 prod_sale_price,
-                prod_model,
+                prod_partnum,
                 prod_sku,
                 brand_uuid,
                 prod_category,
@@ -31,6 +31,7 @@ module.exports = {
                 prod_weight_class,
                 prod_outofstock_status,
                 prod_status,
+                taxable,
                 related_product,
                 prod_thumbnail,
                 prod_gallery,
@@ -58,6 +59,10 @@ module.exports = {
                     }],
                     [Op.and]: [{
                         prod_sku,
+                        tenant_id: TENANTID
+                    }],
+                    [Op.and]: [{
+                        prod_partnum,
                         tenant_id: TENANTID
                     }],
 
@@ -102,7 +107,7 @@ module.exports = {
                 prod_tags,
                 prod_regular_price,
                 prod_sale_price,
-                prod_model,
+                prod_partnum,
                 prod_sku,
                 brand_uuid,
                 prod_category,
@@ -110,6 +115,7 @@ module.exports = {
                 prod_weight_class,
                 prod_outofstock_status,
                 prod_status,
+                taxable,
                 discount_type_uuid,
                 dimension_uuid,
                 prod_thumbnail: "demo.jpg",

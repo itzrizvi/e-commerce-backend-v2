@@ -61,13 +61,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.UUID,
             allowNull: false
         },
-        prod_model: {
+        prod_partnum: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false
         },
         prod_sku: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: false
         },
         dimension_uuid: {
             type: DataTypes.UUID,
@@ -87,6 +87,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "Out Of Stock"
         },
         prod_status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        },
+        taxable: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: true

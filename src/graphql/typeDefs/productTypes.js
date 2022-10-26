@@ -66,8 +66,10 @@ type Product {
     prod_regular_price:Float
     prod_sale_price:Float
     discount_type:DiscountType
-    prod_model:String
+    prod_partnum:String
     prod_sku:String
+    prod_status:Boolean
+    taxable:Boolean
     dimensions:ProductDimension
     prod_weight:String
     prod_weight_class:String
@@ -90,7 +92,7 @@ input AddProductInput {
     prod_tags:JSON
     prod_regular_price:Float!
     prod_sale_price:Float
-    prod_model:String
+    prod_partnum:String!
     prod_sku:String!
     brand_uuid:UUID!
     prod_category:UUID!
@@ -98,6 +100,7 @@ input AddProductInput {
     prod_weight:String
     prod_weight_class:String
     prod_status:Boolean!
+    taxable:Boolean
     prod_outofstock_status:String!
     prod_thumbnail:Upload!
     prod_gallery:[Upload]
@@ -113,9 +116,10 @@ type ProductForList {
     prod_slug:String
     prod_regular_price:Float
     prod_sale_price:Float
-    prod_model:String
+    prod_partnum:String
     prod_sku:String
     prod_status:Boolean
+    taxable:Boolean
     prod_outofstock_status:String
     prod_thumbnail:String
     tenant_id:String
@@ -155,6 +159,23 @@ input GalleryImageUploadInput {
     prod_uuid:UUID!
     gallery_img:[Upload!]
 }
+
+# input UpdateProductInput {
+#     prod_uuid:UUID
+#     prod_name:String
+#     prod_long_desc:JSON
+#     prod_short_desc:JSON
+#     prod_meta_title:String
+#     prod_meta_desc:JSON
+#     prod_meta_keywords:JSON
+#     prod_tags:JSON
+#     prod_regular_price:Float
+#     prod_sale_price:Float
+#     prod_partnum:String
+#     prod_sku:String
+#     brand_uuid:UUID
+#     prod_category:UUID
+# }
 
 
 # Extended QUERIES AND MUTATIONS ######################################

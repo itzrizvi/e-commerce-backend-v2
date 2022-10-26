@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
 
     }, {
         timestamps: true,
-        freezeTableName: true,
         tableName: 'admin_roles',
     })
 

@@ -35,7 +35,6 @@ module.exports = (sequelize, DataTypes) => {
 
     }, {
         timestamps: true,
-        freezeTableName: true,
         tableName: 'product_attributes',
     })
 

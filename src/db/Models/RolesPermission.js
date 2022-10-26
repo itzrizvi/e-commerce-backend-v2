@@ -27,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
 
     }, {
         timestamps: true,
-        freezeTableName: true,
         tableName: 'roles_permission',
     })
 

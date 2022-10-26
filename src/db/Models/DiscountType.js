@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
         },
+        prod_uuid: {
+            type: DataTypes.UUID,
+            allowNull: false
+        },
         customer_group_uuid: {
             type: DataTypes.UUID,
             allowNull: true

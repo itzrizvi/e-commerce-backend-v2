@@ -26,7 +26,7 @@ const addProductRequest = (body) => {
         taxable: 'boolean',
         prod_outofstock_status: 'required|string',
         dimensions: 'object',
-        discount_type: 'object',
+        discount_type: 'array',
         product_attributes: 'array',
         partof_product: 'array'
     }

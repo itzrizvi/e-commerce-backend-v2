@@ -53,10 +53,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 0
         },
-        discount_type_uuid: {
-            type: DataTypes.UUID,
-            allowNull: true
-        },
         brand_uuid: {
             type: DataTypes.UUID,
             allowNull: false

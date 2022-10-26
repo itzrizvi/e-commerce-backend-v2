@@ -65,7 +65,7 @@ type Product {
     related_products:[RelatedProduct]
     prod_regular_price:Float
     prod_sale_price:Float
-    discount_type:DiscountType
+    discount_type:[DiscountType]
     prod_partnum:String
     prod_sku:String
     prod_status:Boolean
@@ -160,22 +160,32 @@ input GalleryImageUploadInput {
     gallery_img:[Upload!]
 }
 
-# input UpdateProductInput {
-#     prod_uuid:UUID
-#     prod_name:String
-#     prod_long_desc:JSON
-#     prod_short_desc:JSON
-#     prod_meta_title:String
-#     prod_meta_desc:JSON
-#     prod_meta_keywords:JSON
-#     prod_tags:JSON
-#     prod_regular_price:Float
-#     prod_sale_price:Float
-#     prod_partnum:String
-#     prod_sku:String
-#     brand_uuid:UUID
-#     prod_category:UUID
-# }
+input UpdateProductInput {
+    prod_uuid:UUID
+    prod_name:String
+    prod_long_desc:JSON
+    prod_short_desc:JSON
+    prod_meta_title:String
+    prod_meta_desc:JSON
+    prod_meta_keywords:JSON
+    prod_tags:JSON
+    prod_regular_price:Float
+    prod_sale_price:Float
+    prod_partnum:String
+    prod_sku:String
+    brand_uuid:UUID
+    prod_category:UUID
+    prod_weight:String
+    prod_weight_class:String
+    prod_status:Boolean
+    taxable:Boolean
+    prod_outofstock_status:String
+    related_product:JSON
+    dimensions:JSON # Dimensions Table Properties will come as an object
+    discount_type:JSON # Discount Type Table Properties will come as an object
+    product_attributes:JSON # Product Attributes Table Properties Will Come as an Object
+    partof_product:JSON # Part of Product Table Properties Will Come as an Object
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -186,7 +196,7 @@ extend type Mutation {
     updateThumbnail(data: UpdateThumbnailInput):CommonOutput!
     deleteGalleryImage(data: GalleryImageDeleteInput):CommonOutput!
     uploadGalleryImage(data: GalleryImageUploadInput):CommonOutput!
-    # updateProduct(data: UpdateProductInput):UpdateProductOutput!
+    updateProduct(data: UpdateProductInput):CommonOutput!
 }
 
 extend type Query {

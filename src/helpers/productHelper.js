@@ -71,18 +71,6 @@ module.exports = {
             if (checkExists) return { message: "Already Have This Product!!!", status: false };
 
 
-            // Discount Type Insertion
-            let discount_type_uuid;
-            if (discount_type) {
-                // Insert Data In Discount Type Table
-                discount_type.tenant_id = TENANTID;
-                const insertDiscountType = await db.discount_type.create(discount_type);
-                if (!insertDiscountType) return { message: "Discount Table Data Insert Failed!!", status: false };
-
-                // Discount Type UUID
-                discount_type_uuid = insertDiscountType.discount_type_uuid
-            }
-
             // Dimensions Table Data Insertion
             let dimension_uuid;
             if (dimensions) {
@@ -116,7 +104,6 @@ module.exports = {
                 prod_outofstock_status,
                 prod_status,
                 taxable,
-                discount_type_uuid,
                 dimension_uuid,
                 prod_thumbnail: "demo.jpg",
                 added_by: user.uid,
@@ -205,6 +192,19 @@ module.exports = {
                 }
             }
 
+            // Discount Type Insertion
+            if (discount_type && discount_type.length > 0) {
+                // Loop For Assign Other Values to Discount Type  Data
+                discount_type.forEach(element => {
+                    element.tenant_id = TENANTID;
+                    element.prod_uuid = createProduct.prod_uuid;
+                });
+                // Insert Data In Discount Type Table
+                const insertDiscountType = await db.discount_type.bulkCreate(discount_type);
+                if (!insertDiscountType) return { message: "Discount Table Data Insert Failed!!", status: false };
+            }
+
+
             // If Part of Product Available
             if (partof_product && partof_product.length > 0) {
 
@@ -281,9 +281,9 @@ module.exports = {
             // Discount Type + Customer Group Association
             if (!db.products.hasAlias('discount_type')) {
 
-                await db.products.hasOne(db.discount_type, {
-                    sourceKey: 'discount_type_uuid',
-                    foreignKey: 'discount_type_uuid',
+                await db.products.hasMany(db.discount_type, {
+                    sourceKey: 'prod_uuid',
+                    foreignKey: 'prod_uuid',
                     as: 'discount_type'
                 });
             }

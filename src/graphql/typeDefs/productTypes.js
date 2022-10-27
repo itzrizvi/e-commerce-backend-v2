@@ -70,6 +70,7 @@ type Product {
     prod_sku:String
     prod_status:Boolean
     taxable:Boolean
+    is_featured:Boolean
     prod_condition:String
     dimensions:ProductDimension
     prod_weight:String
@@ -102,6 +103,7 @@ input AddProductInput {
     prod_weight_class:String
     prod_status:Boolean!
     taxable:Boolean
+    is_featured:Boolean
     prod_condition:String
     prod_outofstock_status:String!
     prod_thumbnail:Upload!
@@ -122,6 +124,7 @@ type ProductForList {
     prod_sku:String
     prod_status:Boolean
     taxable:Boolean
+    is_featured:Boolean
     prod_condition:String
     prod_outofstock_status:String
     prod_thumbnail:String
@@ -182,6 +185,7 @@ input UpdateProductInput {
     prod_weight_class:String
     prod_status:Boolean
     taxable:Boolean
+    is_featured:Boolean
     prod_condition:String
     prod_outofstock_status:String
     related_product:JSON

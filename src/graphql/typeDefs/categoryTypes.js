@@ -107,6 +107,18 @@ input UpdateCategoryInput {
     mark_as_main_category:Boolean
 }
 
+input GetProductByCategoryInput {
+    cat_id:UUID
+}
+
+type GetProductByCategoryOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ProductForList]
+
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -121,6 +133,7 @@ extend type Query {
     getParentCategories:GetCategories!
     getParentChildCategories:GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
+    getProductsByCategory(query: GetProductByCategoryInput):GetProductByCategoryOutput!
 }
 
 

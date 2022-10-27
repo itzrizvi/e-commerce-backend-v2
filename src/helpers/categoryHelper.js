@@ -257,6 +257,45 @@ module.exports = {
         }
 
     },
+    // GET Product By Category Helper
+    getProductsByCategory: async (req, db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // CATEGORY ID
+            const { cat_id } = req;
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Find ALL Products By Category
+            const getProductsByCategory = await db.products.findAll({
+                where: {
+                    [Op.and]: [{
+                        prod_category: cat_id,
+                        tenant_id
+                    }]
+                },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (getProductsByCategory) {
+                return {
+                    message: "Get Products By Category Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: getProductsByCategory
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
     // GET SINGLE Category
     getSingleCategory: async (req, db, user, isAuth, TENANTID) => {
 

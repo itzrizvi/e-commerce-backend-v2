@@ -240,6 +240,10 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // GET PRODUCTS BY BRAND
+    getProductsByBrand: async (req, db, TENANTID) => {
+
+    },
     // UPDATE BRAND 
     updateBrand: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block

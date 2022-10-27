@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        billing_status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

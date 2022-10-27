@@ -1,0 +1,2 @@
+ALTER SEQUENCE product_conditions_id_seq RESTART WITH 10000;
+ALTER SEQUENCE product_availability_statuses_id_seq RESTART WITH 10000;

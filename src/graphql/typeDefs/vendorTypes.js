@@ -27,6 +27,7 @@ input ShippingAddress{
     shipping_city: String!
     shipping_PO_code: String!
     shipping_country: String!
+    shipping_status: Boolean!
 }
 
 input BillingAddress{
@@ -34,6 +35,7 @@ input BillingAddress{
     billing_city: String!
     billing_PO_code: String!
     billing_country: String!
+    billing_status: Boolean!
 }
 
 type ShippingAddressOutput{
@@ -42,6 +44,7 @@ type ShippingAddressOutput{
     shipping_city: String!
     shipping_PO_code: String!
     shipping_country: String!
+    shipping_status: Boolean!
 }
 
 type BillingAddressOutput{
@@ -50,6 +53,7 @@ type BillingAddressOutput{
     billing_city: String!
     billing_PO_code: String!
     billing_country: String!
+    billing_status: Boolean!
 }
 
 input UpdateShippingAddress{
@@ -58,6 +62,7 @@ input UpdateShippingAddress{
     shipping_city: String!
     shipping_PO_code: String!
     shipping_country: String!
+    shipping_status: Boolean!
 }
 
 input UpdateBillingAddress{
@@ -66,6 +71,7 @@ input UpdateBillingAddress{
     billing_city: String!
     billing_PO_code: String!
     billing_country: String!
+    billing_status: Boolean!
 }
 
 input CreateVendorInput{

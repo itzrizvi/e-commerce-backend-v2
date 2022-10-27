@@ -54,6 +54,7 @@ input CustomerShippingAddress{
     shipping_city: String!
     shipping_PO_code: String!
     shipping_country: String!
+    shipping_status: Boolean!
 }
 
 input CustomerBillingAddress{
@@ -62,6 +63,7 @@ input CustomerBillingAddress{
     billing_city: String!
     billing_PO_code: String!
     billing_country: String!
+    billing_status: Boolean!
 }
 
 extend type Mutation {

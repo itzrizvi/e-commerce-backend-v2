@@ -16,4 +16,5 @@ module.exports = {
     ...require('./rating'),
     ...require('./vendor'),
     ...require('./customer'),
+    ...require('./utils')
 }

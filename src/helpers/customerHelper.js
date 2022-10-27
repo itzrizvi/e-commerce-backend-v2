@@ -205,7 +205,7 @@ module.exports = {
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const {customer_uuid, billing_address, billing_city, billing_PO_code, billing_country} = req
+            const {customer_uuid, billing_address, billing_city, billing_PO_code, billing_country, billing_status } = req
             const createBilling = db.billing_address.create({
                 ref_id: customer_uuid,
                 ref_model: "customer",
@@ -213,7 +213,8 @@ module.exports = {
                 billing_address,
                 billing_city,
                 billing_PO_code,
-                billing_country
+                billing_country,
+                billing_status
             });
 
             if(createBilling){
@@ -232,7 +233,7 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {customer_uuid, shipping_address, shipping_city, shipping_PO_code, shipping_country} = req
+            const {customer_uuid, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
             const createShipping = db.shipping_address.create({
                 ref_id: customer_uuid,
                 ref_model: "customer",
@@ -240,7 +241,8 @@ module.exports = {
                 shipping_address,
                 shipping_city,
                 shipping_PO_code,
-                shipping_country
+                shipping_country,
+                shipping_status
             });
 
             if(createShipping){
@@ -259,12 +261,13 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {billing_uuid, billing_address, billing_city, billing_PO_code, billing_country} = req
+            const {billing_uuid, billing_address, billing_city, billing_PO_code, billing_country, billing_status} = req
             const updateBilling = db.billing_address.update({
                 billing_address,
                 billing_city,
                 billing_PO_code,
-                billing_country
+                billing_country,
+                billing_status
             }, {
                 where: {
                     [Op.and]: [{
@@ -286,16 +289,18 @@ module.exports = {
         }
     },
     updateCustomerShippingAddress: async (req, db, user, isAuth, TENANTID) => {
+        
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {shipping_uuid, shipping_address, shipping_city, shipping_PO_code, shipping_country} = req
+            const {shipping_uuid, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
             const updateBilling = db.shipping_address.update({
                 shipping_address,
                 shipping_city,
                 shipping_PO_code,
-                shipping_country
+                shipping_country,
+                shipping_status
             }, {
                 where: {
                     [Op.and]: [{

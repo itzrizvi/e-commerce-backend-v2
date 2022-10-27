@@ -479,8 +479,61 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
+            // ## ASSOCIATION STARTS ##
+            // Check If Has Alias with Categories
+            if (!db.products.hasAlias('category')) {
+
+                await db.products.hasOne(db.categories, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'cat_id',
+                    as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+
+                await db.products.hasMany(db.product_attributes, {
+                    sourceKey: 'prod_uuid',
+                    foreignKey: 'prod_uuid',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+
+                await db.product_attributes.hasOne(db.attributes, {
+                    sourceKey: 'attribute_uuid',
+                    foreignKey: 'attribute_uuid',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+                await db.attributes.hasOne(db.attr_groups, {
+                    sourceKey: 'attr_group_uuid',
+                    foreignKey: 'attr_group_uuid',
+                    as: 'attribute_group'
+                });
+            }
+            // ## ASSOCIATION ENDS ##
+
             // Find ALL Product
             const allProducts = await db.products.findAll({
+                include: [
+                    { model: db.categories, as: 'category' }, // Include Product Category
+                    {
+                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attributes,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_groups,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                ],
                 where: { tenant_id },
                 order: [
                     ['prod_slug', 'ASC']
@@ -967,6 +1020,97 @@ module.exports = {
                 }
             }
 
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET Featured Products Helper
+    getFeaturedProducts: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // ## ASSOCIATION STARTS ##
+            // Check If Has Alias with Categories
+            if (!db.products.hasAlias('category')) {
+
+                await db.products.hasOne(db.categories, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'cat_id',
+                    as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+
+                await db.products.hasMany(db.product_attributes, {
+                    sourceKey: 'prod_uuid',
+                    foreignKey: 'prod_uuid',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+
+                await db.product_attributes.hasOne(db.attributes, {
+                    sourceKey: 'attribute_uuid',
+                    foreignKey: 'attribute_uuid',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+                await db.attributes.hasOne(db.attr_groups, {
+                    sourceKey: 'attr_group_uuid',
+                    foreignKey: 'attr_group_uuid',
+                    as: 'attribute_group'
+                });
+            }
+            // ## ASSOCIATION ENDS ##
+
+
+            // Find ALL Featured Product
+            const allFeaturedProducts = await db.products.findAll({
+                include: [
+                    { model: db.categories, as: 'category' }, // Include Product Category
+                    {
+                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attributes,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_groups,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        tenant_id,
+                        is_featured: true
+                    }]
+                },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (allFeaturedProducts) {
+                return {
+                    message: "Get All Featured Product Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allFeaturedProducts
+                }
+            }
 
 
         } catch (error) {

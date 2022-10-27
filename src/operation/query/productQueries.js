@@ -1,5 +1,5 @@
 // All Requires
-const { getSingleProductController, getProductListController } = require("../../controllers")
+const { getSingleProductController, getProductListController, getFeaturedProductController } = require("../../controllers")
 
 
 module.exports = {
@@ -22,5 +22,12 @@ module.exports = {
 
         // Return To Controller
         return await getProductListController(db, TENANTID);
-    }
+    },
+    // GET Featured Products
+    getFeaturedProducts: async (root, args, { db, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+
+        // Return To Controller
+        return await getFeaturedProductController(db, TENANTID);
+    },
 }

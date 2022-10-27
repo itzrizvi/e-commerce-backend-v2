@@ -128,6 +128,8 @@ type ProductForList {
     prod_condition:String
     prod_outofstock_status:String
     prod_thumbnail:String
+    category:Category
+    prod_attributes:[ProductAttributes]
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -196,6 +198,14 @@ input UpdateProductInput {
 }
 
 
+type GetFeaturedProducts {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[ProductForList]
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -210,6 +220,7 @@ extend type Mutation {
 extend type Query {
     getSingleProduct(query: GetSingleProductInput): GetSingleProductOutput!
     getProductList: GetAllProducts!
+    getFeaturedProducts: GetFeaturedProducts!
 }
 
 

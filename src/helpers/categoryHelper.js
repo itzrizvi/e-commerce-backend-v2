@@ -246,7 +246,7 @@ module.exports = {
                 message: "Success",
                 tenant_id: TENANTID,
                 status: true,
-                categories: featuredCategories
+                data: featuredCategories
             }
 
 

@@ -90,7 +90,7 @@ type GetFeaturedCategories {
     message:String
     status:Boolean
     tenant_id:String
-    categories: [Category]
+    data: [Category]
 }
 
 input UpdateCategoryInput {

@@ -108,7 +108,7 @@ input UpdateCategoryInput {
 }
 
 input GetProductByCategoryInput {
-    cat_id:UUID
+    cat_id:UUID!
 }
 
 type GetProductByCategoryOutput {

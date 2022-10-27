@@ -79,7 +79,7 @@ module.exports = {
 
             // If Found Production AvailabilityStatus
             if (checkExistence) return { message: "Already Have This Product Availability Status!!!", status: false };
-            
+
             // Update Production AvailabilityStatus
             const updateProductionAvailabilityStatus = await db.product_availability_status.update({
                 name,

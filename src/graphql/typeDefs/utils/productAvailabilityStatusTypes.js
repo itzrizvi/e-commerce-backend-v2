@@ -18,16 +18,16 @@ module.exports = gql`
     type GetAllProductAvailabilityStatusOutput{
         message:String!
         status:Boolean!
-        data: [ProductCondition]
+        data: [ProductAvailabilityStatus]
     }
 
     type GetSingleProductAvailabilityStatusOutput{
         message:String!
         status:Boolean!
-        data: ProductCondition
+        data: ProductAvailabilityStatus
     }
     
-    type ProductCondition{
+    type ProductAvailabilityStatus{
         id: Int!
         name: String!
         slug: String!

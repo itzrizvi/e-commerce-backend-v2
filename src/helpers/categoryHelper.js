@@ -55,8 +55,8 @@ module.exports = {
             // If Not Exist The Ctageory will be created
             if (!findExistCategory) {
 
-                // IF IS FEATURED TRUE
-                if (is_featured && cat_parent_id) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
+                // // IF IS FEATURED TRUE
+                // if (is_featured && cat_parent_id) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
 
                 const insertCategory = await db.categories.create({
                     cat_name,
@@ -370,20 +370,20 @@ module.exports = {
                 if (findExistCategory) return { message: "This Category Already Exists!!!", status: false }
             }
 
-            // Find To See If The Category Has any parent before
-            const checkHasParent = await db.categories.findOne({
-                where: {
-                    [Op.and]: [{
-                        cat_id,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
+            // // Find To See If The Category Has any parent before
+            // const checkHasParent = await db.categories.findOne({
+            //     where: {
+            //         [Op.and]: [{
+            //             cat_id,
+            //             tenant_id: TENANTID
+            //         }]
+            //     }
+            // });
 
-            // IF IS FEATURED TRUE
-            if (!mark_as_main_category) {
-                if (is_featured && (checkHasParent.cat_parent_id || cat_parent_id)) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
-            }
+            // // IF IS FEATURED TRUE
+            // if (!mark_as_main_category) {
+            //     if (is_featured && (checkHasParent.cat_parent_id || cat_parent_id)) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
+            // }
 
 
             // Update Doc For Category Update

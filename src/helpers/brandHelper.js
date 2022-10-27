@@ -242,7 +242,41 @@ module.exports = {
     },
     // GET PRODUCTS BY BRAND
     getProductsByBrand: async (req, db, TENANTID) => {
+        // Try Catch Block
+        try {
 
+            // CATEGORY ID
+            const { brand_uuid } = req;
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // Find ALL Products By Brand
+            const getProductsByBrand = await db.products.findAll({
+                where: {
+                    [Op.and]: [{
+                        brand_uuid,
+                        tenant_id
+                    }]
+                },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (getProductsByBrand) {
+                return {
+                    message: "Get Products By Brand Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: getProductsByBrand
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     },
     // UPDATE BRAND 
     updateBrand: async (req, db, user, isAuth, TENANTID) => {

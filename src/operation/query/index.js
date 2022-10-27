@@ -14,4 +14,5 @@ module.exports = {
     ...require('./ratingQueries'),
     ...require('./vendorQueries'),
     ...require('./customerQueries'),
+    ...require('./utils'),
 }

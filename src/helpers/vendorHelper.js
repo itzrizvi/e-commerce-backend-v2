@@ -39,7 +39,7 @@ module.exports = {
             if (createVendor) {
 
                 billing_address.forEach(ele => {
-                    const { billing_address, billing_city, billing_PO_code, billing_country } = ele
+                    const { billing_address, billing_city, billing_PO_code, billing_country, billing_status } = ele
                     db.billing_address.create({
                         ref_id: createVendor.vendor_uuid,
                         ref_model: "vendor",
@@ -47,12 +47,13 @@ module.exports = {
                         billing_address,
                         billing_city,
                         billing_PO_code,
-                        billing_country
+                        billing_country,
+                        billing_status
                     });
                 });
 
                 shipping_address.forEach(ele => {
-                    const { shipping_address, shipping_city, shipping_PO_code, shipping_country } = ele
+                    const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status } = ele
                     db.shipping_address.create({
                         ref_id: createVendor.vendor_uuid,
                         ref_model: "vendor",
@@ -60,7 +61,8 @@ module.exports = {
                         shipping_address,
                         shipping_city,
                         shipping_PO_code,
-                        shipping_country
+                        shipping_country,
+                        shipping_status
                     });
                 });
 
@@ -134,14 +136,15 @@ module.exports = {
             if (!updateVendor) return { message: "Update Gone Wrong!!!", status: false }
 
             billing_address.forEach(ele => {
-                const { billing_address, billing_city, billing_PO_code, billing_country, billing_uuid } = ele
+                const { billing_address, billing_city, billing_PO_code, billing_country, billing_uuid, billing_status } = ele
 
                 if (billing_uuid) {
                     db.billing_address.update({
                         billing_address,
                         billing_city,
                         billing_PO_code,
-                        billing_country
+                        billing_country,
+                        billing_status
                     }, {
                         where: {
                             [Op.and]: [{
@@ -158,19 +161,21 @@ module.exports = {
                         billing_address,
                         billing_city,
                         billing_PO_code,
-                        billing_country
+                        billing_country,
+                        billing_status
                     });
                 }
             });
 
             shipping_address.forEach(ele => {
-                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_uuid } = ele
+                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_uuid, shipping_status } = ele
                 if (shipping_uuid) {
                     db.shipping_address.update({
                         shipping_address,
                         shipping_city,
                         shipping_PO_code,
-                        shipping_country
+                        shipping_country,
+                        shipping_status
                     }, {
                         where: {
                             [Op.and]: [{
@@ -187,7 +192,8 @@ module.exports = {
                         shipping_address,
                         shipping_city,
                         shipping_PO_code,
-                        shipping_country
+                        shipping_country,
+                        shipping_status
                     });
                 }
             });

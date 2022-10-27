@@ -92,6 +92,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: true
         },
+        prod_condition: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         prod_thumbnail: {
             type: DataTypes.STRING,
             allowNull: false

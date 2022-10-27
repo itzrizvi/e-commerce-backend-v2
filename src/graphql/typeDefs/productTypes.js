@@ -70,6 +70,7 @@ type Product {
     prod_sku:String
     prod_status:Boolean
     taxable:Boolean
+    prod_condition:String
     dimensions:ProductDimension
     prod_weight:String
     prod_weight_class:String
@@ -101,6 +102,7 @@ input AddProductInput {
     prod_weight_class:String
     prod_status:Boolean!
     taxable:Boolean
+    prod_condition:String
     prod_outofstock_status:String!
     prod_thumbnail:Upload!
     prod_gallery:[Upload]
@@ -120,6 +122,7 @@ type ProductForList {
     prod_sku:String
     prod_status:Boolean
     taxable:Boolean
+    prod_condition:String
     prod_outofstock_status:String
     prod_thumbnail:String
     tenant_id:String
@@ -179,6 +182,7 @@ input UpdateProductInput {
     prod_weight_class:String
     prod_status:Boolean
     taxable:Boolean
+    prod_condition:String
     prod_outofstock_status:String
     related_product:JSON
     dimensions:JSON # Dimensions Table Properties will come as an object

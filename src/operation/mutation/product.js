@@ -28,7 +28,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await updateThumbnailController(args.data, db, TENANTID);
+        return await updateThumbnailController(args.data, db, user, TENANTID);
     },
     // Delete Gallery Image Mutation
     deleteGalleryImage: async (root, args, { db, user, isAuth, TENANTID }, info) => {
@@ -38,7 +38,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await deleteGalleryImageController(args.data, db, TENANTID);
+        return await deleteGalleryImageController(args.data, db, user, TENANTID);
     },
     // Upload Gallery Image Mutation
     uploadGalleryImage: async (root, args, { db, user, isAuth, TENANTID }, info) => {
@@ -48,7 +48,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await uploadGalleryImageController(args.data, db, TENANTID);
+        return await uploadGalleryImageController(args.data, db, user, TENANTID);
     },
     // Update Product Mutation
     updateProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {

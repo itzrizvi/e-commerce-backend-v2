@@ -39,6 +39,19 @@ module.exports = {
             // SENDING EMAIL
             await verifierEmail(mailData);
 
+            // Update Last Login
+            const updateLastLogin = {
+                last_login: Date.now()
+            }
+            db.users.update(updateLastLogin, {
+                where: {
+                    [Op.and]: [{
+                        uid: user.uid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             return {
                 authToken,
                 uid: user.uid,
@@ -106,6 +119,19 @@ module.exports = {
                 process.env.JWT_SECRET,
                 { expiresIn: '4h' }
             );
+
+            // Update Last Login
+            const updateLastLogin = {
+                last_login: Date.now()
+            }
+            db.users.update(updateLastLogin, {
+                where: {
+                    [Op.and]: [{
+                        uid: user.uid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
             return {
                 authToken,

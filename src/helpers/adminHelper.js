@@ -63,6 +63,19 @@ module.exports = {
                 { expiresIn: '24h' }
             );
 
+            // Update Last Login
+            const updateLastLogin = {
+                last_login: Date.now()
+            }
+            db.users.update(updateLastLogin, {
+                where: {
+                    [Op.and]: [{
+                        uid: user.uid,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             return {
                 authToken,
                 uid: user.uid,

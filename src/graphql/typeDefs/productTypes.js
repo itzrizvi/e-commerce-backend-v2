@@ -209,6 +209,10 @@ type GetFeaturedProducts {
     data:[ProductForList]
 }
 
+input GetRecentViewProductInput{
+    max: Int!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -226,6 +230,7 @@ extend type Query {
     getSingleProduct(query: GetSingleProductInput): GetSingleProductOutput!
     getProductList: GetAllProducts!
     getFeaturedProducts: GetFeaturedProducts!
+    getRecentViewProduct(query: GetRecentViewProductInput): GetFeaturedProducts!
 }
 
 

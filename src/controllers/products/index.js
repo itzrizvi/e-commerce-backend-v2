@@ -8,4 +8,5 @@ module.exports = {
     uploadGalleryImageController: require('./uploadGalleryImageController'),
     recentViewProductController: require('./recentViewProductController'),
     getFeaturedProductController: require('./getFeaturedProductController'),
+    getRecentViewProductController: require('./getRecentViewProductController'),
 }

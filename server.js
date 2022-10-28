@@ -37,6 +37,7 @@ const middlewares = [
 app.use(middlewares); // Middlewares Using
 app.use(onReqTokenGenerate)
 app.use(onReqTenantCheck)
+app.set('trust proxy', true)
 
 // Get file from aws
 app.get('/images/*', getFileStream)
@@ -62,13 +63,14 @@ async function startApolloServer() {
         introspection: true,
         tracing: true,
         context: ({ req }) => {
-            let { isAuth, user, TENANTID } = req;
+            let { isAuth, user, TENANTID, ip } = req;
             return {
                 req,
                 isAuth,
                 user,
                 db,
-                TENANTID
+                TENANTID,
+                ip
             }
         },
         cache: 'bounded',

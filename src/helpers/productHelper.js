@@ -1117,12 +1117,116 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    recentViewProduct: async (req, db, user, isAuth, TENANTID) => {
+    recentViewProduct: async (req, db, user, isAuth, TENANTID, ip) => {
         try {
-            console.log(req, isAuth);
+             // GET DATA
+             const { product_id } = req;
+
+             if( isAuth ){
+                const checkExist = await db.recent_view_product.findOne({
+                    where: {
+                        [Op.and]: [{
+                            product_id,
+                            user_id: user.id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                if (!checkExist) {
+                    db.recent_view_product.create({
+                        product_id,
+                        user_id: user.id,
+                        tenant_id: TENANTID
+                    });
+                }
+             }else{
+                const checkExistbyIP = await db.recent_view_product.findOne({
+                    where: {
+                        [Op.and]: [{
+                            product_id,
+                            user_ip: ip,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                if(!checkExistbyIP){
+                    db.recent_view_product.create({
+                        product_id,
+                        user_ip: ip,
+                        tenant_id: TENANTID
+                    });
+                }
+             }
+
+            
+            return {
+                tenant_id: createUser.tenant_id,
+                message: "Successfully Relink Recent View Product.",
+                status: true,
+            }
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
-    }
+    },
+    getRecentViewProducts: async (req, db, user, isAuth, TENANTID, ip) => {
+        try {
+            const allRecentViewProducts = [];
+
+            if (!db.recent_view_product.hasAlias('product')) {
+
+                await db.recent_view_product.hasOne(db.products, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'id',
+                    as: 'product'
+                });
+            }
+
+            if(isAuth){
+                allRecentViewProducts = await db.recent_view_product.findAll({
+                    limit: req.max ?? 20,
+                    include: [
+                        { model: db.products, as: 'product' }
+                    ],
+                    where: {
+                        [Op.and]: [{
+                            tenant_id: TENANTID,
+                            user_id: user.id
+                        }]
+                    },
+                    order: [['updatedAt', 'DESC']]
+                });
+            }else{
+                allRecentViewProducts = await db.recent_view_product.findAll({
+                    limit: req.max ?? 20,
+                    include: [
+                        { model: db.products, as: 'product' }
+                    ],
+                    where: {
+                        [Op.and]: [{
+                            tenant_id: TENANTID,
+                            user_ip: ip
+                        }]
+                    },
+                    order: [['updatedAt', 'DESC']]
+                });
+            }
+
+            // Return If Success
+            if (allRecentViewProducts) {
+                return {
+                    message: "Get Recent View Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allRecentViewProducts
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

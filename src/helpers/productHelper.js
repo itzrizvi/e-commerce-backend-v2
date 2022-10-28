@@ -277,7 +277,7 @@ module.exports = {
                 });
             }
             // Check If Has Alias with Users and Roles
-            if (!db.products.hasAlias('users') && !db.users.hasAlias('roles')) {
+            if (!db.products.hasAlias('users') && !db.products.hasAlias('created_by')) {
 
                 await db.products.hasOne(db.users, {
                     sourceKey: 'added_by',

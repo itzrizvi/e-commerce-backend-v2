@@ -191,6 +191,10 @@ input UpdateProductInput {
     partof_product:JSON # Part of Product Table Properties Will Come as an Object
 }
 
+input RecentViewProductInput{
+    product_id: Int!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -201,6 +205,7 @@ extend type Mutation {
     deleteGalleryImage(data: GalleryImageDeleteInput):CommonOutput!
     uploadGalleryImage(data: GalleryImageUploadInput):CommonOutput!
     updateProduct(data: UpdateProductInput):CommonOutput!
+    recentViewProduct(data: RecentViewProductInput): CommonOutput!
 }
 
 extend type Query {

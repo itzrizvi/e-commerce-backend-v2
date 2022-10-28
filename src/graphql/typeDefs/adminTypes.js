@@ -24,7 +24,6 @@ input AdminSignUpInput {
     first_name:String!
     last_name:String!
     email:String!
-    password:String!
     roleUUID:JSON!
     userStatus:Boolean!
     sendEmail:Boolean!

@@ -6,4 +6,5 @@ module.exports = {
     updateThumbnailController: require('./updateThumbnailController'),
     deleteGalleryImageController: require('./deleteGalleryImageController'),
     uploadGalleryImageController: require('./uploadGalleryImageController'),
+    recentViewProductController: require('./recentViewProductController'),
 }

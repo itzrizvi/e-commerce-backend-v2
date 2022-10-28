@@ -95,7 +95,6 @@ module.exports = {
             const first_name = req.first_name;
             const last_name = req.last_name;
             const email = req.email;
-            const password = req.password;
             const has_role = 1;
             const user_status = req.userStatus;
             const roleUUID = req.roleUUID;
@@ -124,7 +123,6 @@ module.exports = {
                     first_name: first_name,
                     last_name: last_name,
                     email: email,
-                    password: await bcrypt.hash(password, 10),
                     has_role,
                     verification_code: verificationCode,
                     user_status,
@@ -151,8 +149,8 @@ module.exports = {
                         // Setting Up Data for EMAIL SENDER
                         const mailData = {
                             email: createStuff.email,
-                            subject: "Admin Verification Code From Primer Server Parts",
-                            message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
+                            subject: "Admin Created Successfully for Primer Server Parts",
+                            message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} && Link is: ${process.env.ADMIN_URL}`
                         }
 
                         // SENDING EMAIL

@@ -968,5 +968,13 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    recentViewProduct: async (req, db, user, isAuth, TENANTID) => {
+        try {
+            console.log(req, isAuth);
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     }
 }

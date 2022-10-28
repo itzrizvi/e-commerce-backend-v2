@@ -87,6 +87,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: true
         },
+        is_featured: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         taxable: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

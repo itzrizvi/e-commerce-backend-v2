@@ -365,6 +365,32 @@ module.exports = {
                 // If not updated
                 if (!permissionDataUpdate) return { message: "Update Went Wrong!!!", status: false }
 
+
+                // Find Updated Permission
+                const updatedPermissionCheck = await db.permissions_data.findOne({
+                    where: {
+                        [Op.and]: [{
+                            role_uuid,
+                            permission_uuid,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Delete If Everything is False
+                if (updatedPermissionCheck && !updatedPermissionCheck.edit_access && !updatedPermissionCheck.read_access) {
+                    // DELETE Permission
+                    db.permissions_data.destroy({
+                        where: {
+                            [Op.and]: [{
+                                role_uuid,
+                                permission_uuid,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                }
+
                 // Return Data
                 return {
                     message: "Permission Updated Successfully For this Role!!!",

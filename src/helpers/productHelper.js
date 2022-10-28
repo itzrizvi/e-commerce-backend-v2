@@ -32,6 +32,7 @@ module.exports = {
                 prod_outofstock_status,
                 prod_status,
                 taxable,
+                is_featured,
                 prod_condition,
                 related_product,
                 prod_thumbnail,
@@ -123,6 +124,7 @@ module.exports = {
                 prod_outofstock_status,
                 prod_status,
                 taxable,
+                is_featured,
                 prod_condition,
                 dimension_uuid,
                 prod_thumbnail: "demo.jpg",
@@ -139,7 +141,7 @@ module.exports = {
             const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
             const product_image_bucketName = product_image_src[0];
             const product_image_folder = product_image_src.slice(1).join("/");
-            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_sku, folder: product_image_folder, fileName: createProduct.prod_sku, bucketName: product_image_bucketName });
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_uuid, folder: product_image_folder, fileName: createProduct.prod_uuid, bucketName: product_image_bucketName });
             if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
             // Update Product with Thumbnail Name
@@ -167,7 +169,7 @@ module.exports = {
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
                 const product_gallery_bucketName = product_gallery_src[0];
                 const product_gallery_folder = product_gallery_src.slice(1).join("/");
-                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_sku, folder: product_gallery_folder, fileName: createProduct.prod_sku, bucketName: product_gallery_bucketName });
+                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_uuid, folder: product_gallery_folder, fileName: createProduct.prod_uuid, bucketName: product_gallery_bucketName });
                 if (!imageUrl) return { message: "Gallery Images Couldnt Uploaded Properly!!!", status: false };
 
                 // Assign Values To Gallery Array For Bulk Create
@@ -477,8 +479,61 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
+            // ## ASSOCIATION STARTS ##
+            // Check If Has Alias with Categories
+            if (!db.products.hasAlias('category')) {
+
+                await db.products.hasOne(db.categories, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'cat_id',
+                    as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+
+                await db.products.hasMany(db.product_attributes, {
+                    sourceKey: 'prod_uuid',
+                    foreignKey: 'prod_uuid',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+
+                await db.product_attributes.hasOne(db.attributes, {
+                    sourceKey: 'attribute_uuid',
+                    foreignKey: 'attribute_uuid',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+                await db.attributes.hasOne(db.attr_groups, {
+                    sourceKey: 'attr_group_uuid',
+                    foreignKey: 'attr_group_uuid',
+                    as: 'attribute_group'
+                });
+            }
+            // ## ASSOCIATION ENDS ##
+
             // Find ALL Product
             const allProducts = await db.products.findAll({
+                include: [
+                    { model: db.categories, as: 'category' }, // Include Product Category
+                    {
+                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attributes,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_groups,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                ],
                 where: { tenant_id },
                 order: [
                     ['prod_slug', 'ASC']
@@ -525,6 +580,7 @@ module.exports = {
                 prod_weight_class,
                 prod_status,
                 taxable,
+                is_featured,
                 prod_condition,
                 prod_outofstock_status,
                 related_product,
@@ -737,6 +793,7 @@ module.exports = {
                 prod_weight_class,
                 prod_status,
                 taxable,
+                is_featured,
                 prod_condition,
                 prod_outofstock_status,
                 dimension_uuid,
@@ -792,7 +849,7 @@ module.exports = {
                 const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_DEST").split("/")
                 const product_image_bucketName = product_image_src[0];
                 const product_image_folder = product_image_src.slice(1).join("/");
-                await deleteFile({ idf: findProduct.prod_sku, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
+                await deleteFile({ idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
             }
 
             // Upload New Product Thumbnail
@@ -801,7 +858,7 @@ module.exports = {
             const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
             const product_image_bucketName = product_image_src[0];
             const product_image_folder = product_image_src.slice(1).join("/");
-            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_sku, folder: product_image_folder, fileName: findProduct.prod_sku, bucketName: product_image_bucketName });
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findProduct.prod_uuid, bucketName: product_image_bucketName });
             if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
             // Update Product with New Thumbnail Name
@@ -872,7 +929,7 @@ module.exports = {
                 const product_image_src = config.get("AWS.PRODUCT_IMG_GALLERY_DEST").split("/")
                 const product_image_bucketName = product_image_src[0];
                 const product_image_folder = product_image_src.slice(1).join("/");
-                await deleteFile({ idf: findProduct.prod_sku, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
+                await deleteFile({ idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
 
             } else {
                 return {
@@ -934,7 +991,7 @@ module.exports = {
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
                 const product_gallery_bucketName = product_gallery_src[0];
                 const product_gallery_folder = product_gallery_src.slice(1).join("/");
-                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_sku, folder: product_gallery_folder, fileName: findProduct.prod_sku, bucketName: product_gallery_bucketName });
+                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_uuid, folder: product_gallery_folder, fileName: findProduct.prod_uuid, bucketName: product_gallery_bucketName });
                 if (!imageUrl) return { message: "New Gallery Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Assign Values To Gallery Array For Bulk Create
@@ -963,6 +1020,97 @@ module.exports = {
                 }
             }
 
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET Featured Products Helper
+    getFeaturedProducts: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // ## ASSOCIATION STARTS ##
+            // Check If Has Alias with Categories
+            if (!db.products.hasAlias('category')) {
+
+                await db.products.hasOne(db.categories, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'cat_id',
+                    as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+
+                await db.products.hasMany(db.product_attributes, {
+                    sourceKey: 'prod_uuid',
+                    foreignKey: 'prod_uuid',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+
+                await db.product_attributes.hasOne(db.attributes, {
+                    sourceKey: 'attribute_uuid',
+                    foreignKey: 'attribute_uuid',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
+                await db.attributes.hasOne(db.attr_groups, {
+                    sourceKey: 'attr_group_uuid',
+                    foreignKey: 'attr_group_uuid',
+                    as: 'attribute_group'
+                });
+            }
+            // ## ASSOCIATION ENDS ##
+
+
+            // Find ALL Featured Product
+            const allFeaturedProducts = await db.products.findAll({
+                include: [
+                    { model: db.categories, as: 'category' }, // Include Product Category
+                    {
+                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attributes,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_groups,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        tenant_id,
+                        is_featured: true
+                    }]
+                },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (allFeaturedProducts) {
+                return {
+                    message: "Get All Featured Product Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allFeaturedProducts
+                }
+            }
 
 
         } catch (error) {

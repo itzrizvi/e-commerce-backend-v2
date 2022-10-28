@@ -55,6 +55,18 @@ input UpdateBrandInput {
     categories:JSON
 }
 
+input GetProductByBrandInput {
+    brand_uuid:UUID!
+}
+
+type GetProductByBrandOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ProductForList]
+
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -66,6 +78,7 @@ extend type Mutation {
 extend type Query {
     getAllBrands: GetAllBrands!
     getSingleBrand(query: GetSingleBrandInput):GetSingleBrandOutput!
+    getProductsByBrand(query: GetProductByBrandInput):GetProductByBrandOutput!
 }
 
 

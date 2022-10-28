@@ -467,7 +467,8 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) console.log("ERROR FROM TRY CATCH: ", error)
+            // if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
     // GET Product List Helper
@@ -1119,10 +1120,10 @@ module.exports = {
     },
     recentViewProduct: async (req, db, user, isAuth, TENANTID, ip) => {
         try {
-             // GET DATA
-             const { product_id } = req;
+            // GET DATA
+            const { product_id } = req;
 
-             if( isAuth ){
+            if (isAuth) {
                 const checkExist = await db.recent_view_product.findOne({
                     where: {
                         [Op.and]: [{
@@ -1140,7 +1141,7 @@ module.exports = {
                         tenant_id: TENANTID
                     });
                 }
-             }else{
+            } else {
                 const checkExistbyIP = await db.recent_view_product.findOne({
                     where: {
                         [Op.and]: [{
@@ -1151,16 +1152,16 @@ module.exports = {
                     }
                 });
 
-                if(!checkExistbyIP){
+                if (!checkExistbyIP) {
                     db.recent_view_product.create({
                         product_id,
                         user_ip: ip,
                         tenant_id: TENANTID
                     });
                 }
-             }
+            }
 
-            
+
             return {
                 tenant_id: createUser.tenant_id,
                 message: "Successfully Relink Recent View Product.",
@@ -1184,7 +1185,7 @@ module.exports = {
                 });
             }
 
-            if(isAuth){
+            if (isAuth) {
                 allRecentViewProducts = await db.recent_view_product.findAll({
                     limit: req.max ?? 20,
                     include: [
@@ -1198,7 +1199,7 @@ module.exports = {
                     },
                     order: [['updatedAt', 'DESC']]
                 });
-            }else{
+            } else {
                 allRecentViewProducts = await db.recent_view_product.findAll({
                     limit: req.max ?? 20,
                     include: [

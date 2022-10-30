@@ -24,7 +24,7 @@ input AdminSignUpInput {
     first_name:String!
     last_name:String!
     email:String!
-    role_id:JSON!
+    role_ids:JSON!
     userStatus:Boolean!
     sendEmail:Boolean!
 }

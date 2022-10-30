@@ -58,7 +58,7 @@ module.exports = {
 
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email, has_role: user.has_role },
+                { id: user.id, email: user.email, has_role: user.has_role },
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
             );
@@ -70,7 +70,7 @@ module.exports = {
             db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
-                        uid: user.uid,
+                        id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -78,7 +78,7 @@ module.exports = {
 
             return {
                 authToken,
-                uid: user.uid,
+                id: user.id,
                 email: user.email,
                 message: "Sign In succesfull",
                 emailVerified: user.email_verified,
@@ -96,10 +96,6 @@ module.exports = {
     },
     // Admin Sign Up Helper
     adminSignUp: async (req, db, user, isAuth, TENANTID) => {
-        // Return If No Auth and No Role
-        if (!user || !isAuth) return { message: "Not Authorized", email: req.email, status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", email: req.email, status: false };
-
 
         // Try Catch Block
         try {
@@ -110,7 +106,7 @@ module.exports = {
             const email = req.email;
             const has_role = 1;
             const user_status = req.userStatus;
-            const roleUUID = req.roleUUID;
+            const role_ids = req.role_ids;
             // SEND EMAIL REQUEST
             const { sendEmail } = req;
 
@@ -148,13 +144,13 @@ module.exports = {
 
                     // Insert Role and User Data
                     // Loop For Assign Other Values to Role Data
-                    roleUUID.forEach(element => {
+                    role_ids.forEach(element => {
                         element.tenant_id = createStuff.tenant_id;
-                        element.admin_id = createStuff.uid;
+                        element.admin_id = createStuff.id;
                     });
 
                     // Admin Roles Save Bulk
-                    const adminRolesDataSave = await db.admin_role.bulkCreate(roleUUID);
+                    const adminRolesDataSave = await db.admin_role.bulkCreate(role_ids);
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 
                     // IF SEND EMAIL IS TRUE
@@ -189,7 +185,6 @@ module.exports = {
                 const updateDoc = {
                     first_name: first_name,
                     last_name: last_name,
-                    password: await bcrypt.hash(password, 10),
                     has_role,
                     email_verified: false,
                     user_status,
@@ -220,13 +215,13 @@ module.exports = {
                     });
 
                     // Loop For Assign Other Values to Role Data
-                    roleUUID.forEach(element => {
+                    role_ids.forEach(element => {
                         element.tenant_id = updatedStuffData.tenant_id;
-                        element.admin_id = updatedStuffData.uid;
+                        element.admin_id = updatedStuffData.id;
                     });
 
                     // Permissions Bulk Create
-                    const adminRolesDataSave = await db.admin_role.bulkCreate(roleUUID);
+                    const adminRolesDataSave = await db.admin_role.bulkCreate(role_ids);
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 
 
@@ -238,7 +233,7 @@ module.exports = {
                         const mailData = {
                             email: updatedStuffEmail,
                             subject: "Admin Updated Verification Code From Primer Server Parts",
-                            message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your Password: ${password}`
+                            message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email}`
                         }
 
                         // SENDING EMAIL

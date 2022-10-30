@@ -8,11 +8,6 @@ module.exports = {
     // CREATE ROLES API
     createRoleWithPermission: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         // Try Catch Block
         try {
             // GET DATA
@@ -56,7 +51,7 @@ module.exports = {
                 if (createrole) {
                     // Loop For Assign Other Values to Permissions
                     permissionsData.forEach(element => {
-                        element.role_id = createrole.role_id;
+                        element.role_id = createrole.id;
                         element.role_no = createrole.role_no;
                         element.tenant_id = createrole.tenant_id;
 
@@ -91,22 +86,18 @@ module.exports = {
     },
     // GET ALL ROLES API
     getAllRoles: async (db, user, isAuth, TENANTID) => {
-        // Return if No Auth
-        if (!user || !isAuth) return { message: "Not Authenticated", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
-
 
         // Try Catch Block
         try {
             // GET ALL ROLES
             // Check If User Has Alias or Not 
             if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
-                await db.role.hasMany(db.permissions_data, { sourceKey: 'role_id', foreignKey: 'role_id', as: 'permissions' });
+                await db.role.hasMany(db.permissions_data, { sourceKey: 'id', foreignKey: 'role_id', as: 'permissions' });
             }
 
             // Check If User Has Alias or Not 
             if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'roles_permission_id', as: 'rolesPermission' });
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'id', as: 'rolesPermission' });
             }
 
             // Find All Roles With permissions
@@ -146,7 +137,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { role_id } = req;
+            const { id } = req;
 
             // TENANT ID
             const tenant_id = TENANTID;
@@ -154,12 +145,12 @@ module.exports = {
 
             // Check If User Has Alias or Not 
             if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
-                await db.role.hasMany(db.permissions_data, { sourceKey: 'role_id', foreignKey: 'role_id', as: 'permissions' });
+                await db.role.hasMany(db.permissions_data, { sourceKey: 'id', foreignKey: 'role_id', as: 'permissions' });
             }
 
             // Check If User Has Alias or Not 
             if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'roles_permission_id', as: 'rolesPermission' });
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'id', as: 'rolesPermission' });
             }
 
             // Find Single Role With Permission
@@ -172,7 +163,7 @@ module.exports = {
                 },
                 where: {
                     [Op.and]: [{
-                        role_id,
+                        id,
                         tenant_id
                     }]
                 }
@@ -192,16 +183,11 @@ module.exports = {
     // UPDATE ROLE HELPER
     updateRole: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         // Try Catch Block
         try {
 
             // Data From Request
-            const role_id = req.role_id;
+            const role_id = req.id;
             const role = req.role;
             const role_status = req.role_status;
             const roleDescription = req.roleDescription;
@@ -227,7 +213,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            role_id
+                            id: role_id
                         }]
                     }
                 });
@@ -247,7 +233,7 @@ module.exports = {
             const updateRole = await db.role.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        role_id,
+                        id: role_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -260,7 +246,7 @@ module.exports = {
             const findTargetedRole = await db.role.findOne({
                 where: {
                     [Op.and]: [{
-                        role_id,
+                        id: role_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -283,11 +269,6 @@ module.exports = {
     },
     // UPDATE ROLE PERMISSIONS HELPER
     updateRolePermissions: async (req, db, user, isAuth, TENANTID) => {
-
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
 
         // Try Catch Block
         try {
@@ -320,7 +301,7 @@ module.exports = {
                 const findRoleNo = await db.role.findOne({
                     where: {
                         [Op.and]: [{
-                            role_id,
+                            id: role_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -410,20 +391,17 @@ module.exports = {
     },
     // DELETE ROLE HELPER
     deleteRole: async (req, db, user, isAuth, TENANTID) => {
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
 
         // TRY CATCH BLOCK
         try {
             // Data From Request
-            const { role_id } = req;
+            const { id } = req;
 
             // DELETE ROLE
             const deleteRole = await db.role.destroy({
                 where: {
                     [Op.and]: [{
-                        role_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }

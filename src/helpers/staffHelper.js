@@ -9,16 +9,13 @@ const { verifierEmail } = require("../utils/verifyEmailSender");
 module.exports = {
     // GET ALL STAFF API
     getAllStaff: async (db, user, isAuth, TENANTID) => {
-        // Return if No Auth
-        if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
 
         // Try Catch Block
         try {
 
             // Associations MANY TO MANY
-            db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'uid', foreignKey: 'admin_id' });
-            db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'role_id', foreignKey: 'role_id' });
+            db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'id', foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'id', foreignKey: 'role_id' });
 
             // GET ALL STAFF QUERY
             const getAllStaff = await db.user.findAll({
@@ -56,7 +53,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { uid, first_name, last_name, password, roleUUID, user_status, image, sendEmail } = req;
+            const { id, first_name, last_name, password, role_ids, user_status, image, sendEmail } = req;
 
             // if Password available
             let encryptPassword;
@@ -77,7 +74,7 @@ module.exports = {
             const updateAdminUser = await db.user.update(updateUserDoc, {
                 where: {
                     [Op.and]: [{
-                        uid,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -89,7 +86,7 @@ module.exports = {
                 const findUser = await db.user.findOne({
                     where: {
                         [Op.and]: [{
-                            uid,
+                            id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -127,7 +124,7 @@ module.exports = {
                     const user_image_src = config.get("AWS.USER_IMG_DEST").split("/");
                     const user_image_bucketName = user_image_src[0];
                     const user_image_folder = user_image_src.slice(1);
-                    await deleteFile({ idf: uid, folder: user_image_folder, fileName: findUser.image, bucketName: user_image_bucketName });
+                    await deleteFile({ idf: id, folder: user_image_folder, fileName: findUser.image, bucketName: user_image_bucketName });
                 }
 
                 // Upload New Image to S3
@@ -136,7 +133,7 @@ module.exports = {
                     const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
                     const user_image_bucketName = user_image_src[0];
                     const user_image_folder = user_image_src.slice(1);
-                    const imageUrl = await singleFileUpload({ file: image, idf: uid, folder: user_image_folder, fileName: uid, bucketName: user_image_bucketName });
+                    const imageUrl = await singleFileUpload({ file: image, idf: id, folder: user_image_folder, fileName: id, bucketName: user_image_bucketName });
                     if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                     // Update Brand with New Image Name
@@ -150,7 +147,7 @@ module.exports = {
                     const updateUser = await db.user.update(userImageUpdate, {
                         where: {
                             [Op.and]: [{
-                                uid,
+                                id,
                                 tenant_id: TENANTID
                             }]
                         }
@@ -161,18 +158,18 @@ module.exports = {
 
 
                 // ROLE ALSO UPDATED
-                if (roleUUID) {
+                if (role_ids) {
                     // Loop For Assign Other Values to Role Data
-                    roleUUID.forEach(element => {
+                    role_ids.forEach(element => {
                         element.tenant_id = TENANTID;
-                        element.admin_id = uid;
+                        element.admin_id = id;
                     });
 
                     // Delete Previous Entry
                     const deletePreviousEntry = await db.admin_role.destroy({
                         where: {
                             [Op.and]: [{
-                                admin_id: uid,
+                                admin_id: id,
                                 tenant_id: TENANTID
                             }]
                         }
@@ -181,7 +178,7 @@ module.exports = {
                     if (!deletePreviousEntry) return { message: "Previous Admin Role Delete Failed!!!!", status: false }
 
                     // Update Admin Roles Bulk
-                    const adminRolesDataUpdate = await db.admin_role.bulkCreate(roleUUID);
+                    const adminRolesDataUpdate = await db.admin_role.bulkCreate(role_ids);
                     if (!adminRolesDataUpdate) return { message: "Admin Role Data Udpate Failed", status: false }
 
                     // Return
@@ -212,60 +209,60 @@ module.exports = {
     getSingleAdmin: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block
-        // try {
+        try {
 
-        // UID from Request
-        const { uid } = req;
+            // UID from Request
+            const { id } = req;
 
-        // Accociation with 3 tables
-        db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'uid', foreignKey: 'admin_id' });
-        db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'role_id', foreignKey: 'role_id' });
+            // Accociation with 3 tables
+            db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'id', foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'id', foreignKey: 'role_id' });
 
-        // Check If User Has Alias or Not 
-        if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
-            await db.role.hasMany(db.permissions_data, { sourceKey: 'role_id', foreignKey: 'role_id', as: 'permissions' });
-        }
+            // Check If User Has Alias or Not 
+            if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
+                await db.role.hasMany(db.permissions_data, { sourceKey: 'id', foreignKey: 'role_id', as: 'permissions' });
+            }
 
-        // Check If User Has Alias or Not 
-        if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-            await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'roles_permission_id', as: 'rolesPermission' });
-        }
+            // Check If User Has Alias or Not 
+            if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'id', as: 'rolesPermission' });
+            }
 
-        // GET ALL STAFF QUERY
-        const getAdmin = await db.user.findOne({
-            where: {
-                [Op.and]: [{
-                    uid,
-                    tenant_id: TENANTID
-                }]
+            // GET ALL STAFF QUERY
+            const getAdmin = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
 
-            },
-            include: {
-                model: db.role, as: 'roles',
-                include: {
-                    model: db.permissions_data, as: 'permissions',
-                    include: { model: db.roles_permission, as: 'rolesPermission' },
-                    separate: true,
-                    order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
                 },
-            },
+                include: {
+                    model: db.role, as: 'roles',
+                    include: {
+                        model: db.permissions_data, as: 'permissions',
+                        include: { model: db.roles_permission, as: 'rolesPermission' },
+                        separate: true,
+                        order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
+                    },
+                },
 
-            order: [[db.role, 'role', 'ASC']]
-        });
+                order: [[db.role, 'role', 'ASC']]
+            });
 
-        // Return Formation
-        return {
-            data: getAdmin,
-            message: "Single Staff/Admin GET Success!!!",
-            status: true,
-            tenant_id: TENANTID
+            // Return Formation
+            return {
+                data: getAdmin,
+                message: "Single Staff/Admin GET Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
         }
-
-
-
-        // } catch (error) {
-        //     if (error) return { message: "Something Went Wrong!!!", status: false }
-        // }
     },
     // Admin/Staff Password Change
     adminPasswordChange: async (req, db, user, isAuth, TENANTID) => {
@@ -273,13 +270,13 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request 
-            const { uid, oldPassword, newPassword } = req;
+            const { id, oldPassword, newPassword } = req;
 
             // FIND ADMIN FIRST
             const findAdmin = await db.user.findOne({
                 where: {
                     [Op.and]: [{
-                        uid,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -302,7 +299,7 @@ module.exports = {
             const updateAdmin = await db.user.update(updatePassDoc, {
                 where: {
                     [Op.and]: [{
-                        uid,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -314,7 +311,7 @@ module.exports = {
                 const findUser = await db.user.findOne({
                     where: {
                         [Op.and]: [{
-                            uid,
+                            id,
                             tenant_id: TENANTID
                         }]
                     }

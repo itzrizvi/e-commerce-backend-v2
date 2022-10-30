@@ -17,12 +17,6 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // Validate Delete Role Request
-    const validate = await deleteRoleRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
-    }
-
     // Delete ROLE
     const data = await deleteRole(req, db, user, isAuth, TENANTID);
 

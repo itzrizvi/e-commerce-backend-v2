@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 const checkPermission = async (db, user, TENANTID, permissionName) => {
 
     // Extract User
-    const uid = user.uid;
+    const id = user.id;
 
     // GET The Roles Permission Data
     const getRolesPermissionData = await db.roles_permission.findOne({
@@ -13,13 +13,13 @@ const checkPermission = async (db, user, TENANTID, permissionName) => {
             roles_permission_slug: permissionName
         }
     });
-    const rolePermissionID = getRolesPermissionData.roles_permission_id; // Extract UUID
+    const rolePermissionID = getRolesPermissionData.id; // Extract UUID
 
     // Find Roles of This User 
     const findRoles = await db.admin_role.findAll({
         where: {
             [Op.and]: [{
-                admin_id: uid,
+                admin_id: id,
                 tenant_id: TENANTID
             }]
         }

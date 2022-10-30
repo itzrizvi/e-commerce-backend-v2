@@ -4,6 +4,5 @@ module.exports = {
     getSingleCustomerController: require("./getSingleCustomerController"),
     addCustomerBillingAddressController: require("./addCustomerBillingAddressController"),
     addCustomerShippingAddressController: require("./addCustomerShippingAddressController"),
-    updateCustomerBillingAddressController: require("./updateCustomerBillingAddressController"),
-    updateCustomerShippingAddressController: require("./updateCustomerShippingAddressController"),
+    updateCustomerAddressController: require("./updateCustomerAddressController")
 }

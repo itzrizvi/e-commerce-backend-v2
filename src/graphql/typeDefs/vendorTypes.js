@@ -18,61 +18,11 @@ type Vendor{
     vendor_TAX_ID: String
     vendor_FAX_no: String
     vendor_status: Boolean!
-    billing_addresses: [BillingAddressOutput]
-    shipping_addresses: [ShippingAddressOutput]
+    billing_addresses: [AddressOutput]
+    shipping_addresses: [AddressOutput]
 }
 
-input ShippingAddress{
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
 
-input BillingAddress{
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
-}
-
-type ShippingAddressOutput{
-    shipping_id: Int
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
-
-type BillingAddressOutput{
-    billing_id: Int
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
-}
-
-input UpdateShippingAddress{
-    shipping_id: Int!
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
-
-input UpdateBillingAddress{
-    billing_id: Int!
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
-}
 
 input CreateVendorInput{
     vendor_contact_person: String!
@@ -84,8 +34,6 @@ input CreateVendorInput{
     vendor_EIN_no: String
     vendor_TAX_ID: String
     vendor_FAX_no: String
-    billing_address: [BillingAddress]!
-    shipping_address: [ShippingAddress]!
 }
 
 input UpdateVendorInput{
@@ -99,8 +47,8 @@ input UpdateVendorInput{
     vendor_EIN_no: String
     vendor_TAX_ID: String
     vendor_FAX_no: String
-    billing_address: [UpdateBillingAddress]!
-    shipping_address: [UpdateShippingAddress]!
+    billing_address: [UpdateAddress]!
+    shipping_address: [UpdateAddress]!
 }
 
 input UpdateVendorStatusInput{

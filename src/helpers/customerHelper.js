@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 module.exports = {
     // CREATE Customer API
     createCustomer: async (req, db, user, isAuth, TENANTID) => {
-
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -74,8 +73,8 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
         // Try Catch Block
         try {
-            if (!db.user.hasAlias('billing_address')) {
-                await db.user.hasMany(db.billing_address,
+            if (!db.user.hasAlias('addresses')) {
+                await db.user.hasMany(db.address,
                     {
                         foreignKey: 'ref_id',
                         constraints: false,
@@ -85,27 +84,12 @@ module.exports = {
                     });
             }
 
-
-            if (!db.user.hasAlias('shipping_address')) {
-                await db.user.hasMany(db.shipping_address,
-                    {
-                        foreignKey: 'ref_id',
-                        constraints: false,
-                        scope: {
-                            ref_model: 'customer'
-                        }
-                    });
-            }
 
             // GET ALL User
             const getallusers = await db.user.findAll({
                 include: [
                     {
-                        model: db.billing_address,
-                        separate: true,
-                    },
-                    {
-                        model: db.shipping_address,
+                        model: db.address,
                         separate: true,
                     }
                 ],
@@ -117,7 +101,7 @@ module.exports = {
 
             // Return 
             return {
-                message: "Get All Users Success!!!",
+                message: "Get All Customer Success!!!",
                 status: true,
                 tenant_id: TENANTID,
                 data: getallusers
@@ -135,20 +119,8 @@ module.exports = {
         // Try Catch Block
         try {
 
-            if (!db.user.hasAlias('billing_address')) {
-                await db.user.hasMany(db.billing_address,
-                    {
-                        foreignKey: 'ref_id',
-                        constraints: false,
-                        scope: {
-                            ref_model: 'customer'
-                        }
-                    });
-            }
-    
-    
-            if (!db.user.hasAlias('shipping_address')) {
-                await db.user.hasMany(db.shipping_address,
+            if (!db.user.hasAlias('addresses')) {
+                await db.user.hasMany(db.address,
                     {
                         foreignKey: 'ref_id',
                         constraints: false,
@@ -165,11 +137,7 @@ module.exports = {
             const getsinglecustomer = await db.user.findOne({
                 include: [
                     {
-                        model: db.billing_address,
-                        separate: true,
-                    },
-                    {
-                        model: db.shipping_address,
+                        model: db.address,
                         separate: true,
                     }
                 ],
@@ -201,16 +169,22 @@ module.exports = {
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const {customer_id, billing_address, billing_city, billing_PO_code, billing_country, billing_status } = req
-            const createBilling = db.billing_address.create({
+            const {customer_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const createBilling = db.address.create({
                 ref_id: customer_id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
-                billing_address,
-                billing_city,
-                billing_PO_code,
-                billing_country,
-                billing_status
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                type : "billing",
+                status,
+                phone,
+                fax,
+                email
             });
 
             if(createBilling){
@@ -225,91 +199,71 @@ module.exports = {
         }
     },
     addCustomerShippingAddress: async (req, db, user, isAuth, TENANTID) => {
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-        try {
-            const {customer_id, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
-            const createShipping = db.shipping_address.create({
-                ref_id: customer_id,
-                ref_model: "customer",
-                tenant_id: TENANTID,
-                shipping_address,
-                shipping_city,
-                shipping_PO_code,
-                shipping_country,
-                shipping_status
-            });
-
-            if(createShipping){
-                return {
-                    tenant_id: createShipping.tenant_id,
-                    message: "Successfully Created Shipping Address.",
-                    status: true,
-                }
-            }
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
-        }
+         // Auth Check
+         if (!isAuth) return { message: "Not Authorized", status: false };
+         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+ 
+         try {
+             const {customer_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+             const createShipping = db.address.create({
+                 ref_id: customer_id,
+                 ref_model: "customer",
+                 tenant_id: TENANTID,
+                 address1,
+                 address2,
+                 city,
+                 state,
+                 zip_code,
+                 country,
+                 type : "shipping",
+                 status,
+                 phone,
+                 fax,
+                 email
+             });
+ 
+             if(createShipping){
+                 return {
+                     tenant_id: createShipping.tenant_id,
+                     message: "Successfully Created Shipping Address.",
+                     status: true,
+                 }
+             }
+         } catch (error) {
+             if (error) return { message: "Something Went Wrong!!!", status: false }
+         }
     },
-    updateCustomerBillingAddress: async (req, db, user, isAuth, TENANTID) => {
+    updateCustomerAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Auth Check
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {billing_id, billing_address, billing_city, billing_PO_code, billing_country, billing_status} = req
-            const updateBilling = db.billing_address.update({
-                billing_address,
-                billing_city,
-                billing_PO_code,
-                billing_country,
-                billing_status
+            const {address_id, phone, fax, email, address1, address2, city, state, zip_code, country, status} = req
+            const updateAddress = db.address.update({
+                 address1,
+                 address2,
+                 city,
+                 state,
+                 zip_code,
+                 country,
+                 status,
+                 phone,
+                 fax,
+                 email
             }, {
                 where: {
                     [Op.and]: [{
-                        billing_id,
+                        id: address_id,
                         tenant_id: TENANTID
                     }]
                 }
             });
 
-            if(updateBilling){
+            if(updateAddress){
                 return {
-                    tenant_id: updateBilling.tenant_id,
-                    message: "Successfully Updated Billing Address.",
-                    status: true,
-                }
-            }
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
-        }
-    },
-    updateCustomerShippingAddress: async (req, db, user, isAuth, TENANTID) => {
-        
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-        try {
-            const {shipping_id, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
-            const updateBilling = db.shipping_address.update({
-                shipping_address,
-                shipping_city,
-                shipping_PO_code,
-                shipping_country,
-                shipping_status
-            }, {
-                where: {
-                    [Op.and]: [{
-                        shipping_id,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-            if(updateBilling){
-                return {
-                    tenant_id: updateBilling.tenant_id,
-                    message: "Successfully Updated Shipping Address.",
+                    tenant_id: updateAddress.tenant_id,
+                    message: "Successfully Updated Address.",
                     status: true,
                 }
             }

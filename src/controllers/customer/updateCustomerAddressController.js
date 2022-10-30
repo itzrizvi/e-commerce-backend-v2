@@ -1,5 +1,4 @@
-const { createCustomer } = require("../../helpers/customerHelper");
-const { createCustomerRequest } = require("../../requests/customerRequests");
+const { updateCustomerAddress } = require("../../helpers/customerHelper");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 
@@ -14,7 +13,7 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
     // }
 
     // CREATE ROLE
-    const data = await createCustomer(req, db, user, isAuth, TENANTID);
+    const data = await updateCustomerAddress(req, db, user, isAuth, TENANTID);
 
     return singleResponse(data);
 

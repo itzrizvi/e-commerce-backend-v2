@@ -32,7 +32,7 @@ module.exports = {
             }
 
             // Check If Already Exist the COUPON
-            const checkExistence = await db.coupons.findOne({
+            const checkExistence = await db.coupon.findOne({
                 where: {
                     [Op.and]: [{
                         coupon_code,
@@ -45,7 +45,7 @@ module.exports = {
 
 
             // Create COUPON
-            const createcoupon = await db.coupons.create({
+            const createcoupon = await db.coupon.create({
                 coupon_name,
                 coupon_code,
                 coupon_description,
@@ -84,7 +84,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { coupon_uuid,
+            const { coupon_id,
                 coupon_name,
                 coupon_code,
                 coupon_description,
@@ -100,14 +100,14 @@ module.exports = {
 
             if (coupon_code) {
                 // Check If Already Exist the COUPON
-                const checkExistence = await db.coupons.findOne({
+                const checkExistence = await db.coupon.findOne({
                     where: {
                         [Op.and]: [{
                             coupon_code,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            coupon_uuid
+                            coupon_id
                         }]
                     }
                 });
@@ -119,10 +119,10 @@ module.exports = {
 
 
             // Find Coupon
-            const findCoupon = await db.coupons.findOne({
+            const findCoupon = await db.coupon.findOne({
                 where: {
                     [Op.and]: [{
-                        coupon_uuid,
+                        coupon_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -165,10 +165,10 @@ module.exports = {
             }
 
             // Update Coupon
-            const updateCoupon = await db.coupons.update(updateDoc, {
+            const updateCoupon = await db.coupon.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        coupon_uuid,
+                        coupon_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -192,13 +192,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const { coupon_uuid } = req;
+            const { coupon_id } = req;
 
             // GET Single COUPON
-            const getsinglecoupon = await db.coupons.findOne({
+            const getsinglecoupon = await db.coupon.findOne({
                 where: {
                     [Op.and]: [{
-                        coupon_uuid,
+                        coupon_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -226,7 +226,7 @@ module.exports = {
             const { coupon_code } = req;
 
             // GET Single COUPON BY CODE
-            const getsinglecouponbycode = await db.coupons.findOne({
+            const getsinglecouponbycode = await db.coupon.findOne({
                 where: {
                     [Op.and]: [{
                         coupon_code,
@@ -254,7 +254,7 @@ module.exports = {
         try {
 
             // GET ALL COUPONS
-            const getallcoupons = await db.coupons.findAll({
+            const getallcoupons = await db.coupon.findAll({
                 where: {
                     tenant_id: TENANTID
                 }

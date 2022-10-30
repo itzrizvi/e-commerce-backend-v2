@@ -23,7 +23,7 @@ module.exports = {
              } = req;
 
             // Check The User Is Already given or Not
-            const checkUserExist = await db.users.findOne({
+            const checkUserExist = await db.user.findOne({
                 where: {
                     [Op.and]: [{
                         email,
@@ -34,7 +34,7 @@ module.exports = {
 
             if (checkUserExist) return { message: "User already exists!", status: false }
 
-            const createUser = await db.users.create({
+            const createUser = await db.user.create({
                 first_name,
                 last_name,
                 email,
@@ -74,8 +74,8 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
         // Try Catch Block
         try {
-            if (!db.users.hasAlias('billing_address')) {
-                await db.users.hasMany(db.billing_address,
+            if (!db.user.hasAlias('billing_address')) {
+                await db.user.hasMany(db.billing_address,
                     {
                         sourceKey: 'uid',
                         foreignKey: 'ref_id',
@@ -87,8 +87,8 @@ module.exports = {
             }
 
 
-            if (!db.users.hasAlias('shipping_address')) {
-                await db.users.hasMany(db.shipping_address,
+            if (!db.user.hasAlias('shipping_address')) {
+                await db.user.hasMany(db.shipping_address,
                     {
                         sourceKey: 'uid',
                         foreignKey: 'ref_id',
@@ -100,7 +100,7 @@ module.exports = {
             }
 
             // GET ALL User
-            const getallusers = await db.users.findAll({
+            const getallusers = await db.user.findAll({
                 include: [
                     {
                         model: db.billing_address,
@@ -137,8 +137,8 @@ module.exports = {
         // Try Catch Block
         try {
 
-            if (!db.users.hasAlias('billing_address')) {
-                await db.users.hasMany(db.billing_address,
+            if (!db.user.hasAlias('billing_address')) {
+                await db.user.hasMany(db.billing_address,
                     {
                         sourceKey: 'uid',
                         foreignKey: 'ref_id',
@@ -150,8 +150,8 @@ module.exports = {
             }
     
     
-            if (!db.users.hasAlias('shipping_address')) {
-                await db.users.hasMany(db.shipping_address,
+            if (!db.user.hasAlias('shipping_address')) {
+                await db.user.hasMany(db.shipping_address,
                     {
                         sourceKey: 'uid',
                         foreignKey: 'ref_id',
@@ -163,10 +163,10 @@ module.exports = {
             }
 
             // Data From Request
-            const { customer_uuid } = req;
+            const { customer_id } = req;
 
             // GET Single Customer BY CODE
-            const getsinglecustomer = await db.users.findOne({
+            const getsinglecustomer = await db.user.findOne({
                 include: [
                     {
                         model: db.billing_address,
@@ -179,7 +179,7 @@ module.exports = {
                 ],
                 where: {
                     [Op.and]: [{
-                        uid: customer_uuid,
+                        uid: customer_id,
                         tenant_id: TENANTID,
                         has_role: '0'
                     }]
@@ -205,9 +205,9 @@ module.exports = {
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const {customer_uuid, billing_address, billing_city, billing_PO_code, billing_country, billing_status } = req
+            const {customer_id, billing_address, billing_city, billing_PO_code, billing_country, billing_status } = req
             const createBilling = db.billing_address.create({
-                ref_id: customer_uuid,
+                ref_id: customer_id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
                 billing_address,
@@ -233,9 +233,9 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {customer_uuid, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
+            const {customer_id, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
             const createShipping = db.shipping_address.create({
-                ref_id: customer_uuid,
+                ref_id: customer_id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
                 shipping_address,
@@ -261,7 +261,7 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {billing_uuid, billing_address, billing_city, billing_PO_code, billing_country, billing_status} = req
+            const {billing_id, billing_address, billing_city, billing_PO_code, billing_country, billing_status} = req
             const updateBilling = db.billing_address.update({
                 billing_address,
                 billing_city,
@@ -271,7 +271,7 @@ module.exports = {
             }, {
                 where: {
                     [Op.and]: [{
-                        billing_uuid,
+                        billing_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -294,7 +294,7 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {shipping_uuid, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
+            const {shipping_id, shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status} = req
             const updateBilling = db.shipping_address.update({
                 shipping_address,
                 shipping_city,
@@ -304,7 +304,7 @@ module.exports = {
             }, {
                 where: {
                     [Op.and]: [{
-                        shipping_uuid,
+                        shipping_id,
                         tenant_id: TENANTID
                     }]
                 }

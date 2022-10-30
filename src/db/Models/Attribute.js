@@ -1,12 +1,12 @@
 // Attribute Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Attributes = sequelize.define("attributes", {
-        attribute_uuid: {
-            type: DataTypes.UUID,
+    const Attributes = sequelize.define("attribute", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         attribute_name: {
             type: DataTypes.STRING,
@@ -20,8 +20,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        attr_group_uuid: {
-            type: DataTypes.UUID,
+        attr_group_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         tenant_id: {
@@ -30,8 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'attributes',
+        timestamps: true
     })
 
     return Attributes

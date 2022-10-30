@@ -27,7 +27,7 @@ const createCouponRequest = (body) => {
 // UPDATE COUPON REQUEST
 const updateCouponRequest = (body) => {
     rules = {
-        coupon_uuid: 'required|string',
+        coupon_id: 'required|string',
         coupon_name: 'string',
         coupon_code: 'string',
         coupon_type: 'string',
@@ -47,7 +47,7 @@ const updateCouponRequest = (body) => {
 // GET SINGLE COUPON REQUEST
 const getSingleCouponRequest = (body) => {
     rules = {
-        coupon_uuid: 'required|string'
+        coupon_id: 'required|string'
     }
 
     return checkBody(body, rules);

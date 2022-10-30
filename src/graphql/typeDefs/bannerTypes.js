@@ -32,7 +32,7 @@ module.exports = gql`
     }
 
     type Banner{
-        banner_uuid: UUID!
+        banner_id: UUID!
         banner_name: String
         banner_slug: String
         banner_status: Boolean!
@@ -43,7 +43,7 @@ module.exports = gql`
     }
 
     type BannerImage{
-        banner_uuid: UUID!
+        banner_id: UUID!
         banner_id: UUID!
         title: String!
         image:String
@@ -55,13 +55,13 @@ module.exports = gql`
     }
 
     input UpdateBannerInput {
-        banner_uuid: UUID!
+        banner_id: UUID!
         banner_name: String
         banner_status: Boolean
     }
 
     input UpdateBannerImageInput {
-        banner_uuid: UUID!
+        banner_id: UUID!
         banner_id: UUID!
         title: String
         link: String
@@ -70,7 +70,7 @@ module.exports = gql`
     }
 
     input GetSingleBannerInput {
-        banner_uuid: UUID!
+        banner_id: UUID!
     }
 
     type GetSingleBannerOutput {
@@ -99,7 +99,7 @@ module.exports = gql`
     }
 
     input DeleteBannerImageInput {
-        banner_uuid: UUID!
+        banner_id: UUID!
     }
 
 

@@ -8,7 +8,7 @@ module.exports = gql`
 
 
 type Vendor{
-    vendor_uuid: UUID!
+    vendor_id: UUID!
     vendor_contact_person: String!
     vendor_company_name: String
     vendor_email: String!
@@ -39,7 +39,7 @@ input BillingAddress{
 }
 
 type ShippingAddressOutput{
-    shipping_uuid: UUID
+    shipping_id: UUID
     shipping_address: String!
     shipping_city: String!
     shipping_PO_code: String!
@@ -48,7 +48,7 @@ type ShippingAddressOutput{
 }
 
 type BillingAddressOutput{
-    billing_uuid: UUID
+    billing_id: UUID
     billing_address: String!
     billing_city: String!
     billing_PO_code: String!
@@ -57,7 +57,7 @@ type BillingAddressOutput{
 }
 
 input UpdateShippingAddress{
-    shipping_uuid: UUID!
+    shipping_id: UUID!
     shipping_address: String!
     shipping_city: String!
     shipping_PO_code: String!
@@ -66,7 +66,7 @@ input UpdateShippingAddress{
 }
 
 input UpdateBillingAddress{
-    billing_uuid: UUID!
+    billing_id: UUID!
     billing_address: String!
     billing_city: String!
     billing_PO_code: String!
@@ -89,7 +89,7 @@ input CreateVendorInput{
 }
 
 input UpdateVendorInput{
-    vendor_uuid: UUID!
+    vendor_id: UUID!
     vendor_contact_person: String!
     vendor_company_name: String
     vendor_email: String!
@@ -104,7 +104,7 @@ input UpdateVendorInput{
 }
 
 input UpdateVendorStatusInput{
-    vendor_uuid: UUID!
+    vendor_id: UUID!
     vendor_status: Boolean!
 }
 
@@ -127,7 +127,7 @@ type SingleVendorOutput{
 
 
 input GetSingleVendorInput{
-    vendor_uuid:UUID!
+    vendor_id:UUID!
 }
 
 # Extended QUERIES AND MUTATIONS ######################################

@@ -13,7 +13,7 @@ module.exports = {
             const { first_name, last_name, email, password } = req;
             const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
-            const user = await db.users.create({
+            const user = await db.user.create({
                 first_name,
                 last_name,
                 email,

@@ -1,19 +1,19 @@
 // Admin Roles Model
 module.exports = (sequelize, DataTypes) => {
 
-    const AdminRoles = sequelize.define("admin_roles", {
-        admin_roles_uuid: {
-            type: DataTypes.UUID,
+    const AdminRoles = sequelize.define("admin_role", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        role_uuid: {
-            type: DataTypes.UUID,
+        role_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
-        admin_uuid: {
-            type: DataTypes.UUID,
+        admin_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         tenant_id: {
@@ -22,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'admin_roles',
+        timestamps: true
     })
 
     return AdminRoles

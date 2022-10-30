@@ -1,12 +1,12 @@
 // Customer Group Model
 module.exports = (sequelize, DataTypes) => {
 
-    const CustomerGroup = sequelize.define("customer_groups", {
-        customer_group_uuid: {
-            type: DataTypes.UUID,
+    const CustomerGroup = sequelize.define("customer_group", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         customer_group_name: {
             type: DataTypes.STRING,
@@ -34,8 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'customer_groups',
+        timestamps: true
     })
 
     return CustomerGroup

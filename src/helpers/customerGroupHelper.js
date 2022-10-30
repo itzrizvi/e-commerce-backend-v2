@@ -22,7 +22,7 @@ module.exports = {
             });
 
             // Check If Already Exist the Customer Group
-            const checkExistence = await db.customer_groups.findOne({
+            const checkExistence = await db.customer_group.findOne({
                 where: {
                     [Op.and]: [{
                         customer_group_slug,
@@ -35,7 +35,7 @@ module.exports = {
             if (checkExistence) return { message: "Already Have This Customer Group!!!", status: false };
 
             // Create Customer Group
-            const createCustomerGrp = await db.customer_groups.create({
+            const createCustomerGrp = await db.customer_group.create({
                 customer_group_name,
                 customer_group_slug,
                 customergroup_description,
@@ -65,7 +65,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { customer_group_uuid,
+            const { customer_group_id,
                 customer_group_name,
                 customergroup_sortorder,
                 customergroup_status,
@@ -84,14 +84,14 @@ module.exports = {
                 });
 
                 // Check If Already Exist the Customer Group
-                const checkExistence = await db.customer_groups.findOne({
+                const checkExistence = await db.customer_group.findOne({
                     where: {
                         [Op.and]: [{
                             customer_group_slug,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            customer_group_uuid
+                            customer_group_id
                         }]
                     }
                 });
@@ -110,10 +110,10 @@ module.exports = {
             }
 
             // Update Customer Group
-            const updateCustomerGrp = await db.customer_groups.update(updateDoc, {
+            const updateCustomerGrp = await db.customer_group.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        customer_group_uuid,
+                        customer_group_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -138,7 +138,7 @@ module.exports = {
         try {
 
             // GET ALL Customer GROUPS
-            const allCustomerGroups = await db.customer_groups.findAll({
+            const allCustomerGroups = await db.customer_group.findAll({
                 where: {
                     tenant_id: TENANTID
                 },
@@ -165,13 +165,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const { customer_group_uuid } = req;
+            const { customer_group_id } = req;
 
             // GET Single Customer Group
-            const singleCustomerGroup = await db.customer_groups.findOne({
+            const singleCustomerGroup = await db.customer_group.findOne({
                 where: {
                     [Op.and]: [{
-                        customer_group_uuid,
+                        customer_group_id,
                         tenant_id: TENANTID
                     }]
                 }

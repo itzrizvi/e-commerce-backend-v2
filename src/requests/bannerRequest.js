@@ -17,7 +17,7 @@ const createBannerRequest = (body) => {
 // Update Banner REQUEST
 const updateBannerRequest = (body) => {
     rules = {
-        banner_uuid: 'required|string',
+        banner_id: 'required|string',
         banner_name: 'string',
         banner_status: 'strict|boolean'
     }
@@ -28,7 +28,7 @@ const updateBannerRequest = (body) => {
 // GET SINGLE Banner REQUEST
 const getSingleBannerRequest = (body) => {
     rules = {
-        banner_uuid: 'required|string'
+        banner_id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -59,7 +59,7 @@ const createBannerImageRequest = (body) => {
 // UPDATE Banner Image REQUEST
 const updateBannerImageRequest = (body) => {
     rules = {
-        banner_uuid: 'required|string',
+        banner_id: 'required|string',
         title: 'string',
         link: 'string',
         sort_order: 'numeric'
@@ -71,7 +71,7 @@ const updateBannerImageRequest = (body) => {
 // DELETE Banner Image REQUEST
 const deleteBannerImageRequest = (body) => {
     rules = {
-        banner_uuid: 'required|string'
+        banner_id: 'required|string'
     }
 
     return checkBody(body, rules);

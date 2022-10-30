@@ -96,13 +96,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const roles_permission_uuid = req.roles_permission_uuid;
+            const roles_permission_id = req.roles_permission_id;
 
             // Find Roles Permission
             const findRolesPermission = await db.roles_permission.findOne({
                 where: {
                     [Op.and]: [{
-                        roles_permission_uuid,
+                        roles_permission_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -135,7 +135,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const roles_permission_uuid = req.roles_permission_uuid;
+            const roles_permission_id = req.roles_permission_id;
             const roles_permission_name = req.roles_permission_name;
             const roles_permission_status = req.roles_permission_status;
 
@@ -177,7 +177,7 @@ module.exports = {
             const updateRolesPermission = await db.roles_permission.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        roles_permission_uuid,
+                        roles_permission_id,
                         tenant_id: TENANTID
                     }]
                 }

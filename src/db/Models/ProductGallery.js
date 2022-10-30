@@ -3,14 +3,14 @@
 module.exports = (sequelize, DataTypes) => {
 
     const ProductGallery = sequelize.define("product_gallery", {
-        prod_gallery_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        prod_uuid: {
-            type: DataTypes.UUID,
+        prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         prod_image: {
@@ -24,8 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 
     },
         {
-            timestamps: true,
-            tableName: 'product_gallery',
+            timestamps: true
         })
 
     return ProductGallery

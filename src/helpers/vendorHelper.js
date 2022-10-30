@@ -41,7 +41,7 @@ module.exports = {
                 billing_address.forEach(ele => {
                     const { billing_address, billing_city, billing_PO_code, billing_country, billing_status } = ele
                     db.billing_address.create({
-                        ref_id: createVendor.vendor_uuid,
+                        ref_id: createVendor.vendor_id,
                         ref_model: "vendor",
                         tenant_id: TENANTID,
                         billing_address,
@@ -55,7 +55,7 @@ module.exports = {
                 shipping_address.forEach(ele => {
                     const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status } = ele
                     db.shipping_address.create({
-                        ref_id: createVendor.vendor_uuid,
+                        ref_id: createVendor.vendor_id,
                         ref_model: "vendor",
                         tenant_id: TENANTID,
                         shipping_address,
@@ -90,7 +90,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { vendor_uuid, vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req
+            const { vendor_id, vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req
 
 
             // Check The Vendor Is Already Taken or Not
@@ -101,7 +101,7 @@ module.exports = {
                         tenant_id: TENANTID
                     }],
                     [Op.not]: [{
-                        vendor_uuid
+                        vendor_id
                     }]
                 }
             });
@@ -126,7 +126,7 @@ module.exports = {
             const updateVendor = await db.vendor.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        vendor_uuid,
+                        vendor_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -136,9 +136,9 @@ module.exports = {
             if (!updateVendor) return { message: "Update Gone Wrong!!!", status: false }
 
             billing_address.forEach(ele => {
-                const { billing_address, billing_city, billing_PO_code, billing_country, billing_uuid, billing_status } = ele
+                const { billing_address, billing_city, billing_PO_code, billing_country, billing_id, billing_status } = ele
 
-                if (billing_uuid) {
+                if (billing_id) {
                     db.billing_address.update({
                         billing_address,
                         billing_city,
@@ -148,14 +148,14 @@ module.exports = {
                     }, {
                         where: {
                             [Op.and]: [{
-                                billing_uuid,
+                                billing_id,
                                 tenant_id: TENANTID
                             }]
                         }
                     });
                 } else {
                     db.billing_address.create({
-                        ref_id: vendor_uuid,
+                        ref_id: vendor_id,
                         ref_model: "vendor",
                         tenant_id: TENANTID,
                         billing_address,
@@ -168,8 +168,8 @@ module.exports = {
             });
 
             shipping_address.forEach(ele => {
-                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_uuid, shipping_status } = ele
-                if (shipping_uuid) {
+                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_id, shipping_status } = ele
+                if (shipping_id) {
                     db.shipping_address.update({
                         shipping_address,
                         shipping_city,
@@ -179,14 +179,14 @@ module.exports = {
                     }, {
                         where: {
                             [Op.and]: [{
-                                shipping_uuid,
+                                shipping_id,
                                 tenant_id: TENANTID
                             }]
                         }
                     });
                 } else {
                     db.shipping_address.create({
-                        ref_id: vendor_uuid,
+                        ref_id: vendor_id,
                         ref_model: "vendor",
                         tenant_id: TENANTID,
                         shipping_address,
@@ -222,7 +222,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { vendor_uuid, vendor_status } = req
+            const { vendor_id, vendor_status } = req
 
             // Update Doc
             const updateDoc = {
@@ -233,7 +233,7 @@ module.exports = {
             const updateVendor = await db.vendor.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        vendor_uuid,
+                        vendor_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -269,7 +269,7 @@ module.exports = {
             if (!db.vendor.hasAlias('billing_address')) {
                 await db.vendor.hasMany(db.billing_address,
                     {
-                        sourceKey: 'vendor_uuid',
+                        sourceKey: 'vendor_id',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -282,7 +282,7 @@ module.exports = {
             if (!db.vendor.hasAlias('shipping_address')) {
                 await db.vendor.hasMany(db.shipping_address,
                     {
-                        sourceKey: 'vendor_uuid',
+                        sourceKey: 'vendor_id',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -292,7 +292,7 @@ module.exports = {
             }
 
             // Data From Request
-            const { vendor_uuid } = req;
+            const { vendor_id } = req;
 
             // GET Single Vendor BY CODE
             const getsinglevendor = await db.vendor.findOne({
@@ -308,7 +308,7 @@ module.exports = {
                 ],
                 where: {
                     [Op.and]: [{
-                        vendor_uuid,
+                        vendor_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -339,7 +339,7 @@ module.exports = {
         if (!db.vendor.hasAlias('billing_address')) {
             await db.vendor.hasMany(db.billing_address,
                 {
-                    sourceKey: 'vendor_uuid',
+                    sourceKey: 'vendor_id',
                     foreignKey: 'ref_id',
                     constraints: false,
                     scope: {
@@ -352,7 +352,7 @@ module.exports = {
         if (!db.vendor.hasAlias('shipping_address')) {
             await db.vendor.hasMany(db.shipping_address,
                 {
-                    sourceKey: 'vendor_uuid',
+                    sourceKey: 'vendor_id',
                     foreignKey: 'ref_id',
                     constraints: false,
                     scope: {

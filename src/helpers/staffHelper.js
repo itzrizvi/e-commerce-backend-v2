@@ -17,11 +17,11 @@ module.exports = {
         try {
 
             // Associations MANY TO MANY
-            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
-            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+            db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'uid', foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'role_id', foreignKey: 'role_id' });
 
             // GET ALL STAFF QUERY
-            const getAllStaff = await db.users.findAll({
+            const getAllStaff = await db.user.findAll({
                 where: {
                     [Op.and]: [{
                         has_role: { [Op.ne]: '0' },
@@ -29,8 +29,8 @@ module.exports = {
                     }]
 
                 },
-                include: db.roles,
-                order: [['first_name', 'ASC'], [db.roles, 'role', 'ASC']]
+                include: db.role,
+                order: [['first_name', 'ASC'], [db.role, 'role', 'ASC']]
             });
 
             // Return Formation
@@ -74,7 +74,7 @@ module.exports = {
             }
 
             // Update User Table 
-            const updateAdminUser = await db.users.update(updateUserDoc, {
+            const updateAdminUser = await db.user.update(updateUserDoc, {
                 where: {
                     [Op.and]: [{
                         uid,
@@ -86,7 +86,7 @@ module.exports = {
             if (updateAdminUser) { // IF USER UPDATED
 
                 // Find User to Get Image Name
-                const findUser = await db.users.findOne({
+                const findUser = await db.user.findOne({
                     where: {
                         [Op.and]: [{
                             uid,
@@ -147,7 +147,7 @@ module.exports = {
                         image: imageName
                     }
                     // Update Brand Image
-                    const updateUser = await db.users.update(userImageUpdate, {
+                    const updateUser = await db.user.update(userImageUpdate, {
                         where: {
                             [Op.and]: [{
                                 uid,
@@ -165,14 +165,14 @@ module.exports = {
                     // Loop For Assign Other Values to Role Data
                     roleUUID.forEach(element => {
                         element.tenant_id = TENANTID;
-                        element.admin_uuid = uid;
+                        element.admin_id = uid;
                     });
 
                     // Delete Previous Entry
-                    const deletePreviousEntry = await db.admin_roles.destroy({
+                    const deletePreviousEntry = await db.admin_role.destroy({
                         where: {
                             [Op.and]: [{
-                                admin_uuid: uid,
+                                admin_id: uid,
                                 tenant_id: TENANTID
                             }]
                         }
@@ -181,7 +181,7 @@ module.exports = {
                     if (!deletePreviousEntry) return { message: "Previous Admin Role Delete Failed!!!!", status: false }
 
                     // Update Admin Roles Bulk
-                    const adminRolesDataUpdate = await db.admin_roles.bulkCreate(roleUUID);
+                    const adminRolesDataUpdate = await db.admin_role.bulkCreate(roleUUID);
                     if (!adminRolesDataUpdate) return { message: "Admin Role Data Udpate Failed", status: false }
 
                     // Return
@@ -218,21 +218,21 @@ module.exports = {
         const { uid } = req;
 
         // Accociation with 3 tables
-        db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
-        db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+        db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'uid', foreignKey: 'admin_id' });
+        db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'role_id', foreignKey: 'role_id' });
 
         // Check If User Has Alias or Not 
-        if (!db.roles.hasAlias('permissions_data') && !db.roles.hasAlias('permissions')) {
-            await db.roles.hasMany(db.permissions_data, { sourceKey: 'role_uuid', foreignKey: 'role_uuid', as: 'permissions' });
+        if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
+            await db.role.hasMany(db.permissions_data, { sourceKey: 'role_id', foreignKey: 'role_id', as: 'permissions' });
         }
 
         // Check If User Has Alias or Not 
         if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-            await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_uuid', foreignKey: 'roles_permission_uuid', as: 'rolesPermission' });
+            await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'roles_permission_id', as: 'rolesPermission' });
         }
 
         // GET ALL STAFF QUERY
-        const getAdmin = await db.users.findOne({
+        const getAdmin = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     uid,
@@ -241,7 +241,7 @@ module.exports = {
 
             },
             include: {
-                model: db.roles, as: 'roles',
+                model: db.role, as: 'roles',
                 include: {
                     model: db.permissions_data, as: 'permissions',
                     include: { model: db.roles_permission, as: 'rolesPermission' },
@@ -250,7 +250,7 @@ module.exports = {
                 },
             },
 
-            order: [[db.roles, 'role', 'ASC']]
+            order: [[db.role, 'role', 'ASC']]
         });
 
         // Return Formation
@@ -276,7 +276,7 @@ module.exports = {
             const { uid, oldPassword, newPassword } = req;
 
             // FIND ADMIN FIRST
-            const findAdmin = await db.users.findOne({
+            const findAdmin = await db.user.findOne({
                 where: {
                     [Op.and]: [{
                         uid,
@@ -299,7 +299,7 @@ module.exports = {
             }
 
             // Update With New Password
-            const updateAdmin = await db.users.update(updatePassDoc, {
+            const updateAdmin = await db.user.update(updatePassDoc, {
                 where: {
                     [Op.and]: [{
                         uid,
@@ -311,7 +311,7 @@ module.exports = {
             if (updateAdmin) {
 
                 // Find User to Get Image Name
-                const findUser = await db.users.findOne({
+                const findUser = await db.user.findOne({
                     where: {
                         [Op.and]: [{
                             uid,

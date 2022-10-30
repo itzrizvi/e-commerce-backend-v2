@@ -21,7 +21,7 @@ module.exports = gql`
     }
 
     input UpdateCouponInput {
-        coupon_uuid: UUID!
+        coupon_id: UUID!
         coupon_name: String
         coupon_code: String
         coupon_description: String
@@ -36,7 +36,7 @@ module.exports = gql`
     }
 
     type Coupon {
-        coupon_uuid: UUID
+        coupon_id: UUID
         coupon_name: String
         coupon_code: String
         coupon_description: String
@@ -54,7 +54,7 @@ module.exports = gql`
     }
 
     input GetSingleCouponInput {
-        coupon_uuid: UUID!
+        coupon_id: UUID!
     }
 
     type GetSingleCouponOutput {

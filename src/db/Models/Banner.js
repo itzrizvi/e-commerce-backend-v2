@@ -1,21 +1,21 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const Banners = sequelize.define("banners", {
-        banner_uuid: {
-            type: DataTypes.UUID,
+    const Banners = sequelize.define("banner", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        banner_name: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        banner_slug: {
+        slug: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        banner_status: {
+        status: {
             type: DataTypes.BOOLEAN,
             allowNull: true
         },
@@ -27,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
     },
         {
             timestamps: true,
-            tableName: 'banners',
         })
 
     return Banners

@@ -7,7 +7,7 @@ module.exports = gql`
 ###############################################################################
 
 type Brand {
-    brand_uuid:UUID
+    brand_id:UUID
     brand_name:String
     brand_slug:String
     brand_description:String
@@ -36,7 +36,7 @@ type GetAllBrands{
 }
 
 input GetSingleBrandInput {
-    brand_uuid:UUID
+    brand_id:UUID
 }
 
 type GetSingleBrandOutput{
@@ -47,7 +47,7 @@ type GetSingleBrandOutput{
 }
 
 input UpdateBrandInput {
-    brand_uuid:UUID!
+    brand_id:UUID!
     brand_name:String
     brand_status:Boolean
     brand_description:String
@@ -56,7 +56,7 @@ input UpdateBrandInput {
 }
 
 input GetProductByBrandInput {
-    brand_uuid:UUID!
+    brand_id:UUID!
 }
 
 type GetProductByBrandOutput {

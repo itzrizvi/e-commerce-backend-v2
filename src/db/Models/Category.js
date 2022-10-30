@@ -1,12 +1,12 @@
 // Category Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Category = sequelize.define("categories", {
-        cat_id: {
-            type: DataTypes.UUID,
+    const Category = sequelize.define("category", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4
+            autoIncrement: true
         },
         cat_name: {
             type: DataTypes.TEXT,
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         cat_parent_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.BIGINT,
             allowNull: true
         },
         cat_meta_tag_title: {
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false
         },
         created_by: {
-            type: DataTypes.UUID,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         is_featured: {
@@ -65,8 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'categories',
+        timestamps: true
     })
 
     return Category

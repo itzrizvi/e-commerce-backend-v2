@@ -14,7 +14,7 @@ module.exports = {
             const { email, password } = req;
 
             // Check User
-            const user = await db.users.findOne({
+            const user = await db.user.findOne({
                 where: {
                     [Op.and]: [{
                         email: email,
@@ -67,7 +67,7 @@ module.exports = {
             const updateLastLogin = {
                 last_login: Date.now()
             }
-            db.users.update(updateLastLogin, {
+            db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
                         uid: user.uid,
@@ -116,7 +116,7 @@ module.exports = {
 
 
             // Check User Already Exist
-            const checkUserExist = await db.users.findOne({
+            const checkUserExist = await db.user.findOne({
                 where: {
                     [Op.and]: [{
                         email,
@@ -132,7 +132,7 @@ module.exports = {
             if (!checkUserExist) {
 
                 // Insert User
-                const createStuff = await db.users.create({
+                const createStuff = await db.user.create({
                     first_name: first_name,
                     last_name: last_name,
                     email: email,
@@ -150,11 +150,11 @@ module.exports = {
                     // Loop For Assign Other Values to Role Data
                     roleUUID.forEach(element => {
                         element.tenant_id = createStuff.tenant_id;
-                        element.admin_uuid = createStuff.uid;
+                        element.admin_id = createStuff.uid;
                     });
 
                     // Admin Roles Save Bulk
-                    const adminRolesDataSave = await db.admin_roles.bulkCreate(roleUUID);
+                    const adminRolesDataSave = await db.admin_role.bulkCreate(roleUUID);
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 
                     // IF SEND EMAIL IS TRUE
@@ -196,7 +196,7 @@ module.exports = {
                     verification_code: verificationCode
                 }
 
-                const updateUserToStuff = await db.users.update(updateDoc, {
+                const updateUserToStuff = await db.user.update(updateDoc, {
                     where: {
                         [Op.and]: [{
                             email: userEmail,
@@ -210,7 +210,7 @@ module.exports = {
 
 
                     // Find Updated User
-                    const updatedStuffData = await db.users.findOne({
+                    const updatedStuffData = await db.user.findOne({
                         where: {
                             [Op.and]: [{
                                 email: userEmail,
@@ -222,11 +222,11 @@ module.exports = {
                     // Loop For Assign Other Values to Role Data
                     roleUUID.forEach(element => {
                         element.tenant_id = updatedStuffData.tenant_id;
-                        element.admin_uuid = updatedStuffData.uid;
+                        element.admin_id = updatedStuffData.uid;
                     });
 
                     // Permissions Bulk Create
-                    const adminRolesDataSave = await db.admin_roles.bulkCreate(roleUUID);
+                    const adminRolesDataSave = await db.admin_role.bulkCreate(roleUUID);
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 
 

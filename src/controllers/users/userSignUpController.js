@@ -13,7 +13,7 @@ module.exports = async (req, db, TENANTID) => {
         return singleResponse(validate.data);
     }
     // Check Email Is Already Taken or Not
-    const checkEmail = await db.users.findOne({
+    const checkEmail = await db.user.findOne({
         where: {
             [Op.and]: [{
                 email: req.email,

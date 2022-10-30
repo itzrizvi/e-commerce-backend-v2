@@ -22,7 +22,7 @@ module.exports = {
             });
 
             // Check If Already Exist the Banner
-            const checkExistence = await db.banners.findOne({
+            const checkExistence = await db.banner.findOne({
                 where: {
                     [Op.and]: [{
                         banner_slug,
@@ -35,7 +35,7 @@ module.exports = {
             if (checkExistence) return { message: "Already Have This Banner!!!", status: false };
 
             // Create Banner
-            const createBanner = await db.banners.create({
+            const createBanner = await db.banner.create({
                 banner_name: banner_name,
                 banner_slug: banner_slug,
                 banner_status: banner_status,
@@ -47,7 +47,7 @@ module.exports = {
                 return {
                     message: "Successfully Created Banner!",
                     data: {
-                        banner_uuid: createBanner.banner_uuid,
+                        banner_id: createBanner.banner_id,
                         banner_name: createBanner.banner_name,
                         banner_slug: createBanner.banner_slug,
                         banner_status: createBanner.banner_status,
@@ -85,7 +85,7 @@ module.exports = {
         }
 
         // Create Banner Image
-        const createBannerImage = await db.banner_images.create({
+        const createBannerImage = await db.banner_image.create({
             banner_id,
             title,
             link,
@@ -99,7 +99,7 @@ module.exports = {
             return {
                 message: "Successfully Created Banner Image!",
                 data: {
-                    banner_uuid: createBannerImage.banner_uuid,
+                    banner_id: createBannerImage.banner_id,
                     banner_id: createBannerImage.banner_id,
                     title: createBannerImage.title,
                     link: createBannerImage.link,
@@ -121,7 +121,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request 
-            const { banner_uuid, banner_name, banner_status } = req;
+            const { banner_id, banner_name, banner_status } = req;
 
             // Create New Slug If Banner name is also Updating
             let banner_slug;
@@ -136,14 +136,14 @@ module.exports = {
                 });
 
                 // Check If Already Exist the Banner
-                const checkExistence = await db.banners.findOne({
+                const checkExistence = await db.banner.findOne({
                     where: {
                         [Op.and]: [{
                             banner_slug,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            banner_uuid
+                            banner_id
                         }]
                     }
                 });
@@ -160,10 +160,10 @@ module.exports = {
             }
 
             // Update Banner
-            const updateBnr = await db.banners.update(updateDoc, {
+            const updateBnr = await db.banner.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        banner_uuid,
+                        banner_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -186,7 +186,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { banner_uuid,
+            const { banner_id,
                 banner_id,
                 title,
                 link,
@@ -202,10 +202,10 @@ module.exports = {
             }
 
             // Update Banner Image Details
-            const updateBannerimage = await db.banner_images.update(updateDoc, {
+            const updateBannerimage = await db.banner_image.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        banner_uuid,
+                        banner_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -215,10 +215,10 @@ module.exports = {
             if (!updateBannerimage) return { message: "Update Gone Wrong!!!", status: false };
 
             // Find Banner Image to Get Image Name
-            const findBannerImage = await db.banner_images.findOne({
+            const findBannerImage = await db.banner_image.findOne({
                 where: {
                     [Op.and]: [{
-                        banner_uuid,
+                        banner_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -250,10 +250,10 @@ module.exports = {
                     image: imageName
                 }
                 // Update Banner Image
-                const updateBannerImg = await db.banner_images.update(bannerImageUpdate, {
+                const updateBannerImg = await db.banner_image.update(bannerImageUpdate, {
                     where: {
                         [Op.and]: [{
-                            banner_uuid,
+                            banner_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -287,21 +287,21 @@ module.exports = {
         try {
 
             // Data From Request
-            const { banner_uuid } = req;
+            const { banner_id } = req;
 
             // Association with Banner and Banner Images
-            if (!db.banners.hasAlias('banner_images') && !db.banners.hasAlias('bannerimages')) {
-                await db.banners.hasMany(db.banner_images, { sourceKey: 'banner_uuid', foreignKey: 'banner_id', as: 'bannerimages' });
+            if (!db.banner.hasAlias('banner_images') && !db.banner.hasAlias('bannerimages')) {
+                await db.banner.hasMany(db.banner_image, { sourceKey: 'banner_id', foreignKey: 'banner_id', as: 'bannerimages' });
             }
 
             // GET Single Banner
-            const getBanner = await db.banners.findOne({
+            const getBanner = await db.banner.findOne({
                 where: {
-                    banner_uuid,
+                    banner_id,
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.banner_images, as: 'bannerimages'
+                    model: db.banner_image, as: 'bannerimages'
                 }]
             });
 
@@ -323,17 +323,17 @@ module.exports = {
         try {
 
             // Association with Banner and Banner Images
-            if (!db.banners.hasAlias('banner_images') && !db.banners.hasAlias('bannerimages')) {
-                await db.banners.hasMany(db.banner_images, { sourceKey: 'banner_uuid', foreignKey: 'banner_id', as: 'bannerimages' });
+            if (!db.banner.hasAlias('banner_images') && !db.banner.hasAlias('bannerimages')) {
+                await db.banner.hasMany(db.banner_image, { sourceKey: 'banner_id', foreignKey: 'banner_id', as: 'bannerimages' });
             }
 
             // GET All Banners
-            const getallbanner = await db.banners.findAll({
+            const getallbanner = await db.banner.findAll({
                 where: {
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.banner_images, as: 'bannerimages'
+                    model: db.banner_image, as: 'bannerimages'
                 }]
             });
 
@@ -358,18 +358,18 @@ module.exports = {
             const { banner_slug } = req;
 
             // Association with Banner and Banner Images
-            if (!db.banners.hasAlias('banner_images') && !db.banners.hasAlias('bannerimages')) {
-                await db.banners.hasMany(db.banner_images, { sourceKey: 'banner_uuid', foreignKey: 'banner_id', as: 'bannerimages' });
+            if (!db.banner.hasAlias('banner_images') && !db.banner.hasAlias('bannerimages')) {
+                await db.banner.hasMany(db.banner_image, { sourceKey: 'banner_id', foreignKey: 'banner_id', as: 'bannerimages' });
             }
 
             // GET Banner By SLUG
-            const getBanner = await db.banners.findOne({
+            const getBanner = await db.banner.findOne({
                 where: {
                     banner_slug,
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.banner_images, as: 'bannerimages'
+                    model: db.banner_image, as: 'bannerimages'
                 }]
             });
 
@@ -391,13 +391,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const { banner_uuid } = req;
+            const { banner_id } = req;
 
             // Find Banner Image to Get Image Name
-            const findBannerImage = await db.banner_images.findOne({
+            const findBannerImage = await db.banner_image.findOne({
                 where: {
                     [Op.and]: [{
-                        banner_uuid,
+                        banner_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -414,10 +414,10 @@ module.exports = {
             }
 
             // Delete Banner Image
-            const deletebannerimage = await db.banner_images.destroy({
+            const deletebannerimage = await db.banner_image.destroy({
                 where: {
                     [Op.and]: [{
-                        banner_uuid,
+                        banner_id,
                         tenant_id: TENANTID
                     }]
                 }

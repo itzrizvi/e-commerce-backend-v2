@@ -2,11 +2,11 @@
 module.exports = (sequelize, DataTypes) => {
 
     const Rating = sequelize.define("rating", {
-        rating_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         user_id: {
             type: DataTypes.UUID,
@@ -34,8 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'rating',
+        timestamps: true
     })
 
     return Rating

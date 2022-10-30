@@ -1,57 +1,74 @@
-// Vendor model
+// Address model
 module.exports = (sequelize, DataTypes) => {
 
-    const Vendor = sequelize.define("vendor", {
+    const Address = sequelize.define("address", {
         id: {
             type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        vendor_contact_person: {
+        ref_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        ref_model: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        vendor_company_name: {
+        phone: {
             type: DataTypes.STRING,
-            allowNull: true
-        },
-        vendor_email: {
-            type: DataTypes.STRING,
-            isEmail: true,
             allowNull: false
         },
-        vendor_phone_number: {
+        fax: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_EIN_no: {
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        address1: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        address2: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_TAX_ID: {
+        city: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        state: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        zip_code: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        country: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_FAX_no: {
-            type: DataTypes.STRING,
-            allowNull: true
+        type: {
+            type: DataTypes.ENUM('shipping', 'billing'),
+            allowNull: false
         },
-        vendor_description: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        vendor_status: {
+        status: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: false,
+            defaultValue: true
         },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false
         }
+
     }, {
         timestamps: true
     })
 
-    return Vendor
+    return Address
 }

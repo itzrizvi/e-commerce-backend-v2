@@ -1,19 +1,19 @@
 // Brand Categories Model
 module.exports = (sequelize, DataTypes) => {
 
-    const BrandCategories = sequelize.define("brand_categories", {
-        brand_categories_uuid: {
-            type: DataTypes.UUID,
+    const BrandCategories = sequelize.define("brand_category", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        brand_uuid: {
-            type: DataTypes.UUID,
+        brand_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         cat_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         tenant_id: {
@@ -22,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'brand_categories',
+        timestamps: true
     })
 
     return BrandCategories

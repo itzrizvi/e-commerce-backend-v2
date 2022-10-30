@@ -45,11 +45,11 @@ type SingleCustomerOutput{
 }
 
 input GetSingleCustomerInput{
-    customer_uuid: UUID!
+    customer_id: UUID!
 }
 
 input CustomerShippingAddress{
-    customer_uuid: UUID!
+    customer_id: UUID!
     shipping_address: String!
     shipping_city: String!
     shipping_PO_code: String!
@@ -58,7 +58,7 @@ input CustomerShippingAddress{
 }
 
 input CustomerBillingAddress{
-    customer_uuid: UUID!
+    customer_id: UUID!
     billing_address: String!
     billing_city: String!
     billing_PO_code: String!

@@ -1,12 +1,12 @@
 // Attribute Group Model
 module.exports = (sequelize, DataTypes) => {
 
-    const AttrGroup = sequelize.define("attr_groups", {
-        attr_group_uuid: {
-            type: DataTypes.UUID,
+    const AttrGroup = sequelize.define("attr_group", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         attr_group_name: {
             type: DataTypes.STRING,
@@ -30,8 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'attr_groups',
+        timestamps: true
     })
 
     return AttrGroup

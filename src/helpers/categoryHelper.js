@@ -42,7 +42,7 @@ module.exports = {
             const created_by = user.uid;
 
             // If Exist Category
-            const findExistCategory = await db.categories.findOne({
+            const findExistCategory = await db.category.findOne({
                 where: {
                     [Op.and]: [{
                         cat_slug,
@@ -58,7 +58,7 @@ module.exports = {
                 // // IF IS FEATURED TRUE
                 // if (is_featured && cat_parent_id) return { message: "You cannot add a Child Category as Featured Category!!!", status: false };
 
-                const insertCategory = await db.categories.create({
+                const insertCategory = await db.category.create({
                     cat_name,
                     cat_slug,
                     cat_description,
@@ -95,7 +95,7 @@ module.exports = {
                 const categoryImageUpdate = {
                     image: imageName
                 }
-                const updateCategory = await db.categories.update(categoryImageUpdate, {
+                const updateCategory = await db.category.update(categoryImageUpdate, {
                     where: {
                         [Op.and]: [{
                             cat_id: insertCategory.cat_id,
@@ -136,9 +136,9 @@ module.exports = {
 
         try {
             // Check If Has Alias with subcategories
-            if (!db.categories.hasAlias('subcategories')) {
+            if (!db.category.hasAlias('subcategories')) {
 
-                await db.categories.hasMany(db.categories, {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
@@ -146,8 +146,8 @@ module.exports = {
             }
 
             // Check If Has Alias with subsubcategories
-            if (!db.categories.hasAlias('subsubcategories')) {
-                await db.categories.hasMany(db.categories, {
+            if (!db.category.hasAlias('subsubcategories')) {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
@@ -156,18 +156,18 @@ module.exports = {
             }
 
             // All Categories with Sub and Sub Sub Categories Query
-            const allCategories = await db.categories.findAll({
+            const allCategories = await db.category.findAll({
                 include: [
-                    { model: db.categories, as: 'subcategories' },
+                    { model: db.category, as: 'subcategories' },
                     {
-                        model: db.categories,
+                        model: db.category,
                         as: 'subcategories',
                         include: {
-                            model: db.categories,
+                            model: db.category,
                             as: 'subsubcategories'
                         },
                         separate: true,
-                        order: [[{ model: db.categories, as: 'subsubcategories' }, 'cat_name', 'ASC']]
+                        order: [[{ model: db.category, as: 'subsubcategories' }, 'cat_name', 'ASC']]
                     }
                 ],
                 order: [['cat_name', 'ASC']],
@@ -200,9 +200,9 @@ module.exports = {
 
         try {
             // Check If Has Alias with subcategories
-            if (!db.categories.hasAlias('subcategories')) {
+            if (!db.category.hasAlias('subcategories')) {
 
-                await db.categories.hasMany(db.categories, {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
@@ -210,8 +210,8 @@ module.exports = {
             }
 
             // Check If Has Alias with subsubcategories
-            if (!db.categories.hasAlias('subsubcategories')) {
-                await db.categories.hasMany(db.categories, {
+            if (!db.category.hasAlias('subsubcategories')) {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
@@ -220,14 +220,14 @@ module.exports = {
             }
 
             // All Featured Categories with Sub and Sub Sub Categories Query
-            const featuredCategories = await db.categories.findAll({
+            const featuredCategories = await db.category.findAll({
                 include: [ // IF WE DONT NEED SUB CATEGORIES ON FEATURED THEN WE SHOULD REMOVE INCLUDES ARGS FROM HERE
-                    { model: db.categories, as: 'subcategories' },
+                    { model: db.category, as: 'subcategories' },
                     {
-                        model: db.categories,
+                        model: db.category,
                         as: 'subcategories',
                         include: {
-                            model: db.categories,
+                            model: db.category,
                             as: 'subsubcategories'
                         }
                     }
@@ -269,7 +269,7 @@ module.exports = {
             const tenant_id = TENANTID;
 
             // Find ALL Products By Category
-            const getProductsByCategory = await db.products.findAll({
+            const getProductsByCategory = await db.product.findAll({
                 where: {
                     [Op.and]: [{
                         prod_category: cat_id,
@@ -305,9 +305,9 @@ module.exports = {
             const { cat_id } = req;
 
             // Check If Has Alias with subcategories
-            if (!db.categories.hasAlias('subcategories')) {
+            if (!db.category.hasAlias('subcategories')) {
 
-                await db.categories.hasMany(db.categories, {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
@@ -315,8 +315,8 @@ module.exports = {
             }
 
             // Check If Has Alias with subsubcategories
-            if (!db.categories.hasAlias('subsubcategories')) {
-                await db.categories.hasMany(db.categories, {
+            if (!db.category.hasAlias('subsubcategories')) {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
@@ -325,18 +325,18 @@ module.exports = {
             }
 
             // All Categories with Sub and Sub Sub Categories Query
-            const findSingleCategory = await db.categories.findOne({
+            const findSingleCategory = await db.category.findOne({
                 include: [
-                    { model: db.categories, as: 'subcategories' },
+                    { model: db.category, as: 'subcategories' },
                     {
-                        model: db.categories,
+                        model: db.category,
                         as: 'subcategories',
                         include: {
-                            model: db.categories,
+                            model: db.category,
                             as: 'subsubcategories'
                         },
                         separate: true,
-                        order: [[{ model: db.categories, as: 'subsubcategories' }, 'cat_name', 'ASC']]
+                        order: [[{ model: db.category, as: 'subsubcategories' }, 'cat_name', 'ASC']]
                     }
                 ],
                 order: [['cat_name', 'ASC']],
@@ -393,7 +393,7 @@ module.exports = {
                 });
 
                 // If Exist Category
-                const findExistCategory = await db.categories.findOne({
+                const findExistCategory = await db.category.findOne({
                     where: {
                         [Op.and]: [{
                             cat_slug,
@@ -440,7 +440,7 @@ module.exports = {
             }
 
             // Update Category
-            const updateCategory = await db.categories.update(updateDoc, {
+            const updateCategory = await db.category.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         cat_id,
@@ -453,7 +453,7 @@ module.exports = {
             if (!updateCategory) return { message: "Update Gone Wrong!!!", status: false };
 
             // Find Category to Get Image Name
-            const findCategory = await db.categories.findOne({
+            const findCategory = await db.category.findOne({
                 where: {
                     [Op.and]: [{
                         cat_id,
@@ -491,7 +491,7 @@ module.exports = {
                     image: imageName
                 }
                 // Update Brand Image
-                const updateCategory = await db.categories.update(categoryImageUpdate, {
+                const updateCategory = await db.category.update(categoryImageUpdate, {
                     where: {
                         [Op.and]: [{
                             cat_id,
@@ -522,7 +522,7 @@ module.exports = {
         try {
 
             // All Parent Categories Query
-            const getParentCategories = await db.categories.findAll({
+            const getParentCategories = await db.category.findAll({
                 order: [['cat_name', 'ASC']],
                 where: {
                     [Op.and]: [{
@@ -550,9 +550,9 @@ module.exports = {
         // Tr Catch 
         try {
             // Check If Has Alias with subcategories
-            if (!db.categories.hasAlias('subcategories')) {
+            if (!db.category.hasAlias('subcategories')) {
 
-                await db.categories.hasMany(db.categories, {
+                await db.category.hasMany(db.category, {
                     targetKey: 'cat_id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
@@ -560,9 +560,9 @@ module.exports = {
             }
 
             // All Categories with Sub and Sub Sub Categories Query
-            const findAllCategories = await db.categories.findAll({
+            const findAllCategories = await db.category.findAll({
                 include: [
-                    { model: db.categories, as: 'subcategories' }
+                    { model: db.category, as: 'subcategories' }
                 ],
                 order: [['cat_name', 'ASC']],
                 where: {

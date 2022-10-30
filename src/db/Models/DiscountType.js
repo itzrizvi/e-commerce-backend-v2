@@ -3,18 +3,18 @@
 module.exports = (sequelize, DataTypes) => {
 
     const DiscountType = sequelize.define("discount_type", {
-        discount_type_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        prod_uuid: {
-            type: DataTypes.UUID,
+        prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
-        customer_group_uuid: {
-            type: DataTypes.UUID,
+        customer_group_id: {
+            type: DataTypes.BIGINT,
             allowNull: true
         },
         discount_quantity: {
@@ -44,8 +44,7 @@ module.exports = (sequelize, DataTypes) => {
 
     },
         {
-            timestamps: true,
-            tableName: 'discount_type',
+            timestamps: true
         })
 
     return DiscountType

@@ -25,7 +25,7 @@ module.exports = {
                 prod_sale_price,
                 prod_partnum,
                 prod_sku,
-                brand_uuid,
+                brand_id,
                 prod_category,
                 prod_weight,
                 prod_weight_class,
@@ -53,7 +53,7 @@ module.exports = {
             });
 
             // Check Existence
-            const checkExists = await db.products.findOne({
+            const checkExists = await db.product.findOne({
                 where: {
                     [Op.and]: [{
                         prod_slug,
@@ -66,7 +66,7 @@ module.exports = {
             // If SKU Exists
             if (prod_sku) {
                 // Check Existence
-                const checkSKUExists = await db.products.findOne({
+                const checkSKUExists = await db.product.findOne({
                     where: {
                         [Op.and]: [{
                             prod_sku,
@@ -79,7 +79,7 @@ module.exports = {
             // If Part Number Exists
             if (prod_partnum) {
                 // Check Existence
-                const checkPNExists = await db.products.findOne({
+                const checkPNExists = await db.product.findOne({
                     where: {
                         [Op.and]: [{
                             prod_partnum,
@@ -92,7 +92,7 @@ module.exports = {
 
 
             // Dimensions Table Data Insertion
-            let dimension_uuid;
+            let dimension_id;
             if (dimensions) {
                 // Insert Data In Dimension Table
                 dimensions.tenant_id = TENANTID;
@@ -100,11 +100,11 @@ module.exports = {
                 if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
 
                 // Discount Type UUID
-                dimension_uuid = insertDimension.prod_dimension_uuid
+                dimension_id = insertDimension.prod_dimension_id
             }
 
             // Create Product Without Image First
-            const createProduct = await db.products.create({
+            const createProduct = await db.product.create({
                 prod_name,
                 prod_slug,
                 prod_long_desc,
@@ -117,7 +117,7 @@ module.exports = {
                 prod_sale_price,
                 prod_partnum,
                 prod_sku,
-                brand_uuid,
+                brand_id,
                 prod_category,
                 prod_weight,
                 prod_weight_class,
@@ -126,7 +126,7 @@ module.exports = {
                 taxable,
                 is_featured,
                 prod_condition,
-                dimension_uuid,
+                dimension_id,
                 prod_thumbnail: "demo.jpg",
                 added_by: user.uid,
                 tenant_id: TENANTID
@@ -141,7 +141,7 @@ module.exports = {
             const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
             const product_image_bucketName = product_image_src[0];
             const product_image_folder = product_image_src.slice(1).join("/");
-            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_uuid, folder: product_image_folder, fileName: createProduct.prod_uuid, bucketName: product_image_bucketName });
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: createProduct.prod_id, folder: product_image_folder, fileName: createProduct.prod_id, bucketName: product_image_bucketName });
             if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
             // Update Product with Thumbnail Name
@@ -150,10 +150,10 @@ module.exports = {
             const productThumbUpdate = {
                 prod_thumbnail: thumbName
             }
-            const updateProductWithThumb = await db.products.update(productThumbUpdate, {
+            const updateProductWithThumb = await db.product.update(productThumbUpdate, {
                 where: {
                     [Op.and]: [{
-                        prod_uuid: createProduct.prod_uuid,
+                        prod_id: createProduct.prod_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -169,12 +169,12 @@ module.exports = {
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
                 const product_gallery_bucketName = product_gallery_src[0];
                 const product_gallery_folder = product_gallery_src.slice(1).join("/");
-                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_uuid, folder: product_gallery_folder, fileName: createProduct.prod_uuid, bucketName: product_gallery_bucketName });
+                const imageUrl = await multipleFileUpload({ file: prod_gallery, idf: createProduct.prod_id, folder: product_gallery_folder, fileName: createProduct.prod_id, bucketName: product_gallery_bucketName });
                 if (!imageUrl) return { message: "Gallery Images Couldnt Uploaded Properly!!!", status: false };
 
                 // Assign Values To Gallery Array For Bulk Create
                 imageUrl.forEach(async (galleryImg) => {
-                    await gallery.push({ prod_image: galleryImg.upload.Key.split('/').slice(-1)[0], prod_uuid: createProduct.prod_uuid, tenant_id: TENANTID });
+                    await gallery.push({ prod_image: galleryImg.upload.Key.split('/').slice(-1)[0], prod_id: createProduct.prod_id, tenant_id: TENANTID });
                 });
 
                 // If Gallery Array Created Successfully then Bulk Create In Product Gallery Table
@@ -191,11 +191,11 @@ module.exports = {
                 // Loop For Assign Other Values to Product Attribites Data
                 product_attributes.forEach(element => {
                     element.tenant_id = TENANTID;
-                    element.prod_uuid = createProduct.prod_uuid;
+                    element.prod_id = createProduct.prod_id;
                 });
 
                 // Product Attributes Save Bulk
-                const prodAttributesDataSave = await db.product_attributes.bulkCreate(product_attributes);
+                const prodAttributesDataSave = await db.product_attribute.bulkCreate(product_attributes);
                 if (!prodAttributesDataSave) return { message: "Product Attributes Data Save Failed!!!", status: false }
             }
 
@@ -204,7 +204,7 @@ module.exports = {
             if (related_product && related_product.length > 0) {
                 let relatedProducts = [];
                 related_product.forEach(async (productUUID) => {
-                    await relatedProducts.push({ prod_uuid: productUUID, base_prod_uuid: createProduct.prod_uuid, tenant_id: TENANTID });
+                    await relatedProducts.push({ prod_id: productUUID, base_prod_id: createProduct.prod_id, tenant_id: TENANTID });
                 });
 
                 if (relatedProducts) {
@@ -219,7 +219,7 @@ module.exports = {
                 // Loop For Assign Other Values to Discount Type  Data
                 discount_type.forEach(element => {
                     element.tenant_id = TENANTID;
-                    element.prod_uuid = createProduct.prod_uuid;
+                    element.prod_id = createProduct.prod_id;
                 });
                 // Insert Data In Discount Type Table
                 const insertDiscountType = await db.discount_type.bulkCreate(discount_type);
@@ -231,7 +231,7 @@ module.exports = {
             if (partof_product && partof_product.length > 0) {
 
                 partof_product.forEach(part => {
-                    part.parent_prod_uuid = createProduct.prod_uuid;
+                    part.parent_prod_id = createProduct.prod_id;
                     part.tenant_id = TENANTID;
                 });
 
@@ -264,22 +264,22 @@ module.exports = {
         try {
 
             // Product ID From Request
-            const prod_uuid = req.prod_uuid;
+            const prod_id = req.prod_id;
 
             // ### ASSOCIATION STARTS ### //
             // Check If Has Alias with Categories
-            if (!db.products.hasAlias('category')) {
+            if (!db.product.hasAlias('category')) {
 
-                await db.products.hasOne(db.categories, {
+                await db.product.hasOne(db.category, {
                     sourceKey: 'prod_category',
                     foreignKey: 'cat_id',
                     as: 'category'
                 });
             }
             // Check If Has Alias with Users and Roles
-            if (!db.products.hasAlias('users') && !db.products.hasAlias('created_by')) {
+            if (!db.product.hasAlias('users') && !db.product.hasAlias('created_by')) {
 
-                await db.products.hasOne(db.users, {
+                await db.product.hasOne(db.user, {
                     sourceKey: 'added_by',
                     foreignKey: 'uid',
                     as: 'created_by'
@@ -287,155 +287,155 @@ module.exports = {
             }
 
             // Created By Associations
-            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
-            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+            db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'uid', foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'role_id', foreignKey: 'role_id' });
 
             // Product Gallery Associations
-            if (!db.products.hasAlias('product_gallery') && !db.products.hasAlias('gallery')) {
+            if (!db.product.hasAlias('product_gallery') && !db.product.hasAlias('gallery')) {
 
-                await db.products.hasMany(db.product_gallery, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.product.hasMany(db.product_gallery, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'gallery'
                 });
             }
 
             // Discount Type + Customer Group Association
-            if (!db.products.hasAlias('discount_type')) {
+            if (!db.product.hasAlias('discount_type')) {
 
-                await db.products.hasMany(db.discount_type, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.product.hasMany(db.discount_type, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'discount_type'
                 });
             }
 
             if (!db.discount_type.hasAlias('customer_groups') && !db.discount_type.hasAlias('customer_group')) {
 
-                await db.discount_type.hasOne(db.customer_groups, {
-                    sourceKey: 'customer_group_uuid',
-                    foreignKey: 'customer_group_uuid',
+                await db.discount_type.hasOne(db.customer_group, {
+                    sourceKey: 'customer_group_id',
+                    foreignKey: 'customer_group_id',
                     as: 'customer_group'
                 });
             }
 
             // Dimension Table Association with Product
-            if (!db.products.hasAlias('product_dimension') && !db.products.hasAlias('dimensions')) {
+            if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
 
-                await db.products.hasOne(db.product_dimension, {
-                    sourceKey: 'dimension_uuid',
-                    foreignKey: 'prod_dimension_uuid',
+                await db.product.hasOne(db.product_dimension, {
+                    sourceKey: 'dimension_id',
+                    foreignKey: 'prod_dimension_id',
                     as: 'dimensions'
                 });
             }
             // Brand Table Association with Product
-            if (!db.products.hasAlias('brands') && !db.products.hasAlias('brand')) {
+            if (!db.product.hasAlias('brands') && !db.product.hasAlias('brand')) {
 
-                await db.products.hasOne(db.brands, {
-                    sourceKey: 'brand_uuid',
-                    foreignKey: 'brand_uuid',
+                await db.product.hasOne(db.brand, {
+                    sourceKey: 'brand_id',
+                    foreignKey: 'brand_id',
                     as: 'brand'
                 });
             }
 
             // Part of Product Table Association with Product
-            if (!db.products.hasAlias('partof_product') && !db.products.hasAlias('part_of_products')) {
+            if (!db.product.hasAlias('partof_product') && !db.product.hasAlias('part_of_products')) {
 
-                await db.products.hasMany(db.partof_product, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'parent_prod_uuid',
+                await db.product.hasMany(db.partof_product, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'parent_prod_id',
                     as: 'part_of_products'
                 });
             }
             if (!db.partof_product.hasAlias('products') && !db.partof_product.hasAlias('part_product')) {
 
-                await db.partof_product.hasOne(db.products, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.partof_product.hasOne(db.product, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'part_product'
                 });
             }
 
             // Product Attributes Table Association with Product
-            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
 
-                await db.products.hasMany(db.product_attributes, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.product.hasMany(db.product_attribute, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'prod_attributes'
                 });
             }
-            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
 
-                await db.product_attributes.hasOne(db.attributes, {
-                    sourceKey: 'attribute_uuid',
-                    foreignKey: 'attribute_uuid',
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'attribute_id',
                     as: 'attribute_data'
                 });
             }
 
             // Association with Attribute Group and Attributes
-            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
-                await db.attributes.hasOne(db.attr_groups, {
-                    sourceKey: 'attr_group_uuid',
-                    foreignKey: 'attr_group_uuid',
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'attr_group_id',
                     as: 'attribute_group'
                 });
             }
 
             // Association with Attribute Group and Attributes
-            if (!db.products.hasAlias('related_product') && !db.products.hasAlias('related_products')) {
-                await db.products.hasMany(db.related_product, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'base_prod_uuid',
+            if (!db.product.hasAlias('related_product') && !db.product.hasAlias('related_products')) {
+                await db.product.hasMany(db.related_product, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'base_prod_id',
                     as: 'related_products'
                 });
             }
 
             if (!db.related_product.hasAlias('products') && !db.related_product.hasAlias('related_prod')) {
-                await db.related_product.hasOne(db.products, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.related_product.hasOne(db.product, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'related_prod'
                 });
             }
             // ### ASSOCIATION ENDS ### //
 
             // Find Triggered Product
-            const findProduct = await db.products.findOne({
+            const findProduct = await db.product.findOne({
                 include: [
-                    { model: db.categories, as: 'category' }, // Include Product Category
+                    { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
                     { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
-                    { model: db.brands, as: 'brand' }, // Inlcude Brand
+                    { model: db.brand, as: 'brand' }, // Inlcude Brand
                     {
-                        model: db.users, as: 'created_by', // Include User who created the product and his roles
+                        model: db.user, as: 'created_by', // Include User who created the product and his roles
                         include: {
-                            model: db.roles,
+                            model: db.role,
                             as: 'roles'
                         }
                     },
                     {
                         model: db.discount_type, as: 'discount_type', // Include Discount Types Along with Customer Groups
                         include: {
-                            model: db.customer_groups,
+                            model: db.customer_group,
                             as: 'customer_group'
                         }
                     },
                     {
                         model: db.partof_product, as: 'part_of_products', // Include Part of Product along with Part Products
                         include: {
-                            model: db.products,
+                            model: db.product,
                             as: 'part_product'
                         }
                     },
                     {
-                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
-                            model: db.attributes,
+                            model: db.attribute,
                             as: 'attribute_data',
                             include: {
-                                model: db.attr_groups,
+                                model: db.attr_group,
                                 as: 'attribute_group'
                             }
                         }
@@ -443,14 +443,14 @@ module.exports = {
                     {
                         model: db.related_product, as: 'related_products', // Include Related Products
                         include: {
-                            model: db.products,
+                            model: db.product,
                             as: 'related_prod'
                         }
                     },
                 ],
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
                 },
@@ -482,9 +482,9 @@ module.exports = {
 
             // ## ASSOCIATION STARTS ##
             // Check If Has Alias with Categories
-            if (!db.products.hasAlias('category')) {
+            if (!db.product.hasAlias('category')) {
 
-                await db.products.hasOne(db.categories, {
+                await db.product.hasOne(db.category, {
                     sourceKey: 'prod_category',
                     foreignKey: 'cat_id',
                     as: 'category'
@@ -492,44 +492,44 @@ module.exports = {
             }
 
             // Product Attributes Table Association with Product
-            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
 
-                await db.products.hasMany(db.product_attributes, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.product.hasMany(db.product_attribute, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'prod_attributes'
                 });
             }
-            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
 
-                await db.product_attributes.hasOne(db.attributes, {
-                    sourceKey: 'attribute_uuid',
-                    foreignKey: 'attribute_uuid',
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'attribute_id',
                     as: 'attribute_data'
                 });
             }
 
             // Association with Attribute Group and Attributes
-            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
-                await db.attributes.hasOne(db.attr_groups, {
-                    sourceKey: 'attr_group_uuid',
-                    foreignKey: 'attr_group_uuid',
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'attr_group_id',
                     as: 'attribute_group'
                 });
             }
             // ## ASSOCIATION ENDS ##
 
             // Find ALL Product
-            const allProducts = await db.products.findAll({
+            const allProducts = await db.product.findAll({
                 include: [
-                    { model: db.categories, as: 'category' }, // Include Product Category
+                    { model: db.category, as: 'category' }, // Include Product Category
                     {
-                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
-                            model: db.attributes,
+                            model: db.attribute,
                             as: 'attribute_data',
                             include: {
-                                model: db.attr_groups,
+                                model: db.attr_group,
                                 as: 'attribute_group'
                             }
                         }
@@ -563,7 +563,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { prod_uuid,
+            const { prod_id,
                 prod_name,
                 prod_long_desc,
                 prod_short_desc,
@@ -575,7 +575,7 @@ module.exports = {
                 prod_sale_price,
                 prod_partnum,
                 prod_sku,
-                brand_uuid,
+                brand_id,
                 prod_category,
                 prod_weight,
                 prod_weight_class,
@@ -591,10 +591,10 @@ module.exports = {
                 partof_product } = req;
 
             // FIND TARGETED PRODUCT
-            const findProd = await db.products.findOne({
+            const findProd = await db.product.findOne({
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -613,14 +613,14 @@ module.exports = {
                 });
 
                 // Check Existence
-                const checkSlugExists = await db.products.findOne({
+                const checkSlugExists = await db.product.findOne({
                     where: {
                         [Op.and]: [{
                             prod_slug,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            prod_uuid
+                            prod_id
                         }]
                     }
                 });
@@ -630,14 +630,14 @@ module.exports = {
             // If SKU Updated
             if (prod_sku) {
                 // Check Existence
-                const checkSKUExists = await db.products.findOne({
+                const checkSKUExists = await db.product.findOne({
                     where: {
                         [Op.and]: [{
                             prod_sku,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            prod_uuid
+                            prod_id
                         }]
                     }
                 });
@@ -646,30 +646,30 @@ module.exports = {
             // If Part Number Updated
             if (prod_partnum) {
                 // Check Existence
-                const checkPNExists = await db.products.findOne({
+                const checkPNExists = await db.product.findOne({
                     where: {
                         [Op.and]: [{
                             prod_partnum,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            prod_uuid
+                            prod_id
                         }]
                     }
                 });
                 if (checkPNExists) return { message: "Already Have This Part Number In Product!!!", status: false };
             }
             // If Dimension Updated 
-            let dimension_uuid;
+            let dimension_id;
             if (dimensions) {
                 dimensions.tenant_id = TENANTID;
                 // If Dimension Already Have Created
-                if (findProd.dimension_uuid) {
+                if (findProd.dimension_id) {
                     // Update Dimension
                     const updateDimension = await db.product_dimension.update(dimensions, {
                         where: {
                             [Op.and]: [{
-                                prod_dimension_uuid: findProd.dimension_uuid,
+                                prod_dimension_id: findProd.dimension_id,
                                 tenant_id: TENANTID
                             }]
                         }
@@ -682,7 +682,7 @@ module.exports = {
                     if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
 
                     // Discount Type UUID
-                    dimension_uuid = insertDimension.prod_dimension_uuid
+                    dimension_id = insertDimension.prod_dimension_id
                 }
 
             }
@@ -692,7 +692,7 @@ module.exports = {
                 const deletePreviousEntry = await db.related_product.destroy({
                     where: {
                         [Op.and]: [{
-                            base_prod_uuid: prod_uuid,
+                            base_prod_id: prod_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -700,7 +700,7 @@ module.exports = {
 
                 let newRelatedProducts = [];
                 related_product.forEach(async (productUUID) => {
-                    await newRelatedProducts.push({ prod_uuid: productUUID, base_prod_uuid: prod_uuid, tenant_id: TENANTID });
+                    await newRelatedProducts.push({ prod_id: productUUID, base_prod_id: prod_id, tenant_id: TENANTID });
                 });
 
                 if (newRelatedProducts) {
@@ -715,7 +715,7 @@ module.exports = {
                 const deletePreviousEntry = await db.discount_type.destroy({
                     where: {
                         [Op.and]: [{
-                            prod_uuid,
+                            prod_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -724,7 +724,7 @@ module.exports = {
                 // Loop For Assign Other Values to Discount Type  Data
                 discount_type.forEach(element => {
                     element.tenant_id = TENANTID;
-                    element.prod_uuid = prod_uuid;
+                    element.prod_id = prod_id;
                 });
                 // Insert Data In Discount Type Table
                 const insertNewDiscountTypes = await db.discount_type.bulkCreate(discount_type);
@@ -733,10 +733,10 @@ module.exports = {
             // If Product Attributes is Updated
             if (product_attributes && product_attributes.length > 0) {
                 // Delete Previous Entry
-                const deletePreviousEntry = await db.product_attributes.destroy({
+                const deletePreviousEntry = await db.product_attribute.destroy({
                     where: {
                         [Op.and]: [{
-                            prod_uuid,
+                            prod_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -745,11 +745,11 @@ module.exports = {
                 // Loop For Assign Other Values to Product Attribites Data
                 product_attributes.forEach(element => {
                     element.tenant_id = TENANTID;
-                    element.prod_uuid = prod_uuid;
+                    element.prod_id = prod_id;
                 });
 
                 // Product Attributes Save Bulk
-                const newProdAttributesDataSave = await db.product_attributes.bulkCreate(product_attributes);
+                const newProdAttributesDataSave = await db.product_attribute.bulkCreate(product_attributes);
                 if (!newProdAttributesDataSave) return { message: "Updated Product Attributes Data Save Failed!!!", status: false }
             }
             // If Part of Product is Updated
@@ -758,14 +758,14 @@ module.exports = {
                 const deletePreviousEntry = await db.partof_product.destroy({
                     where: {
                         [Op.and]: [{
-                            parent_prod_uuid: prod_uuid,
+                            parent_prod_id: prod_id,
                             tenant_id: TENANTID
                         }]
                     }
                 });
 
                 partof_product.forEach(part => {
-                    part.parent_prod_uuid = prod_uuid;
+                    part.parent_prod_id = prod_id;
                     part.tenant_id = TENANTID;
                 });
 
@@ -788,7 +788,7 @@ module.exports = {
                 prod_sale_price,
                 prod_partnum,
                 prod_sku,
-                brand_uuid,
+                brand_id,
                 prod_category,
                 prod_weight,
                 prod_weight_class,
@@ -797,15 +797,15 @@ module.exports = {
                 is_featured,
                 prod_condition,
                 prod_outofstock_status,
-                dimension_uuid,
+                dimension_id,
                 added_by: user.uid
             }
 
             // Update Product
-            const updateProd = await db.products.update(prodUpdateDoc, {
+            const updateProd = await db.product.update(prodUpdateDoc, {
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -831,13 +831,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const { prod_uuid, prod_thumbnail } = req;
+            const { prod_id, prod_thumbnail } = req;
 
             // Find The Product
-            const findProduct = await db.products.findOne({
+            const findProduct = await db.product.findOne({
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
 
@@ -850,7 +850,7 @@ module.exports = {
                 const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_DEST").split("/")
                 const product_image_bucketName = product_image_src[0];
                 const product_image_folder = product_image_src.slice(1).join("/");
-                await deleteFile({ idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
+                await deleteFile({ idf: findProduct.prod_id, folder: product_image_folder, fileName: findProduct.prod_thumbnail, bucketName: product_image_bucketName });
             }
 
             // Upload New Product Thumbnail
@@ -859,7 +859,7 @@ module.exports = {
             const product_image_src = config.get("AWS.PRODUCT_IMG_THUMB_SRC").split("/")
             const product_image_bucketName = product_image_src[0];
             const product_image_folder = product_image_src.slice(1).join("/");
-            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findProduct.prod_uuid, bucketName: product_image_bucketName });
+            const imageUrl = await singleFileUpload({ file: prod_thumbnail, idf: findProduct.prod_id, folder: product_image_folder, fileName: findProduct.prod_id, bucketName: product_image_bucketName });
             if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
             // Update Product with New Thumbnail Name
@@ -869,10 +869,10 @@ module.exports = {
             const productThumbUpdate = {
                 prod_thumbnail: thumbName
             }
-            const updateProductWithThumb = await db.products.update(productThumbUpdate, {
+            const updateProductWithThumb = await db.product.update(productThumbUpdate, {
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -899,15 +899,15 @@ module.exports = {
         try {
 
             // Data From Request
-            const { prod_uuid, prod_gallery_uuid } = req;
+            const { prod_id, prod_gallery_id } = req;
 
 
             // Find Product Gallery
             const findGallery = await db.product_gallery.findOne({
                 where: {
                     [Op.and]: [{
-                        prod_gallery_uuid,
-                        prod_uuid,
+                        prod_gallery_id,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -915,10 +915,10 @@ module.exports = {
             if (!findGallery) return { message: "Couldnt Find The Gallery From DB!!!", status: false }
 
             // Find The Product
-            const findProduct = await db.products.findOne({
+            const findProduct = await db.product.findOne({
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
 
@@ -930,7 +930,7 @@ module.exports = {
                 const product_image_src = config.get("AWS.PRODUCT_IMG_GALLERY_DEST").split("/")
                 const product_image_bucketName = product_image_src[0];
                 const product_image_folder = product_image_src.slice(1).join("/");
-                await deleteFile({ idf: findProduct.prod_uuid, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
+                await deleteFile({ idf: findProduct.prod_id, folder: product_image_folder, fileName: findGallery.prod_image, bucketName: product_image_bucketName });
 
             } else {
                 return {
@@ -944,7 +944,7 @@ module.exports = {
             const deleteGlryImgFromDB = await db.product_gallery.destroy({
                 where: {
                     [Op.and]: [{
-                        prod_gallery_uuid,
+                        prod_gallery_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -971,13 +971,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const { prod_uuid, gallery_img } = req;
+            const { prod_id, gallery_img } = req;
 
             // Find Product
-            const findProduct = await db.products.findOne({
+            const findProduct = await db.product.findOne({
                 where: {
                     [Op.and]: [{
-                        prod_uuid,
+                        prod_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -992,12 +992,12 @@ module.exports = {
                 const product_gallery_src = config.get("AWS.PRODUCT_IMG_GALLERY_SRC").split("/")
                 const product_gallery_bucketName = product_gallery_src[0];
                 const product_gallery_folder = product_gallery_src.slice(1).join("/");
-                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_uuid, folder: product_gallery_folder, fileName: findProduct.prod_uuid, bucketName: product_gallery_bucketName });
+                const imageUrl = await multipleFileUpload({ file: gallery_img, idf: findProduct.prod_id, folder: product_gallery_folder, fileName: findProduct.prod_id, bucketName: product_gallery_bucketName });
                 if (!imageUrl) return { message: "New Gallery Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Assign Values To Gallery Array For Bulk Create
                 imageUrl.forEach(async (galleryImg) => {
-                    await gallery.push({ prod_image: galleryImg.upload.Key.split('/').slice(-1)[0], prod_uuid: findProduct.prod_uuid, tenant_id: TENANTID });
+                    await gallery.push({ prod_image: galleryImg.upload.Key.split('/').slice(-1)[0], prod_id: findProduct.prod_id, tenant_id: TENANTID });
                 });
 
                 // If Gallery Array Created Successfully then Bulk Create In Product Gallery Table
@@ -1038,9 +1038,9 @@ module.exports = {
 
             // ## ASSOCIATION STARTS ##
             // Check If Has Alias with Categories
-            if (!db.products.hasAlias('category')) {
+            if (!db.product.hasAlias('category')) {
 
-                await db.products.hasOne(db.categories, {
+                await db.product.hasOne(db.category, {
                     sourceKey: 'prod_category',
                     foreignKey: 'cat_id',
                     as: 'category'
@@ -1048,28 +1048,28 @@ module.exports = {
             }
 
             // Product Attributes Table Association with Product
-            if (!db.products.hasAlias('product_attributes') && !db.products.hasAlias('prod_attributes')) {
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
 
-                await db.products.hasMany(db.product_attributes, {
-                    sourceKey: 'prod_uuid',
-                    foreignKey: 'prod_uuid',
+                await db.product.hasMany(db.product_attribute, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'prod_id',
                     as: 'prod_attributes'
                 });
             }
-            if (!db.product_attributes.hasAlias('attributes') && !db.product_attributes.hasAlias('attribute_data')) {
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
 
-                await db.product_attributes.hasOne(db.attributes, {
-                    sourceKey: 'attribute_uuid',
-                    foreignKey: 'attribute_uuid',
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'attribute_id',
                     as: 'attribute_data'
                 });
             }
 
             // Association with Attribute Group and Attributes
-            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
-                await db.attributes.hasOne(db.attr_groups, {
-                    sourceKey: 'attr_group_uuid',
-                    foreignKey: 'attr_group_uuid',
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'attr_group_id',
                     as: 'attribute_group'
                 });
             }
@@ -1077,16 +1077,16 @@ module.exports = {
 
 
             // Find ALL Featured Product
-            const allFeaturedProducts = await db.products.findAll({
+            const allFeaturedProducts = await db.product.findAll({
                 include: [
-                    { model: db.categories, as: 'category' }, // Include Product Category
+                    { model: db.category, as: 'category' }, // Include Product Category
                     {
-                        model: db.product_attributes, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
-                            model: db.attributes,
+                            model: db.attribute,
                             as: 'attribute_data',
                             include: {
-                                model: db.attr_groups,
+                                model: db.attr_group,
                                 as: 'attribute_group'
                             }
                         }
@@ -1178,7 +1178,7 @@ module.exports = {
 
             if (!db.recent_view_product.hasAlias('product')) {
 
-                await db.recent_view_product.hasOne(db.products, {
+                await db.recent_view_product.hasOne(db.product, {
                     sourceKey: 'product_id',
                     foreignKey: 'id',
                     as: 'product'
@@ -1189,7 +1189,7 @@ module.exports = {
                 allRecentViewProducts = await db.recent_view_product.findAll({
                     limit: req.max ?? 20,
                     include: [
-                        { model: db.products, as: 'product' }
+                        { model: db.product, as: 'product' }
                     ],
                     where: {
                         [Op.and]: [{
@@ -1203,7 +1203,7 @@ module.exports = {
                 allRecentViewProducts = await db.recent_view_product.findAll({
                     limit: req.max ?? 20,
                     include: [
-                        { model: db.products, as: 'product' }
+                        { model: db.product, as: 'product' }
                     ],
                     where: {
                         [Op.and]: [{

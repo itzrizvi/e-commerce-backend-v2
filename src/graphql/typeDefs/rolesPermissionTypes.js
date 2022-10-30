@@ -7,10 +7,10 @@ module.exports = gql`
 ##############################################################################
 
 type PermissionData {
-    permission_data_id:UUID
+    permission_data_id:Int
     role_no:Float
     tenant_id:String
-    role_id:UUID
+    role_id:Int
     edit_access:Boolean
     read_access:Boolean
     rolesPermission:RolesPermission
@@ -28,7 +28,7 @@ type RolesPermissionOutput {
 }
 
 type RolesPermission {
-    roles_permission_id:UUID
+    roles_permission_id:Int
     roles_permission_name:String
     roles_permission_slug:String
     roles_permission_status:Boolean
@@ -46,7 +46,7 @@ type GetAllRolesPermission {
 }
 
 input GetSingleRolesPermissionInput {
-    roles_permission_id:UUID!
+    roles_permission_id:Int!
 }
 type GetSingleRolesPermissionOutput {
     message:String
@@ -56,7 +56,7 @@ type GetSingleRolesPermissionOutput {
 }
 
 input UpdateRolesPermissionInput {
-    roles_permission_id:UUID!
+    roles_permission_id:Int!
     roles_permission_name:String
     roles_permission_status:Boolean
 }

@@ -9,7 +9,7 @@ module.exports = gql`
 input CategoryCreateInput {
     categoryName:String!
     categoryDescription:JSON
-    categoryParentId:UUID
+    categoryParentId:Int
     categoryMetaTagTitle:String
     categoryMetaTagDescription:JSON
     categoryMetaTagKeywords:JSON
@@ -19,7 +19,7 @@ input CategoryCreateInput {
 }
 
 type SubSubCategory {
-    cat_id:UUID
+    cat_id:Int
     cat_name:String
     cat_slug:String
     cat_description:JSON
@@ -31,11 +31,11 @@ type SubSubCategory {
     cat_status:Boolean
     is_featured:Boolean
     tenant_id:String
-    cat_parent_id:UUID
+    cat_parent_id:Int
 }
 
 type SubCategory {
-    cat_id:UUID
+    cat_id:Int
     cat_name:String
     cat_slug:String
     cat_description:JSON
@@ -47,12 +47,12 @@ type SubCategory {
     cat_status:Boolean
     is_featured:Boolean
     tenant_id:String
-    cat_parent_id:UUID
+    cat_parent_id:Int
     subsubcategories:[SubSubCategory]
 }
 
 type Category {
-    cat_id:UUID!
+    cat_id:Int!
     cat_name:String!
     cat_slug:String!
     cat_description:JSON
@@ -64,7 +64,7 @@ type Category {
     cat_status:Boolean
     is_featured:Boolean
     tenant_id:String
-    cat_parent_id:UUID
+    cat_parent_id:Int
     subcategories:[SubCategory]
 }
 
@@ -76,7 +76,7 @@ type GetCategories {
 }
 
 input GetSingleCategoryInput {
-    cat_id:UUID
+    cat_id:Int
 }
 
 type GetSingleCategoryOutput {
@@ -94,21 +94,21 @@ type GetFeaturedCategories {
 }
 
 input UpdateCategoryInput {
-    cat_id:UUID!
+    cat_id:Int!
     cat_name:String
     cat_description:JSON
     cat_meta_tag_title:String
     cat_meta_tag_description:JSON
     cat_meta_tag_keywords:JSON
     cat_status:Boolean
-    cat_parent_id:UUID
+    cat_parent_id:Int
     is_featured:Boolean
     cat_sort_order:Int
     mark_as_main_category:Boolean
 }
 
 input GetProductByCategoryInput {
-    cat_id:UUID!
+    cat_id:Int!
 }
 
 type GetProductByCategoryOutput {

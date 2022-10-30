@@ -41,7 +41,7 @@ type GetAllCustomerGroupsOutput {
 }
 
 input GetSingleCustomerGroupInput {
-    customer_group_id:UUID!
+    customer_group_id:Int!
 }
 
 type GetSingleCustomerGroupOutput {

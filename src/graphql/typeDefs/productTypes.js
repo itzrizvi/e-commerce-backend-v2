@@ -7,7 +7,7 @@ module.exports = gql`
 #########################################################################
 
 type ProductDimension {
-    prod_dimension_id:UUID
+    prod_dimension_id:Int
     length:String
     width:String
     height:String
@@ -15,7 +15,7 @@ type ProductDimension {
 }
 
 type DiscountType {
-    discount_type_id:UUID
+    discount_type_id:Int
     customer_group:CustomerGroup
     discount_quantity:Int
     discount_priority:Int
@@ -25,31 +25,31 @@ type DiscountType {
 }
 
 type ProductGallery {
-    prod_gallery_id:UUID
-    prod_id:UUID
+    prod_gallery_id:Int
+    prod_id:Int
     prod_image:String
 }
 
 type PartofProduct {
-    partof_product_id:UUID
+    partof_product_id:Int
     prod_quantity:Int
     part_product:Product
 }
 
 type ProductAttributes {
-    prod_attr_id:UUID
+    prod_attr_id:Int
     attribute_type:String
     attribute_value:String
     attribute_data:Attribute
 }
 
 type RelatedProduct {
-    related_prod_id:UUID
+    related_prod_id:Int
     related_prod:Product
 }
 
 type Product {
-    prod_id:UUID
+    prod_id:Int
     prod_name:String
     prod_slug:String
     prod_long_desc:JSON
@@ -96,8 +96,8 @@ input AddProductInput {
     prod_sale_price:Float
     prod_partnum:String!
     prod_sku:String!
-    brand_id:UUID!
-    prod_category:UUID!
+    brand_id:Int!
+    prod_category:Int!
     related_product:JSON
     prod_weight:String
     prod_weight_class:String
@@ -115,7 +115,7 @@ input AddProductInput {
 }
 
 type ProductForList {
-    prod_id:UUID
+    prod_id:Int
     prod_name:String
     prod_slug:String
     prod_regular_price:Float
@@ -143,7 +143,7 @@ type GetAllProducts {
 }
 
 input GetSingleProductInput {
-    prod_id:UUID!
+    prod_id:Int!
 }
 
 type GetSingleProductOutput {
@@ -154,22 +154,22 @@ type GetSingleProductOutput {
 }
 
 input UpdateThumbnailInput {
-    prod_id:UUID!
+    prod_id:Int!
     prod_thumbnail:Upload!
 }
 
 input GalleryImageDeleteInput {
-    prod_id:UUID!
-    prod_gallery_id:UUID!
+    prod_id:Int!
+    prod_gallery_id:Int!
 }
 
 input GalleryImageUploadInput {
-    prod_id:UUID!
+    prod_id:Int!
     gallery_img:[Upload!]
 }
 
 input UpdateProductInput {
-    prod_id:UUID
+    prod_id:Int
     prod_name:String
     prod_long_desc:JSON
     prod_short_desc:JSON
@@ -181,8 +181,8 @@ input UpdateProductInput {
     prod_sale_price:Float
     prod_partnum:String
     prod_sku:String
-    brand_id:UUID
-    prod_category:UUID
+    brand_id:Int
+    prod_category:Int
     prod_weight:String
     prod_weight_class:String
     prod_status:Boolean

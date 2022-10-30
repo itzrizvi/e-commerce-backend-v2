@@ -186,7 +186,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { banner_id,
+            const { id,
                 banner_id,
                 title,
                 link,

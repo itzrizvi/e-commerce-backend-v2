@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         user_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         product_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         rating_title: {

@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         type: {
-            type: DataTypes.ENUM('shipping', 'billing'),
+            type: DataTypes.ENUM("shipping", "billing"),
             allowNull: false
         },
         status: {

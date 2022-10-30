@@ -16,7 +16,7 @@ const checkPermission = async (db, user, TENANTID, permissionName) => {
     const rolePermissionID = getRolesPermissionData.roles_permission_id; // Extract UUID
 
     // Find Roles of This User 
-    const findRoles = await db.admin_roles.findAll({
+    const findRoles = await db.admin_role.findAll({
         where: {
             [Op.and]: [{
                 admin_id: uid,

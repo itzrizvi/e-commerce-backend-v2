@@ -24,7 +24,7 @@ const onReqTokenGenerate = async (req, res, next) => {
         return next();
     }
     //
-    let authUser = await db.users.findOne({
+    let authUser = await db.user.findOne({
         where: { uid: decodeToken.uid }
     });
 

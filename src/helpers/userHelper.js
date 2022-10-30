@@ -43,7 +43,7 @@ module.exports = {
             const updateLastLogin = {
                 last_login: Date.now()
             }
-            db.users.update(updateLastLogin, {
+            db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
                         uid: user.uid,
@@ -80,7 +80,7 @@ module.exports = {
             const { email, password } = req;
 
             // CHECK USER
-            const user = await db.users.findOne({
+            const user = await db.user.findOne({
                 where: {
                     [Op.and]: [{
                         email,
@@ -124,7 +124,7 @@ module.exports = {
             const updateLastLogin = {
                 last_login: Date.now()
             }
-            db.users.update(updateLastLogin, {
+            db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
                         uid: user.uid,
@@ -160,7 +160,7 @@ module.exports = {
         const email = user.email; // Email From Request
 
         // User Find For Matching Code
-        const findUser = await db.users.findOne({
+        const findUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -194,7 +194,7 @@ module.exports = {
                     email_verified: true
                 }
                 // Update User
-                const updateUser = await db.users.update(updateDoc, {
+                const updateUser = await db.user.update(updateDoc, {
                     where: {
                         [Op.and]: [{
                             email,
@@ -267,7 +267,7 @@ module.exports = {
                 verification_code: newVerificationCode
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, {
+            const updateUser = await db.user.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         email,
@@ -317,7 +317,7 @@ module.exports = {
         const email = req.email;
 
         // Check User is Exists
-        const checkUser = await db.users.findOne({
+        const checkUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -336,7 +336,7 @@ module.exports = {
                 forgot_password_code: forgotPasswordCode
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, {
+            const updateUser = await db.user.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         email,
@@ -390,7 +390,7 @@ module.exports = {
         const forgotPassVerifyCode = req.forgotPassVerifyCode;
 
         // CHECK USER 
-        const checkUser = await db.users.findOne({
+        const checkUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -454,7 +454,7 @@ module.exports = {
         const confirmPassword = req.confirmPassword;
 
         // CHECK USER 
-        const checkUser = await db.users.findOne({
+        const checkUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -495,7 +495,7 @@ module.exports = {
                 password: await bcrypt.hash(confirmPassword, 10),
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, {
+            const updateUser = await db.user.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         email,

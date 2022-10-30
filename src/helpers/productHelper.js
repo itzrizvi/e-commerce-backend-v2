@@ -276,19 +276,6 @@ module.exports = {
                     as: 'category'
                 });
             }
-            // Check If Has Alias with Users and Roles
-            if (!db.products.hasAlias('users') && !db.products.hasAlias('created_by')) {
-
-                await db.products.hasOne(db.users, {
-                    sourceKey: 'added_by',
-                    foreignKey: 'uid',
-                    as: 'created_by'
-                });
-            }
-
-            // Created By Associations
-            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
-            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
 
             // Product Gallery Associations
             if (!db.products.hasAlias('product_gallery') && !db.products.hasAlias('gallery')) {
@@ -397,6 +384,20 @@ module.exports = {
                     sourceKey: 'prod_uuid',
                     foreignKey: 'prod_uuid',
                     as: 'related_prod'
+                });
+            }
+
+            // Created By Associations
+            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
+            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.products.hasAlias('users') && !db.products.hasAlias('created_by')) {
+
+                await db.products.hasOne(db.users, {
+                    sourceKey: 'added_by',
+                    foreignKey: 'uid',
+                    as: 'created_by'
                 });
             }
             // ### ASSOCIATION ENDS ### //

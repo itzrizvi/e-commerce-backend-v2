@@ -9,7 +9,7 @@ module.exports = gql`
 
 type AuthPayload {
     authToken: String
-    uid:String
+    id:String
     first_name:String
     last_name:String
     email:String

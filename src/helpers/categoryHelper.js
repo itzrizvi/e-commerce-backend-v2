@@ -39,7 +39,7 @@ module.exports = {
             });
 
             // Created By
-            const created_by = user.uid;
+            const created_by = user.id;
 
             // If Exist Category
             const findExistCategory = await db.category.findOne({

@@ -7,7 +7,7 @@ let rules = {}, request, response;
 // UPDATE ADMIN/STAFF  REQUEST
 const updateAdminRequest = (body) => {
     rules = {
-        uid: 'required|string',
+        id: 'required|string',
         first_name: 'string',
         last_name: 'string',
         password: 'string',
@@ -22,7 +22,7 @@ const updateAdminRequest = (body) => {
 // GET SINGLE ADMIN/STAFF  REQUEST
 const getSingleAdminRequest = (body) => {
     rules = {
-        uid: 'required|string'
+        id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -31,7 +31,7 @@ const getSingleAdminRequest = (body) => {
 // ADMIN/STAFF PASSWORD CHANGE  REQUEST
 const adminPasswordChangeRequest = (body) => {
     rules = {
-        uid: 'required|string',
+        id: 'required|string',
         oldPassword: 'required|string|min:6',
         newPassword: 'required|string|min:6',
     }

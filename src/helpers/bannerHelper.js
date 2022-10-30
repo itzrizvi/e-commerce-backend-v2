@@ -25,7 +25,7 @@ module.exports = {
             const checkExistence = await db.banner.findOne({
                 where: {
                     [Op.and]: [{
-                        banner_slug,
+                        slug: banner_slug,
                         tenant_id: TENANTID
                     }]
                 }
@@ -36,9 +36,9 @@ module.exports = {
 
             // Create Banner
             const createBanner = await db.banner.create({
-                banner_name: banner_name,
-                banner_slug: banner_slug,
-                banner_status: banner_status,
+                name: banner_name,
+                slug: banner_slug,
+                status: banner_status,
                 tenant_id: TENANTID
             });
 
@@ -47,10 +47,10 @@ module.exports = {
                 return {
                     message: "Successfully Created Banner!",
                     data: {
-                        banner_id: createBanner.banner_id,
-                        banner_name: createBanner.banner_name,
-                        banner_slug: createBanner.banner_slug,
-                        banner_status: createBanner.banner_status,
+                        id: createBanner.id,
+                        name: createBanner.name,
+                        slug: createBanner.slug,
+                        status: createBanner.status,
                         tenant_id: createBanner.tenant_id,
                     },
                     status: true
@@ -99,11 +99,14 @@ module.exports = {
             return {
                 message: "Successfully Created Banner Image!",
                 data: {
-                    banner_id: createBannerImage.banner_id,
+                    id: createBannerImage.id,
                     banner_id: createBannerImage.banner_id,
                     title: createBannerImage.title,
                     link: createBannerImage.link,
                     sort_order: createBannerImage.sort_order,
+                    tenant_id: createBannerImage.tenant_id,
+                    createdAt: createBannerImage.createdAt,
+                    updatedAt: createBannerImage.updatedAt
                 },
                 status: true
             }
@@ -121,13 +124,13 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request 
-            const { banner_id, banner_name, banner_status } = req;
+            const { banner_id, name, status } = req;
 
             // Create New Slug If Banner name is also Updating
-            let banner_slug;
-            if (banner_name) {
+            let slug;
+            if (name) {
                 // Slugify Banner Name
-                banner_slug = slugify(`${banner_name}`, {
+                slug = slugify(`${name}`, {
                     replacement: '-',
                     remove: /[*+~.()'"!:@]/g,
                     lower: true,
@@ -139,11 +142,11 @@ module.exports = {
                 const checkExistence = await db.banner.findOne({
                     where: {
                         [Op.and]: [{
-                            banner_slug,
+                            slug,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            banner_id
+                            id: banner_id
                         }]
                     }
                 });
@@ -154,20 +157,21 @@ module.exports = {
 
             // Update Doc for Banner
             const updateDoc = {
-                banner_name,
-                banner_slug,
-                banner_status
+                name,
+                slug,
+                status
             }
 
             // Update Banner
             const updateBnr = await db.banner.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        banner_id,
+                        id: banner_id,
                         tenant_id: TENANTID
                     }]
                 }
             });
+
             if (!updateBnr) return { message: "Couldnt Update the Banner!!!", status: false }
 
             // Return Formation
@@ -186,8 +190,8 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { id,
-                banner_id,
+            const { 
+                id,
                 title,
                 link,
                 sort_order,
@@ -205,7 +209,7 @@ module.exports = {
             const updateBannerimage = await db.banner_image.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        banner_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -218,7 +222,7 @@ module.exports = {
             const findBannerImage = await db.banner_image.findOne({
                 where: {
                     [Op.and]: [{
-                        banner_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -230,7 +234,7 @@ module.exports = {
                 const banner_image_src = config.get("AWS.BANNER_IMG_DEST").split("/");
                 const banner_image_bucketName = banner_image_src[0];
                 const banner_image_folder = banner_image_src.slice(1);
-                await deleteFile({ idf: banner_id, folder: banner_image_folder, fileName: findBannerImage.image, bucketName: banner_image_bucketName });
+                await deleteFile({ idf: id, folder: banner_image_folder, fileName: findBannerImage.image, bucketName: banner_image_bucketName });
             }
 
             // Upload New Image to S3
@@ -239,7 +243,7 @@ module.exports = {
                 const banner_image_src = config.get("AWS.BANNER_IMG_SRC").split("/")
                 const banner_image_bucketName = banner_image_src[0];
                 const banner_image_folder = banner_image_src.slice(1);
-                const imageUrl = await singleFileUpload({ file: image, idf: banner_id, folder: banner_image_folder, bucketName: banner_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: id, folder: banner_image_folder, bucketName: banner_image_bucketName });
                 if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Banner Slide with New Image Name
@@ -253,7 +257,7 @@ module.exports = {
                 const updateBannerImg = await db.banner_image.update(bannerImageUpdate, {
                     where: {
                         [Op.and]: [{
-                            banner_id,
+                            id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -285,23 +289,23 @@ module.exports = {
     getSingleBanner: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
-
             // Data From Request
             const { banner_id } = req;
 
             // Association with Banner and Banner Images
-            if (!db.banner.hasAlias('banner_images') && !db.banner.hasAlias('bannerimages')) {
-                await db.banner.hasMany(db.banner_image, { sourceKey: 'banner_id', foreignKey: 'banner_id', as: 'bannerimages' });
+            if (!db.banner.hasAlias('banner_images')) {
+                await db.banner.hasMany(db.banner_image, { foreignKey: 'banner_id'});
             }
 
             // GET Single Banner
             const getBanner = await db.banner.findOne({
                 where: {
-                    banner_id,
+                    id: banner_id,
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.banner_image, as: 'bannerimages'
+                    model: db.banner_image,
+                    as: 'banner_images'
                 }]
             });
 
@@ -323,8 +327,8 @@ module.exports = {
         try {
 
             // Association with Banner and Banner Images
-            if (!db.banner.hasAlias('banner_images') && !db.banner.hasAlias('bannerimages')) {
-                await db.banner.hasMany(db.banner_image, { sourceKey: 'banner_id', foreignKey: 'banner_id', as: 'bannerimages' });
+            if (!db.banner.hasAlias('banner_images')) {
+                await db.banner.hasMany(db.banner_image, { foreignKey: 'banner_id'});
             }
 
             // GET All Banners
@@ -333,7 +337,7 @@ module.exports = {
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.banner_image, as: 'bannerimages'
+                    model: db.banner_image, as: 'banner_images'
                 }]
             });
 
@@ -358,18 +362,18 @@ module.exports = {
             const { banner_slug } = req;
 
             // Association with Banner and Banner Images
-            if (!db.banner.hasAlias('banner_images') && !db.banner.hasAlias('bannerimages')) {
-                await db.banner.hasMany(db.banner_image, { sourceKey: 'banner_id', foreignKey: 'banner_id', as: 'bannerimages' });
+            if (!db.banner.hasAlias('banner_images')) {
+                await db.banner.hasMany(db.banner_image, { foreignKey: 'banner_id' });
             }
 
             // GET Banner By SLUG
             const getBanner = await db.banner.findOne({
                 where: {
-                    banner_slug,
+                    slug: banner_slug,
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.banner_image, as: 'bannerimages'
+                    model: db.banner_image, as: 'banner_images'
                 }]
             });
 
@@ -397,7 +401,7 @@ module.exports = {
             const findBannerImage = await db.banner_image.findOne({
                 where: {
                     [Op.and]: [{
-                        banner_id,
+                        id: banner_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -417,7 +421,7 @@ module.exports = {
             const deletebannerimage = await db.banner_image.destroy({
                 where: {
                     [Op.and]: [{
-                        banner_id,
+                        id: banner_id,
                         tenant_id: TENANTID
                     }]
                 }

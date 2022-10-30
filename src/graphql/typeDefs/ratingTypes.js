@@ -13,7 +13,7 @@ module.exports = gql`
     }
 
     type User {
-        uid:String
+        id:String
         first_name:String
         last_name:String
         email:String

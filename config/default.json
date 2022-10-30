@@ -25,15 +25,15 @@
         "PRODUCT_IMG_IDF": "partno",
         "BRAND_IMG_SRC": "psp-image-storage/brand",
         "BRAND_IMG_DEST": "psp-image-storage-resize/brand",
-        "BRND_IMG_IDF": "brand_id",
+        "BRND_IMG_IDF": "id",
         "BANNER_IMG_SRC": "psp-image-storage/banner",
         "BANNER_IMG_DEST": "psp-image-storage-resize/banner",
-        "BANNER_IMG_IDF": "banner_id",
+        "BANNER_IMG_IDF": "id",
         "CATEGORY_IMG_SRC": "psp-image-storage/category",
         "CATEGORY_IMG_DEST": "psp-image-storage-resize/category",
         "CATEGORY_IMG_IDF": "cat_id",
         "USER_IMG_SRC": "psp-image-storage/user",
         "USER_IMG_DEST": "psp-image-storage-resize/user",
-        "USER_IMG_IDF": "uuid"
+        "USER_IMG_IDF": "id"
     }
 }

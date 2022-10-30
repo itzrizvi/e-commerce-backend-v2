@@ -128,7 +128,7 @@ module.exports = {
                 prod_condition,
                 dimension_id,
                 prod_thumbnail: "demo.jpg",
-                added_by: user.uid,
+                added_by: user.id,
                 tenant_id: TENANTID
             });
             if (!createProduct) return { message: "Product Create Failed!!!", status: false }
@@ -281,14 +281,13 @@ module.exports = {
 
                 await db.product.hasOne(db.user, {
                     sourceKey: 'added_by',
-                    foreignKey: 'uid',
                     as: 'created_by'
                 });
             }
 
             // Created By Associations
-            db.user.belongsToMany(db.role, { through: db.admin_role, sourceKey: 'uid', foreignKey: 'admin_id' });
-            db.role.belongsToMany(db.user, { through: db.admin_role, sourceKey: 'role_id', foreignKey: 'role_id' });
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
             // Product Gallery Associations
             if (!db.product.hasAlias('product_gallery') && !db.product.hasAlias('gallery')) {
@@ -798,7 +797,7 @@ module.exports = {
                 prod_condition,
                 prod_outofstock_status,
                 dimension_id,
-                added_by: user.uid
+                added_by: user.id
             }
 
             // Update Product

@@ -24,7 +24,7 @@ module.exports = {
             });
 
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email },
+                { id: user.id, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: '1y' }
             );
@@ -46,7 +46,7 @@ module.exports = {
             db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
-                        uid: user.uid,
+                        id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -54,7 +54,7 @@ module.exports = {
 
             return {
                 authToken,
-                uid: user.uid,
+                id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
@@ -115,7 +115,7 @@ module.exports = {
 
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email },
+                { id: user.id, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: '4h' }
             );
@@ -127,7 +127,7 @@ module.exports = {
             db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
-                        uid: user.uid,
+                        id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -135,7 +135,7 @@ module.exports = {
 
             return {
                 authToken,
-                uid: user.uid,
+                id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,

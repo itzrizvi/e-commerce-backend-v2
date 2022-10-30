@@ -32,14 +32,14 @@ module.exports = gql`
     }
 
     type Banner{
-        banner_id: Int!
-        banner_name: String
-        banner_slug: String
-        banner_status: Boolean!
+        id: Int!
+        name: String
+        slug: String
+        status: Boolean!
         tenant_id: String
         createdAt: String
         updatedAt: String
-        bannerimages:[BannerImage]
+        banner_images:[BannerImage]
     }
 
     type BannerImage{
@@ -56,13 +56,12 @@ module.exports = gql`
 
     input UpdateBannerInput {
         banner_id: Int!
-        banner_name: String
-        banner_status: Boolean
+        name: String
+        status: Boolean
     }
 
     input UpdateBannerImageInput {
         id: Int!
-        banner_id: Int!
         title: String
         link: String
         sort_order: Int

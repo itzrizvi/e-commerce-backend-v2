@@ -58,7 +58,7 @@ module.exports = {
 
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email, has_role: user.has_role },
+                { id: user.id, email: user.email, has_role: user.has_role },
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
             );
@@ -70,7 +70,7 @@ module.exports = {
             db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
-                        uid: user.uid,
+                        id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -78,7 +78,7 @@ module.exports = {
 
             return {
                 authToken,
-                uid: user.uid,
+                id: user.id,
                 email: user.email,
                 message: "Sign In succesfull",
                 emailVerified: user.email_verified,
@@ -150,7 +150,7 @@ module.exports = {
                     // Loop For Assign Other Values to Role Data
                     roleUUID.forEach(element => {
                         element.tenant_id = createStuff.tenant_id;
-                        element.admin_id = createStuff.uid;
+                        element.admin_id = createStuff.id;
                     });
 
                     // Admin Roles Save Bulk
@@ -222,7 +222,7 @@ module.exports = {
                     // Loop For Assign Other Values to Role Data
                     roleUUID.forEach(element => {
                         element.tenant_id = updatedStuffData.tenant_id;
-                        element.admin_id = updatedStuffData.uid;
+                        element.admin_id = updatedStuffData.id;
                     });
 
                     // Permissions Bulk Create

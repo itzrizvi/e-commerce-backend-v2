@@ -77,7 +77,6 @@ module.exports = {
             if (!db.user.hasAlias('billing_address')) {
                 await db.user.hasMany(db.billing_address,
                     {
-                        sourceKey: 'uid',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -90,7 +89,6 @@ module.exports = {
             if (!db.user.hasAlias('shipping_address')) {
                 await db.user.hasMany(db.shipping_address,
                     {
-                        sourceKey: 'uid',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -140,7 +138,6 @@ module.exports = {
             if (!db.user.hasAlias('billing_address')) {
                 await db.user.hasMany(db.billing_address,
                     {
-                        sourceKey: 'uid',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -153,7 +150,6 @@ module.exports = {
             if (!db.user.hasAlias('shipping_address')) {
                 await db.user.hasMany(db.shipping_address,
                     {
-                        sourceKey: 'uid',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -179,7 +175,7 @@ module.exports = {
                 ],
                 where: {
                     [Op.and]: [{
-                        uid: customer_id,
+                        id: customer_id,
                         tenant_id: TENANTID,
                         has_role: '0'
                     }]

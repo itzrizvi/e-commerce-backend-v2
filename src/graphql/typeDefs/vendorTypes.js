@@ -81,7 +81,10 @@ input GetSingleVendorInput{
 extend type Mutation {
     createVendor(data: CreateVendorInput): CreateVendorOutput!
     updateVendor(data: UpdateVendorInput): CreateVendorOutput!
+    addVendorBillingAddress(data: Address): CommonOutput!
+    addVendorShippingAddress(data: Address): CommonOutput!
     updateVendorStatus(data: UpdateVendorStatusInput): CreateVendorOutput!
+    updateVendorAddress(data: UpdateAddress): CommonOutput!
 }
 
 extend type Query {

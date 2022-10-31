@@ -19,7 +19,7 @@ type AddressOutput{
 }
 
 input Address{
-    customer_id: Int!
+    parent_id: Int!
     address1: String!
     address2: String!
     phone: String!
@@ -33,7 +33,7 @@ input Address{
 }
 
 input UpdateAddress{
-    address_id: Int!
+    parent_id: Int!
     address1: String!
     address2: String!
     phone: String!

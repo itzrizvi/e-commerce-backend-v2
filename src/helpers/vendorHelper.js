@@ -260,5 +260,113 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
-    }
+    },
+    addVendorBillingAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Auth Check
+        if (!isAuth) return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        try {
+            const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const createBilling = db.address.create({
+                ref_id: parent_id,
+                ref_model: "vendor",
+                tenant_id: TENANTID,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                type : "billing",
+                status,
+                phone,
+                fax,
+                email
+            });
+
+            if(createBilling){
+                return {
+                    tenant_id: createBilling.tenant_id,
+                    message: "Successfully Created Billing Address.",
+                    status: true,
+                }
+            }
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    addVendorShippingAddress: async (req, db, user, isAuth, TENANTID) => {
+         // Auth Check
+         if (!isAuth) return { message: "Not Authorized", status: false };
+         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+ 
+         try {
+             const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+             const createShipping = db.address.create({
+                 ref_id: parent_id,
+                 ref_model: "vendor",
+                 tenant_id: TENANTID,
+                 address1,
+                 address2,
+                 city,
+                 state,
+                 zip_code,
+                 country,
+                 type : "shipping",
+                 status,
+                 phone,
+                 fax,
+                 email
+             });
+ 
+             if(createShipping){
+                 return {
+                     tenant_id: createShipping.tenant_id,
+                     message: "Successfully Created Shipping Address.",
+                     status: true,
+                 }
+             }
+         } catch (error) {
+             if (error) return { message: "Something Went Wrong!!!", status: false }
+         }
+    },
+    updateVendorAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Auth Check
+        // Auth Check
+        if (!isAuth) return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+        try {
+            const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status} = req
+            const updateAddress = db.address.update({
+                 address1,
+                 address2,
+                 city,
+                 state,
+                 zip_code,
+                 country,
+                 status,
+                 phone,
+                 fax,
+                 email
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id: parent_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if(updateAddress){
+                return {
+                    tenant_id: updateAddress.tenant_id,
+                    message: "Successfully Updated Address.",
+                    status: true,
+                }
+            }
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

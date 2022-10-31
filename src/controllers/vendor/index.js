@@ -4,4 +4,7 @@ module.exports = {
     updateVendorStatusController: require("./updateVendorStatusController"),
     getAllVendorController: require("./getAllVendorController"),
     getSingleVendorController: require("./getSingleVendorController"),
+    addVendorBillingAddressController: require("./addVendorBillingAddressController"),
+    addVendorShippingAddressController: require("./addVendorShippingAddressController"),
+    updateVendorAddressController: require("./updateVendorAddressController"),
 }

@@ -1,4 +1,4 @@
-const { createVendorController, updateVendorController, updateVendorStatusController } = require("../../controllers");
+const { createVendorController, updateVendorController, updateVendorStatusController, addVendorBillingAddressController, addVendorShippingAddressController, updateVendorAddressController } = require("../../controllers");
 
 // Role Mutation Start
 module.exports = {
@@ -31,5 +31,35 @@ module.exports = {
 
         // Return To Controller
         return await updateVendorStatusController(args.data, db, user, isAuth, TENANTID);
-    }
+    },
+    // Create Vendor Billing Address Mutation
+    addVendorBillingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+        // Send to Controller
+        return await addVendorBillingAddressController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Create Vendor Shipping Address Mutation
+    addVendorShippingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+        // Send to Controller
+        return await addVendorShippingAddressController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Update Vendor Address Mutation
+    updateVendorAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+        // Send to Controller
+        return await updateVendorAddressController(args.data, db, user, isAuth, TENANTID);
+    },
 }

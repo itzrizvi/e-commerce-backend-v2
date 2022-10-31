@@ -65,7 +65,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { customer_group_id,
+            const { id,
                 customer_group_name,
                 customergroup_sortorder,
                 customergroup_status,
@@ -91,7 +91,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            customer_group_id
+                            id
                         }]
                     }
                 });
@@ -113,7 +113,7 @@ module.exports = {
             const updateCustomerGrp = await db.customer_group.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        customer_group_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -171,7 +171,7 @@ module.exports = {
             const singleCustomerGroup = await db.customer_group.findOne({
                 where: {
                     [Op.and]: [{
-                        customer_group_id,
+                        id: customer_group_id,
                         tenant_id: TENANTID
                     }]
                 }

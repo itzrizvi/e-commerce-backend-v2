@@ -3,7 +3,7 @@ const { gql } = require("apollo-server-express");
 
 module.exports = gql`
     type Rating {
-        rating_id: Int
+        id: Int
         rating_title:String
         rating_description:String
         rating:Float
@@ -41,7 +41,7 @@ module.exports = gql`
         data: Rating
     }
 
-    input CreateRoleInput{
+    input CreateRatingInput{
         user_id: Int!
         product_id: Int!
         rating: Float!
@@ -80,7 +80,7 @@ module.exports = gql`
     }
 
     extend type Mutation {
-        createRating(data: CreateRoleInput): CreateRatingOutput!
+        createRating(data: CreateRatingInput): CreateRatingOutput!
     }
 
     extend type Query {

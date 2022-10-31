@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const DiscountType = sequelize.define("discount_type", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         customer_group_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         discount_quantity: {

@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const Coupon = sequelize.define("coupon", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true

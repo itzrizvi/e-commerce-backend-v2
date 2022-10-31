@@ -3,45 +3,45 @@ module.exports = (sequelize, DataTypes) => {
 
     const Vendor = sequelize.define("vendor", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        vendor_contact_person: {
+        contact_person: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        vendor_company_name: {
+        company_name: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_email: {
+        email: {
             type: DataTypes.STRING,
             isEmail: true,
             allowNull: false
         },
-        vendor_phone_number: {
+        phone_number: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_EIN_no: {
+        EIN_no: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_TAX_ID: {
+        TAX_ID: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_FAX_no: {
+        FAX_no: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_description: {
+        description: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        vendor_status: {
+        status: {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },

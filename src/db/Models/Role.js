@@ -3,13 +3,13 @@ module.exports = (sequelize, DataTypes) => {
 
     const Role = sequelize.define("role", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
         role_no: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
         },

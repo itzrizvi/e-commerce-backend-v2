@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const Brands = sequelize.define("brand", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true

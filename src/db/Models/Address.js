@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const Address = sequelize.define("address", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true

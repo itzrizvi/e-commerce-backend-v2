@@ -8,52 +8,49 @@ module.exports = gql`
 
 
 type Vendor{
-    vendor_id: Int!
-    vendor_contact_person: String!
-    vendor_company_name: String
-    vendor_email: String!
-    vendor_description: String
-    vendor_phone_number: String
-    vendor_EIN_no: String
-    vendor_TAX_ID: String
-    vendor_FAX_no: String
-    vendor_status: Boolean!
-    billing_addresses: [AddressOutput]
-    shipping_addresses: [AddressOutput]
+    id: Int!
+    contact_person: String!
+    company_name: String
+    email: String!
+    description: String
+    phone_number: String
+    EIN_no: String
+    TAX_ID: String
+    FAX_no: String
+    status: Boolean!
+    addresses: [AddressOutput]
 }
 
 
 
 input CreateVendorInput{
-    vendor_contact_person: String!
-    vendor_company_name: String
-    vendor_email: String!
-    vendor_description: String
-    vendor_status: Boolean!
-    vendor_phone_number: String
-    vendor_EIN_no: String
-    vendor_TAX_ID: String
-    vendor_FAX_no: String
+    contact_person: String!
+    company_name: String
+    email: String!
+    description: String
+    status: Boolean!
+    phone_number: String
+    EIN_no: String
+    TAX_ID: String
+    FAX_no: String
 }
 
 input UpdateVendorInput{
-    vendor_id: Int!
-    vendor_contact_person: String!
-    vendor_company_name: String
-    vendor_email: String!
-    vendor_description: String
-    vendor_status: Boolean!
-    vendor_phone_number: String
-    vendor_EIN_no: String
-    vendor_TAX_ID: String
-    vendor_FAX_no: String
-    billing_address: [UpdateAddress]!
-    shipping_address: [UpdateAddress]!
+    id: Int!
+    contact_person: String!
+    company_name: String
+    email: String!
+    description: String
+    status: Boolean!
+    phone_number: String
+    EIN_no: String
+    TAX_ID: String
+    FAX_no: String
 }
 
 input UpdateVendorStatusInput{
-    vendor_id: Int!
-    vendor_status: Boolean!
+    id: Int!
+    status: Boolean!
 }
 
 type CreateVendorOutput{
@@ -75,7 +72,7 @@ type SingleVendorOutput{
 
 
 input GetSingleVendorInput{
-    vendor_id:Int!
+    id:Int!
 }
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -84,7 +81,10 @@ input GetSingleVendorInput{
 extend type Mutation {
     createVendor(data: CreateVendorInput): CreateVendorOutput!
     updateVendor(data: UpdateVendorInput): CreateVendorOutput!
+    addVendorBillingAddress(data: Address): CommonOutput!
+    addVendorShippingAddress(data: Address): CommonOutput!
     updateVendorStatus(data: UpdateVendorStatusInput): CreateVendorOutput!
+    updateVendorAddress(data: UpdateAddress): CommonOutput!
 }
 
 extend type Query {

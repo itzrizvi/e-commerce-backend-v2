@@ -169,9 +169,9 @@ module.exports = {
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const {customer_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
             const createBilling = db.address.create({
-                ref_id: customer_id,
+                ref_id: parent_id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
                 address1,
@@ -204,9 +204,9 @@ module.exports = {
          if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
  
          try {
-             const {customer_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+             const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
              const createShipping = db.address.create({
-                 ref_id: customer_id,
+                 ref_id: parent_id,
                  ref_model: "customer",
                  tenant_id: TENANTID,
                  address1,
@@ -239,7 +239,7 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {address_id, phone, fax, email, address1, address2, city, state, zip_code, country, status} = req
+            const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status} = req
             const updateAddress = db.address.update({
                  address1,
                  address2,
@@ -254,7 +254,7 @@ module.exports = {
             }, {
                 where: {
                     [Op.and]: [{
-                        id: address_id,
+                        id: parent_id,
                         tenant_id: TENANTID
                     }]
                 }

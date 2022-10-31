@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const AttrGroup = sequelize.define("attr_group", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true

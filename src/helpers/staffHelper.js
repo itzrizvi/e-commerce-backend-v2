@@ -9,9 +9,6 @@ const { verifierEmail } = require("../utils/verifyEmailSender");
 module.exports = {
     // GET ALL STAFF API
     getAllStaff: async (db, user, isAuth, TENANTID) => {
-        // Return if No Auth
-        if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
 
         // Try Catch Block
         try {
@@ -56,7 +53,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { id, first_name, last_name, password, roleUUID, user_status, image, sendEmail } = req;
+            const { id, first_name, last_name, password, role_ids, user_status, image, sendEmail } = req;
 
             // if Password available
             let encryptPassword;
@@ -161,9 +158,9 @@ module.exports = {
 
 
                 // ROLE ALSO UPDATED
-                if (roleUUID) {
+                if (role_ids) {
                     // Loop For Assign Other Values to Role Data
-                    roleUUID.forEach(element => {
+                    role_ids.forEach(element => {
                         element.tenant_id = TENANTID;
                         element.admin_id = id;
                     });
@@ -181,7 +178,7 @@ module.exports = {
                     if (!deletePreviousEntry) return { message: "Previous Admin Role Delete Failed!!!!", status: false }
 
                     // Update Admin Roles Bulk
-                    const adminRolesDataUpdate = await db.admin_role.bulkCreate(roleUUID);
+                    const adminRolesDataUpdate = await db.admin_role.bulkCreate(role_ids);
                     if (!adminRolesDataUpdate) return { message: "Admin Role Data Udpate Failed", status: false }
 
                     // Return
@@ -212,7 +209,7 @@ module.exports = {
     getSingleAdmin: async (req, db, user, isAuth, TENANTID) => {
 
         // Try Catch Block
-        // try {
+        try {
 
         // UID from Request
         const { id } = req;
@@ -226,46 +223,46 @@ module.exports = {
             await db.role.hasMany(db.permissions_data, { foreignKey: 'role_id', as: 'permissions' });
         }
 
-        // Check If User Has Alias or Not 
-        if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-            await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'roles_permission_id', as: 'rolesPermission' });
-        }
+            // Check If User Has Alias or Not 
+            if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'id', as: 'rolesPermission' });
+            }
 
-        // GET ALL STAFF QUERY
-        const getAdmin = await db.user.findOne({
-            where: {
-                [Op.and]: [{
-                    id,
-                    tenant_id: TENANTID
-                }]
+            // GET ALL STAFF QUERY
+            const getAdmin = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
 
-            },
-            include: {
-                model: db.role, as: 'roles',
-                include: {
-                    model: db.permissions_data, as: 'permissions',
-                    include: { model: db.roles_permission, as: 'rolesPermission' },
-                    separate: true,
-                    order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
                 },
-            },
+                include: {
+                    model: db.role, as: 'roles',
+                    include: {
+                        model: db.permissions_data, as: 'permissions',
+                        include: { model: db.roles_permission, as: 'rolesPermission' },
+                        separate: true,
+                        order: [[{ model: db.roles_permission, as: 'rolesPermission' }, 'roles_permission_name', 'ASC']]
+                    },
+                },
 
-            order: [[db.role, 'role', 'ASC']]
-        });
+                order: [[db.role, 'role', 'ASC']]
+            });
 
-        // Return Formation
-        return {
-            data: getAdmin,
-            message: "Single Staff/Admin GET Success!!!",
-            status: true,
-            tenant_id: TENANTID
+            // Return Formation
+            return {
+                data: getAdmin,
+                message: "Single Staff/Admin GET Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
         }
-
-
-
-        // } catch (error) {
-        //     if (error) return { message: "Something Went Wrong!!!", status: false }
-        // }
     },
     // Admin/Staff Password Change
     adminPasswordChange: async (req, db, user, isAuth, TENANTID) => {

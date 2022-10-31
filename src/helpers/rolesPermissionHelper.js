@@ -57,10 +57,6 @@ module.exports = {
     },
     // GET ALL Roles Permission
     getAllRolesPermission: async (db, user, isAuth, TENANTID) => {
-        // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
-
 
         try {
             // GET ALL Feature Permissions Query
@@ -88,21 +84,18 @@ module.exports = {
     },
     // GET SINGLE ROLES PERMISSION
     getSingleRolesPermission: async (req, db, user, isAuth, TENANTID) => {
-        // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Try Catch Block
         try {
 
             // Data From Request
-            const roles_permission_id = req.roles_permission_id;
+            const roles_permission_id = req.id;
 
             // Find Roles Permission
             const findRolesPermission = await db.roles_permission.findOne({
                 where: {
                     [Op.and]: [{
-                        roles_permission_id,
+                        id: roles_permission_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -127,15 +120,12 @@ module.exports = {
     },
     // UPDATE ROLES PERMISSION
     updateRolesPermission: async (req, db, user, isAuth, TENANTID) => {
-        // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Try Catch Block
         try {
 
             // Data From Request
-            const roles_permission_id = req.roles_permission_id;
+            const id = req.id;
             const roles_permission_name = req.roles_permission_name;
             const roles_permission_status = req.roles_permission_status;
 
@@ -156,7 +146,7 @@ module.exports = {
                 const findPermissionExists = await db.roles_permission.findOne({
                     where: {
                         [Op.and]: [{
-                            roles_permission_slug: rolesPermissionNameSlug,
+                            roles_permission_slug: roles_permission_slug,
                             tenant_id: TENANTID
                         }]
                     }
@@ -177,7 +167,7 @@ module.exports = {
             const updateRolesPermission = await db.roles_permission.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        roles_permission_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }

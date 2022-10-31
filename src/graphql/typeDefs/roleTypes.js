@@ -7,7 +7,7 @@ module.exports = gql`
 ##############################################################################
 
 type Role {
-    role_id: Int
+    id: Int
     role_no: Float
     role:String
     role_slug:String
@@ -39,7 +39,7 @@ type CreateRoleWithPermissionOutput {
 }
 
 input UpdateRoleInput {
-    role_id:Int
+    id:Int
     role:String
     role_status:Boolean
     roleDescription:String
@@ -61,7 +61,7 @@ type UpdateRolePermissionsOutput {
 }
 
 input DeleteRoleInput {
-    role_id:Int
+    id:Int
 }
 
 type DeleteRoleOutput {
@@ -70,7 +70,7 @@ type DeleteRoleOutput {
 }
 
 type SingleRole {
-    role_id: Int
+    id: Int
     role_no: Float
     role:String
     role_slug:String
@@ -83,7 +83,7 @@ type SingleRole {
 }
 
 input GetSingleRoleInput {
-    role_id:Int
+    id:Int
 }
 
 type GetSingleRoleOutput {

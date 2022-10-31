@@ -180,6 +180,7 @@ module.exports = {
         // Time Calculating
         const reqTime = new Date();
         const recordTime = new Date(updatedAt);
+
         // Calculating Minutes
         let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
         // Difference

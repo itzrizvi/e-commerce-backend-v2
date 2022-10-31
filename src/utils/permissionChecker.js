@@ -13,7 +13,7 @@ const checkPermission = async (db, user, TENANTID, permissionName) => {
             roles_permission_slug: permissionName
         }
     });
-    const rolePermissionID = getRolesPermissionData.roles_permission_id; // Extract UUID
+    const rolePermissionID = getRolesPermissionData.id; // Extract UUID
 
     // Find Roles of This User 
     const findRoles = await db.admin_role.findAll({

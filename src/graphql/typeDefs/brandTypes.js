@@ -7,7 +7,7 @@ module.exports = gql`
 ###############################################################################
 
 type Brand {
-    brand_id:Int
+    id:Int
     brand_name:String
     brand_slug:String
     brand_description:String

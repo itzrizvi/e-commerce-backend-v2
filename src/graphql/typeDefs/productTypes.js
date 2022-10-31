@@ -37,7 +37,7 @@ type PartofProduct {
 }
 
 type ProductAttributes {
-    prod_attr_id:Int
+    id:Int
     attribute_type:String
     attribute_value:String
     attribute_data:Attribute
@@ -115,7 +115,7 @@ input AddProductInput {
 }
 
 type ProductForList {
-    prod_id:Int
+    id:Int
     prod_name:String
     prod_slug:String
     prod_regular_price:Float

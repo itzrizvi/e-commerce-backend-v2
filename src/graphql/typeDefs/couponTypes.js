@@ -36,7 +36,7 @@ module.exports = gql`
     }
 
     type Coupon {
-        coupon_id: Int
+        id: Int
         coupon_name: String
         coupon_code: String
         coupon_description: String

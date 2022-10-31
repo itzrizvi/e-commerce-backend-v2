@@ -107,7 +107,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            coupon_id
+                            id: coupon_id
                         }]
                     }
                 });
@@ -122,7 +122,7 @@ module.exports = {
             const findCoupon = await db.coupon.findOne({
                 where: {
                     [Op.and]: [{
-                        coupon_id,
+                        id: coupon_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -168,7 +168,7 @@ module.exports = {
             const updateCoupon = await db.coupon.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        coupon_id,
+                        id: coupon_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -198,7 +198,7 @@ module.exports = {
             const getsinglecoupon = await db.coupon.findOne({
                 where: {
                     [Op.and]: [{
-                        coupon_id,
+                        id: coupon_id,
                         tenant_id: TENANTID
                     }]
                 }

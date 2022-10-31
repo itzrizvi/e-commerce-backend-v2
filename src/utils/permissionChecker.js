@@ -13,6 +13,10 @@ const checkPermission = async (db, user, TENANTID, permissionName) => {
             roles_permission_slug: permissionName
         }
     });
+
+    // If Null
+    if (!getRolesPermissionData) return { success: false }
+
     const rolePermissionID = getRolesPermissionData.id; // Extract UUID
 
     // Find Roles of This User 

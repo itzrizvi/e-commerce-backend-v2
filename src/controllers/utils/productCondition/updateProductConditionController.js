@@ -2,7 +2,7 @@ const { updateProductCondition } = require("../../../helpers/utils/productCondit
 const { checkPermission } = require("../../../utils/permissionChecker");
 const { singleResponse } = require("../../../utils/response");
 
-module.exports = async (req, db, TENANTID) => {
+module.exports = async (req, db, user, TENANTID) => {
     // Check Permission
     const checkPermissions = await checkPermission(db, user, TENANTID, "product-condition");
     if (!checkPermissions.success) {

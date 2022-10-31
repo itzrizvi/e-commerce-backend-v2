@@ -2,7 +2,7 @@ const { createProductAvailabilityStatus } = require("../../../helpers/utils/prod
 const { singleResponse } = require("../../../utils/response");
 const { checkPermission } = require("../../../utils/permissionChecker");
 
-module.exports = async (req, db, TENANTID) => {
+module.exports = async (req, db, user, TENANTID) => {
     // Check Permission
     const checkPermissions = await checkPermission(db, user, TENANTID, "product-availability-status");
     if (!checkPermissions.success) {

@@ -3,17 +3,17 @@ module.exports = (sequelize, DataTypes) => {
 
     const AdminRoles = sequelize.define("admin_role", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
         role_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         admin_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         tenant_id: {

@@ -10,13 +10,13 @@ module.exports = {
 
         try {
             // GET DATA
-            const { vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req;
+            const { contact_person, company_name, email, description, phone_number, EIN_no, TAX_ID, FAX_no, status } = req;
 
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {
                     [Op.and]: [{
-                        vendor_email,
+                        email,
                         tenant_id: TENANTID
                     }]
                 }
@@ -24,53 +24,22 @@ module.exports = {
 
             if (checkVendorExist) return { message: "Vendor already exists!", status: false }
             const createVendor = await db.vendor.create({
-                vendor_contact_person,
-                vendor_company_name,
-                vendor_email,
-                vendor_description,
-                vendor_phone_number,
-                vendor_EIN_no,
-                vendor_TAX_ID,
-                vendor_FAX_no,
-                vendor_status,
+                contact_person,
+                company_name,
+                email,
+                description,
+                phone_number,
+                EIN_no,
+                TAX_ID,
+                FAX_no,
+                status,
                 tenant_id: TENANTID
             });
 
-            if (createVendor) {
-
-                billing_address.forEach(ele => {
-                    const { billing_address, billing_city, billing_PO_code, billing_country, billing_status } = ele
-                    db.billing_address.create({
-                        ref_id: createVendor.vendor_id,
-                        ref_model: "vendor",
-                        tenant_id: TENANTID,
-                        billing_address,
-                        billing_city,
-                        billing_PO_code,
-                        billing_country,
-                        billing_status
-                    });
-                });
-
-                shipping_address.forEach(ele => {
-                    const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_status } = ele
-                    db.shipping_address.create({
-                        ref_id: createVendor.vendor_id,
-                        ref_model: "vendor",
-                        tenant_id: TENANTID,
-                        shipping_address,
-                        shipping_city,
-                        shipping_PO_code,
-                        shipping_country,
-                        shipping_status
-                    });
-                });
-
-                return {
-                    tenant_id: createVendor.tenant_id,
-                    message: "Successfully Created Vendor.",
-                    status: true,
-                }
+            return {
+                tenant_id: createVendor.tenant_id,
+                message: "Successfully Created Vendor.",
+                status: true,
             }
 
         } catch (error) {
@@ -90,18 +59,18 @@ module.exports = {
         try {
 
             // Data From Request
-            const { vendor_id, vendor_contact_person, vendor_company_name, vendor_email, vendor_description, vendor_phone_number, vendor_EIN_no, vendor_TAX_ID, vendor_FAX_no, billing_address, shipping_address, vendor_status } = req
+            const { id, contact_person, company_name, email, description, phone_number, EIN_no, TAX_ID, FAX_no, status } = req
 
 
             // Check The Vendor Is Already Taken or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {
                     [Op.and]: [{
-                        vendor_email,
+                        email,
                         tenant_id: TENANTID
                     }],
                     [Op.not]: [{
-                        vendor_id
+                        id
                     }]
                 }
             });
@@ -111,22 +80,22 @@ module.exports = {
 
             // Update Doc
             const updateDoc = {
-                vendor_contact_person,
-                vendor_company_name,
-                vendor_email,
-                vendor_description,
-                vendor_phone_number,
-                vendor_EIN_no,
-                vendor_TAX_ID,
-                vendor_FAX_no,
-                vendor_status,
+                contact_person,
+                company_name,
+                email,
+                description,
+                phone_number,
+                EIN_no,
+                TAX_ID,
+                FAX_no,
+                status,
             }
 
             // Update Vendor 
             const updateVendor = await db.vendor.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        vendor_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -134,69 +103,6 @@ module.exports = {
 
             // IF NOT UPDATED THEN RETURN
             if (!updateVendor) return { message: "Update Gone Wrong!!!", status: false }
-
-            billing_address.forEach(ele => {
-                const { billing_address, billing_city, billing_PO_code, billing_country, billing_id, billing_status } = ele
-
-                if (billing_id) {
-                    db.billing_address.update({
-                        billing_address,
-                        billing_city,
-                        billing_PO_code,
-                        billing_country,
-                        billing_status
-                    }, {
-                        where: {
-                            [Op.and]: [{
-                                billing_id,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    });
-                } else {
-                    db.billing_address.create({
-                        ref_id: vendor_id,
-                        ref_model: "vendor",
-                        tenant_id: TENANTID,
-                        billing_address,
-                        billing_city,
-                        billing_PO_code,
-                        billing_country,
-                        billing_status
-                    });
-                }
-            });
-
-            shipping_address.forEach(ele => {
-                const { shipping_address, shipping_city, shipping_PO_code, shipping_country, shipping_id, shipping_status } = ele
-                if (shipping_id) {
-                    db.shipping_address.update({
-                        shipping_address,
-                        shipping_city,
-                        shipping_PO_code,
-                        shipping_country,
-                        shipping_status
-                    }, {
-                        where: {
-                            [Op.and]: [{
-                                shipping_id,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    });
-                } else {
-                    db.shipping_address.create({
-                        ref_id: vendor_id,
-                        ref_model: "vendor",
-                        tenant_id: TENANTID,
-                        shipping_address,
-                        shipping_city,
-                        shipping_PO_code,
-                        shipping_country,
-                        shipping_status
-                    });
-                }
-            });
 
             // Return Data
             return {
@@ -222,18 +128,18 @@ module.exports = {
         try {
 
             // Data From Request
-            const { vendor_id, vendor_status } = req
+            const { id, status } = req
 
             // Update Doc
             const updateDoc = {
-                vendor_status
+                status
             }
 
             // Update Vendor Status
             const updateVendor = await db.vendor.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        vendor_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -266,23 +172,9 @@ module.exports = {
         // Try Catch Block
         try {
 
-            if (!db.vendor.hasAlias('billing_address')) {
-                await db.vendor.hasMany(db.billing_address,
+            if (!db.vendor.hasAlias('addresses')) {
+                await db.vendor.hasMany(db.address,
                     {
-                        sourceKey: 'vendor_id',
-                        foreignKey: 'ref_id',
-                        constraints: false,
-                        scope: {
-                            ref_model: 'vendor'
-                        }
-                    });
-            }
-    
-    
-            if (!db.vendor.hasAlias('shipping_address')) {
-                await db.vendor.hasMany(db.shipping_address,
-                    {
-                        sourceKey: 'vendor_id',
                         foreignKey: 'ref_id',
                         constraints: false,
                         scope: {
@@ -292,23 +184,19 @@ module.exports = {
             }
 
             // Data From Request
-            const { vendor_id } = req;
+            const { id } = req;
 
             // GET Single Vendor BY CODE
             const getsinglevendor = await db.vendor.findOne({
                 include: [
                     {
-                        model: db.billing_address,
-                        separate: true,
-                    },
-                    {
-                        model: db.shipping_address,
+                        model: db.address,
                         separate: true,
                     }
                 ],
                 where: {
                     [Op.and]: [{
-                        vendor_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -336,23 +224,9 @@ module.exports = {
 
         // Try Catch Block
         try {
-        if (!db.vendor.hasAlias('billing_address')) {
-            await db.vendor.hasMany(db.billing_address,
+        if (!db.vendor.hasAlias('addresses')) {
+            await db.vendor.hasMany(db.address,
                 {
-                    sourceKey: 'vendor_id',
-                    foreignKey: 'ref_id',
-                    constraints: false,
-                    scope: {
-                        ref_model: 'vendor'
-                    }
-                });
-        }
-
-
-        if (!db.vendor.hasAlias('shipping_address')) {
-            await db.vendor.hasMany(db.shipping_address,
-                {
-                    sourceKey: 'vendor_id',
                     foreignKey: 'ref_id',
                     constraints: false,
                     scope: {
@@ -365,11 +239,7 @@ module.exports = {
         const getallvendor = await db.vendor.findAll({
             include: [
                 {
-                    model: db.billing_address,
-                    separate: true,
-                },
-                {
-                    model: db.shipping_address,
+                    model: db.address,
                     separate: true,
                 }
             ],

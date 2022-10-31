@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         user_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         user_ip:{

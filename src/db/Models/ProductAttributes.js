@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const ProductAttributes = sequelize.define("product_attribute", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         attr_group_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         attribute_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         attribute_type: {

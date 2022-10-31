@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const Category = sequelize.define("category", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         cat_parent_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         cat_meta_tag_title: {
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false
         },
         created_by: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         is_featured: {

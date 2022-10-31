@@ -14,7 +14,7 @@ input CreateCustomerGroupInput {
 }
 
 input UpdateCustomerGroupInput {
-    customer_group_id:UUID!
+    id:Int!
     customer_group_name:String
     customergroup_description:String
     customergroup_sortorder:Int
@@ -22,7 +22,7 @@ input UpdateCustomerGroupInput {
 }
 
 type CustomerGroup {
-    customer_group_id:UUID
+    id:Int
     customer_group_name:String
     customer_group_slug:String
     customergroup_description:String
@@ -64,7 +64,4 @@ extend type Mutation {
 extend type Query {
     getAllCustomerGroups:GetAllCustomerGroupsOutput!
     getSingleCustomerGroup(query: GetSingleCustomerGroupInput):GetSingleCustomerGroupOutput!
-}
-
-
-`;
+}`;

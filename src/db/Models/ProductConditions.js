@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const ProductConditions = sequelize.define("product_condition", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true

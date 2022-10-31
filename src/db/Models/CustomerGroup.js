@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const CustomerGroup = sequelize.define("customer_group", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         customergroup_description: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         customergroup_sortorder: {
             type: DataTypes.INTEGER,

@@ -28,12 +28,25 @@ module.exports = {
 
             if (checkRatingExist) return { message: "Rating already given!", status: false }
 
+
+             // Check The Product Exist or Not
+             const checkProductExist = await db.product.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: product_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!checkProductExist) return { message: "Product not exist!", status: false }
+
             const createRating = await db.rating.create({
-                user_id: user_id,
-                product_id: product_id,
+                user_id,
+                product_id,
                 rating_title: title,
                 rating_description: description,
-                rating: rating,
+                rating,
                 tenant_id: TENANTID
             });
 
@@ -119,7 +132,7 @@ module.exports = {
             const findRating = await db.rating.findOne({
                 where: {
                     tenant_id: TENANTID,
-                    rating_id
+                    id: rating_id
                 },
                 order: [
                     ['createdAt', 'DESC']

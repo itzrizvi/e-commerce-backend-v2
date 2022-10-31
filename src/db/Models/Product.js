@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         prod_category: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         prod_regular_price: {
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0
         },
         brand_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         prod_partnum: {

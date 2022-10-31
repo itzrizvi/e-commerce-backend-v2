@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const User = sequelize.define("user", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         has_role: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             defaultValue: 0,
             allowNull: false
         },

@@ -2,13 +2,13 @@ module.exports = (sequelize, DataTypes) => {
 
     const BannerImages = sequelize.define("banner_image", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
         banner_id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         title: {

@@ -117,8 +117,8 @@ module.exports = {
         try {
 
             // Associations MANY TO MANY
-            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'brand_id', foreignKey: 'id' });
-            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'cat_id', foreignKey: 'id' });
+            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'id', foreignKey: 'brand_id' });
+            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'id', foreignKey: 'cat_id' });
 
             // Check If Has Alias with subcategories
             if (!db.category.hasAlias('subcategories')) {
@@ -148,18 +148,12 @@ module.exports = {
                 include: [
                     {
                         model: db.category,
-                        seperate: true,
-                        order: [{ model: db.category }, 'cat_name', 'ASC'],
                         include: {
                             model: db.category,
                             as: 'subcategories',
-                            seperate: true,
-                            order: [{ model: db.category }, 'cat_name', 'ASC'],
                             include: {
                                 model: db.category,
-                                as: 'subsubcategories',
-                                seperate: true,
-                                order: [{ model: db.category }, 'cat_name', 'ASC'],
+                                as: 'subsubcategories'
                             }
                         }
                     }
@@ -189,8 +183,8 @@ module.exports = {
             const { brand_id } = req;
 
             // Associations MANY TO MANY
-            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'brand_id', foreignKey: 'id' });
-            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'cat_id', foreignKey: 'id' });
+            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'id', foreignKey: 'brand_id' });
+            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'id', foreignKey: 'cat_id' });
 
             // Check If Has Alias with subcategories
             if (!db.category.hasAlias('subcategories')) {
@@ -221,18 +215,12 @@ module.exports = {
                 include: [
                     {
                         model: db.category,
-                        seperate: true,
-                        order: [{ model: db.category }, 'cat_name', 'ASC'],
                         include: {
                             model: db.category,
                             as: 'subcategories',
-                            seperate: true,
-                            order: [{ model: db.category }, 'cat_name', 'ASC'],
                             include: {
                                 model: db.category,
-                                as: 'subsubcategories',
-                                seperate: true,
-                                order: [{ model: db.category }, 'cat_name', 'ASC'],
+                                as: 'subsubcategories'
                             }
                         }
                     }

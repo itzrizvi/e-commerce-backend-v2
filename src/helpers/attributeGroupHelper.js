@@ -86,7 +86,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            attr_group_id
+                            id: attr_group_id
                         }]
                     }
                 });
@@ -107,7 +107,7 @@ module.exports = {
             const updateAttrGroup = await db.attr_group.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        attr_group_id,
+                        id: attr_group_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -132,8 +132,8 @@ module.exports = {
         try {
 
             // Association with Attribute Group and Attributes
-            if (!db.attr_group.hasAlias('attributes')) {
-                await db.attr_group.hasMany(db.attribute, { sourceKey: 'attr_group_id', foreignKey: 'attr_group_id', as: 'attributes' });
+            if (!db.attr_group.hasAlias('attribute') && !db.attr_group.hasAlias('attributes')) {
+                await db.attr_group.hasMany(db.attribute, { sourceKey: 'id', foreignKey: 'attr_group_id', as: 'attributes' });
             }
 
             // GET ALL ATTR GROUPS
@@ -142,11 +142,12 @@ module.exports = {
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.attribute, as: 'attributes'
+                    model: db.attribute, as: 'attributes',
+                    seperate: true,
+                    order: [{ model: db.attribute }, 'attribute_name', 'ASC']
                 }],
                 order: [
-                    ['attr_group_name', 'ASC'],
-                    [{ model: db.attribute }, 'attribute_name', 'ASC']
+                    ['attr_group_name', 'ASC']
                 ],
             });
 
@@ -173,23 +174,21 @@ module.exports = {
 
             // Association with Attribute Group and Attributes
             if (!db.attr_group.hasAlias('attributes')) {
-                await db.attr_group.hasMany(db.attribute, { sourceKey: 'attr_group_id', foreignKey: 'attr_group_id', as: 'attributes' });
+                await db.attr_group.hasMany(db.attribute, { sourceKey: 'id', foreignKey: 'attr_group_id', as: 'attributes' });
             }
             // GET Single ATTR Group
             const singleAttrGroup = await db.attr_group.findOne({
                 where: {
                     [Op.and]: [{
-                        attr_group_id,
+                        id: attr_group_id,
                         tenant_id: TENANTID
                     }]
                 },
                 include: [{
-                    model: db.attribute, as: 'attributes'
-                }],
-                order: [
-                    ['attr_group_name', 'ASC'],
-                    [{ model: db.attribute }, 'attribute_name', 'ASC']
-                ],
+                    model: db.attribute, as: 'attributes',
+                    seperate: true,
+                    order: [{ model: db.attribute }, 'attribute_name', 'ASC']
+                }]
             });
 
             // return 

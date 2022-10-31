@@ -87,7 +87,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            attribute_id
+                            id: attribute_id
                         }]
                     }
                 });
@@ -108,7 +108,7 @@ module.exports = {
             const updateAttr = await db.attribute.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        attribute_id,
+                        id: attribute_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -133,7 +133,7 @@ module.exports = {
 
             // Association with Attribute Group and Attributes
             if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
-                await db.attribute.hasOne(db.attr_group, { sourceKey: 'attr_group_id', foreignKey: 'attr_group_id', as: 'attribute_group' });
+                await db.attribute.hasOne(db.attr_group, { sourceKey: 'attr_group_id', foreignKey: 'id', as: 'attribute_group' });
             }
 
             // GET ALL ATTR
@@ -173,13 +173,13 @@ module.exports = {
 
             // Association with Attribute Group and Attributes
             if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
-                await db.attribute.hasOne(db.attr_group, { sourceKey: 'attr_group_id', foreignKey: 'attr_group_id', as: 'attribute_group' });
+                await db.attribute.hasOne(db.attr_group, { sourceKey: 'attr_group_id', foreignKey: 'id', as: 'attribute_group' });
             }
 
             // GET Single ATTR
             const getAttribute = await db.attribute.findOne({
                 where: {
-                    attribute_id,
+                    id: attribute_id,
                     tenant_id: TENANTID
                 },
                 include: [{

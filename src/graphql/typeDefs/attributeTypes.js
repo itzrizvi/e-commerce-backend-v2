@@ -22,7 +22,7 @@ input UpdateAttributeGroupInput{
 }
 
 type AttributeGroup {
-    attr_group_id:Int
+    id:Int
     attr_group_name:String
     attr_group_slug:String
     attrgroup_sortorder:Int
@@ -68,7 +68,7 @@ input UpdateAttributeInput{
 }
 
 type Attribute {
-    attribute_id:Int
+    id:Int
     attribute_name:String
     attribute_slug:String
     attribute_status:Boolean

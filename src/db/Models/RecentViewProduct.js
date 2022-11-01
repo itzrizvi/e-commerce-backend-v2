@@ -12,10 +12,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        user_ip:{
-            type: DataTypes.STRING,
-            allowNull: true
-        },
         product_id: {
             type: DataTypes.BIGINT,
             allowNull: true

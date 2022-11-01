@@ -195,6 +195,7 @@ module.exports = {
                 title,
                 link,
                 sort_order,
+                banner_id,
                 image } = req;
 
 
@@ -234,7 +235,7 @@ module.exports = {
                 const banner_image_src = config.get("AWS.BANNER_IMG_DEST").split("/");
                 const banner_image_bucketName = banner_image_src[0];
                 const banner_image_folder = banner_image_src.slice(1);
-                await deleteFile({ idf: id, folder: banner_image_folder, fileName: findBannerImage.image, bucketName: banner_image_bucketName });
+                await deleteFile({ idf: banner_id, folder: banner_image_folder, fileName: findBannerImage.image, bucketName: banner_image_bucketName });
             }
 
             // Upload New Image to S3
@@ -243,7 +244,7 @@ module.exports = {
                 const banner_image_src = config.get("AWS.BANNER_IMG_SRC").split("/")
                 const banner_image_bucketName = banner_image_src[0];
                 const banner_image_folder = banner_image_src.slice(1);
-                const imageUrl = await singleFileUpload({ file: image, idf: id, folder: banner_image_folder, bucketName: banner_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: banner_id, folder: banner_image_folder, bucketName: banner_image_bucketName });
                 if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Banner Slide with New Image Name
@@ -406,6 +407,7 @@ module.exports = {
                     }]
                 }
             });
+
             if (!findBannerImage) return { message: "Couldnt Found Banner Image!!!", status: false }
 
             // IF Image Found

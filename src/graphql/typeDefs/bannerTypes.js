@@ -62,6 +62,7 @@ module.exports = gql`
 
     input UpdateBannerImageInput {
         id: Int!
+        banner_id: Int!
         title: String
         link: String
         sort_order: Int

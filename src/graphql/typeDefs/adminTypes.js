@@ -81,6 +81,13 @@ input AdminPasswordChangeInput {
     newPassword:String!
 }
 
+input SetPasswordInput {
+    codeHashed:String!
+    verificationCode:Int!
+    newPassword:String!
+    confirmPassword:String!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -90,6 +97,7 @@ extend type Mutation {
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
     adminUpdate(data: UpdateAdminInput, file:Upload): CommonOutput!
     adminPasswordChange(data: AdminPasswordChangeInput): CommonOutput!
+    setPassword(data:SetPasswordInput): CommonOutput!
 }
 
 extend type Query {

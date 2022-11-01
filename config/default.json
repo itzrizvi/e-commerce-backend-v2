@@ -35,5 +35,6 @@
         "USER_IMG_SRC": "psp-image-storage/user",
         "USER_IMG_DEST": "psp-image-storage-resize/user",
         "USER_IMG_IDF": "id"
-    }
+    },
+    "RESET_PASSWORD_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/set-password/"
 }

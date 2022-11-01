@@ -2,6 +2,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const { crypt, decrypt } = require('../utils/hashes');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 
 
@@ -155,6 +156,7 @@ module.exports = {
 
                     // IF SEND EMAIL IS TRUE
                     if (sendEmail) {
+                        let codeHashed = crypt(createStuff.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
                         // Setting Up Data for EMAIL SENDER
                         const mailData = {
                             email: createStuff.email,
@@ -254,6 +256,96 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // SET PASSWORD HELPER
+    setPassword: async (req, db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { verificationCode, codeHashed, newPassword, confirmPassword } = req;
+            // decrypting Code for email
+            const email = decrypt(codeHashed);
+
+            // Check The Passwords are Equal
+            if (newPassword != confirmPassword) return { message: "Password Didn't Matched!!!", status: false }
+
+            // Find User 
+            const findUser = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findUser) return { message: "User Not Found!!!", status: false };
+
+            // Check Verification Code is Valid or Not
+            const { verification_code, updatedAt } = findUser;
+            // Time Calculating
+            const reqTime = new Date();
+            const recordTime = new Date(updatedAt);
+
+            // Calculating Minutes
+            let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
+            // Difference
+            const diffs = Math.abs(Math.round(minutes));
+
+            // IF Difference Less than or Equal to 20 minutes
+            if (diffs <= 20) {
+                // Matching Codes
+                if (verification_code === verificationCode) {
+                    // Updating Doc
+                    const updateDoc = {
+                        password: await bcrypt.hash(confirmPassword, 10),
+                        email_verified: true
+                    }
+                    // Update User
+                    const updateUser = await db.user.update(updateDoc, {
+                        where: {
+                            [Op.and]: [{
+                                email,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+
+                    // If Updated then return values
+                    if (updateUser) {
+                        return {
+                            message: "Your Password Was Set Successfully!!",
+                            status: true,
+                            tenant_id: TENANTID
+                        }
+                    } else {
+                        return { // If Not updated
+                            message: "Failed!!",
+                            status: false
+                        }
+                    }
+
+
+                } else {
+                    return { // If nOt Matched
+                        message: "Invalid Code!!!",
+                        status: false
+                    }
+                }
+
+
+            } else { // If Time Expired
+
+                return {
+                    message: "YOUR 6 DIGIT CODE IS EXPIRED!!!",
+                    status: false
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
         }
     }
 }

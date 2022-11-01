@@ -68,6 +68,28 @@ type GetProductByBrandOutput {
 }
 
 
+type PublicViewBrand {
+    id:Int
+    brand_name:String
+    brand_slug:String
+    brand_description:String
+    brand_status:Boolean
+    brand_sort_order:Int
+    image:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type GetAllPublicBrand{
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[PublicViewBrand]
+}
+
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 extend type Mutation {
@@ -77,6 +99,7 @@ extend type Mutation {
 
 extend type Query {
     getAllBrands: GetAllBrands!
+    allPublicBrands: GetAllPublicBrand!
     getSingleBrand(query: GetSingleBrandInput):GetSingleBrandOutput!
     getProductsByBrand(query: GetProductByBrandInput):GetProductByBrandOutput!
 }

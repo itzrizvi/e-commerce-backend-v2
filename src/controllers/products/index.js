@@ -9,4 +9,5 @@ module.exports = {
     recentViewProductController: require('./recentViewProductController'),
     getFeaturedProductController: require('./getFeaturedProductController'),
     getRecentViewProductController: require('./getRecentViewProductController'),
+    publicProductViewController: require('./publicProductViewController'),
 }

@@ -1223,4 +1223,144 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Public Product View Helper
+    publicProductView: async (req, db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Product ID From Request
+            const id = req.prod_id;
+
+            // ### ASSOCIATION STARTS ### //
+            // Check If Has Alias with Categories
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            // Product Gallery Associations
+            if (!db.product.hasAlias('product_gallery') && !db.product.hasAlias('gallery')) {
+
+                await db.product.hasMany(db.product_gallery, {
+                    foreignKey: 'prod_id',
+                    as: 'gallery'
+                });
+            }
+
+            // Dimension Table Association with Product
+            if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
+
+                await db.product.hasOne(db.product_dimension, {
+                    sourceKey: 'dimension_id',
+                    foreignKey: 'id',
+                    as: 'dimensions'
+                });
+            }
+            // Brand Table Association with Product
+            if (!db.product.hasAlias('brands') && !db.product.hasAlias('brand')) {
+
+                await db.product.hasOne(db.brand, {
+                    sourceKey: 'brand_id',
+                    foreignKey: 'id',
+                    as: 'brand'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+                await db.product.hasMany(db.product_attribute, {
+                    foreignKey: 'prod_id',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'id',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'id',
+                    as: 'attribute_group'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.product.hasAlias('related_product') && !db.product.hasAlias('related_products')) {
+                await db.product.hasMany(db.related_product, {
+                    foreignKey: 'base_prod_id',
+                    as: 'related_products'
+                });
+            }
+
+            if (!db.related_product.hasAlias('products') && !db.related_product.hasAlias('related_prod')) {
+                await db.related_product.hasOne(db.product, {
+                    sourceKey: 'prod_id',
+                    foreignKey: 'id',
+                    as: 'related_prod'
+                });
+            }
+            // ### ASSOCIATION ENDS ### //
+
+            // Find Public View Product
+            const findProduct = await db.product.findOne({
+                include: [
+                    { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
+                    { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
+                    { model: db.brand, as: 'brand' }, // Inlcude Brand
+                    {
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attribute,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_group,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                    {
+                        model: db.related_product, as: 'related_products', // Include Related Products
+                        include: {
+                            model: db.product,
+                            as: 'related_prod'
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                },
+            });
+
+            // Return Final Data
+            return {
+                message: "Get Public View Product Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: findProduct
+            }
+
+
+
+        } catch (error) {
+            if (error) console.log("ERROR FROM TRY CATCH PUBLIC VIEW PRODUCT : ", error)
+            // if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

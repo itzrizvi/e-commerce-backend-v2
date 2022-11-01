@@ -214,6 +214,51 @@ input GetRecentViewProductInput{
 }
 
 
+type PublicProductView {
+    id:Int
+    prod_name:String
+    prod_slug:String
+    prod_long_desc:JSON
+    prod_short_desc:JSON
+    prod_meta_title:String
+    prod_meta_desc:JSON
+    prod_meta_keywords:JSON
+    prod_tags:JSON
+    brand:Brand
+    category:Category
+    prod_attributes:[ProductAttributes]
+    related_products:[RelatedProduct]
+    prod_regular_price:Float
+    prod_sale_price:Float
+    prod_partnum:String
+    prod_sku:String
+    prod_status:Boolean
+    taxable:Boolean
+    is_featured:Boolean
+    prod_condition:String
+    dimensions:ProductDimension
+    prod_weight:String
+    prod_weight_class:String
+    prod_outofstock_status:String
+    prod_thumbnail:String
+    gallery:[ProductGallery]
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+input PublicProductViewInput {
+    prod_id:Int!
+}
+
+type PublicProductViewOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data: PublicProductView
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -228,6 +273,7 @@ extend type Mutation {
 
 extend type Query {
     getSingleProduct(query: GetSingleProductInput): GetSingleProductOutput!
+    publicProductView(query: PublicProductViewInput): PublicProductViewOutput!
     getProductList: GetAllProducts!
     getFeaturedProducts: GetFeaturedProducts!
     getRecentViewProduct(query: GetRecentViewProductInput): GetFeaturedProducts!

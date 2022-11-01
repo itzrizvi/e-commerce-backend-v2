@@ -435,5 +435,31 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
+    },
+    //  ALL PUBLIC BRANDS
+    allPublicBrands: async (db, TENANTID) => {
+        // TRY CATCH BLOCK
+        try {
+
+            // GET ALL PUBLIC BRANDS QUERY
+            const getAllPublicBrands = await db.brand.findAll({
+                where: {
+                    brand_status: true,
+                    tenant_id: TENANTID
+                },
+                order: [['brand_name', 'ASC']]
+            });
+
+            // Return Formation
+            return {
+                data: getAllPublicBrands,
+                message: "All Public Brands GET Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
     }
 }

@@ -7,7 +7,7 @@ module.exports = gql`
 #########################################################################
 
 type ProductDimension {
-    prod_dimension_id:Int
+    id:Int
     length:String
     width:String
     height:String
@@ -15,7 +15,7 @@ type ProductDimension {
 }
 
 type DiscountType {
-    discount_type_id:Int
+    id:Int
     customer_group:CustomerGroup
     discount_quantity:Int
     discount_priority:Int
@@ -25,31 +25,31 @@ type DiscountType {
 }
 
 type ProductGallery {
-    prod_gallery_id:Int
+    id:Int
     prod_id:Int
     prod_image:String
 }
 
 type PartofProduct {
-    partof_product_id:Int
+    id:Int
     prod_quantity:Int
     part_product:Product
 }
 
 type ProductAttributes {
-    prod_attr_id:Int
+    id:Int
     attribute_type:String
     attribute_value:String
     attribute_data:Attribute
 }
 
 type RelatedProduct {
-    related_prod_id:Int
+    id:Int
     related_prod:Product
 }
 
 type Product {
-    prod_id:Int
+    id:Int
     prod_name:String
     prod_slug:String
     prod_long_desc:JSON
@@ -115,7 +115,7 @@ input AddProductInput {
 }
 
 type ProductForList {
-    prod_id:Int
+    id:Int
     prod_name:String
     prod_slug:String
     prod_regular_price:Float

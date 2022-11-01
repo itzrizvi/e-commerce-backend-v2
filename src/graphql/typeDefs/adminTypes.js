@@ -59,7 +59,7 @@ input UpdateAdminInput {
     first_name:String
     last_name:String
     password:String
-    role_id:JSON
+    role_ids:JSON
     user_status:Boolean
     sendEmail:Boolean!
 }

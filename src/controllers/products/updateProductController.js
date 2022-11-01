@@ -15,12 +15,6 @@ module.exports = async (req, db, user, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // Validate Create Role Request
-    const validate = await updateProductRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
-    }
-
     // Return If No Auth
     if (user.has_role === '0') return { message: "Not Authorized", status: false };
 

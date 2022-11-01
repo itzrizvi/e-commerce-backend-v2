@@ -57,7 +57,7 @@ module.exports = {
                 const brand_image_src = config.get("AWS.BRAND_IMG_SRC").split("/")
                 const brand_image_bucketName = brand_image_src[0]
                 const brand_image_folder = brand_image_src.slice(1)
-                const imageUrl = await singleFileUpload({ file: image, idf: createBrand.brand_id, folder: brand_image_folder, fileName: createBrand.brand_id, bucketName: brand_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: createBrand.id, folder: brand_image_folder, fileName: createBrand.id, bucketName: brand_image_bucketName });
                 if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Brand with Image Name
@@ -72,7 +72,7 @@ module.exports = {
             const updateBrand = await db.brand.update(brandImageUpdate, {
                 where: {
                     [Op.and]: [{
-                        brand_id: createBrand.brand_id,
+                        id: createBrand.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -82,7 +82,7 @@ module.exports = {
             // Loop For Assign Other Values to Brand Categories
             categories.forEach(element => {
                 element.tenant_id = createBrand.tenant_id;
-                element.brand_id = createBrand.brand_id;
+                element.brand_id = createBrand.id;
             });
 
             // Brand Categories Save Bulk
@@ -117,14 +117,14 @@ module.exports = {
         try {
 
             // Associations MANY TO MANY
-            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'brand_id', foreignKey: 'brand_id' });
-            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'cat_id', foreignKey: 'cat_id' });
+            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'id', foreignKey: 'brand_id' });
+            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'id', foreignKey: 'cat_id' });
 
             // Check If Has Alias with subcategories
             if (!db.category.hasAlias('subcategories')) {
 
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
                 });
@@ -133,7 +133,7 @@ module.exports = {
             // Check If Has Alias with subsubcategories
             if (!db.category.hasAlias('subsubcategories')) {
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
                 });
@@ -158,7 +158,7 @@ module.exports = {
                         }
                     }
                 ],
-                order: [['brand_name', 'ASC'], [db.category, 'cat_name', 'ASC']]
+                order: [['brand_name', 'ASC']]
             });
 
             // Return Formation
@@ -183,14 +183,14 @@ module.exports = {
             const { brand_id } = req;
 
             // Associations MANY TO MANY
-            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'brand_id', foreignKey: 'brand_id' });
-            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'cat_id', foreignKey: 'cat_id' });
+            db.brand.belongsToMany(db.category, { through: db.brand_category, sourceKey: 'id', foreignKey: 'brand_id' });
+            db.category.belongsToMany(db.brand, { through: db.brand_category, sourceKey: 'id', foreignKey: 'cat_id' });
 
             // Check If Has Alias with subcategories
             if (!db.category.hasAlias('subcategories')) {
 
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
                 });
@@ -199,7 +199,7 @@ module.exports = {
             // Check If Has Alias with subsubcategories
             if (!db.category.hasAlias('subsubcategories')) {
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
                 });
@@ -209,7 +209,7 @@ module.exports = {
             // GET ALL BRANDS QUERY
             const getBrand = await db.brand.findOne({
                 where: {
-                    brand_id,
+                    id: brand_id,
                     tenant_id: TENANTID
                 },
                 include: [
@@ -224,8 +224,7 @@ module.exports = {
                             }
                         }
                     }
-                ],
-                order: [['brand_name', 'ASC'], [db.category, 'cat_name', 'ASC']]
+                ]
             });
 
             // Return Formation
@@ -312,7 +311,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            brand_id
+                            id: brand_id
                         }]
                     }
                 });
@@ -334,7 +333,7 @@ module.exports = {
             const updateBrand = await db.brand.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        brand_id,
+                        id: brand_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -347,7 +346,7 @@ module.exports = {
             const findBrand = await db.brand.findOne({
                 where: {
                     [Op.and]: [{
-                        brand_id,
+                        id: brand_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -359,7 +358,7 @@ module.exports = {
                 const brand_image_src = config.get("AWS.BRAND_IMG_DEST").split("/");
                 const brand_image_bucketName = brand_image_src[0];
                 const brand_image_folder = brand_image_src.slice(1);
-                await deleteFile({ idf: brand_id, folder: brand_image_folder, fileName: findBrand.image, bucketName: brand_image_bucketName });
+                await deleteFile({ idf: findBrand.id, folder: brand_image_folder, fileName: findBrand.image, bucketName: brand_image_bucketName });
             }
 
             // Upload New Image to S3
@@ -368,7 +367,7 @@ module.exports = {
                 const brand_image_src = config.get("AWS.BRAND_IMG_SRC").split("/")
                 const brand_image_bucketName = brand_image_src[0];
                 const brand_image_folder = brand_image_src.slice(1);
-                const imageUrl = await singleFileUpload({ file: image, idf: brand_id, folder: brand_image_folder, fileName: brand_id, bucketName: brand_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: findBrand.id, folder: brand_image_folder, fileName: findBrand.id, bucketName: brand_image_bucketName });
                 if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Brand with New Image Name
@@ -382,7 +381,7 @@ module.exports = {
                 const updateBrand = await db.brand.update(brandImageUpdate, {
                     where: {
                         [Op.and]: [{
-                            brand_id,
+                            id: brand_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -396,7 +395,7 @@ module.exports = {
                 // Loop For Assign Other Values to Role Data
                 categories.forEach(element => {
                     element.tenant_id = TENANTID;
-                    element.brand_id = brand_id;
+                    element.brand_id = findBrand.id;
                 });
 
                 // Delete Previous Entry

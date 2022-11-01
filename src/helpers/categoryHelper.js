@@ -11,9 +11,6 @@ const config = require('config');
 module.exports = {
     // Create Category Helper
     createCategory: async (req, db, user, isAuth, TENANTID) => {
-        // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Try Catch Block
         try {
@@ -84,7 +81,7 @@ module.exports = {
                     const category_image_src = config.get("AWS.CATEGORY_IMG_SRC").split("/")
                     const category_image_bucketName = category_image_src[0];
                     const category_image_folder = category_image_src.slice(1);
-                    const imageUrl = await singleFileUpload({ file: image, idf: insertCategory.cat_id, folder: category_image_folder, fileName: insertCategory.cat_id, bucketName: category_image_bucketName });
+                    const imageUrl = await singleFileUpload({ file: image, idf: insertCategory.id, folder: category_image_folder, fileName: insertCategory.id, bucketName: category_image_bucketName });
                     if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
 
@@ -98,7 +95,7 @@ module.exports = {
                 const updateCategory = await db.category.update(categoryImageUpdate, {
                     where: {
                         [Op.and]: [{
-                            cat_id: insertCategory.cat_id,
+                            id: insertCategory.id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -139,7 +136,7 @@ module.exports = {
             if (!db.category.hasAlias('subcategories')) {
 
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
                 });
@@ -148,7 +145,7 @@ module.exports = {
             // Check If Has Alias with subsubcategories
             if (!db.category.hasAlias('subsubcategories')) {
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
                 });
@@ -203,7 +200,7 @@ module.exports = {
             if (!db.category.hasAlias('subcategories')) {
 
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
                 });
@@ -212,7 +209,7 @@ module.exports = {
             // Check If Has Alias with subsubcategories
             if (!db.category.hasAlias('subsubcategories')) {
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
                 });
@@ -234,7 +231,6 @@ module.exports = {
                 ],
                 where: {
                     [Op.and]: [{
-                        cat_parent_id: null,
                         is_featured: true,
                         tenant_id: TENANTID
                     }]
@@ -308,7 +304,7 @@ module.exports = {
             if (!db.category.hasAlias('subcategories')) {
 
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
                 });
@@ -317,7 +313,7 @@ module.exports = {
             // Check If Has Alias with subsubcategories
             if (!db.category.hasAlias('subsubcategories')) {
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subsubcategories'
                 });
@@ -342,7 +338,7 @@ module.exports = {
                 order: [['cat_name', 'ASC']],
                 where: {
                     [Op.and]: [{
-                        cat_id,
+                        id: cat_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -401,7 +397,7 @@ module.exports = {
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            cat_id
+                            id: cat_id
                         }]
                     }
                 });
@@ -443,7 +439,7 @@ module.exports = {
             const updateCategory = await db.category.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        cat_id,
+                        id: cat_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -456,7 +452,7 @@ module.exports = {
             const findCategory = await db.category.findOne({
                 where: {
                     [Op.and]: [{
-                        cat_id,
+                        id: cat_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -469,7 +465,7 @@ module.exports = {
                 const category_image_src = config.get("AWS.CATEGORY_IMG_DEST").split("/")
                 const category_image_bucketName = category_image_src[0];
                 const category_image_folder = category_image_src.slice(1);
-                await deleteFile({ idf: cat_id, folder: category_image_folder, fileName: findCategory.image, bucketName: category_image_bucketName });
+                await deleteFile({ idf: findCategory.id, folder: category_image_folder, fileName: findCategory.image, bucketName: category_image_bucketName });
 
             }
 
@@ -480,7 +476,7 @@ module.exports = {
                 const category_image_src = config.get("AWS.CATEGORY_IMG_SRC").split("/")
                 const category_image_bucketName = category_image_src[0];
                 const category_image_folder = category_image_src.slice(1);
-                const imageUrl = await singleFileUpload({ file: image, idf: cat_id, folder: category_image_folder, fileName: cat_id, bucketName: category_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: findCategory.id, folder: category_image_folder, fileName: findCategory.id, bucketName: category_image_bucketName });
                 if (!imageUrl) return { message: "Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Category with New Image Name
@@ -494,7 +490,7 @@ module.exports = {
                 const updateCategory = await db.category.update(categoryImageUpdate, {
                     where: {
                         [Op.and]: [{
-                            cat_id,
+                            id: cat_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -553,7 +549,7 @@ module.exports = {
             if (!db.category.hasAlias('subcategories')) {
 
                 await db.category.hasMany(db.category, {
-                    targetKey: 'cat_id',
+                    targetKey: 'id',
                     foreignKey: 'cat_parent_id',
                     as: 'subcategories'
                 });

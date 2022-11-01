@@ -19,7 +19,7 @@ input CategoryCreateInput {
 }
 
 type SubSubCategory {
-    cat_id:Int
+    id:Int
     cat_name:String
     cat_slug:String
     cat_description:JSON
@@ -35,7 +35,7 @@ type SubSubCategory {
 }
 
 type SubCategory {
-    cat_id:Int
+    id:Int
     cat_name:String
     cat_slug:String
     cat_description:JSON
@@ -52,7 +52,7 @@ type SubCategory {
 }
 
 type Category {
-    cat_id:Int!
+    id:Int!
     cat_name:String!
     cat_slug:String!
     cat_description:JSON

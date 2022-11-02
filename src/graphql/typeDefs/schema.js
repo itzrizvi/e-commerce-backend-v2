@@ -20,6 +20,7 @@ const customerTypes = require("./customerTypes");
 const productConditionTypes = require('./utils/productConditionTypes');
 const productAvailabilityStatusTypes = require('./utils/productAvailabilityStatusTypes');
 const addressTypes = require('./addressTypes');
+const companyInfoTypes = require('./companyInfoTypes');
 
 
 // Type Defs and Scalars
@@ -78,5 +79,6 @@ module.exports = [
     customerTypes,
     productConditionTypes,
     productAvailabilityStatusTypes,
-    addressTypes
+    addressTypes,
+    companyInfoTypes
 ]

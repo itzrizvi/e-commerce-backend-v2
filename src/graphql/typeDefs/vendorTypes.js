@@ -56,6 +56,12 @@ input UpdateVendorStatusInput{
 type CreateVendorOutput{
     message:String!
     status:Boolean!
+    id: Int!
+}
+
+type UpdateVendorOutput{
+    message:String!
+    status:Boolean!
 }
 
 type VendorOutput{
@@ -80,7 +86,7 @@ input GetSingleVendorInput{
 
 extend type Mutation {
     createVendor(data: CreateVendorInput): CreateVendorOutput!
-    updateVendor(data: UpdateVendorInput): CreateVendorOutput!
+    updateVendor(data: UpdateVendorInput): UpdateVendorOutput!
     addVendorBillingAddress(data: Address): CommonOutput!
     addVendorShippingAddress(data: Address): CommonOutput!
     updateVendorStatus(data: UpdateVendorStatusInput): CreateVendorOutput!

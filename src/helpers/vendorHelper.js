@@ -40,6 +40,7 @@ module.exports = {
                 tenant_id: createVendor.tenant_id,
                 message: "Successfully Created Vendor.",
                 status: true,
+                id: createVendor.id
             }
 
         } catch (error) {

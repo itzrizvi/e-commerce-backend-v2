@@ -2,7 +2,8 @@
 const { getSingleProductController,
     getProductListController,
     getFeaturedProductController,
-    getRecentViewProductController
+    getRecentViewProductController,
+    publicProductViewController
 } = require("../../controllers")
 
 
@@ -35,10 +36,17 @@ module.exports = {
         return await getFeaturedProductController(db, TENANTID);
     },
     getRecentViewProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {
-        
+
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
 
         // Return To Controller
         return await getRecentViewProductController(args.query, db, user, isAuth, TENANTID, ip);
-    }
+    },
+    // GET Single Product Query
+    publicProductView: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+
+        // Return to Controller
+        return await publicProductViewController(args.query, db, TENANTID);
+    },
 }

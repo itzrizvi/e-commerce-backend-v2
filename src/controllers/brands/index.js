@@ -4,4 +4,5 @@ module.exports = {
     getSingleBrandController: require("./getSingleBrandController"),
     updateBrandController: require("./updateBrandController"),
     getProductsByBrandController: require("./getProductsByBrandController"),
+    allPublicBrandsController: require("./allPublicBrandsController"),
 }

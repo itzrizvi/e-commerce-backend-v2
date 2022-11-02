@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 3000;
-const CryptoJS = require('crypto-js');
 const db = require('./src/db');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./src/graphql/typeDefs/schema');
@@ -42,15 +41,6 @@ app.set('trust proxy', true)
 // Get file from aws
 app.get('/images/*', getFileStream)
 
-
-// //
-// // Encrypt
-// let myID = '9487253';
-// var ciphertext = CryptoJS.AES.encrypt(myID, process.env.secretKey).toString();
-
-// // Decrypt
-// var bytes = CryptoJS.AES.decrypt(ciphertext, process.env.secretKey);
-// var originalText = bytes.toString(CryptoJS.enc.Utf8);
 
 // APOLLO SERVER STARTS
 async function startApolloServer() {

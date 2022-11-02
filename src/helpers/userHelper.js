@@ -2,7 +2,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
-const CryptoJS = require('crypto-js');
 const { Op } = require('sequelize');
 
 module.exports = {

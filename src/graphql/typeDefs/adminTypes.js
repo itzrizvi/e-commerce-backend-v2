@@ -58,7 +58,6 @@ input UpdateAdminInput {
     id:Int!
     first_name:String
     last_name:String
-    password:String
     role_ids:JSON
     user_status:Boolean
     sendEmail:Boolean!
@@ -88,6 +87,11 @@ input SetPasswordInput {
     confirmPassword:String!
 }
 
+input ResetPasswordInput {
+    email:String!
+    permissionName:String!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -98,6 +102,7 @@ extend type Mutation {
     adminUpdate(data: UpdateAdminInput, file:Upload): CommonOutput!
     adminPasswordChange(data: AdminPasswordChangeInput): CommonOutput!
     setPassword(data:SetPasswordInput): CommonOutput!
+    resetPassword(data:ResetPasswordInput): CommonOutput!
 }
 
 extend type Query {

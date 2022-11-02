@@ -89,7 +89,6 @@ startApolloServer();
 
 
 
-
 // DB RESYNC
 db.sequelize.sync({ force: false }).then(() => {
     console.log("DB HAS BEEN RESYNC")

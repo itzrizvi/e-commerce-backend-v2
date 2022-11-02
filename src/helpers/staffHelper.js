@@ -53,21 +53,15 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { id, first_name, last_name, password, role_ids, user_status, image, sendEmail } = req;
-
-            // if Password available
-            let encryptPassword;
-            if (password) {
-                encryptPassword = await bcrypt.hash(password, 10);
-            }
+            const { id, first_name, last_name, role_ids, user_status, image, sendEmail } = req;
 
             // Update User Table Doc
             const updateUserDoc = {
                 first_name,
                 last_name,
-                password: encryptPassword,
                 user_status,
-                image: null
+                image: null,
+                updated_by: user.id
             }
 
             // Update User Table 
@@ -94,22 +88,13 @@ module.exports = {
 
                 // IF SEND EMAIL IS TRUE
                 if (sendEmail) {
-                    // If Password is Also Changed Changed
                     let mailData
-                    if (password) {
-                        // Setting Up Data for EMAIL SENDER
-                        mailData = {
-                            email: findUser.email,
-                            subject: "Password Changed on Prime Server Parts",
-                            message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
-                        }
-                    } else {
-                        // Setting Up Data for EMAIL SENDER
-                        mailData = {
-                            email: findUser.email,
-                            subject: "Account Update on Prime Server Parts",
-                            message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
-                        }
+
+                    // Setting Up Data for EMAIL SENDER
+                    mailData = {
+                        email: findUser.email,
+                        subject: "Account Update on Prime Server Parts",
+                        message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
                     }
 
                     // SENDING EMAIL
@@ -163,6 +148,8 @@ module.exports = {
                     role_ids.forEach(element => {
                         element.tenant_id = TENANTID;
                         element.admin_id = id;
+                        element.updated_by = user.id;
+                        element.created_by = user.id;
                     });
 
                     // Delete Previous Entry
@@ -211,17 +198,17 @@ module.exports = {
         // Try Catch Block
         try {
 
-        // UID from Request
-        const { id } = req;
+            // UID from Request
+            const { id } = req;
 
-        // Accociation with 3 tables
-        db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-        db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+            // Accociation with 3 tables
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
-        // Check If User Has Alias or Not 
-        if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
-            await db.role.hasMany(db.permissions_data, { foreignKey: 'role_id', as: 'permissions' });
-        }
+            // Check If User Has Alias or Not 
+            if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
+                await db.role.hasMany(db.permissions_data, { foreignKey: 'role_id', as: 'permissions' });
+            }
 
             // Check If User Has Alias or Not 
             if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {

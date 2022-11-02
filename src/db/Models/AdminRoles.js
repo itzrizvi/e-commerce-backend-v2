@@ -19,6 +19,14 @@ module.exports = (sequelize, DataTypes) => {
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        updated_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
 
     }, {

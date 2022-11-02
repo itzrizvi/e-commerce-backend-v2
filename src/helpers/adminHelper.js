@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const { crypt, decrypt } = require('../utils/hashes');
 const { verifierEmail } = require('../utils/verifyEmailSender');
+const config = require('config');
 
 
 // HELPER
@@ -136,7 +137,9 @@ module.exports = {
                     has_role,
                     verification_code: verificationCode,
                     user_status,
-                    tenant_id: TENANTID
+                    tenant_id: TENANTID,
+                    created_by: user.id,
+                    updated_by: user.id
                 });
 
 
@@ -157,11 +160,14 @@ module.exports = {
                     // IF SEND EMAIL IS TRUE
                     if (sendEmail) {
                         let codeHashed = crypt(createStuff.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
+                        // SET PASSWORD URL
+                        const setPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
+
                         // Setting Up Data for EMAIL SENDER
                         const mailData = {
                             email: createStuff.email,
                             subject: "Admin Created Successfully for Primer Server Parts",
-                            message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} && Link is: ${process.env.ADMIN_URL}`
+                            message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your SET NEW PASSWORD Link is: ${setPasswordURL.concat(codeHashed)}`
                         }
 
                         // SENDING EMAIL
@@ -190,7 +196,8 @@ module.exports = {
                     has_role,
                     email_verified: false,
                     user_status,
-                    verification_code: verificationCode
+                    verification_code: verificationCode,
+                    updated_by: user.id
                 }
 
                 const updateUserToStuff = await db.user.update(updateDoc, {
@@ -231,11 +238,14 @@ module.exports = {
 
                     // IF SEND EMAIL IS TRUE
                     if (sendEmail) {
+                        let codeHashed = crypt(createStuff.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
+                        // SET PASSWORD URL
+                        const setPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
                         // Setting Up Data for EMAIL SENDER
                         const mailData = {
                             email: updatedStuffEmail,
                             subject: "Admin Updated Verification Code From Primer Server Parts",
-                            message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email}`
+                            message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your SET NEW PASSWORD Link is: ${setPasswordURL.concat(codeHashed)}`
                         }
 
                         // SENDING EMAIL
@@ -346,6 +356,98 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong", status: false }
+        }
+    },
+    // RESET PASSWORD HELPER
+    resetPassword: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { email, permissionName } = req;
+
+            // FIND USER
+            const findUser = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findUser) return { message: "USER NOT FOUND!!!", status: false }
+
+            // Email verification Code generate
+            const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
+
+            // Update Doc
+            const updateDoc = {
+                verification_code: verificationCode,
+                password: null,
+                updated_by: user.id
+            }
+            // Insert User
+            const updateForResetPassword = await db.user.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (updateForResetPassword) {
+
+                let resetPasswordURL;
+                let codeHashed = crypt(email);
+
+                if (permissionName === 'user') {
+                    // RESET PASSWORD URL
+                    resetPasswordURL = config.get("ADMIN_URL").concat(config.get("RESET_PASSWORD"));
+
+                    // Setting Up Data for EMAIL SENDER
+                    const mailData = {
+                        email: email,
+                        subject: "Admin Reset Password for Primer Server Parts",
+                        message: `Your 6 Digit Verification Code is ${verificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your RESET PASSWORD Link is: ${resetPasswordURL.concat(codeHashed)}`
+                    }
+
+                    // SENDING EMAIL
+                    await verifierEmail(mailData);
+
+                    // Return Formation
+                    return {
+                        message: "Successfully Sent Reset Password Link For Reset Password!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
+
+                } else if (permissionName === 'customer') {
+                    // RESET PASSWORD URL
+                    resetPasswordURL = config.get("ECOM_URL").concat(config.get("RESET_PASSWORD"));
+
+                    // Setting Up Data for EMAIL SENDER
+                    const mailData = {
+                        email: email,
+                        subject: "Reset Password for Primer Server Parts",
+                        message: `Your 6 Digit Verification Code is ${verificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your RESET PASSWORD Link is: ${resetPasswordURL.concat(codeHashed)}`
+                    }
+
+                    // SENDING EMAIL
+                    await verifierEmail(mailData);
+
+                    // Return Formation
+                    return {
+                        message: "Successfully Sent Reset Password Link For Reset Password!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
+                }
+
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     }
 }

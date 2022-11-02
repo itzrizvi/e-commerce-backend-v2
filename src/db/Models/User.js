@@ -60,6 +60,14 @@ module.exports = (sequelize, DataTypes) => {
         last_login: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        updated_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
 
     }, {

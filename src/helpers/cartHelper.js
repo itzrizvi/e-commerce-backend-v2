@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 module.exports = {
   createCart: async (req, db, user, isAuth, TENANTID) => {
     try {
+      if (!isAuth) return { message: "Not Authorized", status: false };
       const { customer_id, cart_item } = req;
       var cart_id;
       const checkCart = await db.cart.findOne({
@@ -77,6 +78,7 @@ module.exports = {
   },
   removeCartItem: async (req, db, user, isAuth, TENANTID) => {
     try {
+      if (!isAuth) return { message: "Not Authorized", status: false };
       const { cart_item_id } = req;
 
       const cart_remove = await db.cart_item.destroy({
@@ -109,6 +111,7 @@ module.exports = {
   },
   addSingleCart: async (req, db, user, isAuth, TENANTID) => {
     try {
+      if (!isAuth) return { message: "Not Authorized", status: false };
       const { cart_id, product_id, quantity } = req;
 
       const checkCartItem = await db.cart_item.findOne({
@@ -160,6 +163,7 @@ module.exports = {
   },
   removeCart: async (req, db, user, isAuth, TENANTID) => {
     try {
+      if (!isAuth) return { message: "Not Authorized", status: false };
       const { cart_id } = req;
 
       const cart_remove = await db.cart.destroy({
@@ -195,6 +199,7 @@ module.exports = {
   },
   getCart: async (req, db, user, isAuth, TENANTID) => {
     try {
+      if (!isAuth) return { message: "Not Authorized", status: false };
       const { customer_id } = req;
       if (!db.cart.hasAlias("cart_items")) {
         await db.cart.hasMany(db.cart_item, {
@@ -234,6 +239,7 @@ module.exports = {
   },
   getSingleCart: async (req, db, user, isAuth, TENANTID) => {
     try {
+      if (!isAuth) return { message: "Not Authorized", status: false };
       const { cart_item_id } = req;
 
       const cart_item = await db.cart_item.findOne({

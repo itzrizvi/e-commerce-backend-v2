@@ -1,29 +1,30 @@
-// Permission Model
 module.exports = (sequelize, DataTypes) => {
-
-    const RecentViewProduct = sequelize.define("recent_view_product", {
+    const CompanyEmail = sequelize.define("company_email", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        user_id: {
+        company_info_id:{
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
         },
-        product_id: {
-            type: DataTypes.BIGINT,
-            allowNull: true
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: false
         },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false
         }
-
     }, {
         timestamps: true
     })
 
-    return RecentViewProduct
+    return CompanyEmail
 }

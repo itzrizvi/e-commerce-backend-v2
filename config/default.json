@@ -31,10 +31,13 @@
         "BANNER_IMG_IDF": "id",
         "CATEGORY_IMG_SRC": "psp-image-storage/category",
         "CATEGORY_IMG_DEST": "psp-image-storage-resize/category",
-        "CATEGORY_IMG_IDF": "cat_id",
+        "CATEGORY_IMG_IDF": "id",
         "USER_IMG_SRC": "psp-image-storage/user",
         "USER_IMG_DEST": "psp-image-storage-resize/user",
-        "USER_IMG_IDF": "id"
+        "USER_IMG_IDF": "id",
+        "COMPANY_LOGO_IMG_SRC": "psp-image-storage/logo",
+        "COMPANY_LOGO_IMG_DEST": "psp-image-storage-resize/logo",
+        "COMPANY_LOGO_IMG_IDF": "tenant_id"
     },
     "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",
     "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",

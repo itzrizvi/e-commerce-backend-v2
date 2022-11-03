@@ -13,6 +13,7 @@ type AddressOutput{
     state: String!
     zip_code: String!
     country: String
+    type: String!
     status: Boolean
     updatedAt:String
     createdAt:String
@@ -33,7 +34,7 @@ input Address{
 }
 
 input UpdateAddress{
-    parent_id: Int!
+    id: Int!
     address1: String!
     address2: String!
     phone: String!

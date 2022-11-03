@@ -40,6 +40,7 @@ module.exports = {
                 tenant_id: createVendor.tenant_id,
                 message: "Successfully Created Vendor.",
                 status: true,
+                id: createVendor.id
             }
 
         } catch (error) {
@@ -338,7 +339,7 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const { id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
             const updateAddress = db.address.update({
                 address1,
                 address2,
@@ -354,7 +355,7 @@ module.exports = {
             }, {
                 where: {
                     [Op.and]: [{
-                        id: parent_id,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }

@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        sub_total:{
+        sub_total: {
             type: DataTypes.FLOAT,
             allowNull: false
         },
@@ -43,11 +43,20 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        createdBy: {
+        order_status_id: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        updatedBy: {
+        tax_exempt: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
+        created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        updated_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },

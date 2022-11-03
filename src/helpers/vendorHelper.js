@@ -162,7 +162,6 @@ module.exports = {
         }
 
     },
-
     // GET SINGLE Vendor
     getSingleVendor: async (req, db, user, isAuth, TENANTID) => {
 

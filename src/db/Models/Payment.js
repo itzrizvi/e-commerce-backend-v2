@@ -1,7 +1,7 @@
 // Address model
 module.exports = (sequelize, DataTypes) => {
 
-    const Payment = sequelize.define("payment", {
+    const Payment = sequelize.define("payment_method", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -16,14 +16,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        status:{
+        status: {
             type: DataTypes.BOOLEAN
         },
-        createdBy: {
+        created_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        updatedBy: {
+        updated_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },

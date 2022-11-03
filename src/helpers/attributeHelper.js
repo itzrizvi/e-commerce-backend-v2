@@ -41,7 +41,8 @@ module.exports = {
                 attribute_slug,
                 attribute_status,
                 attr_group_id,
-                tenant_id: TENANTID
+                tenant_id: TENANTID,
+                created_by: user.id
             });
 
             // IF Not Created
@@ -101,7 +102,8 @@ module.exports = {
                 attribute_name,
                 attribute_slug,
                 attribute_status,
-                attr_group_id
+                attr_group_id,
+                updated_by: user.id
             }
 
             // Update Attribute

@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const OrderItem = sequelize.define("order_item", {
         id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
-        price:{
+        price: {
             type: DataTypes.FLOAT,
             allowNull: false
         },
@@ -24,11 +24,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        createdBy: {
+        created_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        updatedBy: {
+        updated_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },

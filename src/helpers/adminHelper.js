@@ -309,7 +309,8 @@ module.exports = {
                     // Updating Doc
                     const updateDoc = {
                         password: await bcrypt.hash(confirmPassword, 10),
-                        email_verified: true
+                        email_verified: true,
+                        verification_code: null
                     }
                     // Update User
                     const updateUser = await db.user.update(updateDoc, {
@@ -416,7 +417,7 @@ module.exports = {
 
                     // Return Formation
                     return {
-                        message: "Successfully Sent Reset Password Link For Reset Password!!!",
+                        message: "Successfully Sent Reset Password Link!!!",
                         status: true,
                         tenant_id: TENANTID
                     }
@@ -437,7 +438,7 @@ module.exports = {
 
                     // Return Formation
                     return {
-                        message: "Successfully Sent Reset Password Link For Reset Password!!!",
+                        message: "Successfully Sent Reset Password Link!!!",
                         status: true,
                         tenant_id: TENANTID
                     }

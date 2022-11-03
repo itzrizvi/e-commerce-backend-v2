@@ -1,7 +1,7 @@
 // Payment Detail model
 module.exports = (sequelize, DataTypes) => {
 
-    const PaymentDetail = sequelize.define("payment_detail", {
+    const Payment = sequelize.define("payment", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -41,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return PaymentDetail
+    return Payment
 }

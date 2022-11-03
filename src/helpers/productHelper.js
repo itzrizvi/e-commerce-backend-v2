@@ -286,10 +286,6 @@ module.exports = {
                 });
             }
 
-            // Created By Associations
-            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
-
             // Product Gallery Associations
             if (!db.product.hasAlias('product_gallery') && !db.product.hasAlias('gallery')) {
 
@@ -387,7 +383,7 @@ module.exports = {
                 });
             }
 
-            if (!db.related_product.hasAlias('products') && !db.related_product.hasAlias('related_prod')) {
+            if (!db.related_product.hasAlias('product') && !db.related_product.hasAlias('related_prod')) {
                 await db.related_product.hasOne(db.product, {
                     sourceKey: 'prod_id',
                     foreignKey: 'id',
@@ -396,15 +392,15 @@ module.exports = {
             }
 
             // Created By Associations
-            db.users.belongsToMany(db.roles, { through: db.admin_roles, sourceKey: 'uid', foreignKey: 'admin_uuid' });
-            db.roles.belongsToMany(db.users, { through: db.admin_roles, sourceKey: 'role_uuid', foreignKey: 'role_uuid' });
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
             // Check If Has Alias with Users and Roles
-            if (!db.products.hasAlias('users') && !db.products.hasAlias('created_by')) {
+            if (!db.product.hasAlias('user') && !db.product.hasAlias('created_by')) {
 
-                await db.products.hasOne(db.users, {
+                await db.product.hasOne(db.user, {
                     sourceKey: 'added_by',
-                    foreignKey: 'uid',
+                    foreignKey: 'id',
                     as: 'created_by'
                 });
             }

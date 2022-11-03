@@ -3,30 +3,30 @@
 module.exports = (sequelize, DataTypes) => {
 
     const ProductInventory = sequelize.define("product_inventory", {
-        prod_inventory_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        prod_uuid: {
-            type: DataTypes.UUID,
+        prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         prod_quantity: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        purchase_order_uuid: {
-            type: DataTypes.UUID,
+        purchase_order_id: {
+            type: DataTypes.BIGINT,
             allowNull: true
         },
         input_type: {
             type: DataTypes.ENUM("purchase", "split"),
             allowNull: false
         },
-        parent_prod_uuid: {
-            type: DataTypes.UUID,
+        parent_prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: true
         },
         tenant_id: {
@@ -36,8 +36,7 @@ module.exports = (sequelize, DataTypes) => {
 
     },
         {
-            timestamps: true,
-            tableName: 'product_inventory',
+            timestamps: true
         })
 
     return ProductInventory

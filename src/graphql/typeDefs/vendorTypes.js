@@ -8,107 +8,58 @@ module.exports = gql`
 
 
 type Vendor{
-    vendor_uuid: UUID!
-    vendor_contact_person: String!
-    vendor_company_name: String
-    vendor_email: String!
-    vendor_description: String
-    vendor_phone_number: String
-    vendor_EIN_no: String
-    vendor_TAX_ID: String
-    vendor_FAX_no: String
-    vendor_status: Boolean!
-    billing_addresses: [BillingAddressOutput]
-    shipping_addresses: [ShippingAddressOutput]
+    id: Int!
+    contact_person: String!
+    company_name: String
+    email: String!
+    description: String
+    phone_number: String
+    EIN_no: String
+    TAX_ID: String
+    FAX_no: String
+    status: Boolean!
+    addresses: [AddressOutput]
 }
 
-input ShippingAddress{
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
 
-input BillingAddress{
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
-}
-
-type ShippingAddressOutput{
-    shipping_uuid: UUID
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
-
-type BillingAddressOutput{
-    billing_uuid: UUID
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
-}
-
-input UpdateShippingAddress{
-    shipping_uuid: UUID!
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
-
-input UpdateBillingAddress{
-    billing_uuid: UUID!
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
-}
 
 input CreateVendorInput{
-    vendor_contact_person: String!
-    vendor_company_name: String
-    vendor_email: String!
-    vendor_description: String
-    vendor_status: Boolean!
-    vendor_phone_number: String
-    vendor_EIN_no: String
-    vendor_TAX_ID: String
-    vendor_FAX_no: String
-    billing_address: [BillingAddress]!
-    shipping_address: [ShippingAddress]!
+    contact_person: String!
+    company_name: String
+    email: String!
+    description: String
+    status: Boolean!
+    phone_number: String
+    EIN_no: String
+    TAX_ID: String
+    FAX_no: String
 }
 
 input UpdateVendorInput{
-    vendor_uuid: UUID!
-    vendor_contact_person: String!
-    vendor_company_name: String
-    vendor_email: String!
-    vendor_description: String
-    vendor_status: Boolean!
-    vendor_phone_number: String
-    vendor_EIN_no: String
-    vendor_TAX_ID: String
-    vendor_FAX_no: String
-    billing_address: [UpdateBillingAddress]!
-    shipping_address: [UpdateShippingAddress]!
+    id: Int!
+    contact_person: String!
+    company_name: String
+    email: String!
+    description: String
+    status: Boolean!
+    phone_number: String
+    EIN_no: String
+    TAX_ID: String
+    FAX_no: String
 }
 
 input UpdateVendorStatusInput{
-    vendor_uuid: UUID!
-    vendor_status: Boolean!
+    id: Int!
+    status: Boolean!
 }
 
 type CreateVendorOutput{
+    message:String!
+    status:Boolean!
+    id: Int!
+}
+
+type UpdateVendorOutput{
     message:String!
     status:Boolean!
 }
@@ -127,7 +78,7 @@ type SingleVendorOutput{
 
 
 input GetSingleVendorInput{
-    vendor_uuid:UUID!
+    id:Int!
 }
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -135,8 +86,11 @@ input GetSingleVendorInput{
 
 extend type Mutation {
     createVendor(data: CreateVendorInput): CreateVendorOutput!
-    updateVendor(data: UpdateVendorInput): CreateVendorOutput!
+    updateVendor(data: UpdateVendorInput): UpdateVendorOutput!
+    addVendorBillingAddress(data: Address): CommonOutput!
+    addVendorShippingAddress(data: Address): CommonOutput!
     updateVendorStatus(data: UpdateVendorStatusInput): CreateVendorOutput!
+    updateVendorAddress(data: UpdateAddress): CommonOutput!
 }
 
 extend type Query {

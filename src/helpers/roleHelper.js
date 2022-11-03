@@ -8,11 +8,6 @@ module.exports = {
     // CREATE ROLES API
     createRoleWithPermission: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         // Try Catch Block
         try {
             // GET DATA
@@ -28,7 +23,7 @@ module.exports = {
             });
 
             // Check The Role Is Already Taken or Not
-            const checkRoleExist = await db.roles.findOne({
+            const checkRoleExist = await db.role.findOne({
                 where: {
                     [Op.and]: [{
                         role_slug: role_slug,
@@ -43,7 +38,7 @@ module.exports = {
 
             // If Not Exists then create
             if (!checkRoleExist) {
-                const createrole = await db.roles.create({
+                const createrole = await db.role.create({
                     role_no: roleNo,
                     role: role,
                     role_status: role_status,
@@ -56,7 +51,7 @@ module.exports = {
                 if (createrole) {
                     // Loop For Assign Other Values to Permissions
                     permissionsData.forEach(element => {
-                        element.role_uuid = createrole.role_uuid;
+                        element.role_id = createrole.id;
                         element.role_no = createrole.role_no;
                         element.tenant_id = createrole.tenant_id;
 
@@ -91,26 +86,22 @@ module.exports = {
     },
     // GET ALL ROLES API
     getAllRoles: async (db, user, isAuth, TENANTID) => {
-        // Return if No Auth
-        if (!user || !isAuth) return { message: "Not Authenticated", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
-
 
         // Try Catch Block
         try {
             // GET ALL ROLES
             // Check If User Has Alias or Not 
-            if (!db.roles.hasAlias('permissions_data') && !db.roles.hasAlias('permissions')) {
-                await db.roles.hasMany(db.permissions_data, { sourceKey: 'role_uuid', foreignKey: 'role_uuid', as: 'permissions' });
+            if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
+                await db.role.hasMany(db.permissions_data, { sourceKey: 'id', foreignKey: 'role_id', as: 'permissions' });
             }
 
             // Check If User Has Alias or Not 
             if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_uuid', foreignKey: 'roles_permission_uuid', as: 'rolesPermission' });
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'id', as: 'rolesPermission' });
             }
 
             // Find All Roles With permissions
-            const findAllRoleandPermissions = await db.roles.findAll({
+            const findAllRoleandPermissions = await db.role.findAll({
                 include: [{
                     model: db.permissions_data, as: 'permissions',
                     include: [{ model: db.roles_permission, as: 'rolesPermission' }],
@@ -146,24 +137,24 @@ module.exports = {
         try {
 
             // Data From Request
-            const { role_uuid } = req;
+            const { id } = req;
 
             // TENANT ID
             const tenant_id = TENANTID;
 
 
             // Check If User Has Alias or Not 
-            if (!db.roles.hasAlias('permissions_data') && !db.roles.hasAlias('permissions')) {
-                await db.roles.hasMany(db.permissions_data, { sourceKey: 'role_uuid', foreignKey: 'role_uuid', as: 'permissions' });
+            if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
+                await db.role.hasMany(db.permissions_data, { sourceKey: 'id', foreignKey: 'role_id', as: 'permissions' });
             }
 
             // Check If User Has Alias or Not 
             if (!db.permissions_data.hasAlias('roles_permission') && !db.permissions_data.hasAlias('rolesPermission')) {
-                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_uuid', foreignKey: 'roles_permission_uuid', as: 'rolesPermission' });
+                await db.permissions_data.hasOne(db.roles_permission, { sourceKey: 'permission_id', foreignKey: 'id', as: 'rolesPermission' });
             }
 
             // Find Single Role With Permission
-            const findRoleandPermission = await db.roles.findOne({
+            const findRoleandPermission = await db.role.findOne({
                 include: {
                     model: db.permissions_data, as: 'permissions',
                     include: { model: db.roles_permission, as: 'rolesPermission' },
@@ -172,7 +163,7 @@ module.exports = {
                 },
                 where: {
                     [Op.and]: [{
-                        role_uuid,
+                        id,
                         tenant_id
                     }]
                 }
@@ -192,16 +183,11 @@ module.exports = {
     // UPDATE ROLE HELPER
     updateRole: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         // Try Catch Block
         try {
 
             // Data From Request
-            const role_uuid = req.role_uuid;
+            const role_id = req.id;
             const role = req.role;
             const role_status = req.role_status;
             const roleDescription = req.roleDescription;
@@ -220,14 +206,14 @@ module.exports = {
 
 
                 // Check The Role Is Already Taken or Not
-                const checkRoleExist = await db.roles.findOne({
+                const checkRoleExist = await db.role.findOne({
                     where: {
                         [Op.and]: [{
                             role_slug: role_slug,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            role_uuid
+                            id: role_id
                         }]
                     }
                 });
@@ -244,10 +230,10 @@ module.exports = {
             }
 
             // Update Role 
-            const updateRole = await db.roles.update(updateDoc, {
+            const updateRole = await db.role.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        role_uuid,
+                        id: role_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -257,10 +243,10 @@ module.exports = {
             if (!updateRole) return { message: "Update Gone Wrong!!!", status: false }
 
             // Find Targeted Role
-            const findTargetedRole = await db.roles.findOne({
+            const findTargetedRole = await db.role.findOne({
                 where: {
                     [Op.and]: [{
-                        role_uuid,
+                        id: role_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -284,17 +270,12 @@ module.exports = {
     // UPDATE ROLE PERMISSIONS HELPER
     updateRolePermissions: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         // Try Catch Block
         try {
 
             // Data From Request
             const permissionsData = req.permissionsData;
-            const { role_uuid, permission_uuid, read_access, edit_access } = permissionsData;
+            const { role_id, permission_id, read_access, edit_access } = permissionsData;
 
             // Update Doc
             const permissionsUpdateDoc = {
@@ -306,8 +287,8 @@ module.exports = {
             const checkIsNewPermission = await db.permissions_data.findOne({
                 where: {
                     [Op.and]: [{
-                        role_uuid,
-                        permission_uuid,
+                        role_id,
+                        permission_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -317,10 +298,10 @@ module.exports = {
             if (!checkIsNewPermission) {
 
                 // GET ROLE NO
-                const findRoleNo = await db.roles.findOne({
+                const findRoleNo = await db.role.findOne({
                     where: {
                         [Op.and]: [{
-                            role_uuid,
+                            id: role_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -332,8 +313,8 @@ module.exports = {
                 // Create Permission Data 
                 const creareRolePermissionsData = {
                     role_no,
-                    role_uuid,
-                    permission_uuid,
+                    role_id,
+                    permission_id,
                     edit_access,
                     read_access,
                     tenant_id: TENANTID
@@ -355,8 +336,8 @@ module.exports = {
                 const permissionDataUpdate = await db.permissions_data.update(permissionsUpdateDoc, {
                     where: {
                         [Op.and]: [{
-                            role_uuid,
-                            permission_uuid,
+                            role_id,
+                            permission_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -370,8 +351,8 @@ module.exports = {
                 const updatedPermissionCheck = await db.permissions_data.findOne({
                     where: {
                         [Op.and]: [{
-                            role_uuid,
-                            permission_uuid,
+                            role_id,
+                            permission_id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -383,8 +364,8 @@ module.exports = {
                     db.permissions_data.destroy({
                         where: {
                             [Op.and]: [{
-                                role_uuid,
-                                permission_uuid,
+                                role_id,
+                                permission_id,
                                 tenant_id: TENANTID
                             }]
                         }
@@ -410,20 +391,17 @@ module.exports = {
     },
     // DELETE ROLE HELPER
     deleteRole: async (req, db, user, isAuth, TENANTID) => {
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
 
         // TRY CATCH BLOCK
         try {
             // Data From Request
-            const { role_uuid } = req;
+            const { id } = req;
 
             // DELETE ROLE
-            const deleteRole = await db.roles.destroy({
+            const deleteRole = await db.role.destroy({
                 where: {
                     [Op.and]: [{
-                        role_uuid,
+                        id,
                         tenant_id: TENANTID
                     }]
                 }

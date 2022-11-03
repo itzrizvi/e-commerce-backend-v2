@@ -10,7 +10,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { attribute_name, attribute_status, attr_group_uuid } = req;
+            const { attribute_name, attribute_status, attr_group_id } = req;
 
             // Slugify Attr Name
             const attribute_slug = slugify(`${attribute_name}`, {
@@ -22,11 +22,11 @@ module.exports = {
             });
 
             // Check If Already Exist the Attribute
-            const checkExistence = await db.attributes.findOne({
+            const checkExistence = await db.attribute.findOne({
                 where: {
                     [Op.and]: [{
                         attribute_slug,
-                        attr_group_uuid,
+                        attr_group_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -36,12 +36,13 @@ module.exports = {
             if (checkExistence) return { message: "Already Have This Attribute For this Group!!!", status: false };
 
             // Create Attr
-            const createAttr = await db.attributes.create({
+            const createAttr = await db.attribute.create({
                 attribute_name,
                 attribute_slug,
                 attribute_status,
-                attr_group_uuid,
-                tenant_id: TENANTID
+                attr_group_id,
+                tenant_id: TENANTID,
+                created_by: user.id
             });
 
             // IF Not Created
@@ -64,7 +65,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request 
-            const { attribute_uuid, attribute_name, attribute_status, attr_group_uuid } = req;
+            const { attribute_id, attribute_name, attribute_status, attr_group_id } = req;
 
             // Create New Slug If Attr name is also Updating
             let attribute_slug;
@@ -79,15 +80,15 @@ module.exports = {
                 });
 
                 // Check If Already Exist the Attribute
-                const checkExistence = await db.attributes.findOne({
+                const checkExistence = await db.attribute.findOne({
                     where: {
                         [Op.and]: [{
                             attribute_slug,
-                            attr_group_uuid,
+                            attr_group_id,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
-                            attribute_uuid
+                            id: attribute_id
                         }]
                     }
                 });
@@ -101,14 +102,15 @@ module.exports = {
                 attribute_name,
                 attribute_slug,
                 attribute_status,
-                attr_group_uuid
+                attr_group_id,
+                updated_by: user.id
             }
 
             // Update Attribute
-            const updateAttr = await db.attributes.update(updateDoc, {
+            const updateAttr = await db.attribute.update(updateDoc, {
                 where: {
                     [Op.and]: [{
-                        attribute_uuid,
+                        id: attribute_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -132,17 +134,17 @@ module.exports = {
         try {
 
             // Association with Attribute Group and Attributes
-            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
-                await db.attributes.hasOne(db.attr_groups, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attribute_group' });
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, { sourceKey: 'attr_group_id', foreignKey: 'id', as: 'attribute_group' });
             }
 
             // GET ALL ATTR
-            const getAllAttributes = await db.attributes.findAll({
+            const getAllAttributes = await db.attribute.findAll({
                 where: {
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.attr_groups, as: 'attribute_group'
+                    model: db.attr_group, as: 'attribute_group'
                 }],
                 order: [
                     ['attribute_name', 'ASC']
@@ -169,21 +171,21 @@ module.exports = {
         try {
 
             // Data From Request
-            const { attribute_uuid } = req;
+            const { attribute_id } = req;
 
             // Association with Attribute Group and Attributes
-            if (!db.attributes.hasAlias('attr_groups') && !db.attributes.hasAlias('attribute_group')) {
-                await db.attributes.hasOne(db.attr_groups, { sourceKey: 'attr_group_uuid', foreignKey: 'attr_group_uuid', as: 'attribute_group' });
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, { sourceKey: 'attr_group_id', foreignKey: 'id', as: 'attribute_group' });
             }
 
             // GET Single ATTR
-            const getAttribute = await db.attributes.findOne({
+            const getAttribute = await db.attribute.findOne({
                 where: {
-                    attribute_uuid,
+                    id: attribute_id,
                     tenant_id: TENANTID
                 },
                 include: [{
-                    model: db.attr_groups, as: 'attribute_group'
+                    model: db.attr_group, as: 'attribute_group'
                 }],
                 order: [
                     ['attribute_name', 'ASC']

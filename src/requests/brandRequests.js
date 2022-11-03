@@ -20,7 +20,7 @@ const createBrandRequest = (body) => {
 // GET SINGLE BRAND REQUEST
 const getSingleBrandRequest = (body) => {
     rules = {
-        brand_uuid: 'required|string'
+        brand_id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -30,7 +30,7 @@ const getSingleBrandRequest = (body) => {
 // Update BRAND REQUEST
 const updateBrandRequest = (body) => {
     rules = {
-        brand_uuid: 'required|string',
+        brand_id: 'required|string',
         brand_name: 'string',
         brand_description: 'string',
         brand_status: 'strict|boolean',
@@ -45,7 +45,7 @@ const updateBrandRequest = (body) => {
 // GET PRODUCTS BY BRAND REQUEST
 const getProductsByBrandRequest = (body) => {
     rules = {
-        brand_uuid: 'required|string'
+        brand_id: 'required|string'
     }
 
     return checkBody(body, rules);

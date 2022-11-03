@@ -1,6 +1,5 @@
 // ALL REQUIRES
 const { createRolesPermission } = require("../../helpers/rolesPermissionHelper");
-const { createRolesPermissionRequest } = require("../../requests/rolesPermissionRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 
@@ -14,12 +13,6 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
     const checkPermissions = await checkPermission(db, user, TENANTID, permissionName);
     if (!checkPermissions.success) {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
-    }
-
-    // Validate Create Role Request
-    const validate = await createRolesPermissionRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
     }
 
     if (!user || !isAuth) return { message: "Not Authorized!!", status: false } // If Not Auth or User

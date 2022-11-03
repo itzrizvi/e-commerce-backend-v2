@@ -1,23 +1,23 @@
 // Product Attributes Model
 module.exports = (sequelize, DataTypes) => {
 
-    const ProductAttributes = sequelize.define("product_attributes", {
-        prod_attr_uuid: {
-            type: DataTypes.UUID,
+    const ProductAttributes = sequelize.define("product_attribute", {
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        prod_uuid: {
-            type: DataTypes.UUID,
+        prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
-        attr_group_uuid: {
-            type: DataTypes.UUID,
+        attr_group_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
-        attribute_uuid: {
-            type: DataTypes.UUID,
+        attribute_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         attribute_type: {
@@ -34,8 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'product_attributes',
+        timestamps: true
     })
 
     return ProductAttributes

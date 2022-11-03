@@ -1,4 +1,6 @@
 module.exports = {
     adminSignInController: require("./adminSignInController"),
-    adminSignUpController: require("./adminSignUpController")
+    adminSignUpController: require("./adminSignUpController"),
+    setPasswordController: require("./setPasswordController"),
+    resetPasswordController: require("./resetPasswordController"),
 }

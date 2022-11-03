@@ -10,7 +10,7 @@ module.exports = {
 
         try{
             // GET DATA
-            const { user_uuid, product_uuid, rating, title, description } = req;
+            const { user_id, product_id, rating, title, description } = req;
 
             // Need to implement this user buy or not this product after order module finished
             // To DO
@@ -19,8 +19,8 @@ module.exports = {
             const checkRatingExist = await db.rating.findOne({
                 where: {
                     [Op.and]: [{
-                        product_id: product_uuid,
-                        user_id: user_uuid,
+                        product_id: product_id,
+                        user_id: user_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -28,12 +28,25 @@ module.exports = {
 
             if (checkRatingExist) return { message: "Rating already given!", status: false }
 
+
+             // Check The Product Exist or Not
+             const checkProductExist = await db.product.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: product_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!checkProductExist) return { message: "Product not exist!", status: false }
+
             const createRating = await db.rating.create({
-                user_id: user_uuid,
-                product_id: product_uuid,
+                user_id,
+                product_id,
                 rating_title: title,
                 rating_description: description,
-                rating: rating,
+                rating,
                 tenant_id: TENANTID
             });
 
@@ -55,13 +68,13 @@ module.exports = {
          try {
             // GET ALL Rating
             // GET DATA
-            const { user_uuid } = req;
+            const { user_id } = req;
 
             // Find All Roles With permissions
             const findAllRating = await db.rating.findAll({
                 where: {
                     tenant_id: TENANTID,
-                    user_id: user_uuid
+                    user_id: user_id
                 },
                 order: [
                     ['createdAt', 'DESC']
@@ -84,13 +97,13 @@ module.exports = {
          try {
             // GET ALL Rating
             // GET DATA
-            const { product_uuid } = req;
+            const { product_id } = req;
 
             // Find All Roles With permissions
             const findAllRating = await db.rating.findAll({
                 where: {
                     tenant_id: TENANTID,
-                    product_id: product_uuid
+                    product_id: product_id
                 },
                 order: [
                     ['createdAt', 'DESC']
@@ -113,13 +126,13 @@ module.exports = {
          try {
             // GET Rating
             // GET DATA
-            const { rating_uuid } = req;
+            const { rating_id } = req;
 
             // Find All Roles With permissions
             const findRating = await db.rating.findOne({
                 where: {
                     tenant_id: TENANTID,
-                    rating_uuid
+                    id: rating_id
                 },
                 order: [
                     ['createdAt', 'DESC']

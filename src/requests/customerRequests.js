@@ -20,7 +20,7 @@ const createCustomerRequest = (body) => {
 // Add Customer Billing Address REQUEST
 const addCustomerBillingAddressRequest = (body) => {
     rules = {
-        customer_uuid: 'required|string',
+        customer_id: 'required|string',
         billing_address: 'required|string',
         billing_city: 'required|string',
         billing_PO_code: 'required|string',
@@ -33,7 +33,7 @@ const addCustomerBillingAddressRequest = (body) => {
 // Add Customer Shipping Address REQUEST
 const addCustomerShippingAddressRequest = (body) => {
     rules = {
-        customer_uuid: 'required|string',
+        customer_id: 'required|string',
         shipping_address: 'required|string',
         shipping_city: 'required|string',
         shipping_PO_code: 'required|string',
@@ -47,7 +47,7 @@ const addCustomerShippingAddressRequest = (body) => {
 // Update Customer Billing Address REQUEST
 const updateCustomerBillingAddressRequest = (body) => {
     rules = {
-        billing_uuid: 'required|string',
+        billing_id: 'required|string',
         billing_address: 'required|string',
         billing_city: 'required|string',
         billing_PO_code: 'required|string',
@@ -59,7 +59,7 @@ const updateCustomerBillingAddressRequest = (body) => {
 // Update Customer Shipping Address REQUEST
 const updateCustomerShippingAddressRequest = (body) => {
     rules = {
-        shipping_uuid: 'required|string',
+        shipping_id: 'required|string',
         shipping_address: 'required|string',
         shipping_city: 'required|string',
         shipping_PO_code: 'required|string',

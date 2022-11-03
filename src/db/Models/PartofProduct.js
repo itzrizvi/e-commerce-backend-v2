@@ -3,22 +3,22 @@
 module.exports = (sequelize, DataTypes) => {
 
     const PartOfProduct = sequelize.define("partof_product", {
-        partof_product_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        prod_uuid: {
-            type: DataTypes.UUID,
+        prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         prod_quantity: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        parent_prod_uuid: {
-            type: DataTypes.UUID,
+        parent_prod_id: {
+            type: DataTypes.BIGINT,
             allowNull: true
         },
         tenant_id: {
@@ -28,8 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
     },
         {
-            timestamps: true,
-            tableName: 'partof_product',
+            timestamps: true
         })
 
     return PartOfProduct

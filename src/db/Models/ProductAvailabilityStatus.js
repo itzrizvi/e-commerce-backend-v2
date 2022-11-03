@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const ProductAvailabilityStatus = sequelize.define("product_availability_status", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true

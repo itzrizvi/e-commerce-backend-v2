@@ -18,7 +18,7 @@ const createRoleRequest = (body) => {
 // UPDATE ROLE REQUEST
 const updateRoleRequest = (body) => {
     rules = {
-        role_uuid: 'string',
+        role_id: 'string',
         role: 'string',
         roleDescription: 'string',
         role_status: 'strict|boolean'
@@ -39,7 +39,7 @@ const updateRolePermissionsRequest = (body) => {
 // DELETE ROLE REQUEST
 const deleteRoleRequest = (body) => {
     rules = {
-        role_uuid: 'string'
+        role_id: 'string'
     }
 
     return checkBody(body, rules);
@@ -48,7 +48,7 @@ const deleteRoleRequest = (body) => {
 // GET SINGLE ROLE REQUEST
 const getSingleRoleRequest = (body) => {
     rules = {
-        role_uuid: 'string'
+        role_id: 'string'
     }
 
     return checkBody(body, rules);

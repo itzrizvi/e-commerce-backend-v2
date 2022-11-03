@@ -10,27 +10,21 @@ input CustomerInput {
     first_name:String!
     last_name:String!
     email:String!
-    password:String!
     status: Boolean!
     send_mail: Boolean!
 }
 
 type Customer{
-    uid: UUID!
+    id: Int!
     first_name: String!
     last_name: String!
     email: String!
     email_verified: Boolean!
     user_status: Boolean!
     image: String
-    billing_addresses: [BillingAddressOutput]
-    shipping_addresses: [ShippingAddressOutput]
+    addresses: [AddressOutput]
 }
 
-type CreateCustomerOutput{
-    status: Boolean!
-    message: String!
-}
 
 type getAllCustomerOutput{
     status: Boolean!
@@ -45,33 +39,14 @@ type SingleCustomerOutput{
 }
 
 input GetSingleCustomerInput{
-    customer_uuid: UUID!
-}
-
-input CustomerShippingAddress{
-    customer_uuid: UUID!
-    shipping_address: String!
-    shipping_city: String!
-    shipping_PO_code: String!
-    shipping_country: String!
-    shipping_status: Boolean!
-}
-
-input CustomerBillingAddress{
-    customer_uuid: UUID!
-    billing_address: String!
-    billing_city: String!
-    billing_PO_code: String!
-    billing_country: String!
-    billing_status: Boolean!
+    customer_id: Int!
 }
 
 extend type Mutation {
-    addCustomer(data: CustomerInput): CreateCustomerOutput!
-    addCustomerBillingAddress(data: CustomerBillingAddress): CreateCustomerOutput!
-    addCustomerShippingAddress(data: CustomerShippingAddress): CreateCustomerOutput!
-    updateCustomerBillingAddress(data: UpdateBillingAddress): CreateCustomerOutput!
-    updateCustomerShippingAddress(data: UpdateShippingAddress): CreateCustomerOutput!
+    addCustomer(data: CustomerInput): CommonOutput!
+    addCustomerBillingAddress(data: Address): CommonOutput!
+    addCustomerShippingAddress(data: Address): CommonOutput!
+    updateCustomerAddress(data: UpdateAddress): CommonOutput!
 }
 extend type Query {
     getAllCustomer: getAllCustomerOutput!

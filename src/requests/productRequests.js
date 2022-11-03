@@ -17,7 +17,7 @@ const addProductRequest = (body) => {
         prod_sale_price: 'strict|numeric',
         prod_partnum: 'required|string',
         prod_sku: 'required|string',
-        brand_uuid: 'required|string',
+        brand_id: 'required|string',
         prod_category: 'required|string',
         related_product: 'array',
         prod_weight: 'string',
@@ -38,7 +38,7 @@ const addProductRequest = (body) => {
 // Update Product Request
 const updateProductRequest = (body) => {
     rules = {
-        prod_uuid: 'required|string',
+        prod_id: 'required|string',
         prod_name: 'string',
         prod_long_desc: 'string',
         prod_short_desc: 'string',
@@ -50,7 +50,7 @@ const updateProductRequest = (body) => {
         prod_sale_price: 'numeric',
         prod_partnum: 'string',
         prod_sku: 'string',
-        brand_uuid: 'string',
+        brand_id: 'string',
         prod_category: 'string',
         related_product: 'array',
         prod_weight: 'string',
@@ -70,7 +70,7 @@ const updateProductRequest = (body) => {
 // Get Single Product Request
 const getSingleProductRequest = (body) => {
     rules = {
-        prod_uuid: 'required|string'
+        prod_id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -79,7 +79,7 @@ const getSingleProductRequest = (body) => {
 // Update Product Thumbnail Request
 const updateThumbnailRequest = (body) => {
     rules = {
-        prod_uuid: 'required|string'
+        prod_id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -88,8 +88,8 @@ const updateThumbnailRequest = (body) => {
 // Delete Gallery Image Request
 const deleteGalleryImageRequest = (body) => {
     rules = {
-        prod_uuid: 'required|string',
-        prod_gallery_uuid: 'required|string',
+        prod_id: 'required|string',
+        prod_gallery_id: 'required|string',
     }
 
     return checkBody(body, rules);
@@ -99,7 +99,7 @@ const deleteGalleryImageRequest = (body) => {
 // Upload Product Gallery Image Request
 const uploadGalleryImageRequest = (body) => {
     rules = {
-        prod_uuid: 'required|string'
+        prod_id: 'required|string'
     }
 
     return checkBody(body, rules);

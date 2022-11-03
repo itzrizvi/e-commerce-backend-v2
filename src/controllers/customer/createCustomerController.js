@@ -13,12 +13,6 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // Validate Create Brand Request
-    const validate = await createCustomerRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
-    }
-
     // CREATE ROLE
     const data = await createCustomer(req, db, user, isAuth, TENANTID);
 

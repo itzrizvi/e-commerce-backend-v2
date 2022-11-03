@@ -1,12 +1,12 @@
 // Coupon Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Coupon = sequelize.define("coupons", {
-        coupon_uuid: {
-            type: DataTypes.UUID,
+    const Coupon = sequelize.define("coupon", {
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         coupon_name: {
             type: DataTypes.STRING,
@@ -58,8 +58,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'coupons',
+        timestamps: true
     })
 
     return Coupon

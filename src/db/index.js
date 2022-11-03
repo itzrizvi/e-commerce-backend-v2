@@ -54,10 +54,7 @@ readdirSync(path.join(__dirname, './Models'))
 
     });
 
-
 db.sequelize = sequelize
-db.Sequelize = Sequelize
-
 
 //exporting the module
 module.exports = db

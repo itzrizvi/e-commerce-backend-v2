@@ -1,6 +1,5 @@
 // All Requires
 const { adminSignUp } = require("../../helpers/adminHelper");
-const { adminSignUpRequest } = require("../../requests/adminRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 
@@ -15,13 +14,6 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
     const checkPermissions = await checkPermission(db, user, TENANTID, permissionName);
     if (!checkPermissions.success) {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
-    }
-
-
-    // Validate Data
-    const validate = await adminSignUpRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
     }
 
     // Return If No Auth and No Role

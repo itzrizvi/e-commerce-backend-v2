@@ -8,7 +8,7 @@ module.exports = gql`
 
 type AdminAuthPayload {
     authToken:String
-    uid:String
+    id:String
     first_name:String
     last_name:String
     email:String
@@ -24,7 +24,7 @@ input AdminSignUpInput {
     first_name:String!
     last_name:String!
     email:String!
-    roleUUID:JSON!
+    role_ids:JSON!
     userStatus:Boolean!
     sendEmail:Boolean!
 }
@@ -37,7 +37,7 @@ type AdminSignUpOutput {
 
 
 type Staff {
-    uid:UUID
+    id:Int
     first_name:String
     last_name:String
     email:String
@@ -55,17 +55,16 @@ type GetALLStaffOutput {
 }
 
 input UpdateAdminInput {
-    uid:UUID!
+    id:Int!
     first_name:String
     last_name:String
-    password:String
-    roleUUID:JSON
+    role_ids:JSON
     user_status:Boolean
     sendEmail:Boolean!
 }
 
 input GetSingleAdminInput {
-    uid:UUID!
+    id:Int!
 }
 
 type GetSingleAdminOutput {
@@ -76,9 +75,21 @@ type GetSingleAdminOutput {
 }
 
 input AdminPasswordChangeInput {
-    uid:UUID!
+    id:Int!
     oldPassword:String!
     newPassword:String!
+}
+
+input SetPasswordInput {
+    codeHashed:String!
+    verificationCode:Int!
+    newPassword:String!
+    confirmPassword:String!
+}
+
+input ResetPasswordInput {
+    email:String!
+    permissionName:String!
 }
 
 
@@ -90,6 +101,8 @@ extend type Mutation {
     adminSignIn(email: String!, password: String!): AdminAuthPayload!
     adminUpdate(data: UpdateAdminInput, file:Upload): CommonOutput!
     adminPasswordChange(data: AdminPasswordChangeInput): CommonOutput!
+    setPassword(data:SetPasswordInput): CommonOutput!
+    resetPassword(data:ResetPasswordInput): CommonOutput!
 }
 
 extend type Query {

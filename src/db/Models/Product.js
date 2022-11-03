@@ -1,12 +1,12 @@
 // Product Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Product = sequelize.define("products", {
-        prod_uuid: {
-            type: DataTypes.UUID,
+    const Product = sequelize.define("product", {
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4
+            autoIncrement: true
         },
         prod_name: {
             type: DataTypes.TEXT,
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         prod_category: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         prod_regular_price: {
@@ -53,8 +53,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 0
         },
-        brand_uuid: {
-            type: DataTypes.UUID,
+        brand_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         prod_partnum: {
@@ -65,8 +65,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        dimension_uuid: {
-            type: DataTypes.UUID,
+        dimension_id: {
+            type: DataTypes.BIGINT,
             allowNull: true
         },
         prod_weight: {
@@ -106,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         added_by: {
-            type: DataTypes.UUID,
+            type: DataTypes.BIGINT,
             allowNull: false
         },
         tenant_id: {
@@ -115,8 +115,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'products',
+        timestamps: true
     })
 
     return Product

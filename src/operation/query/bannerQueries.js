@@ -32,5 +32,4 @@ module.exports = {
         // Return To Controller
         return await getBannerBySlugController(args.query, db, user, isAuth, TENANTID);
     }
-
 }

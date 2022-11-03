@@ -2,14 +2,14 @@
 module.exports = (sequelize, DataTypes) => {
 
     const Permissions = sequelize.define("permissions_data", {
-        permission_data_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
-        permission_uuid: {
-            type: DataTypes.UUID,
+        permission_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         edit_access: {
@@ -20,12 +20,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: true
         },
-        role_uuid: {
-            type: DataTypes.UUID,
+        role_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         role_no: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         tenant_id: {
@@ -34,8 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'permissions_data',
+        timestamps: true
     })
 
     return Permissions

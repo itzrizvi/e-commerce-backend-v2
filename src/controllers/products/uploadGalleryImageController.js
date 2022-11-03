@@ -16,11 +16,6 @@ module.exports = async (req, db, user, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // Validate Add Product Request
-    const validate = await uploadGalleryImageRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
-    }
     // Sending Request to Helper
     const data = await uploadGalleryImage(req, db, TENANTID);
 

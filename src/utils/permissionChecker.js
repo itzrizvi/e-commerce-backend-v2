@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 const checkPermission = async (db, user, TENANTID, permissionName) => {
 
     // Extract User
-    const uid = user.uid;
+    const id = user.id;
 
     // GET The Roles Permission Data
     const getRolesPermissionData = await db.roles_permission.findOne({
@@ -13,13 +13,17 @@ const checkPermission = async (db, user, TENANTID, permissionName) => {
             roles_permission_slug: permissionName
         }
     });
-    const rolePermissionID = getRolesPermissionData.roles_permission_uuid; // Extract UUID
+
+    // If Null
+    if (!getRolesPermissionData) return { success: false }
+
+    const rolePermissionID = getRolesPermissionData.id; // Extract UUID
 
     // Find Roles of This User 
-    const findRoles = await db.admin_roles.findAll({
+    const findRoles = await db.admin_role.findAll({
         where: {
             [Op.and]: [{
-                admin_uuid: uid,
+                admin_id: id,
                 tenant_id: TENANTID
             }]
         }
@@ -28,15 +32,15 @@ const checkPermission = async (db, user, TENANTID, permissionName) => {
     // GET ROLE UUIDS
     let roleUUIDs = [];
     findRoles.forEach(async (role) => {
-        await roleUUIDs.push(role.role_uuid);
+        await roleUUIDs.push(role.role_id);
     });
 
     // GET Permission Data
     const getPermissionData = await db.permissions_data.findAll({
         where: {
             [Op.and]: [{
-                role_uuid: roleUUIDs,
-                permission_uuid: rolePermissionID,
+                role_id: roleUUIDs,
+                permission_id: rolePermissionID,
                 edit_access: true,
                 tenant_id: TENANTID
             }]

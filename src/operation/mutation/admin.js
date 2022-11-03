@@ -1,5 +1,5 @@
 // Require Controllers
-const { adminSignInController, adminSignUpController } = require("../../controllers")
+const { adminSignInController, adminSignUpController, setPasswordController, resetPasswordController } = require("../../controllers")
 
 
 
@@ -29,5 +29,24 @@ module.exports = {
         // Return To Controller
         return await adminSignUpController(args.data, db, user, isAuth, TENANTID);
 
-    }
+    },
+    // Set/Reset Password
+    setPassword: async (root, args, { db, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false };
+
+        // Return To Controller
+        return await setPasswordController(args.data, db, TENANTID);
+    },
+    // Reset Password
+    resetPassword: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false };
+        // Return If No Auth and No Role
+        if (!user || !isAuth) return { message: "Not Authorized", email: args.data.email, status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", email: args.data.email, status: false };
+
+        // Return To Controller
+        return await resetPasswordController(args.data, db, user, isAuth, TENANTID);
+    },
 }

@@ -10,8 +10,8 @@ module.exports = async (token, db) => {
     } catch (error) {
         return { status: false };
     }
-    let authUser = await db.users.findOne({
-        where: { uid: decodeToken.uid }
+    let authUser = await db.user.findOne({
+        where: { id: decodeToken.id }
     });
 
     if (!authUser) {

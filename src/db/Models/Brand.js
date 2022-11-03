@@ -1,12 +1,12 @@
 // Brand Model
 module.exports = (sequelize, DataTypes) => {
 
-    const Brands = sequelize.define("brands", {
-        brand_uuid: {
-            type: DataTypes.UUID,
+    const Brands = sequelize.define("brand", {
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         brand_name: {
             type: DataTypes.STRING,
@@ -39,8 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'brands',
+        timestamps: true
     })
 
     return Brands

@@ -1,14 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const BannerImages = sequelize.define("banner_images", {
-        banner_uuid: {
-            type: DataTypes.UUID,
+    const BannerImages = sequelize.define("banner_image", {
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         banner_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         title: {
@@ -35,8 +35,7 @@ module.exports = (sequelize, DataTypes) => {
 
     },
         {
-            timestamps: true,
-            tableName: 'banner_images',
+            timestamps: true
         })
 
     return BannerImages

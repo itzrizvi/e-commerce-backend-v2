@@ -2,7 +2,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
-const CryptoJS = require('crypto-js');
 const { Op } = require('sequelize');
 
 module.exports = {
@@ -13,7 +12,7 @@ module.exports = {
             const { first_name, last_name, email, password } = req;
             const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
-            const user = await db.users.create({
+            const user = await db.user.create({
                 first_name,
                 last_name,
                 email,
@@ -24,7 +23,7 @@ module.exports = {
             });
 
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email },
+                { id: user.id, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: '1y' }
             );
@@ -43,10 +42,10 @@ module.exports = {
             const updateLastLogin = {
                 last_login: Date.now()
             }
-            db.users.update(updateLastLogin, {
+            db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
-                        uid: user.uid,
+                        id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -54,7 +53,7 @@ module.exports = {
 
             return {
                 authToken,
-                uid: user.uid,
+                id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
@@ -80,7 +79,7 @@ module.exports = {
             const { email, password } = req;
 
             // CHECK USER
-            const user = await db.users.findOne({
+            const user = await db.user.findOne({
                 where: {
                     [Op.and]: [{
                         email,
@@ -115,7 +114,7 @@ module.exports = {
 
             // return jwt
             const authToken = jwt.sign(
-                { uid: user.uid, email: user.email },
+                { id: user.id, email: user.email },
                 process.env.JWT_SECRET,
                 { expiresIn: '4h' }
             );
@@ -124,10 +123,10 @@ module.exports = {
             const updateLastLogin = {
                 last_login: Date.now()
             }
-            db.users.update(updateLastLogin, {
+            db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
-                        uid: user.uid,
+                        id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -135,7 +134,7 @@ module.exports = {
 
             return {
                 authToken,
-                uid: user.uid,
+                id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
@@ -160,7 +159,7 @@ module.exports = {
         const email = user.email; // Email From Request
 
         // User Find For Matching Code
-        const findUser = await db.users.findOne({
+        const findUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -180,6 +179,7 @@ module.exports = {
         // Time Calculating
         const reqTime = new Date();
         const recordTime = new Date(updatedAt);
+
         // Calculating Minutes
         let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
         // Difference
@@ -191,10 +191,11 @@ module.exports = {
             if (verification_code === req.verificationCode) {
                 // Updating Doc
                 const updateDoc = {
-                    email_verified: true
+                    email_verified: true,
+                    updated_by: user.id
                 }
                 // Update User
-                const updateUser = await db.users.update(updateDoc, {
+                const updateUser = await db.user.update(updateDoc, {
                     where: {
                         [Op.and]: [{
                             email,
@@ -264,10 +265,11 @@ module.exports = {
 
             // Updating Doc
             const updateDoc = {
-                verification_code: newVerificationCode
+                verification_code: newVerificationCode,
+                updated_by: user.id
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, {
+            const updateUser = await db.user.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         email,
@@ -317,7 +319,7 @@ module.exports = {
         const email = req.email;
 
         // Check User is Exists
-        const checkUser = await db.users.findOne({
+        const checkUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -336,7 +338,7 @@ module.exports = {
                 forgot_password_code: forgotPasswordCode
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, {
+            const updateUser = await db.user.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         email,
@@ -390,7 +392,7 @@ module.exports = {
         const forgotPassVerifyCode = req.forgotPassVerifyCode;
 
         // CHECK USER 
-        const checkUser = await db.users.findOne({
+        const checkUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -454,7 +456,7 @@ module.exports = {
         const confirmPassword = req.confirmPassword;
 
         // CHECK USER 
-        const checkUser = await db.users.findOne({
+        const checkUser = await db.user.findOne({
             where: {
                 [Op.and]: [{
                     email,
@@ -495,7 +497,7 @@ module.exports = {
                 password: await bcrypt.hash(confirmPassword, 10),
             }
             // Update User
-            const updateUser = await db.users.update(updateDoc, {
+            const updateUser = await db.user.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         email,

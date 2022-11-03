@@ -8,7 +8,7 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
         // Return To Controller
-        return await addProductAvailabilityStatusController(args.data, db, TENANTID);
+        return await addProductAvailabilityStatusController(args.data, db, user, TENANTID);
     },
     updateProductAvailabilityStatus: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
@@ -17,6 +17,6 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
-        return await updateProductAvailabilityStatusController(args.data, db, TENANTID);
+        return await updateProductAvailabilityStatusController(args.data, db, user, TENANTID);
     }
 }

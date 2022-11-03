@@ -7,7 +7,7 @@ module.exports = gql`
 #########################################################################
 
 type ProductDimension {
-    prod_dimension_uuid:UUID
+    id:Int
     length:String
     width:String
     height:String
@@ -15,7 +15,7 @@ type ProductDimension {
 }
 
 type DiscountType {
-    discount_type_uuid:UUID
+    id:Int
     customer_group:CustomerGroup
     discount_quantity:Int
     discount_priority:Int
@@ -25,31 +25,31 @@ type DiscountType {
 }
 
 type ProductGallery {
-    prod_gallery_uuid:UUID
-    prod_uuid:UUID
+    id:Int
+    prod_id:Int
     prod_image:String
 }
 
 type PartofProduct {
-    partof_product_uuid:UUID
+    id:Int
     prod_quantity:Int
     part_product:Product
 }
 
 type ProductAttributes {
-    prod_attr_uuid:UUID
+    id:Int
     attribute_type:String
     attribute_value:String
     attribute_data:Attribute
 }
 
 type RelatedProduct {
-    related_prod_uuid:UUID
+    id:Int
     related_prod:Product
 }
 
 type Product {
-    prod_uuid:UUID
+    id:Int
     prod_name:String
     prod_slug:String
     prod_long_desc:JSON
@@ -96,8 +96,8 @@ input AddProductInput {
     prod_sale_price:Float
     prod_partnum:String!
     prod_sku:String!
-    brand_uuid:UUID!
-    prod_category:UUID!
+    brand_id:Int!
+    prod_category:Int!
     related_product:JSON
     prod_weight:String
     prod_weight_class:String
@@ -115,7 +115,7 @@ input AddProductInput {
 }
 
 type ProductForList {
-    prod_uuid:UUID
+    id:Int
     prod_name:String
     prod_slug:String
     prod_regular_price:Float
@@ -143,7 +143,7 @@ type GetAllProducts {
 }
 
 input GetSingleProductInput {
-    prod_uuid:UUID!
+    prod_id:Int!
 }
 
 type GetSingleProductOutput {
@@ -154,22 +154,22 @@ type GetSingleProductOutput {
 }
 
 input UpdateThumbnailInput {
-    prod_uuid:UUID!
+    prod_id:Int!
     prod_thumbnail:Upload!
 }
 
 input GalleryImageDeleteInput {
-    prod_uuid:UUID!
-    prod_gallery_uuid:UUID!
+    prod_id:Int!
+    prod_gallery_id:Int!
 }
 
 input GalleryImageUploadInput {
-    prod_uuid:UUID!
+    prod_id:Int!
     gallery_img:[Upload!]
 }
 
 input UpdateProductInput {
-    prod_uuid:UUID
+    prod_id:Int
     prod_name:String
     prod_long_desc:JSON
     prod_short_desc:JSON
@@ -181,8 +181,8 @@ input UpdateProductInput {
     prod_sale_price:Float
     prod_partnum:String
     prod_sku:String
-    brand_uuid:UUID
-    prod_category:UUID
+    brand_id:Int
+    prod_category:Int
     prod_weight:String
     prod_weight_class:String
     prod_status:Boolean
@@ -214,6 +214,51 @@ input GetRecentViewProductInput{
 }
 
 
+type PublicProductView {
+    id:Int
+    prod_name:String
+    prod_slug:String
+    prod_long_desc:JSON
+    prod_short_desc:JSON
+    prod_meta_title:String
+    prod_meta_desc:JSON
+    prod_meta_keywords:JSON
+    prod_tags:JSON
+    brand:Brand
+    category:Category
+    prod_attributes:[ProductAttributes]
+    related_products:[RelatedProduct]
+    prod_regular_price:Float
+    prod_sale_price:Float
+    prod_partnum:String
+    prod_sku:String
+    prod_status:Boolean
+    taxable:Boolean
+    is_featured:Boolean
+    prod_condition:String
+    dimensions:ProductDimension
+    prod_weight:String
+    prod_weight_class:String
+    prod_outofstock_status:String
+    prod_thumbnail:String
+    gallery:[ProductGallery]
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+input PublicProductViewInput {
+    prod_id:Int!
+}
+
+type PublicProductViewOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data: PublicProductView
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -228,6 +273,7 @@ extend type Mutation {
 
 extend type Query {
     getSingleProduct(query: GetSingleProductInput): GetSingleProductOutput!
+    publicProductView(query: PublicProductViewInput): PublicProductViewOutput!
     getProductList: GetAllProducts!
     getFeaturedProducts: GetFeaturedProducts!
     getRecentViewProduct(query: GetRecentViewProductInput): GetFeaturedProducts!

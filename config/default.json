@@ -25,15 +25,22 @@
         "PRODUCT_IMG_IDF": "partno",
         "BRAND_IMG_SRC": "psp-image-storage/brand",
         "BRAND_IMG_DEST": "psp-image-storage-resize/brand",
-        "BRND_IMG_IDF": "brand_uuid",
+        "BRND_IMG_IDF": "id",
         "BANNER_IMG_SRC": "psp-image-storage/banner",
         "BANNER_IMG_DEST": "psp-image-storage-resize/banner",
-        "BANNER_IMG_IDF": "banner_uuid",
+        "BANNER_IMG_IDF": "id",
         "CATEGORY_IMG_SRC": "psp-image-storage/category",
         "CATEGORY_IMG_DEST": "psp-image-storage-resize/category",
-        "CATEGORY_IMG_IDF": "cat_id",
+        "CATEGORY_IMG_IDF": "id",
         "USER_IMG_SRC": "psp-image-storage/user",
         "USER_IMG_DEST": "psp-image-storage-resize/user",
-        "USER_IMG_IDF": "uuid"
-    }
+        "USER_IMG_IDF": "id",
+        "COMPANY_LOGO_IMG_SRC": "psp-image-storage/logo",
+        "COMPANY_LOGO_IMG_DEST": "psp-image-storage-resize/logo",
+        "COMPANY_LOGO_IMG_IDF": "tenant_id"
+    },
+    "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",
+    "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",
+    "RESET_PASSWORD": "reset-password/",
+    "SET_PASSWORD": "set-password/"
 }

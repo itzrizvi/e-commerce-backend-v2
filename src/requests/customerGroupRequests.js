@@ -19,7 +19,7 @@ const createCustomerGroupGroupRequest = (body) => {
 // Update Customer Group REQUEST
 const updateCustomerGroupRequest = (body) => {
     rules = {
-        customer_group_uuid: 'required|string',
+        customer_group_id: 'required|string',
         customer_group_name: 'string',
         customergroup_description: 'string',
         customergroup_sortorder: 'strict|integer',
@@ -32,7 +32,7 @@ const updateCustomerGroupRequest = (body) => {
 // GET Single Customer Group Request
 const getSingleCustomerGroupRequest = (body) => {
     rules = {
-        customer_group_uuid: 'required|string'
+        customer_group_id: 'required|string'
     }
 
     return checkBody(body, rules);

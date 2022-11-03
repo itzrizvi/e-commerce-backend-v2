@@ -19,7 +19,7 @@ const createVendorRequest = (body) => {
 // Update Vendor REQUEST
 const updateVendorRequest = (body) => {
     rules = {
-        vendor_uuid: 'required|string',
+        vendor_id: 'required|string',
         vendor_contact_person: 'required|string',
         vendor_email: 'required|email',
         vendor_status: 'required|boolean',
@@ -34,7 +34,7 @@ const updateVendorRequest = (body) => {
 // Update Vendor Status REQUEST
 const updateVendorStatusRequest = (body) => {
     rules = {
-        vendor_uuid: 'required|string',
+        vendor_id: 'required|string',
         vendor_status: 'required|boolean',
     }
 

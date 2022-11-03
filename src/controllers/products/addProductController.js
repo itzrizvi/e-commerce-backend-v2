@@ -1,6 +1,5 @@
 // All Requires
 const { addProduct } = require("../../helpers/productHelper");
-const { addProductRequest } = require("../../requests/productRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 
@@ -14,12 +13,6 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-
-    // Validate Add Product Request
-    const validate = await addProductRequest(req);
-    if (!validate.success) {
-        return singleResponse(validate.data);
-    }
     // Return If No Auth
     if (!user || !isAuth) return { message: "Not Authorized", status: false };
     if (user.has_role === '0') return { message: "Not Authorized", status: false };

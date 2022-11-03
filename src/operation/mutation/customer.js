@@ -1,4 +1,4 @@
-const { createCustomerController, addCustomerBillingAddressController, addCustomerShippingAddressController, updateCustomerBillingAddressController, updateCustomerShippingAddressController } = require("../../controllers");
+const { createCustomerController, addCustomerBillingAddressController, addCustomerShippingAddressController, updateCustomerAddressController } = require("../../controllers");
 
 // Customer Mutation Start
 module.exports = {
@@ -32,24 +32,14 @@ module.exports = {
         // Send to Controller
         return await addCustomerShippingAddressController(args.data, db, user, isAuth, TENANTID);
     },
-    // Update Customer Billing Address Mutation
-    updateCustomerBillingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+    // Update Customer Address Mutation
+    updateCustomerAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
         // Send to Controller
-        return await updateCustomerBillingAddressController(args.data, db, user, isAuth, TENANTID);
+        return await updateCustomerAddressController(args.data, db, user, isAuth, TENANTID);
     },
-    // Update Customer Shipping Address Mutation
-    updateCustomerShippingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
-        // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
-        // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", status: false };
-        // Send to Controller
-        return await updateCustomerShippingAddressController(args.data, db, user, isAuth, TENANTID);
-    }
 }

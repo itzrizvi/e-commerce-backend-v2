@@ -2,18 +2,18 @@
 module.exports = (sequelize, DataTypes) => {
 
     const Rating = sequelize.define("rating", {
-        rating_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         user_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         product_id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         rating_title: {
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         rating_description: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         rating: {
             type: DataTypes.FLOAT,
@@ -34,8 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         }
 
     }, {
-        timestamps: true,
-        tableName: 'rating',
+        timestamps: true
     })
 
     return Rating

@@ -16,7 +16,7 @@ const createRolesPermissionRequest = (body) => {
 // Roles Permission GET SINGLE REQUEST
 const getSingleRolesPermissionRequest = (body) => {
     rules = {
-        roles_permission_uuid: 'required|string'
+        roles_permission_id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -25,7 +25,7 @@ const getSingleRolesPermissionRequest = (body) => {
 // Roles Permission Update REQUEST
 const updateRolesPermissionRequest = (body) => {
     rules = {
-        roles_permission_uuid: 'required|string',
+        roles_permission_id: 'required|string',
         roles_permission_name: 'string',
         roles_permission_status: 'boolean',
     }

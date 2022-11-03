@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const CompanyInfo = sequelize.define("company_info", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
@@ -14,23 +14,23 @@ module.exports = (sequelize, DataTypes) => {
         },
         logo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         contact_address:{
             type: DataTypes.STRING,
-            allowNull: false
-        },
-        phone:{
-            type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fax:{
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        email:{
-            type: DataTypes.STRING,
-            allowNull: false
+        createdBy: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        updatedBy: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         tenant_id: {
             type: DataTypes.STRING,

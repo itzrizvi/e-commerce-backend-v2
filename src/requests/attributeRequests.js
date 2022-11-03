@@ -18,7 +18,7 @@ const createAttrGroupRequest = (body) => {
 // Update ATTR Group  REQUEST
 const updateAttrGroupRequest = (body) => {
     rules = {
-        attr_group_uuid: 'required|string',
+        attr_group_id: 'required|string',
         attr_group_name: 'string',
         attrgroup_sortorder: 'strict|integer',
         attrgroup_status: 'strict|boolean'
@@ -30,7 +30,7 @@ const updateAttrGroupRequest = (body) => {
 // GET Single ATTR Group Request
 const getSingleAttrGroupRequest = (body) => {
     rules = {
-        attr_group_uuid: 'required|string'
+        attr_group_id: 'required|string'
     }
 
     return checkBody(body, rules);
@@ -41,7 +41,7 @@ const getSingleAttrGroupRequest = (body) => {
 const createAttributeRequest = (body) => {
     rules = {
         attribute_name: 'required|string',
-        attr_group_uuid: 'required|string',
+        attr_group_id: 'required|string',
         attribute_status: 'required|strict|boolean'
     }
 
@@ -52,9 +52,9 @@ const createAttributeRequest = (body) => {
 // UPDATE Attr REQUEST
 const updateAttributeRequest = (body) => {
     rules = {
-        attribute_uuid: 'required|string',
+        attribute_id: 'required|string',
         attribute_name: 'string',
-        attr_group_uuid: 'string',
+        attr_group_id: 'string',
         attribute_status: 'strict|boolean'
     }
 
@@ -65,7 +65,7 @@ const updateAttributeRequest = (body) => {
 // GET Single ATTR Request
 const getSingleAttributeRequest = (body) => {
     rules = {
-        attribute_uuid: 'required|string'
+        attribute_id: 'required|string'
     }
 
     return checkBody(body, rules);

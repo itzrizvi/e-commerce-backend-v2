@@ -6,8 +6,8 @@ let rules = {}, request, response;
 // CREATE Rating REQUEST
 const createRatingRequest = (body) => {
     rules = {
-        user_uuid: 'required|string',
-        product_uuid: 'required|string',
+        user_id: 'required|string',
+        product_id: 'required|string',
         rating: 'required|numeric',
         title: 'required|string',
         description: 'required|string'

@@ -1,11 +1,12 @@
 // User model
 module.exports = (sequelize, DataTypes) => {
 
-    const User = sequelize.define("users", {
-        uid: {
-            type: DataTypes.UUID,
+    const User = sequelize.define("user", {
+        id: {
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4
+            allowNull: false,
+            autoIncrement: true
         },
         first_name: {
             type: DataTypes.STRING,
@@ -39,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         has_role: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             defaultValue: 0,
             allowNull: false
         },
@@ -59,11 +60,18 @@ module.exports = (sequelize, DataTypes) => {
         last_login: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        updated_by: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
 
     }, {
-        timestamps: true,
-        tableName: 'users',
+        timestamps: true
     })
 
 

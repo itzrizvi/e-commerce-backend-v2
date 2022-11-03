@@ -15,14 +15,14 @@ input CreateAttributeGroupInput{
 }
 
 input UpdateAttributeGroupInput{
-    attr_group_uuid:UUID!
+    attr_group_id:Int!
     attr_group_name:String
     attrgroup_sortorder:Int
     attrgroup_status:Boolean
 }
 
 type AttributeGroup {
-    attr_group_uuid:UUID
+    id:Int
     attr_group_name:String
     attr_group_slug:String
     attrgroup_sortorder:Int
@@ -41,7 +41,7 @@ type GetAllAttrGroups{
 }
 
 input GetSingleAttrGroupInput{
-    attr_group_uuid:UUID!
+    attr_group_id:Int!
 }
 
 type GetSingleAttrGroup {
@@ -57,22 +57,22 @@ type GetSingleAttrGroup {
 input CreateAttributeInput{
     attribute_name:String!
     attribute_status:Boolean!
-    attr_group_uuid:UUID!
+    attr_group_id:Int!
 }
 
 input UpdateAttributeInput{
-    attribute_uuid:UUID!
+    attribute_id:Int!
     attribute_name:String
     attribute_status:Boolean
-    attr_group_uuid:UUID
+    attr_group_id:Int
 }
 
 type Attribute {
-    attribute_uuid:UUID
+    id:Int
     attribute_name:String
     attribute_slug:String
     attribute_status:Boolean
-    attr_group_uuid:UUID
+    attr_group_id:Int
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -87,7 +87,7 @@ type GetAllAttributes {
 }
 
 input GetSingleAttributeInput{
-    attribute_uuid:UUID!
+    attribute_id:Int!
 }
 
 type GetSingleAttribute {

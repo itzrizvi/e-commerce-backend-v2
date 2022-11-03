@@ -1,7 +1,8 @@
 // BARND BASED QUERY
 const { getAllBrandsController,
     getSingleBrandController,
-    getProductsByBrandController } = require("../../controllers");
+    getProductsByBrandController,
+    allPublicBrandsController } = require("../../controllers");
 
 // BARND QUERIES
 module.exports = {
@@ -37,6 +38,15 @@ module.exports = {
 
         // Return To Controller
         return await getProductsByBrandController(args.query, db, TENANTID);
+    },
+    // Public Brand List API
+    allPublicBrands: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+
+        // Return To Controller
+        return await allPublicBrandsController(db, TENANTID);
     },
 
 }

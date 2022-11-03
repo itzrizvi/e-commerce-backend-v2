@@ -3,11 +3,11 @@
 module.exports = (sequelize, DataTypes) => {
 
     const ProductDimension = sequelize.define("product_dimension", {
-        prod_dimension_uuid: {
-            type: DataTypes.UUID,
+        id: {
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true
         },
         length: {
             type: DataTypes.STRING,

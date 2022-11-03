@@ -191,7 +191,8 @@ module.exports = {
             if (verification_code === req.verificationCode) {
                 // Updating Doc
                 const updateDoc = {
-                    email_verified: true
+                    email_verified: true,
+                    updated_by: user.id
                 }
                 // Update User
                 const updateUser = await db.user.update(updateDoc, {
@@ -264,7 +265,8 @@ module.exports = {
 
             // Updating Doc
             const updateDoc = {
-                verification_code: newVerificationCode
+                verification_code: newVerificationCode,
+                updated_by: user.id
             }
             // Update User
             const updateUser = await db.user.update(updateDoc, {

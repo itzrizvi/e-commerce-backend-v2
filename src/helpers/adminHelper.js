@@ -138,8 +138,7 @@ module.exports = {
                     verification_code: verificationCode,
                     user_status,
                     tenant_id: TENANTID,
-                    created_by: user.id,
-                    updated_by: user.id
+                    created_by: user.id
                 });
 
 

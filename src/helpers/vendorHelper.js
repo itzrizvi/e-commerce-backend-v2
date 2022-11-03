@@ -224,37 +224,37 @@ module.exports = {
 
         // Try Catch Block
         try {
-        if (!db.vendor.hasAlias('addresses')) {
-            await db.vendor.hasMany(db.address,
-                {
-                    foreignKey: 'ref_id',
-                    constraints: false,
-                    scope: {
-                        ref_model: 'vendor'
-                    }
-                });
-        }
-
-        // GET ALL Vendor
-        const getallvendor = await db.vendor.findAll({
-            include: [
-                {
-                    model: db.address,
-                    separate: true,
-                }
-            ],
-            where: {
-                tenant_id: TENANTID
+            if (!db.vendor.hasAlias('addresses')) {
+                await db.vendor.hasMany(db.address,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        }
+                    });
             }
-        });
 
-        // Return 
-        return {
-            message: "Get All Vendor Success!!!",
-            status: true,
-            tenant_id: TENANTID,
-            data: getallvendor
-        }
+            // GET ALL Vendor
+            const getallvendor = await db.vendor.findAll({
+                include: [
+                    {
+                        model: db.address,
+                        separate: true,
+                    }
+                ],
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Return 
+            return {
+                message: "Get All Vendor Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getallvendor
+            }
 
 
         } catch (error) {
@@ -267,7 +267,7 @@ module.exports = {
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
             const createBilling = db.address.create({
                 ref_id: parent_id,
                 ref_model: "vendor",
@@ -278,14 +278,15 @@ module.exports = {
                 state,
                 zip_code,
                 country,
-                type : "billing",
+                type: "billing",
                 status,
                 phone,
                 fax,
-                email
+                email,
+                created_by: user.id
             });
 
-            if(createBilling){
+            if (createBilling) {
                 return {
                     tenant_id: createBilling.tenant_id,
                     message: "Successfully Created Billing Address.",
@@ -297,39 +298,40 @@ module.exports = {
         }
     },
     addVendorShippingAddress: async (req, db, user, isAuth, TENANTID) => {
-         // Auth Check
-         if (!isAuth) return { message: "Not Authorized", status: false };
-         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
- 
-         try {
-             const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
-             const createShipping = db.address.create({
-                 ref_id: parent_id,
-                 ref_model: "vendor",
-                 tenant_id: TENANTID,
-                 address1,
-                 address2,
-                 city,
-                 state,
-                 zip_code,
-                 country,
-                 type : "shipping",
-                 status,
-                 phone,
-                 fax,
-                 email
-             });
- 
-             if(createShipping){
-                 return {
-                     tenant_id: createShipping.tenant_id,
-                     message: "Successfully Created Shipping Address.",
-                     status: true,
-                 }
-             }
-         } catch (error) {
-             if (error) return { message: "Something Went Wrong!!!", status: false }
-         }
+        // Auth Check
+        if (!isAuth) return { message: "Not Authorized", status: false };
+        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        try {
+            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const createShipping = db.address.create({
+                ref_id: parent_id,
+                ref_model: "vendor",
+                tenant_id: TENANTID,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                type: "shipping",
+                status,
+                phone,
+                fax,
+                email,
+                created_by: user.id
+            });
+
+            if (createShipping) {
+                return {
+                    tenant_id: createShipping.tenant_id,
+                    message: "Successfully Created Shipping Address.",
+                    status: true,
+                }
+            }
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
     },
     updateVendorAddress: async (req, db, user, isAuth, TENANTID) => {
         // Auth Check
@@ -337,18 +339,19 @@ module.exports = {
         if (!isAuth) return { message: "Not Authorized", status: false };
         if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
         try {
-            const {parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status} = req
+            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
             const updateAddress = db.address.update({
-                 address1,
-                 address2,
-                 city,
-                 state,
-                 zip_code,
-                 country,
-                 status,
-                 phone,
-                 fax,
-                 email
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                status,
+                phone,
+                fax,
+                email,
+                updated_by: user.id
             }, {
                 where: {
                     [Op.and]: [{
@@ -358,7 +361,7 @@ module.exports = {
                 }
             });
 
-            if(updateAddress){
+            if (updateAddress) {
                 return {
                     tenant_id: updateAddress.tenant_id,
                     message: "Successfully Updated Address.",

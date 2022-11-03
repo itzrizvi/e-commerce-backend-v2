@@ -264,7 +264,6 @@ module.exports = {
                 phone,
                 fax,
                 email,
-                created_by: user.id,
                 updated_by: user.id
             }, {
                 where: {

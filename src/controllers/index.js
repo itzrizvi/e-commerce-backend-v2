@@ -16,5 +16,6 @@ module.exports = {
     ...require('./vendor'),
     ...require('./customer'),
     ...require('./utils'),
-    ...require('./companyInfo')
+    ...require('./companyInfo'),
+    ...require('./cart'),
 }

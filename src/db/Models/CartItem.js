@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        cart_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false

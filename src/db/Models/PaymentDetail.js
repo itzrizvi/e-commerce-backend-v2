@@ -1,25 +1,28 @@
-// Address model
+// Payment Detail model
 module.exports = (sequelize, DataTypes) => {
 
-    const Payment = sequelize.define("payment_method", {
+    const PaymentDetail = sequelize.define("payment_detail", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        name: {
-            type: DataTypes.STRING,
+        billing_address_id: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
-        slug: {
-            type: DataTypes.STRING,
+        amount: {
+            type: DataTypes.FLOAT,
             allowNull: false
+        },
+        provider_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         status: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: true
+            type: DataTypes.STRING,
+            allowNull: false
         },
         created_by: {
             type: DataTypes.INTEGER,
@@ -38,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return Payment
+    return PaymentDetail
 }

@@ -13,13 +13,24 @@ type PaymentMethod {
     description:String!
     status:Boolean!
     tenant_id:String!
-    created_by:Staff!
+    added_by:Staff!
 }
 
 input addPaymentMethodInput {
     name:String!
     description:String!
     status:Boolean!
+}
+
+input GetSinglePaymentMethodInput {
+    paymentMethod_id:Int!
+}
+
+type GetSinglePaymentMethodOutPut {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:PaymentMethod
 }
 
 
@@ -33,9 +44,9 @@ extend type Mutation {
     addPaymentMethod(data:addPaymentMethodInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getSinglePaymentMethod(query:GetSinglePaymentMethodInput):GetSinglePaymentMethodOutPut!
+}
 
 
 `;

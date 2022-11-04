@@ -276,15 +276,6 @@ module.exports = {
                     as: 'category'
                 });
             }
-            // Check If Has Alias with Users and Roles
-            if (!db.product.hasAlias('users') && !db.product.hasAlias('created_by')) {
-
-                await db.product.hasOne(db.user, {
-                    sourceKey: 'added_by',
-                    foreignKey: 'id',
-                    as: 'created_by'
-                });
-            }
 
             // Product Gallery Associations
             if (!db.product.hasAlias('product_gallery') && !db.product.hasAlias('gallery')) {

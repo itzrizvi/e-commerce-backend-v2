@@ -17,4 +17,5 @@ module.exports = {
     ...require('./utils'),
     ...require('./companyInfoQueries'),
     ...require('./cartQueries'),
+    ...require('./paymentQueries'),
 }

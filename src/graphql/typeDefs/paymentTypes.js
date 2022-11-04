@@ -33,6 +33,35 @@ type GetSinglePaymentMethodOutPut {
     data:PaymentMethod
 }
 
+input UpdatePaymentMethodInput {
+    id:Int!
+    name:String
+    description:String
+    status:Boolean
+}
+
+type GetPaymentMethodListAdmin {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[PaymentMethod]
+}
+
+type PaymentMethodPublic {
+    id:Int!
+    name:String!
+    slug:String!
+    description:String!
+    status:Boolean!
+    tenant_id:String!
+}
+
+type GetPaymentMethodListPublic {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[PaymentMethodPublic]
+}
 
 
 
@@ -42,10 +71,13 @@ type GetSinglePaymentMethodOutPut {
 
 extend type Mutation {
     addPaymentMethod(data:addPaymentMethodInput):CommonOutput!
+    updatePaymentMethod(data:UpdatePaymentMethodInput):CommonOutput!
 }
 
 extend type Query {
     getSinglePaymentMethod(query:GetSinglePaymentMethodInput):GetSinglePaymentMethodOutPut!
+    getPaymentMethodListAdmin:GetPaymentMethodListAdmin!
+    getPaymentMethodListPublic:GetPaymentMethodListPublic!
 }
 
 

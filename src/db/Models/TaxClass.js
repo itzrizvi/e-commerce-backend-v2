@@ -1,27 +1,19 @@
-// Order Status model
+// Tax Class model
 module.exports = (sequelize, DataTypes) => {
 
-    const OrderStatus = sequelize.define("order_status", {
+    const TaxClass = sequelize.define("tax_class", {
         id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        name: {
-            type: DataTypes.STRING,
+        zip_code: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
-        slug: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        description: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        status: {
-            type: DataTypes.BOOLEAN,
+        tax_amount: {
+            type: DataTypes.FLOAT,
             allowNull: false
         },
         created_by: {
@@ -41,5 +33,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return OrderStatus
+    return TaxClass
 }

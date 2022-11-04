@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        payment_id: {
+        payment_id: { // Payment Method ID
             type: DataTypes.INTEGER,
             allowNull: false
         },

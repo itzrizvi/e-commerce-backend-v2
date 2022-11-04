@@ -3,7 +3,8 @@ const { getSingleProductController,
     getProductListController,
     getFeaturedProductController,
     getRecentViewProductController,
-    publicProductViewController
+    publicProductViewController,
+    getSingleProductBySlugController
 } = require("../../controllers")
 
 
@@ -17,6 +18,13 @@ module.exports = {
 
         // Return to Controller
         return await getSingleProductController(args.query, db, TENANTID);
+    },
+    // GET Single Product By Slug Query
+    getSingleProductBySlug: async (root, args, { db, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+
+        // Return to Controller
+        return await getSingleProductBySlugController(args.query, db, TENANTID);
     },
     // GET Product List
     getProductList: async (root, args, { db, user, isAuth, TENANTID }, info) => {

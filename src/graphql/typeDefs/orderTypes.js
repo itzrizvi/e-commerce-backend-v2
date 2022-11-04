@@ -64,6 +64,45 @@ type GetPublicOrderStatusListOutput {
 }
 
 
+# Order Based Input and Types ##########################
+########################################################
+
+type OrderAdmin {
+    id:Int
+    total:Float
+    sub_total:Float
+    shipping_cost:Float
+    discount_amount:Float
+    tax_amount:Float
+    tax_exempt:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    orderfor:Customer
+    paymentmethod:PaymentMethod
+    coupon:Coupon
+    orderstatus:OrderStatus
+    added_by:Staff
+}
+
+type OrderPublic {
+    id:Int
+    total:Float
+    sub_total:Float
+    shipping_cost:Float
+    discount_amount:Float
+    tax_amount:Float
+    tax_exempt:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    orderfor:Customer
+    paymentmethod:PaymentMethod
+    coupon:Coupon
+    orderstatus:OrderStatus
+}
+
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################

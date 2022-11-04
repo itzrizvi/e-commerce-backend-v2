@@ -10,4 +10,5 @@ module.exports = {
     getFeaturedProductController: require('./getFeaturedProductController'),
     getRecentViewProductController: require('./getRecentViewProductController'),
     publicProductViewController: require('./publicProductViewController'),
+    getSingleProductBySlugController: require('./getSingleProductBySlugController'),
 }

@@ -8,7 +8,7 @@ module.exports = {
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
 
-        try{
+        try {
             // GET DATA
             const { user_id, product_id, rating, title, description } = req;
 
@@ -29,8 +29,8 @@ module.exports = {
             if (checkRatingExist) return { message: "Rating already given!", status: false }
 
 
-             // Check The Product Exist or Not
-             const checkProductExist = await db.product.findOne({
+            // Check The Product Exist or Not
+            const checkProductExist = await db.product.findOne({
                 where: {
                     [Op.and]: [{
                         id: product_id,
@@ -50,7 +50,7 @@ module.exports = {
                 tenant_id: TENANTID
             });
 
-            if(createRating){
+            if (createRating) {
                 return {
                     tenant_id: createRating.tenant_id,
                     message: "Successfully Created Rating.",
@@ -58,14 +58,14 @@ module.exports = {
                 }
             }
 
-        }catch (error) {
+        } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
 
     },
     getAllRatingByUser: async (req, db, user, isAuth, TENANTID) => {
-         // Try Catch Block
-         try {
+        // Try Catch Block
+        try {
             // GET ALL Rating
             // GET DATA
             const { user_id } = req;
@@ -93,8 +93,8 @@ module.exports = {
         }
     },
     getAllRatingByProduct: async (req, db, user, isAuth, TENANTID) => {
-         // Try Catch Block
-         try {
+        // Try Catch Block
+        try {
             // GET ALL Rating
             // GET DATA
             const { product_id } = req;
@@ -122,8 +122,8 @@ module.exports = {
         }
     },
     getSingleRating: async (req, db, user, isAuth, TENANTID) => {
-         // Try Catch Block
-         try {
+        // Try Catch Block
+        try {
             // GET Rating
             // GET DATA
             const { rating_id } = req;

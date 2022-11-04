@@ -3,7 +3,7 @@ const { gql } = require("apollo-server-express");
 
 module.exports = gql`
 
-# Payment Based Input and Types ###############################
+# Payment Method Based Input and Types ########################
 ###############################################################
 
 type PaymentMethod {
@@ -16,6 +16,12 @@ type PaymentMethod {
     created_by:Staff!
 }
 
+input addPaymentMethodInput {
+    name:String!
+    description:String!
+    status:Boolean!
+}
+
 
 
 
@@ -23,9 +29,9 @@ type PaymentMethod {
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
-# extend type Mutation {
-
-# }
+extend type Mutation {
+    addPaymentMethod(data:addPaymentMethodInput):CommonOutput!
+}
 
 # extend type Query {
 

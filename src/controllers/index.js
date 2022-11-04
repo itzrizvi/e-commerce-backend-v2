@@ -19,4 +19,5 @@ module.exports = {
     ...require('./companyInfo'),
     ...require('./cart'),
     ...require('./payment'),
+    ...require('./taxClass'),
 }

@@ -24,6 +24,7 @@ const companyInfoTypes = require('./companyInfoTypes');
 const cartTypes = require('./cartTypes');
 const paymentTypes = require('./paymentTypes');
 const taxClassTypes = require('./taxClassTypes');
+const orderTypes = require('./orderTypes');
 
 
 // Type Defs and Scalars
@@ -86,5 +87,6 @@ module.exports = [
     companyInfoTypes,
     cartTypes,
     paymentTypes,
-    taxClassTypes
+    taxClassTypes,
+    orderTypes
 ]

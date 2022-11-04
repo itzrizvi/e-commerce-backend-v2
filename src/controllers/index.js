@@ -20,4 +20,5 @@ module.exports = {
     ...require('./cart'),
     ...require('./payment'),
     ...require('./taxClass'),
+    ...require('./order'),
 }

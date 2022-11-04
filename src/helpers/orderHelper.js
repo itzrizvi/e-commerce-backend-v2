@@ -3,17 +3,17 @@ const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
 
 
-// Payment HELPER
+// Order HELPER
 module.exports = {
-    // Add Payment Method API
-    addPaymentMethod: async (req, db, user, isAuth, TENANTID) => {
+    // Add Order Status API
+    addOrderStatus: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
 
             // DATA FROM REQUEST
             const { name, description, status } = req;
 
-            // Payment Method Slug
+            // Order Status Slug
             const slug = slugify(`${name}`, {
                 replacement: '-',
                 remove: /[*+~.()'"!:@]/g,
@@ -23,7 +23,7 @@ module.exports = {
             });
 
             // Check Existence
-            const findPaymentMethod = await db.payment_method.findOne({
+            const findOrderStatus = await db.order_status.findOne({
                 where: {
                     [Op.and]: [{
                         slug,
@@ -31,10 +31,10 @@ module.exports = {
                     }]
                 }
             });
-            if (findPaymentMethod) return { message: "Already Have This Payment Method!!!!", status: false }
+            if (findOrderStatus) return { message: "Already Have This Order Status!!!!", status: false }
 
             // Add Payment Method TO DB
-            const insertPaymentMethod = await db.payment_method.create({
+            const insertOrderStatus = await db.order_status.create({
                 name,
                 slug,
                 description,
@@ -44,9 +44,9 @@ module.exports = {
             });
 
             // Return Formation
-            if (insertPaymentMethod) {
+            if (insertOrderStatus) {
                 return {
-                    message: "Payment Method Added Successfully!!!",
+                    message: "Order Status Added Successfully!!!",
                     status: true,
                     tenant_id: TENANTID
                 }
@@ -57,62 +57,8 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // GET Single Payment Method API
-    getSinglePaymentMethod: async (req, db, user, isAuth, TENANTID) => {
-        // Try Catch Block
-        try {
-
-            // DATA FROM REQUEST
-            const { paymentMethod_id } = req;
-
-            // Created By Associations
-            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
-
-            // Check If Has Alias with Users and Roles
-            if (!db.payment_method.hasAlias('user') && !db.payment_method.hasAlias('added_by')) {
-
-                await db.payment_method.hasOne(db.user, {
-                    sourceKey: 'created_by',
-                    foreignKey: 'id',
-                    as: 'added_by'
-                });
-            }
-
-            // GET SINGLE PAYMENT METHOD
-            const getPaymentMethod = await db.payment_method.findOne({
-                include: [
-                    {
-                        model: db.user, as: 'added_by', // Include User who created this Payment MEthod
-                        include: {
-                            model: db.role,
-                            as: 'roles'
-                        }
-                    }
-                ],
-                where: {
-                    [Op.and]: [{
-                        id: paymentMethod_id,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-
-            return {
-                message: "GET Single Payment Method Success!!!",
-                tenant_id: TENANTID,
-                status: true,
-                data: getPaymentMethod
-            }
-
-
-        } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
-        }
-    },
-    // Update Payment Method API
-    updatePaymentMethod: async (req, db, user, isAuth, TENANTID) => {
+    // Update Order Status API
+    updateOrderStatus: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
 
@@ -122,7 +68,7 @@ module.exports = {
             // If name also updated
             let slug
             if (name) {
-                // Payment Method Slug
+                // Order Status Slug
                 slug = slugify(`${name}`, {
                     replacement: '-',
                     remove: /[*+~.()'"!:@]/g,
@@ -132,7 +78,7 @@ module.exports = {
                 });
 
                 // Check Existence
-                const checkExist = await db.payment_method.findOne({
+                const checkExist = await db.order_status.findOne({
                     where: {
                         [Op.and]: [{
                             slug,
@@ -144,7 +90,7 @@ module.exports = {
                     }
                 });
 
-                if (checkExist) return { message: "Already Have This Payment Method!!!", status: false };
+                if (checkExist) return { message: "Already Have This Order Status!!!", status: false };
             }
 
 
@@ -157,8 +103,8 @@ module.exports = {
                 updated_by: user.id
             }
 
-            // Update Payment Method
-            const updatePaymentM = await db.payment_method.update(updateDoc, {
+            // Update Order Status
+            const updateorderstatus = await db.order_status.update(updateDoc, {
                 where: {
                     [Op.and]: [{
                         id,
@@ -169,9 +115,9 @@ module.exports = {
 
 
             // Return Formation
-            if (updatePaymentM) {
+            if (updateorderstatus) {
                 return {
-                    message: "Payment Method Updated Successfully!!!",
+                    message: "Order Status Updated Successfully!!!",
                     status: true,
                     tenant_id: TENANTID
                 }
@@ -181,8 +127,62 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // GET Payment Method List API
-    getPaymentMethodListAdmin: async (db, TENANTID) => {
+    // GET Single Order Status API
+    getSingleOrderStatus: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { orderstatus_id } = req;
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.order_status.hasAlias('user') && !db.order_status.hasAlias('added_by')) {
+
+                await db.order_status.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
+
+            // GET SINGLE ORDER STATUS
+            const getorderstatus = await db.order_status.findOne({
+                include: [
+                    {
+                        model: db.user, as: 'added_by', // Include User who created this Order Status
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id: orderstatus_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            return {
+                message: "GET Single Order Status Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getorderstatus
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET Order Status List Admin
+    getOrderStatusList: async (db, TENANTID) => {
         // Try Catch Block
         try {
 
@@ -191,20 +191,20 @@ module.exports = {
             db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
             // Check If Has Alias with Users and Roles
-            if (!db.payment_method.hasAlias('user') && !db.payment_method.hasAlias('added_by')) {
+            if (!db.order_status.hasAlias('user') && !db.order_status.hasAlias('added_by')) {
 
-                await db.payment_method.hasOne(db.user, {
+                await db.order_status.hasOne(db.user, {
                     sourceKey: 'created_by',
                     foreignKey: 'id',
                     as: 'added_by'
                 });
             }
 
-            // GET PAYMENT METHOD List
-            const getPaymentMethodListAdmin = await db.payment_method.findAll({
+            // GET ORDER STATUS List
+            const getorderstatuslist = await db.order_status.findAll({
                 include: [
                     {
-                        model: db.user, as: 'added_by', // Include User who created this Payment MEthod
+                        model: db.user, as: 'added_by', // Include User who created this Order Status
                         include: {
                             model: db.role,
                             as: 'roles'
@@ -218,10 +218,10 @@ module.exports = {
 
 
             return {
-                message: "GET Payment Method List For Admin Success!!!",
+                message: "GET Order Status List For Admin Success!!!",
                 tenant_id: TENANTID,
                 status: true,
-                data: getPaymentMethodListAdmin
+                data: getorderstatuslist
             }
 
 
@@ -229,13 +229,13 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
-    // GET Payment Method List PUBLIC API
-    getPaymentMethodListPublic: async (db, TENANTID) => {
+    // GET Order Status List PUBLIC
+    getPublicOrderStatusList: async (db, TENANTID) => {
         // Try Catch Block
         try {
 
-            // GET PAYMENT METHOD List PUBLIC
-            const getPaymentMethodListPublic = await db.payment_method.findAll({
+            // GET ORDER STATUS List
+            const getorderstatuslist = await db.order_status.findAll({
                 where: {
                     [Op.and]: [{
                         status: true,
@@ -244,11 +244,12 @@ module.exports = {
                 }
             });
 
+
             return {
-                message: "GET Payment Method List For PUBLIC Success!!!",
+                message: "GET Order Status List Success!!!",
                 tenant_id: TENANTID,
                 status: true,
-                data: getPaymentMethodListPublic
+                data: getorderstatuslist
             }
 
 

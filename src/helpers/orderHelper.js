@@ -257,4 +257,25 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Add Order Status API
+    createOrderByCustomer: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { cart_id,
+                tax_exempt,
+                customer_id,
+                payment_id,
+                coupon_id,
+                order_status_id,
+                billing_address_id,
+                shipping_address_id } = req;
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

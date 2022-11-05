@@ -59,6 +59,7 @@ module.exports = gql`
     quantity: Int!
     createdAt: String
     updatedAt: String
+    product:ProductForList
   }
 
   type GetSingleCartItemOutput {

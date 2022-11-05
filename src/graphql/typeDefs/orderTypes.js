@@ -75,14 +75,15 @@ type OrderAdmin {
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
-    tenant_id:String
-    createdAt:String
-    updatedAt:String
+    cartitems:[CartItem]
     orderfor:Customer
     paymentmethod:PaymentMethod
     coupon:Coupon
     orderstatus:OrderStatus
     added_by:Staff
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
 }
 
 type OrderPublic {
@@ -96,12 +97,23 @@ type OrderPublic {
     tenant_id:String
     createdAt:String
     updatedAt:String
-    orderfor:Customer
+    orderfrom:Customer
     paymentmethod:PaymentMethod
     coupon:Coupon
     orderstatus:OrderStatus
 }
 
+input createOrderInput {
+    cart_id:Int!
+    tax_exempt:Boolean!
+    taxexempt_file:[Upload]
+    customer_id:Int!
+    payment_id:Int!
+    coupon_id:Int!
+    order_status_id:Int!
+    billing_address_id:Int!
+    shipping_address_id:Int!
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -110,6 +122,7 @@ type OrderPublic {
 extend type Mutation {
     addOrderStatus(data:addOrderStatusInput):CommonOutput!
     updateOrderStatus(data:UpdateOrderStatusInput):CommonOutput!
+    createOrderByCustomer(data:createOrderInput):CommonOutput!
 }
 
 extend type Query {

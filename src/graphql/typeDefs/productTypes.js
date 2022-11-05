@@ -269,6 +269,17 @@ type GetSingleProductBySlugOutput {
     data: Product
 }
 
+input GetProductsByIDInput {
+    prod_ids:[Int]!
+}
+
+type GetProductsByIDOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data: [ProductForList]
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -288,6 +299,7 @@ extend type Query {
     getFeaturedProducts: GetFeaturedProducts!
     getRecentViewProduct(query: GetRecentViewProductInput): GetFeaturedProducts!
     getSingleProductBySlug(query: GetSingleProductBySlugInput): GetSingleProductBySlugOutput!
+    getProductsByIDs(query: GetProductsByIDInput): GetProductsByIDOutput!
 }
 
 

@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        shipping_address_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         tax_exempt: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

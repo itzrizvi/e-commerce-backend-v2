@@ -199,6 +199,7 @@ module.exports = {
   },
   getCart: async (req, db, user, isAuth, TENANTID) => {
     try {
+
       if (!isAuth) return { message: "Not Authorized", status: false };
       const { customer_id } = req;
       if (!db.cart.hasAlias("cart_items")) {
@@ -206,8 +207,70 @@ module.exports = {
           foreignKey: "cart_id",
         });
       }
+
+      if (!db.cart_item.hasAlias("product")) {
+        await db.cart_item.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: "id",
+        });
+      }
+
+      if (!db.product.hasAlias('category')) {
+
+        await db.product.hasOne(db.category, {
+          sourceKey: 'prod_category',
+          foreignKey: 'id',
+          as: 'category'
+        });
+      }
+
+      // Product Attributes Table Association with Product
+      if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+        await db.product.hasMany(db.product_attribute, {
+          foreignKey: 'prod_id',
+          as: 'prod_attributes'
+        });
+      }
+      if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+        await db.product_attribute.hasOne(db.attribute, {
+          sourceKey: 'attribute_id',
+          foreignKey: 'id',
+          as: 'attribute_data'
+        });
+      }
+
+      // Association with Attribute Group and Attributes
+      if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+        await db.attribute.hasOne(db.attr_group, {
+          sourceKey: 'attr_group_id',
+          foreignKey: 'id',
+          as: 'attribute_group'
+        });
+      }
+
       const carts = await db.cart.findAll({
-        include: [{ model: db.cart_item }],
+        include: [{
+          model: db.cart_item,
+          include: {
+            model: db.product,
+            include: [
+              { model: db.category, as: 'category' }, // Include Product Category
+              {
+                model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                include: {
+                  model: db.attribute,
+                  as: 'attribute_data',
+                  include: {
+                    model: db.attr_group,
+                    as: 'attribute_group'
+                  }
+                }
+              },
+            ]
+          }
+        }],
         order: [["createdAt", "ASC"]],
         where: {
           [Op.and]: [

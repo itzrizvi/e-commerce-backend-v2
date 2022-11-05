@@ -5,4 +5,5 @@ module.exports = {
     getSingleOrderStatusController: require('./getSingleOrderStatusController'),
     getOrderStatusListController: require('./getOrderStatusListController'),
     getPublicOrderStatusListController: require('./getPublicOrderStatusListController'),
+    createOrderByCustomerController: require('./createOrderByCustomerController'),
 }

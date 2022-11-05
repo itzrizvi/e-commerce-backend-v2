@@ -270,7 +270,11 @@ module.exports = {
                 coupon_id,
                 order_status_id,
                 billing_address_id,
-                shipping_address_id } = req;
+                shipping_address_id,
+                taxexempt_file } = req;
+
+
+
 
 
 

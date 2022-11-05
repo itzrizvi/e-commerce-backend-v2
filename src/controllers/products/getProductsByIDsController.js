@@ -4,7 +4,7 @@ const { singleResponse } = require("../../utils/response");
 
 
 // GET PRODUCT LIST CONTROLLER
-module.exports = async (req, db, user, TENANTID) => {
+module.exports = async (req, db, TENANTID) => {
     // Sending Request to Helper
     const data = await getProductsByIDs(req, db, TENANTID);
 

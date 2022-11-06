@@ -6,18 +6,18 @@ const path = require('path');
 const baseName = basename(__filename);
 const config = require('config');
 
-// const database = config.get('SERVER.DATABASE');
-// const user = config.get('SERVER.USER');
-// const password = config.get('SERVER.PASSWORD');
-// const host = config.get('SERVER.HOST');
-// const port = config.get('SERVER.PORT');
+const database = config.get('SERVER.DATABASE');
+const user = config.get('SERVER.USER');
+const password = config.get('SERVER.PASSWORD');
+const host = config.get('SERVER.HOST');
+const port = config.get('SERVER.PORT');
 
 // DO NOT REMOVE-----####
-const database = process.env.RDS_DB_NAME;
-const user = process.env.RDS_USERNAME;
-const password = process.env.RDS_PASSWORD;
-const host = process.env.RDS_HOSTNAME;
-const port = process.env.RDS_PORT;
+// const database = process.env.RDS_DB_NAME;
+// const user = process.env.RDS_USERNAME;
+// const password = process.env.RDS_PASSWORD;
+// const host = process.env.RDS_HOSTNAME;
+// const port = process.env.RDS_PORT;
 // DO NOT REMOVE-----####
 
 const db = {}

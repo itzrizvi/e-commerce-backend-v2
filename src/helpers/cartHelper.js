@@ -250,7 +250,7 @@ module.exports = {
         });
       }
 
-      const carts = await db.cart.findAll({
+      const carts = await db.cart.findOne({
         include: [{
           model: db.cart_item,
           include: {

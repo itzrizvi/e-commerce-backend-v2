@@ -175,12 +175,11 @@ module.exports = {
     addCustomerBillingAddress: async (req, db, user, isAuth, TENANTID) => {
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status, isDefault } = req
             const createBilling = db.address.create({
-                ref_id: parent_id,
+                ref_id: user.has_role === '1' ? parent_id : user.id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
                 address1,
@@ -194,11 +193,24 @@ module.exports = {
                 phone,
                 fax,
                 email,
-                created_by: user.id,
-                updated_by: user.id
+                created_by: user.has_role === '1' ? parent_id : user.id,
+                updated_by: user.has_role === '1' ? parent_id : user.id
             });
 
             if (createBilling) {
+
+                // Is Default
+                if (isDefault) {
+                    db.default_address.create({
+                        customer_id: user.has_role === '1' ? parent_id : user.id,
+                        address_type: "billing",
+                        address_id: createBilling.id,
+                        tenant_id: TENANTID,
+                        created_by: user.has_role === '1' ? parent_id : user.id
+                    });
+                }
+
+
                 return {
                     tenant_id: createBilling.tenant_id,
                     message: "Successfully Created Billing Address.",
@@ -212,12 +224,11 @@ module.exports = {
     addCustomerShippingAddress: async (req, db, user, isAuth, TENANTID) => {
         // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
 
         try {
-            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status, isDefault } = req
             const createShipping = db.address.create({
-                ref_id: parent_id,
+                ref_id: user.has_role === '1' ? parent_id : user.id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
                 address1,
@@ -231,11 +242,23 @@ module.exports = {
                 phone,
                 fax,
                 email,
-                created_by: user.id,
-                updated_by: user.id
+                created_by: user.has_role === '1' ? parent_id : user.id,
+                updated_by: user.has_role === '1' ? parent_id : user.id
             });
 
             if (createShipping) {
+
+                // Is Default
+                if (isDefault) {
+                    db.default_address.create({
+                        customer_id: user.has_role === '1' ? parent_id : user.id,
+                        address_type: "shipping",
+                        address_id: createShipping.id,
+                        tenant_id: TENANTID,
+                        created_by: user.has_role === '1' ? parent_id : user.id
+                    });
+                }
+
                 return {
                     tenant_id: createShipping.tenant_id,
                     message: "Successfully Created Shipping Address.",
@@ -248,11 +271,11 @@ module.exports = {
     },
     updateCustomerAddress: async (req, db, user, isAuth, TENANTID) => {
         // Auth Check
-        // Auth Check
         if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+
         try {
-            const { id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
+
+            const { id, phone, fax, email, address1, address2, city, state, zip_code, country, status, isDefault, parent_id } = req
             const updateAddress = db.address.update({
                 address1,
                 address2,
@@ -264,7 +287,7 @@ module.exports = {
                 phone,
                 fax,
                 email,
-                updated_by: user.id
+                updated_by: user.has_role === '1' ? parent_id : user.id
             }, {
                 where: {
                     [Op.and]: [{
@@ -275,6 +298,23 @@ module.exports = {
             });
 
             if (updateAddress) {
+
+                if (isDefault) {
+                    db.default_address.update({
+                        address_id: id,
+                        updated_by: user.has_role === '1' ? parent_id : user.id
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                customer_id: user.has_role === '1' ? parent_id : user.id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                }
+
+
+
                 return {
                     tenant_id: updateAddress.tenant_id,
                     message: "Successfully Updated Address.",

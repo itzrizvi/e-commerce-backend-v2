@@ -31,10 +31,12 @@ input Address{
     zip_code: String!
     country: String
     status: Boolean
+    isDefault:Boolean
 }
 
 input UpdateAddress{
     id: Int!
+    parent_id: Int!
     address1: String!
     address2: String!
     phone: String!
@@ -45,5 +47,6 @@ input UpdateAddress{
     zip_code: String!
     country: String
     status: Boolean
+    isDefault:Boolean
 }
 `

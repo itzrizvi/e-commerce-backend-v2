@@ -41,7 +41,7 @@ module.exports = gql`
   type GetCartOutput {
     status: Boolean
     message: String
-    data: [Cart]
+    data: Cart
   }
 
   type Cart {

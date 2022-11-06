@@ -103,13 +103,12 @@ type OrderPublic {
     orderstatus:OrderStatus
 }
 
-input createOrderInput {
+input createOrderByCustomerInput {
     cart_id:Int!
     tax_exempt:Boolean!
     taxexempt_file:[Upload]
-    customer_id:Int!
     payment_id:Int!
-    coupon_id:Int!
+    coupon_id:Int
     order_status_id:Int!
     billing_address_id:Int!
     shipping_address_id:Int!
@@ -122,7 +121,7 @@ input createOrderInput {
 extend type Mutation {
     addOrderStatus(data:addOrderStatusInput):CommonOutput!
     updateOrderStatus(data:UpdateOrderStatusInput):CommonOutput!
-    createOrderByCustomer(data:createOrderInput):CommonOutput!
+    createOrderByCustomer(data:createOrderByCustomerInput):CommonOutput!
 }
 
 extend type Query {

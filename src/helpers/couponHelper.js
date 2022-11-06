@@ -249,61 +249,61 @@ module.exports = {
   getSingleCouponByCode: async (req, db, user, isAuth, TENANTID) => {
     // Try Catch Block
     // try {
-      // Data From Request
-      const { coupon_code } = req;
+    // Data From Request
+    const { coupon_code } = req;
 
-      // GET Single COUPON BY CODE
-      const getsinglecouponbycode = await db.coupon.findOne({
-        where: {
-          [Op.and]: [
-            {
-              coupon_code,
-              tenant_id: TENANTID,
-            },
-          ],
-        },
-      });
+    // GET Single COUPON BY CODE
+    const getsinglecouponbycode = await db.coupon.findOne({
+      where: {
+        [Op.and]: [
+          {
+            coupon_code,
+            tenant_id: TENANTID,
+          },
+        ],
+      },
+    });
 
-      if (getsinglecouponbycode) {
-        
-        const today = moment().locale('en').endOf('day')
-        const expire_date = moment(getsinglecouponbycode.coupon_enddate).add(-1, 'day').locale('en').endOf('day')
-        const start_date = moment(getsinglecouponbycode.coupon_startdate).add(-1, 'day').locale('en').startOf('day')
-        
-        if( expire_date < today){
-            return {
-                message: "Expire Voucher.",
-                status: false,
-              };
-        }
+    if (getsinglecouponbycode) {
 
-        if( start_date > today){
-            return {
-                message: "Voucher will start on " + start_date.add(1, 'day').format("YYYY-MM-DD"),
-                status: false,
-              };
-        }
+      const today = moment().locale('en').endOf('day')
+      const expire_date = moment(getsinglecouponbycode.coupon_enddate).add(-1, 'day').locale('en').endOf('day')
+      const start_date = moment(getsinglecouponbycode.coupon_startdate).add(-1, 'day').locale('en').startOf('day')
 
-        if( !getsinglecouponbycode.coupon_status ){
-            return {
-                message: "Voucher Unavailable.",
-                status: false,
-            };
-        }
-
-
+      if (expire_date < today) {
         return {
-          message: "Voucher Code Applied to your Cart.",
-          status: true,
-          tenant_id: TENANTID,
-          data: getsinglecouponbycode,
-        };
-      } else {
-        return {
-          message: "Invalid Voucher Code.",
+          message: "Expire Voucher.",
           status: false,
         };
       }
+
+      if (start_date > today) {
+        return {
+          message: "Voucher will start on " + start_date.add(1, 'day').format("YYYY-MM-DD"),
+          status: false,
+        };
+      }
+
+      if (!getsinglecouponbycode.coupon_status) {
+        return {
+          message: "Voucher Unavailable.",
+          status: false,
+        };
+      }
+
+
+      return {
+        message: "Voucher Code Applied to your Cart.",
+        status: true,
+        tenant_id: TENANTID,
+        data: getsinglecouponbycode,
+      };
+    } else {
+      return {
+        message: "Invalid Voucher Code.",
+        status: false,
+      };
+    }
     // } catch (error) {
     //   if (error) return { message: "Something Went Wrong!!!", status: false };
     // }

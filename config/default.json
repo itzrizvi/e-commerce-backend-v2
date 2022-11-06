@@ -37,7 +37,8 @@
         "USER_IMG_IDF": "id",
         "COMPANY_LOGO_IMG_SRC": "psp-image-storage/logo",
         "COMPANY_LOGO_IMG_DEST": "psp-image-storage-resize/logo",
-        "COMPANY_LOGO_IMG_IDF": "tenant_id"
+        "COMPANY_LOGO_IMG_IDF": "tenant_id",
+        "ORDER_TAX_EXEMPT_FILE_SRC": "psp-image-storage/order"
     },
     "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",
     "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",

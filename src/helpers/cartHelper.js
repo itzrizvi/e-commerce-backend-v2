@@ -282,7 +282,7 @@ module.exports = {
         },
       });
 
-      if (carts.length > 0) {
+      if (carts) {
         // Return Data
         return {
           message: "Get Cart Success!!!",

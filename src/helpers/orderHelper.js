@@ -887,13 +887,13 @@ module.exports = {
                 });
             }
 
-            // Check If Has Alias with Order and Order Status
+            // Order and Payment
             if (!db.order.hasAlias('payment')) {
                 await db.order.hasOne(db.payment, {
                     foreignKey: 'order_id'
                 });
             }
-            //
+            //  Payment and Address For Billing Address
             if (!db.payment.hasAlias('address') && !db.payment.hasAlias('billingAddress')) {
                 await db.payment.hasOne(db.address, {
                     sourceKey: "billing_address_id",
@@ -902,7 +902,7 @@ module.exports = {
                 });
             }
 
-            //
+            // Order and Address For Shipping Address
             if (!db.order.hasAlias('address') && !db.order.hasAlias('shippingAddress')) {
                 await db.order.hasOne(db.address, {
                     sourceKey: "shipping_address_id",
@@ -911,7 +911,7 @@ module.exports = {
                 });
             }
 
-            //
+            // 
             if (!db.order.hasAlias('tax_exempt') && !db.order.hasAlias('taxExemptFiles')) {
                 await db.order.hasMany(db.tax_exempt, {
                     foreignKey: "order_id",

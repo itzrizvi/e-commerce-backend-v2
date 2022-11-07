@@ -919,7 +919,7 @@ module.exports = {
                 });
             }
 
-            //
+            // Order and Coupon
             if (!db.order.hasAlias('coupon')) {
                 await db.order.hasOne(db.coupon, {
                     sourceKey: "coupon_id",

@@ -944,26 +944,26 @@ module.exports = {
             // Single Order For Admin
             const singleOrder = await db.order.findOne({
                 include: [
-                    { model: db.user, as: 'customer' },
-                    { model: db.payment_method, as: 'paymentmethod' },
-                    { model: db.order_status, as: 'orderstatus' },
+                    { model: db.user, as: 'customer' }, // User as customer
+                    { model: db.payment_method, as: 'paymentmethod' }, // Payment method
+                    { model: db.order_status, as: 'orderstatus' }, // Order Status
                     {
-                        model: db.order_item,
+                        model: db.order_item, // Order Items and Products
                         as: 'orderitems',
                         include: {
                             model: db.product
                         }
                     },
                     {
-                        model: db.payment,
+                        model: db.payment, // Payment and Address
                         include: {
                             model: db.address,
                             as: "billingAddress"
                         }
                     },
-                    { model: db.address, as: "shippingAddress" },
-                    { model: db.tax_exempt, as: "taxExemptFiles" },
-                    { model: db.coupon },
+                    { model: db.address, as: "shippingAddress" }, // Address
+                    { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
+                    { model: db.coupon }, // Coupon
                     {
                         model: db.user, as: 'added_by', // User and Roles
                         include: {

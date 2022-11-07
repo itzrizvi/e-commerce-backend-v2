@@ -58,7 +58,9 @@ type SuccessMessage {
 type Mutation {
     validateToken(token: String): TokenOutput!
 }
-type Query
+type Query{
+    getPing:CommonOutput!
+}
 `;
 
 // Export Type Defs

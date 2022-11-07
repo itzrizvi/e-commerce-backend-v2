@@ -27,4 +27,15 @@ module.exports = {
         // Return To Controller
         return await getSingleAdminController(args.query, db, user, isAuth, TENANTID);
     },
+    // GET PING
+    getPing: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        return {
+            message: "Connection Is Stable!!!",
+            status: true,
+            tenant_id: TENANTID
+        }
+    },
 }

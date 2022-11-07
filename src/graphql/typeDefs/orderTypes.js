@@ -67,6 +67,33 @@ type GetPublicOrderStatusListOutput {
 # Order Based Input and Types ##########################
 ########################################################
 
+
+type OrderItem {
+    id:Int
+    order_id:Int
+    product:ProductForList
+    price:Float
+    quantity:Int
+    tenant_id:String
+}
+
+type TaxExemptFiles {
+    id:Int
+    order_id:Int
+    file_name:String
+    tenant_id:String
+}
+
+type OrderPayment {
+    id:Int
+    order_id:Int
+    billingAddress:AddressList
+    amount:Float
+    provider_id:Int
+    status:String
+    tenant_id:String
+}
+
 type OrderAdmin {
     id:Int
     total:Float
@@ -75,33 +102,36 @@ type OrderAdmin {
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
-    cartitems:[CartItem]
-    orderfor:Customer
-    paymentmethod:PaymentMethod
-    coupon:Coupon
-    orderstatus:OrderStatus
-    added_by:Staff
     tenant_id:String
     createdAt:String
     updatedAt:String
+    orderitems:[OrderItem]
+    paymentmethod:PaymentMethod
+    payment:OrderPayment
+    orderstatus:OrderStatusPublic
+    customer:Customer
+    shippingAddress:AddressList
+    taxExemptFiles:[TaxExemptFiles]
+    coupon:Coupon
+    added_by:Staff
 }
 
-type OrderPublic {
-    id:Int
-    total:Float
-    sub_total:Float
-    shipping_cost:Float
-    discount_amount:Float
-    tax_amount:Float
-    tax_exempt:Boolean
-    tenant_id:String
-    createdAt:String
-    updatedAt:String
-    orderfrom:Customer
-    paymentmethod:PaymentMethod
-    coupon:Coupon
-    orderstatus:OrderStatus
-}
+# type OrderPublic {
+#     id:Int
+#     total:Float
+#     sub_total:Float
+#     shipping_cost:Float
+#     discount_amount:Float
+#     tax_amount:Float
+#     tax_exempt:Boolean
+#     tenant_id:String
+#     createdAt:String
+#     updatedAt:String
+#     orderfrom:Customer
+#     paymentmethod:PaymentMethod
+#     coupon:Coupon
+#     orderstatus:OrderStatus
+# }
 
 input createOrderByCustomerInput {
     cart_id:Int!
@@ -149,6 +179,17 @@ type GetOrderListForAdmin {
     data:[OrderList]
 }
 
+input GetSingleOrderAdminInput {
+    order_id:Int!
+}
+
+type GetSingleOrderAdminOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:OrderAdmin
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -165,6 +206,7 @@ extend type Query {
     getOrderStatusList:GetOrderStatusListOutput!
     getPublicOrderStatusList:GetPublicOrderStatusListOutput!
     getOrderlistAdmin:GetOrderListForAdmin!
+    getSingleOrderAdmin(query:GetSingleOrderAdminInput):GetSingleOrderAdminOutput!
 }
 
 

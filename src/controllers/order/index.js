@@ -8,4 +8,5 @@ module.exports = {
     createOrderByCustomerController: require('./createOrderByCustomerController'),
     createOrderByAdminController: require('./createOrderByAdminController'),
     getOrderlistAdminController: require('./getOrderlistAdminController'),
+    getSingleOrderAdminController: require('./getSingleOrderAdminController'),
 }

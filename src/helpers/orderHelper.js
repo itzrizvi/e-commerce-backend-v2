@@ -333,7 +333,7 @@ module.exports = {
             });
 
             //
-            let discount_amount; // discount amount
+            let discount_amount = 0; // discount amount
             if (coupon_id) {
                 //
                 const getCouponDetails = await db.coupon.findOne({
@@ -384,7 +384,7 @@ module.exports = {
             // 
             // Calculate Total
             let total = (sub_total + shipping_cost) - discount_amount;
-            let tax_amount;
+            let tax_amount = 0;
             if (!tax_exempt) {
 
                 const getZipCode = await db.address.findOne({
@@ -590,7 +590,7 @@ module.exports = {
             });
 
             //
-            let discount_amount; // discount amount
+            let discount_amount = 0; // discount amount
             if (coupon_id) {
                 //
                 const getCouponDetails = await db.coupon.findOne({
@@ -641,7 +641,7 @@ module.exports = {
             // 
             // Calculate Total
             let total = (sub_total + shipping_cost) - discount_amount;
-            let tax_amount;
+            let tax_amount = 0;
             if (!tax_exempt) {
 
                 const getZipCode = await db.address.findOne({
@@ -827,6 +827,166 @@ module.exports = {
                 status: true,
                 tenant_id: TENANTID,
                 data: orderlist
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET Single Order Admin
+    getSingleOrderAdmin: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { order_id } = req;
+
+            // Check If Has Alias with Users and Order
+            if (!db.order.hasAlias('user') && !db.order.hasAlias('customer')) {
+
+                await db.order.hasOne(db.user, {
+                    sourceKey: 'customer_id',
+                    foreignKey: 'id',
+                    as: 'customer'
+                });
+            }
+
+            // Check If Has Alias with Order and Payment Method
+            if (!db.order.hasAlias('payment_method') && !db.order.hasAlias('paymentmethod')) {
+
+                await db.order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+
+            // Check If Has Alias with Order and Order Status
+            if (!db.order.hasAlias('order_status') && !db.order.hasAlias('orderstatus')) {
+
+                await db.order.hasOne(db.order_status, {
+                    sourceKey: 'order_status_id',
+                    foreignKey: 'id',
+                    as: 'orderstatus'
+                });
+            }
+
+            // Order and Order Items
+            if (!db.order.hasAlias("order_item") && !db.order.hasAlias("orderitems")) {
+                await db.order.hasMany(db.order_item, {
+                    foreignKey: "order_id",
+                    as: 'orderitems'
+                });
+            }
+            // Order Items and Product
+            if (!db.order_item.hasAlias("product")) {
+                await db.order_item.hasOne(db.product, {
+                    sourceKey: "product_id",
+                    foreignKey: "id"
+                });
+            }
+
+            // Check If Has Alias with Order and Order Status
+            if (!db.order.hasAlias('payment')) {
+                await db.order.hasOne(db.payment, {
+                    foreignKey: 'order_id'
+                });
+            }
+            //
+            if (!db.payment.hasAlias('address') && !db.payment.hasAlias('billingAddress')) {
+                await db.payment.hasOne(db.address, {
+                    sourceKey: "billing_address_id",
+                    foreignKey: "id",
+                    as: "billingAddress"
+                });
+            }
+
+            //
+            if (!db.order.hasAlias('address') && !db.order.hasAlias('shippingAddress')) {
+                await db.order.hasOne(db.address, {
+                    sourceKey: "shipping_address_id",
+                    foreignKey: "id",
+                    as: "shippingAddress"
+                });
+            }
+
+            //
+            if (!db.order.hasAlias('tax_exempt') && !db.order.hasAlias('taxExemptFiles')) {
+                await db.order.hasMany(db.tax_exempt, {
+                    foreignKey: "order_id",
+                    as: "taxExemptFiles"
+                });
+            }
+
+            //
+            if (!db.order.hasAlias('coupon')) {
+                await db.order.hasOne(db.coupon, {
+                    sourceKey: "coupon_id",
+                    foreignKey: "id"
+                });
+            }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.order.hasAlias('user') && !db.order.hasAlias('added_by')) {
+
+                await db.order.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
+
+            // Single Order For Admin
+            const singleOrder = await db.order.findOne({
+                include: [
+                    { model: db.user, as: 'customer' },
+                    { model: db.payment_method, as: 'paymentmethod' },
+                    { model: db.order_status, as: 'orderstatus' },
+                    {
+                        model: db.order_item,
+                        as: 'orderitems',
+                        include: {
+                            model: db.product
+                        }
+                    },
+                    {
+                        model: db.payment,
+                        include: {
+                            model: db.address,
+                            as: "billingAddress"
+                        }
+                    },
+                    { model: db.address, as: "shippingAddress" },
+                    { model: db.tax_exempt, as: "taxExemptFiles" },
+                    { model: db.coupon },
+                    {
+                        model: db.user, as: 'added_by', // Include User
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id: order_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            // Return Formation
+            return {
+                message: "GET Single Order Success",
+                status: true,
+                tenant_id: TENANTID,
+                data: singleOrder
             }
 
 

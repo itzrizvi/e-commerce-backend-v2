@@ -114,6 +114,18 @@ input createOrderByCustomerInput {
     shipping_address_id:Int!
 }
 
+input createOrderByAdminInput {
+    customer_id:Int!
+    cart_id:Int!
+    tax_exempt:Boolean!
+    taxexempt_file:[Upload]
+    payment_id:Int!
+    coupon_id:Int
+    order_status_id:Int!
+    billing_address_id:Int!
+    shipping_address_id:Int!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -122,6 +134,7 @@ extend type Mutation {
     addOrderStatus(data:addOrderStatusInput):CommonOutput!
     updateOrderStatus(data:UpdateOrderStatusInput):CommonOutput!
     createOrderByCustomer(data:createOrderByCustomerInput):CommonOutput!
+    createOrderByAdmin(data:createOrderByAdminInput):CommonOutput!
 }
 
 extend type Query {

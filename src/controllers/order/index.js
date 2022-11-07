@@ -6,4 +6,5 @@ module.exports = {
     getOrderStatusListController: require('./getOrderStatusListController'),
     getPublicOrderStatusListController: require('./getPublicOrderStatusListController'),
     createOrderByCustomerController: require('./createOrderByCustomerController'),
+    createOrderByAdminController: require('./createOrderByAdminController'),
 }

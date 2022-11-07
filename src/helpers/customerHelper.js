@@ -178,7 +178,7 @@ module.exports = {
 
         try {
             const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status, isDefault } = req
-            const createBilling = db.address.create({
+            const createBilling = await db.address.create({
                 ref_id: user.has_role === '1' ? parent_id : user.id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
@@ -228,7 +228,7 @@ module.exports = {
 
         try {
             const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status, isDefault } = req
-            const createShipping = db.address.create({
+            const createShipping = await db.address.create({
                 ref_id: user.has_role === '1' ? parent_id : user.id,
                 ref_model: "customer",
                 tenant_id: TENANTID,
@@ -278,7 +278,7 @@ module.exports = {
         try {
 
             const { id, phone, fax, email, address1, address2, city, state, zip_code, country, status, isDefault, parent_id } = req
-            const updateAddress = db.address.update({
+            const updateAddress = await db.address.update({
                 address1,
                 address2,
                 city,
@@ -349,7 +349,6 @@ module.exports = {
                     }
 
                 }
-
 
 
                 return {

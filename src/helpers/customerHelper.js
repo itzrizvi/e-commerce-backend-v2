@@ -201,13 +201,14 @@ module.exports = {
 
                 // Is Default
                 if (isDefault) {
-                    db.default_address.create({
+                    const createDefault = await db.default_address.create({
                         customer_id: user.has_role === '1' ? parent_id : user.id,
                         address_type: "billing",
                         address_id: createBilling.id,
                         tenant_id: TENANTID,
                         created_by: user.has_role === '1' ? parent_id : user.id
                     });
+                    if (!createDefault) return { message: "Default Address Insert Failed!!!", status: false }
                 }
 
 
@@ -250,13 +251,14 @@ module.exports = {
 
                 // Is Default
                 if (isDefault) {
-                    db.default_address.create({
+                    const createDefault = await db.default_address.create({
                         customer_id: user.has_role === '1' ? parent_id : user.id,
                         address_type: "shipping",
                         address_id: createShipping.id,
                         tenant_id: TENANTID,
                         created_by: user.has_role === '1' ? parent_id : user.id
                     });
+                    if (!createDefault) return { message: "Default Address Insert Failed!!!", status: false }
                 }
 
                 return {

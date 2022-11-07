@@ -7,13 +7,13 @@ module.exports = gql`
 ###############################################################
 
 type PaymentMethod {
-    id:Int!
-    name:String!
-    slug:String!
-    description:String!
-    status:Boolean!
-    tenant_id:String!
-    added_by:Staff!
+    id:Int
+    name:String
+    slug:String
+    description:String
+    status:Boolean
+    tenant_id:String
+    added_by:Staff
 }
 
 input addPaymentMethodInput {

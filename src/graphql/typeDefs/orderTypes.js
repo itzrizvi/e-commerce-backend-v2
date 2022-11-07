@@ -16,12 +16,12 @@ type OrderStatus {
     added_by:Staff
 }
 type OrderStatusPublic {
-    id:Int!
-    name:String!
-    slug:String!
-    description:String!
-    status:Boolean!
-    tenant_id:String!
+    id:Int
+    name:String
+    slug:String
+    description:String
+    status:Boolean
+    tenant_id:String
 }
 
 input addOrderStatusInput {
@@ -126,6 +126,29 @@ input createOrderByAdminInput {
     shipping_address_id:Int!
 }
 
+type OrderList {
+    id:Int
+    customer:Customer
+    payment:PaymentMethod
+    total:Float
+    sub_total:Float
+    shipping_cost:Float
+    discount_amount:Float
+    tax_amount:Float
+    orderStatus:OrderStatusPublic
+    tax_exempt:Boolean
+    createdAt:String
+    updatedAt:String
+}
+
+
+type GetOrderListForAdmin {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[OrderList]
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -141,6 +164,7 @@ extend type Query {
     getSingleOrderStatus(query:GetSingleOrderStatusInput):GetSingleOrderStatusOutput!
     getOrderStatusList:GetOrderStatusListOutput!
     getPublicOrderStatusList:GetPublicOrderStatusListOutput!
+    getOrderlistAdmin:GetOrderListForAdmin!
 }
 
 

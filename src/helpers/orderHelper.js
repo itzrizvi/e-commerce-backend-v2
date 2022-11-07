@@ -267,11 +267,11 @@ module.exports = {
             // Data From Request
             const { cart_id,
                 tax_exempt,
-                payment_id,//
-                coupon_id,//
-                order_status_id,//
-                billing_address_id,//
-                shipping_address_id,//
+                payment_id,
+                coupon_id,
+                order_status_id,
+                billing_address_id,
+                shipping_address_id,
                 taxexempt_file } = req;
 
             const shipping_cost = 50; // TODO ->> IT WILL CHANGE 

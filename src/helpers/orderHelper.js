@@ -927,11 +927,11 @@ module.exports = {
                 });
             }
 
-            // Created By Associations
+            // User and Roles Through Admin Roles Associations
             db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
             db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
-            // Check If Has Alias with Users and Roles
+            // Order and User
             if (!db.order.hasAlias('user') && !db.order.hasAlias('added_by')) {
 
                 await db.order.hasOne(db.user, {
@@ -965,7 +965,7 @@ module.exports = {
                     { model: db.tax_exempt, as: "taxExemptFiles" },
                     { model: db.coupon },
                     {
-                        model: db.user, as: 'added_by', // Include User
+                        model: db.user, as: 'added_by', // User and Roles
                         include: {
                             model: db.role,
                             as: 'roles'

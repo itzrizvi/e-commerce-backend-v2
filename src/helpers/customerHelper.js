@@ -299,18 +299,53 @@ module.exports = {
 
             if (updateAddress) {
 
+                //
+                const findAddres = await db.address.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!findAddres) return { message: "Coulnd't Found Adress!!!", status: false }
+
                 if (isDefault) {
-                    db.default_address.update({
-                        address_id: id,
-                        updated_by: user.has_role === '1' ? parent_id : user.id
-                    }, {
+
+                    //
+                    const findDefaultAddres = await db.default_address.findOne({
                         where: {
                             [Op.and]: [{
-                                customer_id: user.has_role === '1' ? parent_id : user.id,
+                                address_id: id,
                                 tenant_id: TENANTID
                             }]
                         }
                     });
+
+                    if (findDefaultAddres) {
+
+                        db.default_address.update({
+                            address_id: id,
+                            updated_by: user.has_role === '1' ? parent_id : user.id
+                        }, {
+                            where: {
+                                [Op.and]: [{
+                                    customer_id: user.has_role === '1' ? parent_id : user.id,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        });
+
+                    } else {
+                        db.default_address.create({
+                            customer_id: user.has_role === '1' ? parent_id : user.id,
+                            address_type: findAddres.type,
+                            address_id: id,
+                            tenant_id: TENANTID,
+                            created_by: user.has_role === '1' ? parent_id : user.id
+                        });
+                    }
+
                 }
 
 

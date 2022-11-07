@@ -911,7 +911,7 @@ module.exports = {
                 });
             }
 
-            // 
+            // Order and Tax Exempt For File Names
             if (!db.order.hasAlias('tax_exempt') && !db.order.hasAlias('taxExemptFiles')) {
                 await db.order.hasMany(db.tax_exempt, {
                     foreignKey: "order_id",

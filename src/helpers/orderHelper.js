@@ -1180,17 +1180,33 @@ module.exports = {
         // Try Catch Block
         try {
 
-            // // Data From Request
-            // const { order_id,
-            //     orderItems } = req;
+            // Data From Request
+            const { order_id,
+                order_status_id } = req;
 
+            // Update Doc 
+            const updateDoc = {
+                order_status_id,
+                updated_by: user.id
+            }
 
-            // // Return Formation
-            // return {
-            //     message: "Order Updated Successfully!!!",
-            //     tenant_id: TENANTID,
-            //     status: true
-            // }
+            // Update Order Status
+            const updateorderstatus = await db.order.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id: order_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateorderstatus) return { message: "Order Status Couldn't Changed!!!", status: false }
+
+            // Return Formation
+            return {
+                message: "Order Status Updated Successfully!!!",
+                tenant_id: TENANTID,
+                status: true
+            }
 
 
 

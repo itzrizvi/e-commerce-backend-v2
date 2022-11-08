@@ -196,6 +196,7 @@ input UpdateOrderInput {
 }
 
 input OrderStatusChangeInput {
+    order_id:Int!
     order_status_id:Int!
 }
 

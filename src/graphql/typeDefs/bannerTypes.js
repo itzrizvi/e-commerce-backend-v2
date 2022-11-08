@@ -22,8 +22,8 @@ module.exports = gql`
         title: String!
         sub_title: String
         link: String
-        price: Float
-        sale_price: Float
+        price: String
+        sale_price: String
         button_text: String
         option_1: String
         option_2: String
@@ -54,8 +54,8 @@ module.exports = gql`
         title: String!
         sub_title: String
         link: String
-        price: Float
-        sale_price: Float
+        price: String
+        sale_price: String
         button_text: String
         option_1: String
         option_2: String
@@ -78,8 +78,8 @@ module.exports = gql`
         title: String!
         sub_title: String
         link: String
-        price: Float
-        sale_price: Float
+        price: String
+        sale_price: String
         button_text: String
         option_1: String
         option_2: String

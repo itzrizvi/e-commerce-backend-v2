@@ -10,4 +10,5 @@ module.exports = {
     getOrderlistAdminController: require('./getOrderlistAdminController'),
     getSingleOrderAdminController: require('./getSingleOrderAdminController'),
     updateOrderController: require('./updateOrderController'),
+    orderStatusChangeController: require('./orderStatusChangeController'),
 }

@@ -195,6 +195,10 @@ input UpdateOrderInput {
     orderItems:JSON
 }
 
+input OrderStatusChangeInput {
+    order_status_id:Int!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -205,6 +209,7 @@ extend type Mutation {
     createOrderByCustomer(data:createOrderByCustomerInput):CommonOutput!
     createOrderByAdmin(data:createOrderByAdminInput):CommonOutput!
     updateOrder(data:UpdateOrderInput):CommonOutput!
+    orderStatusChange(data:OrderStatusChangeInput):CommonOutput!
 }
 
 extend type Query {

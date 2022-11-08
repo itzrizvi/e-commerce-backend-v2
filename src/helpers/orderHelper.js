@@ -1175,4 +1175,27 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Change Order Status By Admin
+    orderStatusChange: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // // Data From Request
+            // const { order_id,
+            //     orderItems } = req;
+
+
+            // // Return Formation
+            // return {
+            //     message: "Order Updated Successfully!!!",
+            //     tenant_id: TENANTID,
+            //     status: true
+            // }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

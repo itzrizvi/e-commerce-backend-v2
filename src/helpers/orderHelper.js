@@ -994,4 +994,185 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // UPDATE Order By Admin
+    updateOrder: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { order_id,
+                orderItems } = req;
+
+            // Product ID Array
+            const productIds = [];
+            orderItems.forEach(async (element) => {
+                await productIds.push(element.product_id)
+            });
+
+            //
+            const newOrderItemsArray = [];
+            let sub_total = 0; // sub_total
+            let totalQuantity = 0; // Total Quantity
+            let discount_amount = 0; // Discount Amount
+            const findProduct = await db.product.findAll({
+                where: {
+                    [Op.and]: [{
+                        id: productIds,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Find Product and Get Details and push to array
+            await orderItems.forEach(async (item) => {
+
+                findProduct.forEach(async (element) => {
+
+                    if (item.product_id === parseInt(element.id)) {
+
+                        //
+                        if (element.prod_sale_price != 0) {
+
+                            const calculateTotal = await element.prod_sale_price * item.quantity;
+                            sub_total += calculateTotal;
+                            totalQuantity += item.quantity;
+
+                            //
+                            await newOrderItemsArray.push({ product_id: element.id, price: element.prod_sale_price, quantity: item.quantity, order_id, updated_by: user.id, tenant_id: TENANTID })
+                        } else {
+                            const calculateTotal = await element.prod_regular_price * item.quantity;
+                            sub_total += calculateTotal;
+                            totalQuantity += item.quantity;
+
+                            //
+                            await newOrderItemsArray.push({ product_id: element.id, price: element.prod_regular_price, quantity: item.quantity, order_id, updated_by: user.id, tenant_id: TENANTID })
+                        }
+                    }
+
+                });
+
+
+            });
+
+
+            // Find Oder
+            const findOrder = await db.order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: order_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { coupon_id, shipping_cost } = findOrder;
+
+            if (coupon_id) {
+                //
+                const getCouponDetails = await db.coupon.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id: coupon_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                //
+                const { coupon_type,
+                    coupon_amount,
+                    coupon_maxamount,
+                    coupon_minamount,
+                    coupon_startdate,
+                    coupon_enddate } = getCouponDetails;
+
+                if (new Date() < new Date(coupon_enddate) && new Date(coupon_startdate) < new Date()) {
+
+                    if (coupon_maxamount >= totalQuantity && coupon_minamount <= totalQuantity) {
+
+                        if (coupon_type === 'percentage') {
+
+                            discount_amount = (sub_total * coupon_amount) / 100;
+
+                        } else if (coupon_type === 'flat') {
+                            discount_amount = coupon_amount;
+                        }
+
+                    } else {
+                        return {
+                            message: "Coupon Doesn't Meet the Order Quantity Limit!!!",
+                            status: false,
+                            tenant_id: TENANTID
+                        }
+                    }
+
+                } else {
+                    return {
+                        message: "Coupon Expired or In-Valid Coupon!!!",
+                        status: false,
+                        tenant_id: TENANTID
+                    }
+                }
+            }
+
+            // Calculate Total
+            let total = (sub_total + shipping_cost) - discount_amount;
+            // Update Order
+            const updateDoc = {
+                total,
+                sub_total,
+                discount_amount,
+                coupon_id,
+                updated_by: user.id
+            }
+            const updateorder = await db.order.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id: order_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateorder) return { message: "Order Couldn't Updated!!!", status: false }
+
+            // Update Order Items
+            await db.order_item.destroy({
+                where: {
+                    [Op.and]: [{
+                        order_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            //
+            const newOrderItems = await db.order_item.bulkCreate(newOrderItemsArray);
+            if (!newOrderItems) return { message: "Order Items Update Failed!!!", status: false };
+
+            //
+            const updateDocPayment = {
+                amount: total
+            }
+            const updateOrderPayment = await db.payment.update(updateDocPayment, {
+                where: {
+                    [Op.and]: [{
+                        order_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateOrderPayment) return { message: "Order Payment Update Failed!!!", status: false };
+
+
+            // Return Formation
+            return {
+                message: "Order Updated Successfully!!!",
+                tenant_id: TENANTID,
+                status: true
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

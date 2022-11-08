@@ -190,6 +190,11 @@ type GetSingleOrderAdminOutput {
     data:OrderAdmin
 }
 
+input UpdateOrderInput {
+    order_id:Int!
+    orderItems:JSON
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -199,6 +204,7 @@ extend type Mutation {
     updateOrderStatus(data:UpdateOrderStatusInput):CommonOutput!
     createOrderByCustomer(data:createOrderByCustomerInput):CommonOutput!
     createOrderByAdmin(data:createOrderByAdminInput):CommonOutput!
+    updateOrder(data:UpdateOrderInput):CommonOutput!
 }
 
 extend type Query {

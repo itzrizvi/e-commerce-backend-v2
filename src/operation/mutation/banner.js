@@ -1,8 +1,8 @@
 const { createBannerController,
-    createBannerImageController,
+    createBannerItemController,
     updateBannerController,
-    updateBannerImageController,
-    deleteBannerImageController } = require("../../controllers");
+    updateBannerItemController,
+    deleteBannerItemController } = require("../../controllers");
 
 module.exports = {
     // Add Banner Muation
@@ -16,8 +16,8 @@ module.exports = {
         // Return To Controller
         return await createBannerController(args.data, db, user, isAuth, TENANTID);
     },
-    // Add banner Image Mutation
-    addBannerImage: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+    // Add banner Item Mutation
+    addBannerItem: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
@@ -25,7 +25,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await createBannerImageController(args.data, db, user, isAuth, TENANTID);
+        return await createBannerItemController(args.data, db, user, isAuth, TENANTID);
     },
     // Update Banner Mutation
     updateBanner: async (root, args, { db, user, isAuth, TENANTID }, info) => {
@@ -38,8 +38,8 @@ module.exports = {
         // Return To Controller
         return await updateBannerController(args.data, db, user, isAuth, TENANTID);
     },
-    // Update Banner Image Mutation
-    updateBannerImage: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+    // Update Banner Item Mutation
+    updateBannerItem: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
@@ -47,10 +47,10 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await updateBannerImageController(args.data, db, user, isAuth, TENANTID);
+        return await updateBannerItemController(args.data, db, user, isAuth, TENANTID);
     },
-    // Delete Banner Image Mutation
-    deleteBannerImage: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+    // Delete Banner Item Mutation
+    deleteBannerItem: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
@@ -58,6 +58,6 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await deleteBannerImageController(args.data, db, user, isAuth, TENANTID);
+        return await deleteBannerItemController(args.data, db, user, isAuth, TENANTID);
     }
 }

@@ -17,18 +17,24 @@ module.exports = gql`
         data: Banner
     }
 
-    input BannerImageInput{
+    input BannerItemInput{
         banner_id: Int!
         title: String!
+        sub_title: String
         link: String
+        price: Float
+        sale_price: Float
+        button_text: String
+        option_1: String
+        option_2: String
         sort_order: Int!
         image: Upload!
     }
 
-    type BannerImageOutput {
+    type BannerItemOutput {
         message: String!
         status: Boolean!
-        data: BannerImage
+        data: BannerItem
     }
 
     type Banner{
@@ -39,15 +45,21 @@ module.exports = gql`
         tenant_id: String
         createdAt: String
         updatedAt: String
-        banner_images:[BannerImage]
+        banner_items:[BannerItem]
     }
 
-    type BannerImage{
+    type BannerItem{
         id: Int!
         banner_id: Int!
         title: String!
-        image:String
+        sub_title: String
         link: String
+        price: Float
+        sale_price: Float
+        button_text: String
+        option_1: String
+        option_2: String
+        image: String
         sort_order: Int!
         tenant_id: String
         createdAt: String
@@ -60,11 +72,17 @@ module.exports = gql`
         status: Boolean
     }
 
-    input UpdateBannerImageInput {
+    input UpdateBannerItemInput {
         id: Int!
         banner_id: Int!
-        title: String
+        title: String!
+        sub_title: String
         link: String
+        price: Float
+        sale_price: Float
+        button_text: String
+        option_1: String
+        option_2: String
         sort_order: Int
         image: Upload
     }
@@ -98,7 +116,7 @@ module.exports = gql`
         data:Banner
     }
 
-    input DeleteBannerImageInput {
+    input DeleteBannerItemInput {
         banner_id: Int!
     }
 
@@ -108,10 +126,10 @@ module.exports = gql`
 
     extend type Mutation {
         addBanner(data: BannerInput): BannerOutput
-        addBannerImage(data: BannerImageInput!): BannerImageOutput
+        addBannerItem(data: BannerItemInput!): BannerItemOutput
         updateBanner(data: UpdateBannerInput):CommonOutput!
-        updateBannerImage(data: UpdateBannerImageInput):CommonOutput!
-        deleteBannerImage(data: DeleteBannerImageInput):CommonOutput!
+        updateBannerItem(data: UpdateBannerItemInput):CommonOutput!
+        deleteBannerItem(data: DeleteBannerItemInput):CommonOutput!
     }
 
     extend type Query {

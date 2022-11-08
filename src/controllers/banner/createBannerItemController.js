@@ -1,8 +1,6 @@
-// ALL REQUIRES;
-const { updateBannerImage } = require("../../helpers/bannerHelper");
+const { createBannerItem } = require("../../helpers/bannerHelper");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
-
 
 // CONTROLLER
 module.exports = async (req, db, user, isAuth, TENANTID) => {
@@ -14,9 +12,8 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // UPDATE BANNER IMAGE
-    const data = await updateBannerImage(req, db, user, isAuth, TENANTID);
+    // // CREATE Banner
+    const data = await createBannerItem(req, db, user, isAuth, TENANTID);
 
     return singleResponse(data);
-
 }

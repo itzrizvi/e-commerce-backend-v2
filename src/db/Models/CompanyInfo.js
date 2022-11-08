@@ -16,11 +16,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        contact_address:{
+        dark_logo: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        fax:{
+        fav_icon: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        contact_address: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        fax: {
             type: DataTypes.STRING,
             allowNull: true
         },

@@ -19,6 +19,8 @@ module.exports = gql`
     input CompanyInfoInput{
         name: String!
         logo: Upload
+        dark_logo: Upload
+        fav_icon: Upload
         contact_address: String
         phone: [Phone]
         email: [Email]

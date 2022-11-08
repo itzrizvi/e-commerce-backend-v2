@@ -36,7 +36,11 @@
         "USER_IMG_DEST": "psp-image-storage-resize/user",
         "USER_IMG_IDF": "id",
         "COMPANY_LOGO_IMG_SRC": "psp-image-storage/logo",
+        "COMPANY_DARK_LOGO_IMG_SRC": "psp-image-storage/dark-logo",
+        "COMPANY_FAV_ICON_SRC": "psp-image-storage/fav",
         "COMPANY_LOGO_IMG_DEST": "psp-image-storage-resize/logo",
+        "COMPANY_DARK_LOGO_IMG_DEST": "psp-image-storage-resize/dark-logo",
+        "COMPANY_FAV_ICON_DEST": "psp-image-storage-resize/fav",
         "COMPANY_LOGO_IMG_IDF": "tenant_id",
         "ORDER_TAX_EXEMPT_FILE_SRC": "psp-image-storage/order"
     },

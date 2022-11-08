@@ -1214,4 +1214,72 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // GET Order List By Customer ID
+    getOrderListByCustomerID: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { customer_id } = req;
+
+            // Check If Has Alias with Users and Order
+            if (!db.order.hasAlias('user') && !db.order.hasAlias('customer')) {
+
+                await db.order.hasOne(db.user, {
+                    sourceKey: 'customer_id',
+                    foreignKey: 'id',
+                    as: 'customer'
+                });
+            }
+
+            // Check If Has Alias with Order and Payment Method
+            if (!db.order.hasAlias('payment_method') && !db.order.hasAlias('payment')) {
+
+                await db.order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_id',
+                    foreignKey: 'id',
+                    as: 'payment'
+                });
+            }
+
+            // Check If Has Alias with Order and Order Status
+            if (!db.order.hasAlias('order_status') && !db.order.hasAlias('orderStatus')) {
+
+                await db.order.hasOne(db.order_status, {
+                    sourceKey: 'order_status_id',
+                    foreignKey: 'id',
+                    as: 'orderStatus'
+                });
+            }
+
+            // Order List For Admin
+            const orderlist = await db.order.findAll({
+                include: [
+                    { model: db.user, as: 'customer' },
+                    { model: db.payment_method, as: 'payment' },
+                    { model: db.order_status, as: 'orderStatus' },
+                ],
+                where: {
+                    [Op.and]: [{
+                        customer_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            // Return Formation
+            return {
+                message: "GET Order List Success",
+                status: true,
+                tenant_id: TENANTID,
+                data: orderlist
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

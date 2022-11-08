@@ -200,6 +200,17 @@ input OrderStatusChangeInput {
     order_status_id:Int!
 }
 
+input GetOrderListByCustomerIDInput {
+    customer_id:Int!
+}
+
+type GetOrderListByCustomerIDOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[OrderList]
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -219,6 +230,7 @@ extend type Query {
     getPublicOrderStatusList:GetPublicOrderStatusListOutput!
     getOrderlistAdmin:GetOrderListForAdmin!
     getSingleOrderAdmin(query:GetSingleOrderAdminInput):GetSingleOrderAdminOutput!
+    getOrderListByCustomerID(query:GetOrderListByCustomerIDInput):GetOrderListByCustomerIDOutput!
 }
 
 

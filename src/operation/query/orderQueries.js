@@ -3,7 +3,8 @@ const { getSingleOrderStatusController,
     getPublicOrderStatusListController,
     getOrderlistAdminController,
     getSingleOrderAdminController,
-    getOrderListByCustomerIDController } = require("../../controllers");
+    getOrderListByCustomerIDController,
+    getSingleOrderCustomerController } = require("../../controllers");
 
 
 // Order BASED QUERY
@@ -74,5 +75,16 @@ module.exports = {
 
         // Return To Controller
         return await getOrderListByCustomerIDController(args.query, db, user, isAuth, TENANTID);
+    },
+    // GET SINGLE ORDER CUSTOMER
+    getSingleOrderCustomer: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getSingleOrderCustomerController(args.query, db, user, isAuth, TENANTID);
     },
 }

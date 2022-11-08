@@ -116,22 +116,26 @@ type OrderAdmin {
     added_by:Staff
 }
 
-# type OrderPublic {
-#     id:Int
-#     total:Float
-#     sub_total:Float
-#     shipping_cost:Float
-#     discount_amount:Float
-#     tax_amount:Float
-#     tax_exempt:Boolean
-#     tenant_id:String
-#     createdAt:String
-#     updatedAt:String
-#     orderfrom:Customer
-#     paymentmethod:PaymentMethod
-#     coupon:Coupon
-#     orderstatus:OrderStatus
-# }
+type OrderCustomer {
+    id:Int
+    total:Float
+    sub_total:Float
+    shipping_cost:Float
+    discount_amount:Float
+    tax_amount:Float
+    tax_exempt:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    orderitems:[OrderItem]
+    paymentmethod:PaymentMethod
+    payment:OrderPayment
+    orderstatus:OrderStatusPublic
+    customer:Customer
+    shippingAddress:AddressList
+    taxExemptFiles:[TaxExemptFiles]
+    coupon:Coupon
+}
 
 input createOrderByCustomerInput {
     cart_id:Int!
@@ -190,6 +194,17 @@ type GetSingleOrderAdminOutput {
     data:OrderAdmin
 }
 
+input GetSingleOrderCustomerInput {
+    order_id:Int!
+}
+
+type GetSingleOrderCustomerOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:OrderCustomer
+}
+
 input UpdateOrderInput {
     order_id:Int!
     orderItems:JSON
@@ -230,6 +245,7 @@ extend type Query {
     getPublicOrderStatusList:GetPublicOrderStatusListOutput!
     getOrderlistAdmin:GetOrderListForAdmin!
     getSingleOrderAdmin(query:GetSingleOrderAdminInput):GetSingleOrderAdminOutput!
+    getSingleOrderCustomer(query:GetSingleOrderCustomerInput):GetSingleOrderCustomerOutput!
     getOrderListByCustomerID(query:GetOrderListByCustomerIDInput):GetOrderListByCustomerIDOutput!
 }
 

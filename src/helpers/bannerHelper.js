@@ -444,6 +444,9 @@ module.exports = {
             as: "banner_items",
           },
         ],
+        order: [
+          [{ model: db.banner_item, as: 'banner_items' }, 'sort_order', 'ASC']
+        ]
       });
 
       // Return

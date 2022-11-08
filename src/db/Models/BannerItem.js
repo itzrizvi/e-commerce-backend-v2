@@ -1,6 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-
-    const BannerImages = sequelize.define("banner_image", {
+    const BannerImages = sequelize.define("banner_item", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -15,11 +14,35 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        sub_title: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        price: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        sale_price: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
         image: {
             type: DataTypes.STRING,
             allowNull: false
         },
         link: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        button_text: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        option_1: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        option_2: {
             type: DataTypes.STRING,
             allowNull: true
         },

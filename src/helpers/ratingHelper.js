@@ -12,10 +12,6 @@ module.exports = {
             // GET DATA
             const { product_id, rating, description } = req;
 
-            // Need to implement this user buy or not this product after order module finished
-            // To DO
-
-
             // Order and Order Items
             if (!db.order.hasAlias("order_item") && !db.order.hasAlias("orderitems")) {
                 await db.order.hasMany(db.order_item, {

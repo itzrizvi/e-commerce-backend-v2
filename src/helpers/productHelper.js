@@ -1802,7 +1802,7 @@ module.exports = {
             // Return If Success
             if (searchedProducts) {
                 return {
-                    message: "Get Searched Products List Success!!!",
+                    message: "Get Searched Products Success!!!",
                     status: true,
                     tenant_id: TENANTID,
                     data: searchedProducts

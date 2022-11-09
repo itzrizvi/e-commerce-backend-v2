@@ -8,7 +8,7 @@ module.exports = {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return To Controller
-        return await getAllRatingByUserController(args.query, db, user, isAuth, TENANTID);
+        return await getAllRatingByUserController(db, user, isAuth, TENANTID);
     },
     getAllRatingByProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID

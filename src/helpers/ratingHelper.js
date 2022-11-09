@@ -10,71 +10,112 @@ module.exports = {
 
         try {
             // GET DATA
-            const { user_id, product_id, rating, title, description } = req;
+            const { product_id, rating, description } = req;
 
             // Need to implement this user buy or not this product after order module finished
             // To DO
 
-            // Check The Rating Is Already given or Not
-            const checkRatingExist = await db.rating.findOne({
+
+            // Order and Order Items
+            if (!db.order.hasAlias("order_item") && !db.order.hasAlias("orderitems")) {
+                await db.order.hasMany(db.order_item, {
+                    foreignKey: "order_id",
+                    as: 'orderitems'
+                });
+            }
+            // Check Order Item To See this User 
+            const checkOrders = await db.order.findAll({
+                include: {
+                    model: db.order_item, // Order Items and Products
+                    as: 'orderitems',
+                },
                 where: {
                     [Op.and]: [{
-                        product_id: product_id,
-                        user_id: user_id,
-                        tenant_id: TENANTID
+                        customer_id: user.id
                     }]
                 }
             });
 
-            if (checkRatingExist) return { message: "Rating already given!", status: false }
+            // User Order Items
+            const orderItems = [];
+
+            // 
+            await checkOrders.forEach(async (order) => {
+                orderItems.concat(order.orderitems);
+            });
+
+            //
+            const checkOrderItems = await orderItems.includes(product_id);
+
+            if (checkOrderItems) {
+
+                // Check The Rating Is Already given or Not
+                const checkRatingExist = await db.rating.findOne({
+                    where: {
+                        [Op.and]: [{
+                            product_id: product_id,
+                            user_id: user.id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                if (checkRatingExist) return { message: "Rating already given!", status: false }
 
 
-            // Check The Product Exist or Not
-            const checkProductExist = await db.product.findOne({
-                where: {
-                    [Op.and]: [{
-                        id: product_id,
-                        tenant_id: TENANTID
-                    }]
+                // Check The Product Exist or Not
+                const checkProductExist = await db.product.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id: product_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                if (!checkProductExist) return { message: "Product not exist!", status: false }
+
+                const createRating = await db.rating.create({
+                    user_id: user.id,
+                    product_id,
+                    rating_description: description,
+                    rating,
+                    tenant_id: TENANTID
+                });
+
+                if (createRating) {
+                    return {
+                        tenant_id: createRating.tenant_id,
+                        message: "Successfully Created Rating.",
+                        status: true
+                    }
                 }
-            });
 
-            if (!checkProductExist) return { message: "Product not exist!", status: false }
-
-            const createRating = await db.rating.create({
-                user_id,
-                product_id,
-                rating_title: title,
-                rating_description: description,
-                rating,
-                tenant_id: TENANTID
-            });
-
-            if (createRating) {
+            } else {
                 return {
-                    tenant_id: createRating.tenant_id,
-                    message: "Successfully Created Rating.",
-                    status: true
+                    message: "You Cannot Rate This Product!!!",
+                    tenant_id: TENANTID,
+                    status: false
                 }
             }
+
+
 
         } catch (error) {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
 
     },
-    getAllRatingByUser: async (req, db, user, isAuth, TENANTID) => {
+    getAllRatingByUser: async (db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
             // GET ALL Rating
-            // GET DATA
-            const { user_id } = req;
 
             // Find All Roles With permissions
             const findAllRating = await db.rating.findAll({
                 where: {
                     tenant_id: TENANTID,
-                    user_id: user_id
+                    user_id: user.id
                 },
                 order: [
                     ['createdAt', 'DESC']

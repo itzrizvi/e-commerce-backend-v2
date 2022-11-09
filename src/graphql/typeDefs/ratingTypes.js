@@ -4,7 +4,6 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
     type Rating {
         id: Int
-        rating_title:String
         rating_description:String
         rating:Float
         createdAt:String
@@ -42,15 +41,9 @@ module.exports = gql`
     }
 
     input CreateRatingInput{
-        user_id: Int!
         product_id: Int!
         rating: Float!
-        title: String!
         description: String
-    }
-
-    input GetAllRatingByUserInput{
-        user_id: Int!
     }
     
     input GetAllRatingByProductInput{
@@ -84,7 +77,7 @@ module.exports = gql`
     }
 
     extend type Query {
-        getAllRatingByUser(query: GetAllRatingByUserInput): getAllRatingOutput!
+        getAllRatingByUser: getAllRatingOutput!
         getAllRatingByProduct(query: GetAllRatingByProductInput): getAllRatingOutput!
         getSingleRating(query: GetSingleRatingInput): getSingleRatingOutput!
     }

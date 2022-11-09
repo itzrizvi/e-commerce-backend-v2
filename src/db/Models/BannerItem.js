@@ -16,15 +16,15 @@ module.exports = (sequelize, DataTypes) => {
         },
         sub_title: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         price: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         sale_price: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         image: {
             type: DataTypes.STRING,

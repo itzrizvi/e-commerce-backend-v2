@@ -1,6 +1,5 @@
 // ALL REQUIRES
 const { getSingleBrand } = require("../../helpers/brandHelper");
-const { getSingleBrandRequest } = require("../../requests/brandRequests");
 const { singleResponse } = require("../../utils/response");
 
 

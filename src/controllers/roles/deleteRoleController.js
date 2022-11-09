@@ -1,6 +1,5 @@
 // ALL REQUIRES
 const { deleteRole } = require("../../helpers/roleHelper");
-const { deleteRoleRequest } = require("../../requests/roleRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 

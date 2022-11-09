@@ -1,6 +1,5 @@
 // ALL REQUIRES=
 const { getSingleCoupon } = require("../../helpers/couponHelper");
-const { getSingleCouponRequest } = require("../../requests/couponRequests");
 const { singleResponse } = require("../../utils/response");
 
 

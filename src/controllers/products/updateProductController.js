@@ -1,6 +1,5 @@
 // All Requires
 const { updateProduct } = require("../../helpers/productHelper");
-const { updateProductRequest } = require("../../requests/productRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 

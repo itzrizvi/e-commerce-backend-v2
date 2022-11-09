@@ -1,6 +1,5 @@
 // ALL REQUIRES
 const { updateRolesPermission } = require("../../helpers/rolesPermissionHelper");
-const { updateRolesPermissionRequest } = require("../../requests/rolesPermissionRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 

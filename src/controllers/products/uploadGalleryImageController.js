@@ -1,6 +1,5 @@
 // All Requires
 const { uploadGalleryImage } = require("../../helpers/productHelper");
-const { uploadGalleryImageRequest } = require("../../requests/productRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 

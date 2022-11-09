@@ -1,5 +1,4 @@
 const { createCustomer } = require("../../helpers/customerHelper");
-const { createCustomerRequest } = require("../../requests/customerRequests");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 

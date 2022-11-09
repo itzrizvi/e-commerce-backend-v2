@@ -141,16 +141,31 @@ module.exports = {
             // GET DATA
             const { product_id } = req;
 
+            // Check If Has Alias with Users and Order
+            if (!db.rating.hasAlias('user') && !db.rating.hasAlias('ratedBy')) {
+
+                await db.rating.hasOne(db.user, {
+                    sourceKey: 'user_id',
+                    foreignKey: 'id',
+                    as: 'ratedBy'
+                });
+            }
+
             // Find All Roles With permissions
             const findAllRating = await db.rating.findAll({
+                include: [
+                    { model: db.user, as: 'ratedBy' }, // User as customer
+                ],
                 where: {
-                    tenant_id: TENANTID,
-                    product_id: product_id
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        product_id: product_id
+                    }]
                 },
                 order: [
                     ['createdAt', 'DESC']
                 ],
-            })
+            });
 
             // Return Formation
             return {

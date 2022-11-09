@@ -9,6 +9,7 @@ module.exports = gql`
         createdAt:String
         updatedAt:String
         tenant_id:String
+        ratedBy:Customer
     }
 
     type User {

@@ -33,6 +33,7 @@ module.exports = {
                 prod_status,
                 taxable,
                 is_featured,
+                is_sale,
                 prod_condition,
                 related_product,
                 prod_thumbnail,
@@ -125,6 +126,7 @@ module.exports = {
                 prod_status,
                 taxable,
                 is_featured,
+                is_sale,
                 prod_condition,
                 dimension_id,
                 prod_thumbnail: "demo.jpg",
@@ -577,6 +579,7 @@ module.exports = {
                 prod_status,
                 taxable,
                 is_featured,
+                is_sale,
                 prod_condition,
                 prod_outofstock_status,
                 related_product,
@@ -790,6 +793,7 @@ module.exports = {
                 prod_status,
                 taxable,
                 is_featured,
+                is_sale,
                 prod_condition,
                 prod_outofstock_status,
                 dimension_id,
@@ -1104,6 +1108,96 @@ module.exports = {
                     status: true,
                     tenant_id: TENANTID,
                     data: allFeaturedProducts
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
+    // GET On Sale Products Helper
+    getOnSaleProducts: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // ## ASSOCIATION STARTS ##
+            // Check If Has Alias with Categories
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+                await db.product.hasMany(db.product_attribute, {
+                    foreignKey: 'prod_id',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'id',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'id',
+                    as: 'attribute_group'
+                });
+            }
+            // ## ASSOCIATION ENDS ##
+
+
+            // Find ALL On Sale Product
+            const allOnSaleProducts = await db.product.findAll({
+                include: [
+                    { model: db.category, as: 'category' }, // Include Product Category
+                    {
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attribute,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_group,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        tenant_id,
+                        is_sale: true
+                    }]
+                },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (allOnSaleProducts) {
+                return {
+                    message: "Get All On Sale Product Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allOnSaleProducts
                 }
             }
 

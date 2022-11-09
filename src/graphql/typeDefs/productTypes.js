@@ -71,6 +71,7 @@ type Product {
     prod_status:Boolean
     taxable:Boolean
     is_featured:Boolean
+    is_sale:Boolean
     prod_condition:String
     dimensions:ProductDimension
     prod_weight:String
@@ -104,6 +105,7 @@ input AddProductInput {
     prod_status:Boolean!
     taxable:Boolean
     is_featured:Boolean
+    is_sale:Boolean
     prod_condition:String
     prod_outofstock_status:String!
     prod_thumbnail:Upload!
@@ -125,6 +127,7 @@ type ProductForList {
     prod_status:Boolean
     taxable:Boolean
     is_featured:Boolean
+    is_sale:Boolean
     prod_condition:String
     prod_outofstock_status:String
     prod_thumbnail:String
@@ -188,6 +191,7 @@ input UpdateProductInput {
     prod_status:Boolean
     taxable:Boolean
     is_featured:Boolean
+    is_sale:Boolean
     prod_condition:String
     prod_outofstock_status:String
     related_product:JSON
@@ -203,6 +207,14 @@ input RecentViewProductInput{
 
 
 type GetFeaturedProducts {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[ProductForList]
+}
+
+
+type GetOnSaleProducts {
     message:String
     tenant_id:String
     status:Boolean
@@ -235,6 +247,7 @@ type PublicProductView {
     prod_status:Boolean
     taxable:Boolean
     is_featured:Boolean
+    is_sale:Boolean
     prod_condition:String
     dimensions:ProductDimension
     prod_weight:String
@@ -300,6 +313,7 @@ extend type Query {
     getRecentViewProduct(query: GetRecentViewProductInput): GetFeaturedProducts!
     getSingleProductBySlug(query: GetSingleProductBySlugInput): GetSingleProductBySlugOutput!
     getProductsByIDs(query: GetProductsByIDInput): GetProductsByIDOutput!
+    getOnSaleProducts: GetOnSaleProducts!
 }
 
 

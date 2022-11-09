@@ -92,6 +92,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: false
         },
+        is_sale: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            defaultValue: false
+        },
         taxable: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

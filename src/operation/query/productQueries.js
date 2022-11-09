@@ -5,7 +5,8 @@ const { getSingleProductController,
     getRecentViewProductController,
     publicProductViewController,
     getSingleProductBySlugController,
-    getProductsByIDsController
+    getProductsByIDsController,
+    getOnSaleProductController
 } = require("../../controllers")
 
 
@@ -43,6 +44,13 @@ module.exports = {
 
         // Return To Controller
         return await getFeaturedProductController(db, TENANTID);
+    },
+    // GET On Sale Products
+    getOnSaleProducts: async (root, args, { db, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+
+        // Return To Controller
+        return await getOnSaleProductController(db, TENANTID);
     },
     getRecentViewProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {
 

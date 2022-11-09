@@ -27,7 +27,8 @@ module.exports = {
                 },
                 where: {
                     [Op.and]: [{
-                        customer_id: user.id
+                        customer_id: user.id,
+                        tenant_id: TENANTID
                     }]
                 }
             });
@@ -35,13 +36,17 @@ module.exports = {
             // User Order Items
             const orderItems = [];
 
+
+
             // 
             await checkOrders.forEach(async (order) => {
-                orderItems.concat(order.orderitems);
+                order.orderitems.forEach(async (item) => {
+                    await orderItems.push(item);
+                });
             });
 
             //
-            const checkOrderItems = await orderItems.includes(product_id);
+            const checkOrderItems = await orderItems.find((item) => parseInt(item.product_id) === product_id);
 
             if (checkOrderItems) {
 
@@ -82,7 +87,7 @@ module.exports = {
                 if (createRating) {
                     return {
                         tenant_id: createRating.tenant_id,
-                        message: "Successfully Created Rating.",
+                        message: "Successfully Rated The Product!!!",
                         status: true
                     }
                 }

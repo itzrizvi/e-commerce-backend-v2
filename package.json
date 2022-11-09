@@ -34,7 +34,6 @@
     "pg": "^8.8.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.21.4",
-    "simple-body-validator": "^1.2.2",
     "slugify": "^1.6.5"
   }
 }

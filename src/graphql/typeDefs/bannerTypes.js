@@ -27,7 +27,7 @@ module.exports = gql`
         button_text: String
         option_1: String
         option_2: String
-        sort_order: Int!
+        sort_order: Int
         image: Upload!
     }
 
@@ -60,7 +60,7 @@ module.exports = gql`
         option_1: String
         option_2: String
         image: String
-        sort_order: Int!
+        sort_order: Int
         tenant_id: String
         createdAt: String
         updatedAt: String

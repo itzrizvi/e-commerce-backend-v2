@@ -1719,4 +1719,99 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // GET Searched Products
+    getSearchedProducts: async (req, db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Data From REQUEST
+            const { category_id, searchQuery } = req;
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // ## ASSOCIATION STARTS ##
+            // Check If Has Alias with Categories
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+                await db.product.hasMany(db.product_attribute, {
+                    foreignKey: 'prod_id',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'id',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'id',
+                    as: 'attribute_group'
+                });
+            }
+            // ## ASSOCIATION ENDS ##
+
+            // Find ALL Product
+            const searchedProducts = await db.product.findAll({
+                include: [
+                    { model: db.category, as: 'category' }, // Include Product Category
+                    {
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        include: {
+                            model: db.attribute,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_group,
+                                as: 'attribute_group'
+                            }
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        prod_category: category_id,
+                        tenant_id
+                    }],
+                    prod_slug: {
+                        [Op.iLike]: `%${searchQuery}%`
+                    },
+
+                },
+                order: [
+                    ['prod_slug', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (searchedProducts) {
+                return {
+                    message: "Get Searched Products List Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: searchedProducts
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

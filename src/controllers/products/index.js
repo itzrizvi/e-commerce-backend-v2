@@ -13,4 +13,5 @@ module.exports = {
     getSingleProductBySlugController: require('./getSingleProductBySlugController'),
     getProductsByIDsController: require('./getProductsByIDsController'),
     getOnSaleProductController: require('./getOnSaleProductController'),
+    getSearchedProductsController: require('./getSearchedProductsController'),
 }

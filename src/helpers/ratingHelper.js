@@ -252,6 +252,7 @@ module.exports = {
                 await db.product.hasOne(db.category, {
                     sourceKey: 'prod_category',
                     foreignKey: 'id',
+                    as: 'category'
                 });
             }
 
@@ -272,7 +273,7 @@ module.exports = {
                                 }
                             }
                         },
-                        include: { model: db.category }
+                        include: { model: db.category, as: 'category' }
                     },
                 ],
                 where: {
@@ -290,7 +291,7 @@ module.exports = {
 
 
             // Top Rated Products Array
-            const topRatedProducts = [];
+            let topRatedProducts = [];
             findAllTopRatings.forEach(async (element) => {
                 await element.ratedProducts.forEach(async (product) => {
                     await topRatedProducts.push(product)

@@ -1814,4 +1814,49 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Add Recent Viewed Product By Array
+    addRecentViewProductByArray: async (req, db, user, isAuth, TENANTID) => {
+        try {
+            // GET DATA
+            const { product_ids } = req;
+
+            const checkExist = await db.recent_view_product.findAll({
+                where: {
+                    [Op.and]: [{
+                        product_id: product_ids,
+                        user_id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Extract Exists IDS
+            let existingProdIDS = [];
+            checkExist.forEach(async (view) => {
+                await existingProdIDS.push(parseInt(view.product_id));
+            });
+
+            // Delete Duplicates
+            const newProductIDs = product_ids.filter(val => !existingProdIDS.includes(val));
+
+            // GET New Array
+            const newRecentViews = [];
+            newProductIDs.forEach(async (element) => {
+                await newRecentViews.push({ user_id: user.id, product_id: element, tenant_id: TENANTID })
+            });
+
+            if (newRecentViews) {
+                await db.recent_view_product.bulkCreate(newRecentViews);
+            }
+
+            return {
+                tenant_id: TENANTID,
+                message: "Successfully Added New Recent View Products.",
+                status: true,
+            }
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

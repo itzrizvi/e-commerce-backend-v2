@@ -4,7 +4,8 @@ const { addProductController,
     updateThumbnailController,
     deleteGalleryImageController,
     uploadGalleryImageController,
-    recentViewProductController } = require("../../controllers");
+    recentViewProductController,
+    addRecentViewProductByArrayController } = require("../../controllers");
 
 
 // Product Mutations
@@ -67,5 +68,13 @@ module.exports = {
 
         // Return To Controller
         return await recentViewProductController(args.data, db, user, isAuth, TENANTID);
+    },
+    addRecentViewProductByArray: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await addRecentViewProductByArrayController(args.data, db, user, isAuth, TENANTID);
     },
 }

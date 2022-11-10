@@ -306,6 +306,11 @@ type SearchProductOutput {
 }
 
 
+input AddRecentViewProductByArrayInput {
+    product_ids:JSON!
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -316,6 +321,7 @@ extend type Mutation {
     uploadGalleryImage(data: GalleryImageUploadInput):CommonOutput!
     updateProduct(data: UpdateProductInput):CommonOutput!
     recentViewProduct(data: RecentViewProductInput): CommonOutput!
+    addRecentViewProductByArray(data: AddRecentViewProductByArrayInput): CommonOutput!
 }
 
 extend type Query {

@@ -7,7 +7,8 @@ const { getSingleProductController,
     getSingleProductBySlugController,
     getProductsByIDsController,
     getOnSaleProductController,
-    getSearchedProductsController
+    getSearchedProductsController,
+    getLatestProductsController
 } = require("../../controllers")
 
 
@@ -80,5 +81,12 @@ module.exports = {
 
         // Return To Controller
         return await getSearchedProductsController(args.query, db, TENANTID);
-    }
+    },
+    // GET Latest Products
+    getLatestProducts: async (root, args, { db, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+
+        // Return To Controller
+        return await getLatestProductsController(db, TENANTID);
+    },
 }

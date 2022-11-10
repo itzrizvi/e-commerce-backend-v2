@@ -305,9 +305,15 @@ type SearchProductOutput {
     data: [ProductForList]
 }
 
-
 input AddRecentViewProductByArrayInput {
     product_ids:JSON!
+}
+
+type GetLatestProducts {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ProductForList]
 }
 
 
@@ -334,6 +340,7 @@ extend type Query {
     getProductsByIDs(query: GetProductsByIDInput): GetProductsByIDOutput!
     getOnSaleProducts: GetOnSaleProducts!
     getSearchedProducts(query:SearchProductInput): SearchProductOutput!
+    getLatestProducts: GetLatestProducts!
 }
 
 

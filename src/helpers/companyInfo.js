@@ -281,43 +281,39 @@ module.exports = {
       }
     }
   },
-  getCompanyInfo: async (req, db, user, isAuth, TENANTID) => {
-    // try {
-    if (!db.company_info.hasAlias("company_emails")) {
-      await db.company_info.hasMany(db.company_email, {
-        foreignKey: "company_info_id",
+  getCompanyInfo: async (db, TENANTID) => {
+    try {
+      if (!db.company_info.hasAlias("company_emails")) {
+        await db.company_info.hasMany(db.company_email, {
+          foreignKey: "company_info_id",
+        });
+      }
+
+      if (!db.company_info.hasAlias("company_phones")) {
+        await db.company_info.hasMany(db.company_phone, {
+          foreignKey: "company_info_id",
+        });
+      }
+
+      const getCompanyInfo = await db.company_info.findOne({
+        where: {
+          tenant_id: TENANTID,
+        },
+        include: [
+          { model: db.company_email, as: 'company_emails' },
+          { model: db.company_phone, as: 'company_phones' },
+        ]
       });
+
+      // Return
+      return {
+        message: "Get Company Info Success!!!",
+        status: true,
+        tenant_id: TENANTID,
+        data: getCompanyInfo,
+      };
+    } catch (error) {
+      if (error) return { message: "Something Went Wrong!!!", status: false };
     }
-
-    if (!db.company_info.hasAlias("company_phones")) {
-      await db.company_info.hasMany(db.company_phone, {
-        foreignKey: "company_info_id",
-      });
-    }
-
-    const getCompanyInfo = await db.company_info.findOne({
-      where: {
-        [Op.and]: [
-          {
-            tenant_id: TENANTID,
-          },
-        ],
-      },
-      include: [
-        { model: db.company_email, as: 'company_emails' },
-        { model: db.company_phone, as: 'company_phones' },
-      ]
-    });
-
-    // Return
-    return {
-      message: "Get Company Info Success!!!",
-      status: true,
-      tenant_id: TENANTID,
-      data: getCompanyInfo,
-    };
-    // } catch (error) {
-    //   if (error) return { message: "Something Went Wrong!!!", status: false };
-    // }
   },
 };

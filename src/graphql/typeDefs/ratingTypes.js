@@ -73,6 +73,13 @@ module.exports = gql`
         data: Rating
     }
 
+    type GetTopRatedProducts {
+        message:String
+        status:Boolean
+        tenant_id:String
+        data:[ProductForList]
+    }
+
     extend type Mutation {
         createRating(data: CreateRatingInput): CreateRatingOutput!
     }
@@ -81,5 +88,6 @@ module.exports = gql`
         getAllRatingByUser: getAllRatingOutput!
         getAllRatingByProduct(query: GetAllRatingByProductInput): getAllRatingOutput!
         getSingleRating(query: GetSingleRatingInput): getSingleRatingOutput!
+        getTopRatedProducts: GetTopRatedProducts!
     }
 `;

@@ -1,6 +1,8 @@
 // ROLE BASED QUERY
-
-const { getAllRatingByUserController, getAllRatingByProductController, getSingleRatingController } = require("../../controllers");
+const { getAllRatingByUserController,
+    getAllRatingByProductController,
+    getSingleRatingController,
+    getTopRatedProductsController } = require("../../controllers");
 
 module.exports = {
     // GET ALL ROLES QUERY
@@ -21,5 +23,11 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return To Controller
         return await getSingleRatingController(args.query, db, user, isAuth, TENANTID);
-    }
+    },
+    getTopRatedProducts: async (root, args, { db, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return To Controller
+        return await getTopRatedProductsController(db, TENANTID);
+    },
 }

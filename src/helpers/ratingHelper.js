@@ -206,5 +206,100 @@ module.exports = {
         } catch (error) {
             if (error) return { message: "Something Went Wrong", status: false }
         }
-    }
+    },
+    getTopRatedProducts: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Check If Has Alias with Users and Order
+            if (!db.rating.hasAlias('product') && !db.rating.hasAlias('ratedProducts')) {
+
+                await db.rating.hasMany(db.product, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'id',
+                    as: 'ratedProducts'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+                await db.product.hasMany(db.product_attribute, {
+                    foreignKey: 'prod_id',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'id',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'id',
+                    as: 'attribute_group'
+                });
+            }
+
+            // Find All Roles With permissions
+            const findAllTopRatings = await db.rating.findAll({
+                include: [
+                    {
+                        model: db.product, as: 'ratedProducts',
+                        limit: 20,
+                        include: {
+                            model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                            include: {
+                                model: db.attribute,
+                                as: 'attribute_data',
+                                include: {
+                                    model: db.attr_group,
+                                    as: 'attribute_group'
+                                }
+                            }
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        rating: {
+                            [Op.gt]: 3
+                        }
+                    }]
+                },
+                order: [
+                    ['rating', 'DESC']
+                ],
+            });
+
+
+            // Top Rated Products Array
+            const topRatedProducts = [];
+            findAllTopRatings.forEach(async (element) => {
+                await element.ratedProducts.forEach(async (product) => {
+                    await topRatedProducts.push(product)
+                });
+            });
+
+
+            // Return Formation
+            return {
+                data: topRatedProducts,
+                message: "GET All Top Rated Products!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong", status: false }
+        }
+    },
 }

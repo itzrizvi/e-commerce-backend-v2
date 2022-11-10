@@ -4,7 +4,8 @@ const { getAllCategoriesController,
     getSingleCategoryController,
     getParentCategoriesController,
     getParentChildCategoriesController,
-    getProductsByCategoryController } = require("../../controllers")
+    getProductsByCategoryController,
+    getProductsByCategorySlugController } = require("../../controllers")
 
 
 module.exports = {
@@ -29,6 +30,14 @@ module.exports = {
 
         // Return To Controller
         return await getProductsByCategoryController(args.query, db, TENANTID);
+    },
+    // GET Products By Category Slug
+    getProductsByCategorySlug: async (root, args, { db, TENANTID }, info) => {
+        // TENANT ID CHECK
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await getProductsByCategorySlugController(args.query, db, TENANTID);
     },
     // GET All Featured Category
     getSingleCategory: async (root, args, { db, user, isAuth, TENANTID }, info) => {

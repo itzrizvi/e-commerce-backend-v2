@@ -119,6 +119,18 @@ type GetProductByCategoryOutput {
 
 }
 
+input GetProductByCategorySlugInput {
+    category_slug:String!
+}
+
+type GetProductByCategorySlugOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ProductForList]
+
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -134,6 +146,7 @@ extend type Query {
     getParentChildCategories:GetCategories!
     getFeaturedCategories: GetFeaturedCategories!
     getProductsByCategory(query: GetProductByCategoryInput):GetProductByCategoryOutput!
+    getProductsByCategorySlug(query: GetProductByCategorySlugInput):GetProductByCategorySlugOutput!
 }
 
 

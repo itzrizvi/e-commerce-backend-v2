@@ -592,5 +592,77 @@ module.exports = {
                 return { message: "Something Went Wrong!!!", status: false }
             }
         }
-    }
+    },
+    // GET Product By Category Slug Helper
+    getProductsByCategorySlug: async (req, db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // CATEGORY ID
+            const { category_slug } = req;
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+
+            // Order Items and Product
+            if (!db.category.hasAlias("product") && !db.category.hasAlias("products")) {
+                await db.category.hasMany(db.product, {
+                    sourceKey: "id",
+                    foreignKey: "prod_category",
+                    as: 'products'
+                });
+
+            }
+
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+
+            // Find ALL Products By Category
+            const getCategoryWithProducts = await db.category.findOne({
+                include: [{
+                    model: db.product,
+                    as: 'products',
+                    separate: true,
+                    order: [
+                        ['prod_slug', 'ASC']
+                    ],
+                    include: { model: db.category, as: 'category' }
+                }],
+                where: {
+                    [Op.and]: [{
+                        cat_slug: category_slug,
+                        tenant_id
+                    }]
+                },
+            });
+
+            // GET Product Array
+            let getProductByCatSlug = [];
+            getCategoryWithProducts.products.forEach(async (element) => {
+                await getProductByCatSlug.push(element);
+            });
+
+            // Return If Success
+            if (getProductByCatSlug) {
+                return {
+                    message: "Get Products By Category Slug Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: getProductByCatSlug
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

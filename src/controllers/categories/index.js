@@ -7,4 +7,5 @@ module.exports = {
     updateCategoryController: require('./updateCategoryController'),
     getParentCategoriesController: require('./getParentCategoriesController'),
     getParentChildCategoriesController: require('./getParentChildCategoriesController'),
+    getProductsByCategorySlugController: require('./getProductsByCategorySlugController'),
 }

@@ -247,6 +247,14 @@ module.exports = {
                 });
             }
 
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                });
+            }
+
             // Find All Roles With permissions
             const findAllTopRatings = await db.rating.findAll({
                 include: [
@@ -263,7 +271,8 @@ module.exports = {
                                     as: 'attribute_group'
                                 }
                             }
-                        }
+                        },
+                        include: { model: db.category }
                     },
                 ],
                 where: {

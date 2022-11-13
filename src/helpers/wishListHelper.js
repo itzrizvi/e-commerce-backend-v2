@@ -48,4 +48,37 @@ module.exports = {
             if (error) return { message: "Something Went Wrong!!!", status: false }
         }
     },
+    // Remove Product From Wish List API
+    removeFromWishList: async (req, db, user, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { product_id } = req;
+
+            // Find and Remove Product From Wish List
+            const findAndRemoveFromWishList = await db.wishlist.destroy({
+                where: {
+                    [Op.and]: [{
+                        product_id,
+                        user_id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!findAndRemoveFromWishList) return { message: "Try Again Please!!!", status: false }
+
+            return {
+                message: "Successfully Removed The Product From Your Wishlist!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: "Something Went Wrong!!!", status: false }
+        }
+    },
 }

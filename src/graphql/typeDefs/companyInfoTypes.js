@@ -12,6 +12,7 @@ module.exports = gql`
         contact_address: String
         company_phones: [PhoneOutput]
         company_emails: [EmailOutput]
+        company_socials: [SocialOutput]
         fax: String
         tenant_id: String
         createdAt: String
@@ -60,10 +61,19 @@ module.exports = gql`
         type: String!
     }
 
-    input Social{
+    input Social {
         id: Int
         social: String!
         type: String!
+    }
+
+    type SocialOutput{
+        id: Int
+        social: String
+        type: String
+        tenant_id: String
+        createdAt: String
+        updatedAt: String
     }
 
     type GetCompanyInfoOutput{

@@ -1,4 +1,4 @@
-const { } = require("../../controllers");
+const { getWishListController } = require("../../controllers");
 
 
 // WISH LIST BASED QUERY
@@ -12,6 +12,6 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        // return await getSingleTaxClassAdminController(db, user, isAuth, TENANTID);
+        return await getWishListController(db, user, TENANTID);
     },
 }

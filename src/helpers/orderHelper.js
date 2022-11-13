@@ -789,12 +789,12 @@ module.exports = {
             }
 
             // Check If Has Alias with Order and Payment Method
-            if (!db.order.hasAlias('payment_method') && !db.order.hasAlias('payment')) {
+            if (!db.order.hasAlias('payment_method') && !db.order.hasAlias('paymentmethod')) {
 
                 await db.order.hasOne(db.payment_method, {
                     sourceKey: 'payment_id',
                     foreignKey: 'id',
-                    as: 'payment'
+                    as: 'paymentmethod'
                 });
             }
 
@@ -812,7 +812,7 @@ module.exports = {
             const orderlist = await db.order.findAll({
                 include: [
                     { model: db.user, as: 'customer' },
-                    { model: db.payment_method, as: 'payment' },
+                    { model: db.payment_method, as: 'paymentmethod' },
                     { model: db.order_status, as: 'orderStatus' },
                 ],
                 where: {
@@ -890,7 +890,8 @@ module.exports = {
             // Order and Payment
             if (!db.order.hasAlias('payment')) {
                 await db.order.hasOne(db.payment, {
-                    foreignKey: 'order_id'
+                    foreignKey: 'order_id',
+                    as: 'payment'
                 });
             }
             //  Payment and Address For Billing Address
@@ -1235,12 +1236,12 @@ module.exports = {
             }
 
             // Check If Has Alias with Order and Payment Method
-            if (!db.order.hasAlias('payment_method') && !db.order.hasAlias('payment')) {
+            if (!db.order.hasAlias('payment_method') && !db.order.hasAlias('paymentmethod')) {
 
                 await db.order.hasOne(db.payment_method, {
                     sourceKey: 'payment_id',
                     foreignKey: 'id',
-                    as: 'payment'
+                    as: 'paymentmethod'
                 });
             }
 
@@ -1258,7 +1259,7 @@ module.exports = {
             const orderlist = await db.order.findAll({
                 include: [
                     { model: db.user, as: 'customer' },
-                    { model: db.payment_method, as: 'payment' },
+                    { model: db.payment_method, as: 'paymentmethod' },
                     { model: db.order_status, as: 'orderStatus' },
                 ],
                 where: {
@@ -1340,7 +1341,8 @@ module.exports = {
             // Order and Payment
             if (!db.order.hasAlias('payment')) {
                 await db.order.hasOne(db.payment, {
-                    foreignKey: 'order_id'
+                    foreignKey: 'order_id',
+                    as: 'payment'
                 });
             }
             //  Payment and Address For Billing Address

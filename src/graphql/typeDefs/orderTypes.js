@@ -163,7 +163,7 @@ input createOrderByAdminInput {
 type OrderList {
     id:Int
     customer:Customer
-    payment:PaymentMethod
+    paymentmethod:PaymentMethod
     total:Float
     sub_total:Float
     shipping_cost:Float

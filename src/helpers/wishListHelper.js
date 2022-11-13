@@ -81,4 +81,17 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // GET Wish List 
+    getWishList: async (db, user, TENANTID) => {
+        // Try Catch Block
+        try {
+
+
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    }
 }

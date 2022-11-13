@@ -19,6 +19,10 @@ input AddWishListInput {
     product_id:Int!
 }
 
+input RemoveProductsFromWishListInput {
+    product_id:Int!
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -26,6 +30,7 @@ input AddWishListInput {
 
 extend type Mutation {
     addWishList(data: AddWishListInput):CommonOutput!
+    removeFromWishList(data:RemoveProductsFromWishListInput):CommonOutput!
 }
 
 # extend type Query {

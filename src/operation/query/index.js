@@ -21,4 +21,5 @@ module.exports = {
     ...require('./taxClassQueries'),
     ...require('./orderQueries'),
     ...require('./addressQueries'),
+    ...require('./wishListQueries'),
 }

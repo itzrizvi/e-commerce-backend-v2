@@ -8,8 +8,8 @@ module.exports = gql`
 
 type WishList {
     id:Int!
-    products:[ProductForList]
-    user:User
+    wishedProducts:[ProductForList]
+    wishedBy:User
     created_by:Int
     updated_by:Int
     tenant_id:String
@@ -23,6 +23,13 @@ input RemoveProductsFromWishListInput {
     product_id:Int!
 }
 
+type GetWishListOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:WishList
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -33,9 +40,9 @@ extend type Mutation {
     removeFromWishList(data:RemoveProductsFromWishListInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getWishList:GetWishListOutput!
+}
 
 
 `;

@@ -46,7 +46,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     updateProductAvailabilityStatus: async (req, db, TENANTID) => {
@@ -104,7 +104,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     getAllProductAvailabilityStatus: async (db, TENANTID) => {
@@ -128,7 +128,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     getSingleProductAvailabilityStatus: async (req, db, TENANTID) => {
@@ -153,7 +153,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 }

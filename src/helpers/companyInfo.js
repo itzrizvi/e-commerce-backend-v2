@@ -381,7 +381,7 @@ module.exports = {
         data: getCompanyInfo,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
 };

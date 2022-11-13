@@ -57,7 +57,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Update ATTR HELPER
@@ -125,7 +125,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Get All ATTR HELPER
@@ -162,7 +162,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Get Single ATTR HELPER
@@ -202,7 +202,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 }

@@ -14,6 +14,7 @@ type User {
     email:String
     email_verified:Boolean
     user_status:Boolean
+    image:String
     updatedAt:String
     createdAt:String
 }

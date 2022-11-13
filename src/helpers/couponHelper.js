@@ -212,7 +212,7 @@ module.exports = {
         tenant_id: TENANTID,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // GET SINGLE COUPON HELPER
@@ -242,7 +242,7 @@ module.exports = {
         data: getsinglecoupon,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // GET SINGLE COUPON BY CODE (PUBLIC)
@@ -305,7 +305,7 @@ module.exports = {
       };
     }
     // } catch (error) {
-    //   if (error) return { message: "Something Went Wrong!!!", status: false };
+    //   if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     // }
   },
   // GET ALL COUPONS (PUBLIC)
@@ -327,7 +327,7 @@ module.exports = {
         data: getallcoupons,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
 };

@@ -91,7 +91,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
 
 
@@ -264,7 +264,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // SET PASSWORD HELPER
@@ -355,7 +355,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // RESET PASSWORD HELPER
@@ -447,7 +447,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 }

@@ -56,7 +56,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Update Customer Group Helper
@@ -129,7 +129,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Get All Customer Group Helper
@@ -156,7 +156,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Single Customer Group Helper
@@ -186,7 +186,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 

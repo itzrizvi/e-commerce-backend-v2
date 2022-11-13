@@ -54,7 +54,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Single Payment Method API
@@ -108,7 +108,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Update Payment Method API
@@ -178,7 +178,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Payment Method List API
@@ -226,7 +226,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Payment Method List PUBLIC API
@@ -253,7 +253,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
 }

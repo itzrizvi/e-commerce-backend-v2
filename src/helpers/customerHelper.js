@@ -72,7 +72,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
 
     },
@@ -118,7 +118,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     getSingleCustomer: async (req, db, user, isAuth, TENANTID) => {
@@ -169,7 +169,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     addCustomerBillingAddress: async (req, db, user, isAuth, TENANTID) => {
@@ -219,7 +219,7 @@ module.exports = {
                 }
             }
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     addCustomerShippingAddress: async (req, db, user, isAuth, TENANTID) => {
@@ -268,7 +268,7 @@ module.exports = {
                 }
             }
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     updateCustomerAddress: async (req, db, user, isAuth, TENANTID) => {
@@ -358,7 +358,7 @@ module.exports = {
                 }
             }
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
 }

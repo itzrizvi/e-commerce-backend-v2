@@ -73,7 +73,7 @@ module.exports = {
         id: cart_id,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   removeCartItem: async (req, db, user, isAuth, TENANTID) => {
@@ -106,7 +106,7 @@ module.exports = {
         };
       }
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   addSingleCart: async (req, db, user, isAuth, TENANTID) => {
@@ -158,7 +158,7 @@ module.exports = {
         status: true,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   removeCart: async (req, db, user, isAuth, TENANTID) => {
@@ -194,7 +194,7 @@ module.exports = {
         status: true,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   getCart: async (req, db, user, isAuth, TENANTID) => {
@@ -297,7 +297,7 @@ module.exports = {
         };
       }
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   getSingleCart: async (req, db, user, isAuth, TENANTID) => {
@@ -331,7 +331,7 @@ module.exports = {
         };
       }
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
 };

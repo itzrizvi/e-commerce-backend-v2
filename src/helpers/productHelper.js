@@ -466,7 +466,7 @@ module.exports = {
 
         } catch (error) {
             if (error) console.log("ERROR FROM TRY CATCH: ", error)
-            // if (error) return { message: "Something Went Wrong!!!", status: false }
+            // if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Product List Helper
@@ -550,7 +550,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Update Product Helper
@@ -821,7 +821,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Update Thumbnail Helper
@@ -889,7 +889,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Delete Gallery Helper
@@ -961,7 +961,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Upload New Gallery Image
@@ -1023,7 +1023,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Featured Products Helper
@@ -1114,7 +1114,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET On Sale Products Helper
@@ -1205,7 +1205,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     recentViewProduct: async (req, db, user, isAuth, TENANTID) => {
@@ -1238,7 +1238,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     getRecentViewProducts: async (req, db, user, isAuth, TENANTID, ip) => {
@@ -1277,7 +1277,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Public Product View Helper
@@ -1417,7 +1417,7 @@ module.exports = {
 
         } catch (error) {
             if (error) console.log("ERROR FROM TRY CATCH PUBLIC VIEW PRODUCT : ", error)
-            // if (error) return { message: "Something Went Wrong!!!", status: false }
+            // if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Single Product By Slug Helper
@@ -1627,7 +1627,7 @@ module.exports = {
 
         } catch (error) {
             if (error) console.log("ERROR FROM TRY CATCH: ", error)
-            // if (error) return { message: "Something Went Wrong!!!", status: false }
+            // if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Product List Helper
@@ -1718,7 +1718,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Searched Products
@@ -1814,7 +1814,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Add Recent Viewed Product By Array
@@ -1859,7 +1859,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Latest Products
@@ -1946,7 +1946,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 }

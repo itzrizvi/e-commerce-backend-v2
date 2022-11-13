@@ -56,7 +56,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Update Order Status API
@@ -126,7 +126,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Single Order Status API
@@ -180,7 +180,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Order Status List Admin
@@ -228,7 +228,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Order Status List PUBLIC
@@ -256,7 +256,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Add Order By Customer
@@ -512,7 +512,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Add Order By Admin
@@ -769,7 +769,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Order List Admin
@@ -831,7 +831,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Single Order Admin
@@ -951,11 +951,13 @@ module.exports = {
                         model: db.order_item, // Order Items and Products
                         as: 'orderitems',
                         include: {
-                            model: db.product
+                            model: db.product,
+                            as: 'product'
                         }
                     },
                     {
                         model: db.payment, // Payment and Address
+                        as: 'payment',
                         include: {
                             model: db.address,
                             as: "billingAddress"
@@ -963,7 +965,7 @@ module.exports = {
                     },
                     { model: db.address, as: "shippingAddress" }, // Address
                     { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
-                    { model: db.coupon }, // Coupon
+                    { model: db.coupon, as: 'coupon' }, // Coupon
                     {
                         model: db.user, as: 'added_by', // User and Roles
                         include: {
@@ -991,7 +993,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // UPDATE Order By Admin
@@ -1172,7 +1174,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // Change Order Status By Admin
@@ -1211,7 +1213,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Order List By Customer ID
@@ -1279,7 +1281,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // GET Single Order For Customer
@@ -1385,11 +1387,13 @@ module.exports = {
                         model: db.order_item, // Order Items and Products
                         as: 'orderitems',
                         include: {
-                            model: db.product
+                            model: db.product,
+                            as: 'product'
                         }
                     },
                     {
-                        model: db.payment, // Payment and Address
+                        model: db.payment,
+                        as: 'payment', // Payment and Address
                         include: {
                             model: db.address,
                             as: "billingAddress"
@@ -1397,7 +1401,7 @@ module.exports = {
                     },
                     { model: db.address, as: "shippingAddress" }, // Address
                     { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
-                    { model: db.coupon } // Coupon
+                    { model: db.coupon, as: 'coupon' } // Coupon
                 ],
                 where: {
                     [Op.and]: [{
@@ -1418,7 +1422,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 }

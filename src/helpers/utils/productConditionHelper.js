@@ -46,7 +46,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     updateProductCondition: async (req, db, TENANTID) => {
@@ -79,7 +79,7 @@ module.exports = {
 
             // If Found Production Condition
             if (checkExistence) return { message: "Already Have This Product Condition!!!", status: false };
-            
+
             // Update Production Condition
             const updateProductionCondition = await db.product_condition.update({
                 name,
@@ -104,7 +104,7 @@ module.exports = {
 
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     getAllProductCondition: async (db, TENANTID) => {
@@ -128,7 +128,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     getSingleProductCondition: async (req, db, TENANTID) => {
@@ -153,7 +153,7 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "Something Went Wrong!!!", status: false }
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }
 }

@@ -63,7 +63,7 @@ module.exports = {
         };
       }
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // Create Banner Item Helper
@@ -138,7 +138,7 @@ module.exports = {
         };
       }
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // Update Banner Helper
@@ -211,7 +211,7 @@ module.exports = {
         tenant_id: TENANTID,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // Update Banner Item HELPER
@@ -347,7 +347,7 @@ module.exports = {
         };
       }
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // GET SINGLE BANNER
@@ -384,7 +384,7 @@ module.exports = {
         data: getBanner,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // GET ALL BANNERS HELPER
@@ -417,7 +417,7 @@ module.exports = {
         data: getallbanner,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // GET BANNER BY SLUG HELPER
@@ -457,7 +457,7 @@ module.exports = {
         data: getBanner,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
   // DELETE Banner Item HELPER
@@ -517,7 +517,7 @@ module.exports = {
         tenant_id: TENANTID,
       };
     } catch (error) {
-      if (error) return { message: "Something Went Wrong!!!", status: false };
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
 };

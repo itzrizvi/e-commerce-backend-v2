@@ -24,6 +24,7 @@ module.exports = gql`
         contact_address: String
         phone: [Phone]
         email: [Email]
+        social:[Social]
         fax: String
     }
 
@@ -54,6 +55,12 @@ module.exports = gql`
     input Email{
         id: Int
         email: String!
+        type: String!
+    }
+
+    input Social{
+        id: Int
+        social: String!
         type: String!
     }
 

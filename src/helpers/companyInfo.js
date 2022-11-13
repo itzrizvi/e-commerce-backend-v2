@@ -7,7 +7,7 @@ module.exports = {
   companyInfo: async (req, db, user, isAuth, TENANTID) => {
     try {
       // Data From Request
-      const { name, logo, dark_logo, fav_icon, contact_address, fax, email = [], phone = [] } = req;
+      const { name, logo, dark_logo, fav_icon, contact_address, fax, email = [], phone = [], social = [] } = req;
       const checkExistence = await db.company_info.findOne({
         where: {
           [Op.and]: [
@@ -199,6 +199,36 @@ module.exports = {
             });
           }
         });
+
+        social.forEach(async (ele) => {
+          if (ele.id) {
+            await db.company_social.update(
+              {
+                social: ele.social,
+                type: ele.type,
+                updated_by: user.id
+              },
+              {
+                where: {
+                  [Op.and]: [
+                    {
+                      id: ele.id,
+                      tenant_id: TENANTID,
+                    },
+                  ],
+                },
+              }
+            );
+          } else {
+            await db.company_social.create({
+              company_info_id: checkExistence.id,
+              social: ele.social,
+              type: ele.type,
+              tenant_id: TENANTID,
+              created_by: user.id
+            });
+          }
+        });
       } else {
         company_info = await db.company_info.create({
           name,
@@ -262,6 +292,37 @@ module.exports = {
             });
           }
         });
+
+
+        social.forEach(async (ele) => {
+          if (ele.id) {
+            await db.company_social.update(
+              {
+                social: ele.social,
+                type: ele.type,
+                updated_by: user.id
+              },
+              {
+                where: {
+                  [Op.and]: [
+                    {
+                      id: ele.id,
+                      tenant_id: TENANTID,
+                    },
+                  ],
+                },
+              }
+            );
+          } else {
+            await db.company_social.create({
+              company_info_id: checkExistence.id,
+              social: ele.social,
+              type: ele.type,
+              tenant_id: TENANTID,
+              created_by: user.id
+            });
+          }
+        });
       }
 
       // Return Formation
@@ -295,6 +356,12 @@ module.exports = {
         });
       }
 
+      if (!db.company_info.hasAlias("company_social")) {
+        await db.company_info.hasMany(db.company_social, {
+          foreignKey: "company_info_id",
+        });
+      }
+
       const getCompanyInfo = await db.company_info.findOne({
         where: {
           tenant_id: TENANTID,
@@ -302,6 +369,7 @@ module.exports = {
         include: [
           { model: db.company_email, as: 'company_emails' },
           { model: db.company_phone, as: 'company_phones' },
+          { model: db.company_social, as: 'company_socials' },
         ]
       });
 

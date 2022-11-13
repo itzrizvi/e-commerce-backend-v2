@@ -86,7 +86,117 @@ module.exports = {
         // Try Catch Block
         try {
 
+            // Check If Has Alias with Users and Order
+            if (!db.wishlist.hasAlias('product') && !db.wishlist.hasAlias('wishedProduct')) {
 
+                await db.wishlist.hasOne(db.product, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'id',
+                    as: 'wishedProduct'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+                await db.product.hasMany(db.product_attribute, {
+                    foreignKey: 'prod_id',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'id',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'id',
+                    as: 'attribute_group'
+                });
+            }
+
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            if (!db.wishlist.hasAlias('user') && !db.wishlist.hasAlias('wishedBy')) {
+
+                await db.wishlist.hasOne(db.user, {
+                    sourceKey: 'user_id',
+                    foreignKey: 'id',
+                    as: 'wishedBy'
+                });
+            }
+
+            // Find WishList with Details
+            const getwishlist = await db.wishlist.findAll({
+                include: [
+                    {
+                        model: db.product, as: 'wishedProduct',
+                        include: {
+                            model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                            include: {
+                                model: db.attribute,
+                                as: 'attribute_data',
+                                include: {
+                                    model: db.attr_group,
+                                    as: 'attribute_group'
+                                }
+                            }
+                        },
+                        include: { model: db.category, as: 'category' }
+                    },
+                    {
+                        model: db.user, as: 'wishedBy',
+                    }
+                ],
+                order: [
+                    [{ model: db.product, as: 'wishedProduct' }, 'prod_slug', 'ASC']
+                ],
+                where: {
+                    [Op.and]: [{
+                        user_id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // GET FORMATTED
+            const wishlist = {
+                created_by: getwishlist[0].created_by,
+                updated_by: getwishlist[0].updated_by,
+                tenant_id: getwishlist[0].tenant_id,
+                wishedBy: getwishlist[0].wishedBy,
+            };
+            const wishedProducts = [];
+            // 
+            getwishlist.forEach(async (list) => {
+                wishedProducts.push(list.wishedProduct);
+            });
+
+            //
+            wishlist.wishedProducts = wishedProducts;
+
+
+            // Return Formation
+            return {
+                message: "GET Wish List Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: wishlist
+            }
 
 
 

@@ -7,7 +7,6 @@ module.exports = gql`
 ##########################################################
 
 type WishList {
-    id:Int!
     wishedProducts:[ProductForList]
     wishedBy:User
     created_by:Int

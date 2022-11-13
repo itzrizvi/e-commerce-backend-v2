@@ -7,6 +7,8 @@ module.exports = gql`
         id: Int
         name: String
         logo: String
+        dark_logo:String
+        fav_icon:String
         contact_address: String
         company_phones: [PhoneOutput]
         company_emails: [EmailOutput]

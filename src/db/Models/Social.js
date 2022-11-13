@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        social_name: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        social_address: {
+        address: {
             type: DataTypes.STRING,
             allowNull: false
         },

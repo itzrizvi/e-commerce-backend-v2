@@ -12,17 +12,6 @@ module.exports = gql`
         ratedBy:Customer
     }
 
-    type User {
-        id:String
-        first_name:String
-        last_name:String
-        email:String
-        email_verified:Boolean
-        user_status:Boolean
-        updatedAt:String
-        createdAt:String
-    }
-
     type Product{
         product_id:Int
         product_name:String

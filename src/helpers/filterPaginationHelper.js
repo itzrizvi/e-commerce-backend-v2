@@ -21,7 +21,11 @@ module.exports = {
                 brand_slug,
                 category_slug } = req;
 
-            console.log(req)
+
+
+
+
+
 
 
 

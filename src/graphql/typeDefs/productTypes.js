@@ -294,7 +294,7 @@ type GetProductsByIDOutput {
 }
 
 input SearchProductInput {
-    category_id:Int!
+    category_id:Int
     searchQuery:String
 }
 

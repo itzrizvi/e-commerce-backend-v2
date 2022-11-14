@@ -40,12 +40,21 @@ input UserInput {
     password:String
 }
 
+input UserProfileUpdateInput {
+    first_name:String
+    last_name:String
+    oldPassword:String
+    newPassword:String
+    image:Upload
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     userSignUp(data: UserInput): AuthPayload!
     userSignIn(email: String!, password: String!): AuthPayload!
+    userProfileUpdate(data:UserProfileUpdateInput): CommonOutput!
 }
 
 

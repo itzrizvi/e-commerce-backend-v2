@@ -1789,7 +1789,7 @@ module.exports = {
                 limit: 10,
                 where: {
                     [Op.and]: [{
-                        prod_category: category_id,
+                        ...(category_id && { prod_category: category_id }),
                         tenant_id,
                         prod_status: true
                     }],

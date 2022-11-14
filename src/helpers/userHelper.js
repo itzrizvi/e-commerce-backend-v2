@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const { Op } = require('sequelize');
+const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
+const config = require('config');
 
 module.exports = {
     // SIGN UP
@@ -536,5 +538,183 @@ module.exports = {
         }
 
 
+    },
+    // User Profile Update
+    userProfileUpdate: async (req, db, user, TENANTID) => {
+        // Try Catch Block
+        try {
+            // Data From Request 
+            const { first_name, last_name, oldPassword, newPassword, image } = req;
+
+            // FIND User FIRST
+            const findUser = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findUser) return { message: "User Not Found!!!", status: false }
+
+            // IF Image Also Updated
+            if (image && findUser.image) {
+                // Delete Previous S3 Image For this User
+                const user_image_src = config.get("AWS.USER_IMG_DEST").split("/");
+                const user_image_bucketName = user_image_src[0];
+                const user_image_folder = user_image_src.slice(1);
+                await deleteFile({ idf: id, folder: user_image_folder, fileName: findUser.image, bucketName: user_image_bucketName });
+            }
+
+            // Upload New Image to S3
+            if (image) {
+                // Upload Image to AWS S3
+                const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
+                const user_image_bucketName = user_image_src[0];
+                const user_image_folder = user_image_src.slice(1);
+                const imageUrl = await singleFileUpload({ file: image, idf: id, folder: user_image_folder, fileName: id, bucketName: user_image_bucketName });
+                if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
+
+                // Update Brand with New Image Name
+                const imageName = imageUrl.Key.split('/').slice(-1)[0];
+
+                // Find and Update Brand Image Name By UUID
+                const userImageUpdate = {
+                    image: imageName
+                }
+                // Update Brand Image
+                const updateUser = await db.user.update(userImageUpdate, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                // If not updated
+                if (!updateUser) return { message: "New Image Name Couldnt Be Updated Properly!!!", status: false }
+            }
+
+            if (oldPassword && newPassword) {
+
+                // GET OLD PASSWORD FROM DB
+                const { password } = findAdmin;
+
+                // Check Old Password Is Matching or Not
+                const isMatched = await bcrypt.compare(oldPassword, password);
+                // IF NOT MATCHED
+                if (!isMatched) return { message: "Unauthorized Request!!!", status: false };
+
+                // Update Password Doc
+                const updateDoc = {
+                    first_name,
+                    last_name,
+                    updated_by: user.id,
+                    password: await bcrypt.hash(newPassword, 10)
+                }
+
+                // Update With New Password
+                const updateUser = await db.user.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            id: findUser.id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+
+                if (updateUser) {
+
+                    // Find User to Get Image Name
+                    const findUpdatedUser = await db.user.findOne({
+                        where: {
+                            [Op.and]: [{
+                                id: user.id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    // If Update Success
+                    // Setting Up Data for EMAIL SENDER
+                    const mailData = {
+                        email: findUpdatedUser.email,
+                        subject: "Password Changed on Prime Server Parts",
+                        message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
+                    }
+                    // SENDING EMAIL
+                    await verifierEmail(mailData);
+
+                    // Return Formation
+                    return {
+                        message: "Password Updated Successfully!!!",
+                        status: true,
+                        tenant_id: TENANTID
+
+                    }
+                }
+            } else {
+
+                // Update User Table Doc
+                const updateUserDoc = {
+                    first_name,
+                    last_name,
+                    updated_by: user.id
+                }
+
+                // Update User Table 
+                const updateUser = await db.user.update(updateUserDoc, {
+                    where: {
+                        [Op.and]: [{
+                            id: user.id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                if (updateUser) { // IF USER UPDATED
+
+                    // Find User to Get Image Name
+                    const findUpdatedUser = await db.user.findOne({
+                        where: {
+                            [Op.and]: [{
+                                id: user.id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+
+                    // IF SEND EMAIL IS TRUE
+                    if (sendEmail) {
+                        let mailData
+
+                        // Setting Up Data for EMAIL SENDER
+                        mailData = {
+                            email: findUpdatedUser.email,
+                            subject: "Account Update on Prime Server Parts",
+                            message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
+                        }
+
+                        // SENDING EMAIL
+                        await verifierEmail(mailData);
+
+                        // Return Formation
+                        return {
+                            message: "User Profile Updated Successfully!!!",
+                            status: true,
+                            tenant_id: TENANTID
+
+                        }
+                    }
+
+                }
+
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
     }
 }

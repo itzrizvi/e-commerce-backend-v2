@@ -4,7 +4,8 @@ const { userSignUpController,
     emailVerifyController,
     resendVerificationEmailController,
     validateToken,
-    forgotPasswordController } = require('../../controllers');
+    forgotPasswordController,
+    userProfileUpdateController } = require('../../controllers');
 
 const { forgotPasswordInitController,
     forgotPasswordCodeMatchController,
@@ -70,5 +71,14 @@ module.exports = {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
         return await validateToken(args.token, db);
-    }
+    },
+    // User Profile Update MUTATION
+    userProfileUpdate: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+
+        return await userProfileUpdateController(args.data, db, user, TENANTID);
+    },
 }

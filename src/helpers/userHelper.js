@@ -650,7 +650,7 @@ module.exports = {
 
                     // Return Formation
                     return {
-                        message: "Password Updated Successfully!!!",
+                        message: "User Profile Updated Successfully!!!",
                         status: true,
                         tenant_id: TENANTID
 
@@ -687,28 +687,26 @@ module.exports = {
                         }
                     });
 
-                    // IF SEND EMAIL IS TRUE
-                    if (sendEmail) {
-                        let mailData
+                    let mailData
 
-                        // Setting Up Data for EMAIL SENDER
-                        mailData = {
-                            email: findUpdatedUser.email,
-                            subject: "Account Update on Prime Server Parts",
-                            message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
-                        }
-
-                        // SENDING EMAIL
-                        await verifierEmail(mailData);
-
-                        // Return Formation
-                        return {
-                            message: "User Profile Updated Successfully!!!",
-                            status: true,
-                            tenant_id: TENANTID
-
-                        }
+                    // Setting Up Data for EMAIL SENDER
+                    mailData = {
+                        email: findUpdatedUser.email,
+                        subject: "Account Update on Prime Server Parts",
+                        message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
                     }
+
+                    // SENDING EMAIL
+                    await verifierEmail(mailData);
+
+                    // Return Formation
+                    return {
+                        message: "User Profile Updated Successfully!!!",
+                        status: true,
+                        tenant_id: TENANTID
+
+                    }
+
 
                 }
 

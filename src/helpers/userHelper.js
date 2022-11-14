@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
 
+
 module.exports = {
     // SIGN UP
     userSignUp: async (req, db, TENANTID) => {
@@ -557,13 +558,15 @@ module.exports = {
             });
             if (!findUser) return { message: "User Not Found!!!", status: false }
 
+
+
             // IF Image Also Updated
             if (image && findUser.image) {
                 // Delete Previous S3 Image For this User
                 const user_image_src = config.get("AWS.USER_IMG_DEST").split("/");
                 const user_image_bucketName = user_image_src[0];
                 const user_image_folder = user_image_src.slice(1);
-                await deleteFile({ idf: id, folder: user_image_folder, fileName: findUser.image, bucketName: user_image_bucketName });
+                await deleteFile({ idf: findUser.id, folder: user_image_folder, fileName: findUser.image, bucketName: user_image_bucketName });
             }
 
             // Upload New Image to S3
@@ -572,7 +575,7 @@ module.exports = {
                 const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
                 const user_image_bucketName = user_image_src[0];
                 const user_image_folder = user_image_src.slice(1);
-                const imageUrl = await singleFileUpload({ file: image, idf: id, folder: user_image_folder, fileName: id, bucketName: user_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: findUser.id, folder: user_image_folder, fileName: findUser.id, bucketName: user_image_bucketName });
                 if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Brand with New Image Name
@@ -586,7 +589,7 @@ module.exports = {
                 const updateUser = await db.user.update(userImageUpdate, {
                     where: {
                         [Op.and]: [{
-                            id,
+                            id: findUser.id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -598,7 +601,7 @@ module.exports = {
             if (oldPassword && newPassword) {
 
                 // GET OLD PASSWORD FROM DB
-                const { password } = findAdmin;
+                const { password } = findUser;
 
                 // Check Old Password Is Matching or Not
                 const isMatched = await bcrypt.compare(oldPassword, password);

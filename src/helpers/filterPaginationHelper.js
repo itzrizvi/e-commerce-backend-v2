@@ -26,11 +26,6 @@ module.exports = {
 
 
 
-
-
-
-
-
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }

@@ -22,4 +22,5 @@ module.exports = {
     ...require('./orderQueries'),
     ...require('./addressQueries'),
     ...require('./wishListQueries'),
+    ...require('./filterPaginationQueries'),
 }

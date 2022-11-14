@@ -26,6 +26,7 @@ const paymentTypes = require('./paymentTypes');
 const taxClassTypes = require('./taxClassTypes');
 const orderTypes = require('./orderTypes');
 const wishListTypes = require('./wishListTypes');
+const filterPaginationTypes = require('./filterPaginationTypes');
 
 
 // Type Defs and Scalars
@@ -92,5 +93,6 @@ module.exports = [
     paymentTypes,
     taxClassTypes,
     orderTypes,
-    wishListTypes
+    wishListTypes,
+    filterPaginationTypes
 ]

@@ -17,7 +17,8 @@ module.exports = {
                 minPrice,
                 maxPrice,
                 brand_slug,
-                category_slug } = req;
+                category_slug,
+                searchQuery } = req;
 
             // Sorting Order Variable SET
             let sortingOrder;
@@ -118,8 +119,13 @@ module.exports = {
                                 [Op.gte]: minPrice ?? 0,
                                 [Op.lte]: maxPrice
                             }]
-                        },
-                    }]
+                        }
+                    }],
+                    ...(searchQuery && { // TODO -> NEED CONFIRMATION
+                        prod_slug: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
+                    }),
                 },
                 order: [
                     [sortingOrder, orderType]

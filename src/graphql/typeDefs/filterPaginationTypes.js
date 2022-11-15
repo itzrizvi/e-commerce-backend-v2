@@ -7,6 +7,7 @@ module.exports = gql`
 ##########################################################
 
 input FilterPaginationInput {
+    searchQuery:String
     sortingType:String
     perPage:Int
     pageNumber:Int

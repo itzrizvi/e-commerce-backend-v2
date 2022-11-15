@@ -128,7 +128,7 @@ module.exports = {
 
 
 
-
+            // Extract Filtered Products
             let data = [];
             await filteredPaginatedProducts.forEach(async (product) => {
                 if (brand_slug || category_slug) {
@@ -149,7 +149,7 @@ module.exports = {
             });
 
 
-            //
+            // Pagination Related Calculation
             const pageQuery = parseInt(pageNumber); // starts from 0
             const sizeQuery = parseInt(perPage) || 40;
             const count = data.length;
@@ -168,10 +168,6 @@ module.exports = {
                 perPage,
                 data: mainData
             }
-
-
-
-
 
 
         } catch (error) {

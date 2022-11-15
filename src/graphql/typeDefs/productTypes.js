@@ -132,6 +132,7 @@ type ProductForList {
     prod_outofstock_status:String
     prod_thumbnail:String
     category:Category
+    brand:Brand
     prod_attributes:[ProductAttributes]
     tenant_id:String
     createdAt:String

@@ -1,6 +1,5 @@
 // All Requires
 const { Op } = require("sequelize");
-const { default: slugify } = require("slugify");
 
 
 // Filter Pagination HELPER

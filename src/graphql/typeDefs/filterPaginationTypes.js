@@ -10,9 +10,9 @@ input FilterPaginationInput {
     searchQuery:String
     sortingType:String
     perPage:Int
-    pageNumber:Int
+    pageNumber:Int!
     minPrice:Int
-    maxPrice:Int
+    maxPrice:Int!
     brand_slug:String
     category_slug:String
 }

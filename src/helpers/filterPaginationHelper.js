@@ -43,7 +43,7 @@ module.exports = {
 
             // If Brand Slug Available
             // Check If Has Alias
-            if (!db.product.hasAlias('brand') && brand_slug) {
+            if (!db.product.hasAlias('brand')) {
                 await db.product.hasOne(db.brand, {
                     sourceKey: 'brand_id',
                     foreignKey: 'id',
@@ -53,11 +53,37 @@ module.exports = {
 
             // If Category Slug Available
             // Check If Has Alias
-            if (!db.product.hasAlias('category') && category_slug) {
+            if (!db.product.hasAlias('category')) {
                 await db.product.hasOne(db.category, {
                     sourceKey: 'prod_category',
                     foreignKey: 'id',
                     as: 'category'
+                });
+            }
+
+            // Product Attributes Table Association with Product
+            if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
+
+                await db.product.hasMany(db.product_attribute, {
+                    foreignKey: 'prod_id',
+                    as: 'prod_attributes'
+                });
+            }
+            if (!db.product_attribute.hasAlias('attributes') && !db.product_attribute.hasAlias('attribute_data')) {
+
+                await db.product_attribute.hasOne(db.attribute, {
+                    sourceKey: 'attribute_id',
+                    foreignKey: 'id',
+                    as: 'attribute_data'
+                });
+            }
+
+            // Association with Attribute Group and Attributes
+            if (!db.attribute.hasAlias('attr_groups') && !db.attribute.hasAlias('attribute_group')) {
+                await db.attribute.hasOne(db.attr_group, {
+                    sourceKey: 'attr_group_id',
+                    foreignKey: 'id',
+                    as: 'attribute_group'
                 });
             }
 
@@ -67,12 +93,21 @@ module.exports = {
                 include: [{
                     ...(brand_slug && {
                         model: db.brand, as: 'brand'
-                    })
-                },
-                {
+                    }),
                     ...(category_slug && {
                         model: db.category, as: 'category'
                     })
+                },
+                {
+                    model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                    include: {
+                        model: db.attribute,
+                        as: 'attribute_data',
+                        include: {
+                            model: db.attr_group,
+                            as: 'attribute_group'
+                        }
+                    }
                 }],
                 where: {
                     [Op.and]: [{
@@ -90,6 +125,9 @@ module.exports = {
                     [sortingOrder, orderType]
                 ]
             });
+
+
+
 
             let data = [];
             await filteredPaginatedProducts.forEach(async (product) => {

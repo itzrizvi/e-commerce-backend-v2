@@ -167,4 +167,79 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // GET PO LIST
+    getPurchaseOrderList: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+
+            // ASSOCIATION STARTS
+            // 
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.purchase_order.hasAlias('user') && !db.purchase_order.hasAlias('POCreated_by')) {
+
+                await db.purchase_order.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'POCreated_by'
+                });
+            }
+
+            // ASSOCIATION ENDS
+
+            // PO List
+            const poList = await db.purchase_order.findAll({
+                include: [
+                    { model: db.vendor, as: 'vendor' },
+                    { model: db.payment_method, as: 'paymentmethod' },
+                    {
+                        model: db.user, as: 'POCreated_by', // Include User who created the product and his roles
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    },
+                ],
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET Purchase Order List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poList
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

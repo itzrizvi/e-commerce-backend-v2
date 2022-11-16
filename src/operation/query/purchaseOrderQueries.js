@@ -1,4 +1,4 @@
-const { } = require("../../controllers");
+const { getPurchaseOrderListController } = require("../../controllers");
 
 
 // PO BASED QUERY
@@ -13,7 +13,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        // return await getTaxClassListController(db, TENANTID);
+        return await getPurchaseOrderListController(db, user, isAuth, TENANTID);
     },
 
 }

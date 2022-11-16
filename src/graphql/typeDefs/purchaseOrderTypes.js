@@ -33,7 +33,7 @@ type PurchaseOrderList {
     comment:String
     vendor:Vendor
     paymentmethod:PaymentMethod
-    created_by:Staff
+    POCreated_by:Staff
 }
 
 type GetPurchaseOrderList {

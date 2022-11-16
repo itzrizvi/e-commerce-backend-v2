@@ -24,6 +24,25 @@ input CreatePurchaseOrderInput {
     products:JSON!
 }
 
+type PurchaseOrderList {
+    id:Int
+    po_id:String
+    grandTotal_price:Float
+    order_placed_via:String
+    status:String
+    comment:String
+    vendor:Vendor
+    paymentmethod:PaymentMethod
+    created_by:Staff
+}
+
+type GetPurchaseOrderList {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[PurchaseOrderList]
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -33,9 +52,9 @@ extend type Mutation {
     createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getPurchaseOrderList:GetPurchaseOrderList!
+}
 
 
 `;

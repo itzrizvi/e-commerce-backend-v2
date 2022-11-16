@@ -98,18 +98,18 @@ module.exports = {
             });
 
             let grandTotal_price = 0; // Grand Total Price
-            //
+            // PO Product List Array
             const poProductList = [];
             findProducts.forEach(async (item) => {
 
                 products.forEach(async (element) => {
 
-                    if (element.id === parseInt(item.id)) {
+                    if (element.id === parseInt(item.id)) { // Matching Input IDs For Quantity
 
                         const calculateTotal = item.prod_regular_price * element.quantity;
                         grandTotal_price += calculateTotal;
 
-                        //
+                        // PO Product List Array Formation
                         await poProductList.push({
                             product_id: element.id,
                             price: item.prod_regular_price,

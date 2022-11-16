@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.ENUM("new", "submitted", "partially-received", "received"),
+            type: DataTypes.ENUM("new", "submitted", "partially received", "received"),
             allowNull: false
         },
         comment: {

@@ -1,5 +1,6 @@
 // All Requires
-const { poSettingController } = require("../../controllers");
+const { poSettingController,
+    createPurchaseOrderController } = require("../../controllers");
 
 
 // PO Mutation Start
@@ -14,6 +15,17 @@ module.exports = {
 
         // Send to Controller
         return await poSettingController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Create PO Mutation
+    createPurchaseOrder: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Send to Controller
+        return await createPurchaseOrderController(args.data, db, user, isAuth, TENANTID);
     },
 
 

@@ -11,12 +11,26 @@ input POSettingInput {
     po_startfrom:Int
 }
 
+input CreatePurchaseOrderInput {
+    vendor_id:Int!
+    vendor_billing_id:Int!
+    vendor_shipping_id:Int!
+    status:String!
+    shipping_method_id:Int!
+    payment_method_id:Int!
+    tax_amount:Float!
+    order_placed_via:String!
+    comment:String
+    products:JSON!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
+    createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
 }
 
 # extend type Query {

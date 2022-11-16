@@ -1,3 +1,4 @@
 module.exports = {
-    poSettingController: require('./poSettingController')
+    poSettingController: require('./poSettingController'),
+    createPurchaseOrderController: require('./createPurchaseOrderController'),
 }

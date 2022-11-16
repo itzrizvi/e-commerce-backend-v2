@@ -174,7 +174,7 @@ module.exports = {
 
 
             // ASSOCIATION STARTS
-            // 
+            // PO TO Vendor
             if (!db.purchase_order.hasAlias('vendor')) {
 
                 await db.purchase_order.hasOne(db.vendor, {

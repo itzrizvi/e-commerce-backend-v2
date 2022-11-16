@@ -145,7 +145,7 @@ module.exports = {
             if (!insertPO) return { message: "Purchase Order Creation Failed!!!", status: false }
 
 
-            // 
+            // Inseting Purchase Order ID to PO Product List Array
             poProductList.forEach((item) => {
                 item.purchase_order_id = insertPO.id;
             });

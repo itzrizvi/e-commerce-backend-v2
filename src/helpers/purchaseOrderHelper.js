@@ -200,14 +200,12 @@ module.exports = {
 
             // Check If Has Alias with Users and Roles
             if (!db.purchase_order.hasAlias('user') && !db.purchase_order.hasAlias('POCreated_by')) {
-
                 await db.purchase_order.hasOne(db.user, {
                     sourceKey: 'created_by',
                     foreignKey: 'id',
                     as: 'POCreated_by'
                 });
             }
-
             // ASSOCIATION ENDS
 
             // PO List

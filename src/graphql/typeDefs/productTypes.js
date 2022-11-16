@@ -120,6 +120,7 @@ type ProductForList {
     id:Int
     prod_name:String
     prod_slug:String
+    prod_short_desc:JSON
     prod_regular_price:Float
     prod_sale_price:Float
     prod_partnum:String

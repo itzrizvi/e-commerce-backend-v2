@@ -172,7 +172,6 @@ module.exports = {
         // Try Catch Block
         try {
 
-
             // ASSOCIATION STARTS
             // PO TO vendor
             if (!db.purchase_order.hasAlias('vendor')) {
@@ -233,7 +232,6 @@ module.exports = {
                 tenant_id: TENANTID,
                 data: poList
             }
-
 
 
         } catch (error) {

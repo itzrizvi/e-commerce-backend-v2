@@ -90,25 +90,25 @@ module.exports = {
 
             // Filter and Paginate Products
             const filteredPaginatedProducts = await db.product.findAll({
-                include: [{
-                    ...(brand_slug && {
+                include: [
+                    {
                         model: db.brand, as: 'brand'
-                    }),
-                    ...(category_slug && {
+                    },
+                    {
                         model: db.category, as: 'category'
-                    })
-                },
-                {
-                    model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
-                    include: {
-                        model: db.attribute,
-                        as: 'attribute_data',
+                    },
+                    {
+                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
-                            model: db.attr_group,
-                            as: 'attribute_group'
+                            model: db.attribute,
+                            as: 'attribute_data',
+                            include: {
+                                model: db.attr_group,
+                                as: 'attribute_group'
+                            }
                         }
                     }
-                }],
+                ],
                 where: {
                     [Op.and]: [{
                         tenant_id: TENANTID,
@@ -131,24 +131,41 @@ module.exports = {
                 ]
             });
 
-
-
             // Extract Filtered Products
             let data = [];
-            await filteredPaginatedProducts.forEach(async (product) => {
-                if (brand_slug || category_slug) {
-                    if (product.brand && product.brand.brand_slug === brand_slug) {
 
-                        if (!data.includes(product)) {
-                            await data.push(product);
+            await filteredPaginatedProducts.forEach(async (product) => {
+                if (brand_slug && category_slug) {
+                    if (product.brand && product.category) {
+                        if (product.brand.brand_slug === brand_slug && product.category.cat_slug === category_slug) {
+                            if (!data.includes(product)) {
+                                await data.push(product);
+                            }
                         }
                     }
+
+
+                } else if (brand_slug && !category_slug) {
+
+                    if (product.brand) {
+                        if (product.brand.brand_slug === brand_slug) {
+                            if (!data.includes(product)) {
+                                await data.push(product);
+                            }
+                        }
+                    }
+
+                } else if (category_slug && !brand_slug) {
+
                     if (product.category && product.category.cat_slug === category_slug) {
 
                         if (!data.includes(product)) {
                             await data.push(product);
                         }
                     }
+
+                } else {
+                    data.push(product)
                 }
 
             });

@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         po_startfrom: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 1000
         },
         created_by: {
             type: DataTypes.INTEGER,

@@ -23,4 +23,5 @@ module.exports = {
     ...require('./taxClass'),
     ...require('./order'),
     ...require('./wishList'),
+    ...require('./purchaseOrder'),
 }

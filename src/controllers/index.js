@@ -24,4 +24,5 @@ module.exports = {
     ...require('./address'),
     ...require('./wishList'),
     ...require('./filterPagination'),
+    ...require('./purchaseOrder'),
 }

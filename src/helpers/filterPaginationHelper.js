@@ -87,6 +87,15 @@ module.exports = {
                 });
             }
 
+            // Check If Has Alias
+            if (!db.product.hasAlias('rating') && !db.product.hasAlias('ratings')) {
+                await db.product.hasMany(db.rating, {
+                    sourceKey: 'id',
+                    foreignKey: 'product_id',
+                    as: 'ratings'
+                });
+            }
+
 
             // Filter and Paginate Products
             const filteredPaginatedProducts = await db.product.findAll({
@@ -96,6 +105,9 @@ module.exports = {
                     },
                     {
                         model: db.category, as: 'category'
+                    },
+                    {
+                        model: db.rating, as: 'ratings'
                     },
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group

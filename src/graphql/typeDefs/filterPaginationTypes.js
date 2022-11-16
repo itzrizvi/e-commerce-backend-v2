@@ -26,6 +26,7 @@ type FilterPaginationOutput {
     perPage:Int
     hasPreviousPage:Boolean
     hasNextPage:Boolean
+    status:Boolean
 }
 
 

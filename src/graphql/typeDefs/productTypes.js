@@ -135,6 +135,8 @@ type ProductForList {
     category:Category
     brand:Brand
     prod_attributes:[ProductAttributes]
+    overallRating:Float
+    totalRating:Int
     tenant_id:String
     createdAt:String
     updatedAt:String

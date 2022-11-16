@@ -174,7 +174,7 @@ module.exports = {
 
 
             // ASSOCIATION STARTS
-            // PO TO Vendor
+            // PO TO vendor
             if (!db.purchase_order.hasAlias('vendor')) {
 
                 await db.purchase_order.hasOne(db.vendor, {
@@ -184,7 +184,7 @@ module.exports = {
                 });
             }
 
-            // 
+            // PO TO payment_method
             if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
 
                 await db.purchase_order.hasOne(db.payment_method, {

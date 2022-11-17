@@ -73,12 +73,40 @@ module.exports = {
             if (!poSettings) return { message: "No Settings Found!!!", status: false }
             const { po_prefix, po_startfrom } = poSettings;
 
+
+            // Find Last Entry 
+            const findPOLastEntry = await db.po_lastentry.findOne({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // 
+            let lastEntryNumber = 0;
+            if (findPOLastEntry) {
+                const { last_entry } = findPOLastEntry;
+                lastEntryNumber = parseInt(last_entry.split('-').slice(-1)[0]);
+
+            }
+
             // GENERATE PO ID
             let po_id;
             if ((new Date().getDate() % 2) === 0) {
-                po_id = `${po_prefix}-${po_startfrom + 2}`
+
+                if (lastEntryNumber != 0) {
+                    po_id = `${po_prefix}-${lastEntryNumber + 2}`
+                } else {
+                    po_id = `${po_prefix}-${po_startfrom + 2}`
+                }
+
             } else {
-                po_id = `${po_prefix}-${po_startfrom + 3}`
+
+                if (lastEntryNumber != 0) {
+                    po_id = `${po_prefix}-${lastEntryNumber + 3}`
+                } else {
+                    po_id = `${po_prefix}-${po_startfrom + 3}`
+                }
+
             }
 
             // Calculate Grand Total Price
@@ -143,6 +171,21 @@ module.exports = {
                 tenant_id: TENANTID
             });
             if (!insertPO) return { message: "Purchase Order Creation Failed!!!", status: false }
+
+            // Update Or Create Last Entry on PO Last Entry Table
+            // Destroy Last Entry
+            await db.po_lastentry.destroy({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+            // Add Last Entry
+            const lastEntry = await db.po_lastentry.create({
+                last_entry: insertPO.po_id,
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
+            if (!lastEntry) return { message: "Last Entry Insert Failed", status: false }
 
 
             // Inseting Purchase Order ID to PO Product List Array

@@ -81,7 +81,7 @@ module.exports = {
                 }
             });
 
-            // 
+            // Get The Last Entry Number
             let lastEntryNumber = 0;
             if (findPOLastEntry) {
                 const { last_entry } = findPOLastEntry;
@@ -93,7 +93,7 @@ module.exports = {
             let po_id;
             if ((new Date().getDate() % 2) === 0) {
 
-                if (lastEntryNumber != 0) {
+                if (lastEntryNumber != 0) { // Check if the last entry is available
                     po_id = `${po_prefix}-${lastEntryNumber + 2}`
                 } else {
                     po_id = `${po_prefix}-${po_startfrom + 2}`
@@ -101,7 +101,7 @@ module.exports = {
 
             } else {
 
-                if (lastEntryNumber != 0) {
+                if (lastEntryNumber != 0) { // Check if the last entry is available
                     po_id = `${po_prefix}-${lastEntryNumber + 3}`
                 } else {
                     po_id = `${po_prefix}-${po_startfrom + 3}`

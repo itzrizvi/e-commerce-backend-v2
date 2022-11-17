@@ -116,8 +116,8 @@ module.exports = {
                             quantity: element.quantity,
                             price: item.prod_regular_price,
                             totalPrice: calculateTotal,
-                            recieved_quantity: 0,
-                            remaining_quantity: element.quantity,
+                            recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
+                            remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
                             created_by: user.id,
                             tenant_id: TENANTID
                         })

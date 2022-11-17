@@ -28,7 +28,8 @@ const sequelize = new Sequelize(database, user, password, {
         max: 50,
         min: 5,
         acquire: 30000,
-        idle: 600000
+        idle: 10000,
+        evict: 600000
     },
     port: port,
     logging: false

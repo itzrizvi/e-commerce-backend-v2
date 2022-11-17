@@ -183,6 +183,25 @@ module.exports = {
             });
 
 
+            // Count Average Rating and Rating Count
+            await data.forEach(async (item) => {
+
+                if (item.ratings && item.ratings.length > 0) {
+                    const totalRating = item.ratings.length;
+                    let allRatings = 0;
+
+                    await item.ratings.forEach(async (rate) => {
+                        allRatings += rate.rating;
+                    });
+
+                    const overallRating = allRatings / totalRating;
+
+                    item.overallRating = overallRating;
+                    item.totalRating = totalRating;
+                }
+            });
+
+
             // Pagination Related Calculation
             const pageQuery = parseInt(pageNumber); // starts from 0
             const sizeQuery = parseInt(perPage) || 40;

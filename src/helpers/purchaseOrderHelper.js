@@ -280,4 +280,154 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // GET SINGLE PO 
+    getSinglePurchaseOrder: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id, po_id } = req;
+            // ASSOCIATION STARTS
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.purchase_order.hasAlias('user') && !db.purchase_order.hasAlias('POCreated_by')) {
+                await db.purchase_order.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'POCreated_by'
+                });
+            }
+
+
+            // 
+            if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorBillingAddress')) {
+
+                await db.purchase_order.hasOne(db.address, {
+                    sourceKey: 'vendor_billing_id',
+                    foreignKey: 'id',
+                    as: 'vendorBillingAddress'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorShippingAddress')) {
+
+                await db.purchase_order.hasOne(db.address, {
+                    sourceKey: 'vendor_shipping_id',
+                    foreignKey: 'id',
+                    as: 'vendorShippingAddress'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
+
+                await db.purchase_order.hasMany(db.po_productlist, {
+                    foreignKey: 'purchase_order_id',
+                    as: 'poProductlist'
+                });
+            }
+
+            // 
+            if (!db.po_productlist.hasAlias('product')) {
+
+                await db.po_productlist.hasOne(db.product, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'id',
+                    as: 'product'
+                });
+            }
+
+            // Check If Has Alias with Categories
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            // Brand Table Association with Product
+            if (!db.product.hasAlias('brand')) {
+
+                await db.product.hasOne(db.brand, {
+                    sourceKey: 'brand_id',
+                    foreignKey: 'id',
+                    as: 'brand'
+                });
+            }
+            // ASSOCIATION ENDS
+
+            // Single PO 
+            const singlePO = await db.purchase_order.findOne({
+                include: [
+                    { model: db.vendor, as: 'vendor' },
+                    { model: db.payment_method, as: 'paymentmethod' },
+                    { model: db.address, as: 'vendorBillingAddress' },
+                    { model: db.address, as: 'vendorShippingAddress' },
+                    {
+                        model: db.user, as: 'POCreated_by', // Include User who created the product and his roles
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    },
+                    {
+                        model: db.po_productlist, as: 'poProductlist', // 
+                        include: {
+                            model: db.product,
+                            as: 'product',
+                            include: [
+                                { model: db.category, as: 'category' },
+                                { model: db.brand, as: 'brand' }
+                            ]
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET Single Purchase Order Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: singlePO
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

@@ -36,12 +36,57 @@ type PurchaseOrderList {
     POCreated_by:Staff
 }
 
+type POProductList {
+    id:Int
+    purchase_order_id:Int
+    quantity:Int
+    price:Float
+    totalPrice:Float
+    recieved_quantity:Int
+    remaining_quantity:Int
+    tenant_id:String
+    product:ProductForList
+}
+
+type PurchaseOrder {
+    id: Int
+    po_id: String
+    grandTotal_price: Float
+    tax_amount: Float
+    order_placed_via: String
+    status: String
+    comment: String
+    shipping_method_id: Int
+    tenant_id: String
+    vendor: Vendor
+    vendorBillingAddress: AddressList
+    vendorShippingAddress: AddressList
+    paymentmethod: PaymentMethod
+    poProductlist:[POProductList]
+    POCreated_by: Staff
+}
+
 type GetPurchaseOrderList {
     message:String
     tenant_id:String
     status:Boolean
     data:[PurchaseOrderList]
 }
+
+
+input GetSinglePurchaseOrderInput {
+    id:Int
+    po_id:String
+}
+
+type GetSinglePurchaseOrderOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:PurchaseOrder
+}
+
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -54,6 +99,7 @@ extend type Mutation {
 
 extend type Query {
     getPurchaseOrderList:GetPurchaseOrderList!
+    getSinglePurchaseOrder(query:GetSinglePurchaseOrderInput):GetSinglePurchaseOrderOutput
 }
 
 

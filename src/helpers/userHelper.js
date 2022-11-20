@@ -106,6 +106,15 @@ module.exports = {
                 };
             }
 
+            // IF USER EMAIL VERIFIED OR NOT
+            const isVarified = user.email_verified;
+            if (!isVarified) {
+                return {
+                    message: "User Not Found!!!",
+                    status: false
+                }
+            }
+
             // IF USER STATUS IS FALSE
             const isActive = user.user_status;
             if (!isActive) {

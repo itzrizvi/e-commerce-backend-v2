@@ -4,7 +4,8 @@ const { addOrderStatusController,
     createOrderByCustomerController,
     createOrderByAdminController,
     updateOrderController,
-    orderStatusChangeController } = require("../../controllers");
+    orderStatusChangeController,
+    orderCancelByCustomerController } = require("../../controllers");
 
 
 // Order Mutation Start
@@ -73,5 +74,15 @@ module.exports = {
 
         // Send to Controller
         return await orderStatusChangeController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Order Cancel By Customer
+    orderCancelByCustomer: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+
+        // Send to Controller
+        return await orderCancelByCustomerController(args.data, db, user, isAuth, TENANTID);
     },
 }

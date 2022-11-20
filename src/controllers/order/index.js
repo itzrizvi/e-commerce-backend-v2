@@ -13,4 +13,5 @@ module.exports = {
     orderStatusChangeController: require('./orderStatusChangeController'),
     getOrderListByCustomerIDController: require('./getOrderListByCustomerIDController'),
     getSingleOrderCustomerController: require('./getSingleOrderCustomerController'),
+    orderCancelByCustomerController: require('./orderCancelByCustomerController'),
 }

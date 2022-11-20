@@ -226,6 +226,11 @@ type GetOrderListByCustomerIDOutput {
     data:[OrderList]
 }
 
+input CancelOrderByCustomerInput {
+    order_status_id:Int!
+    order_id:Int!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -237,6 +242,7 @@ extend type Mutation {
     createOrderByAdmin(data:createOrderByAdminInput):CommonOutput!
     updateOrder(data:UpdateOrderInput):CommonOutput!
     orderStatusChange(data:OrderStatusChangeInput):CommonOutput!
+    orderCancelByCustomer(data:CancelOrderByCustomerInput):CommonOutput!
 }
 
 extend type Query {

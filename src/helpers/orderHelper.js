@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
 const { multipleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
+const { verifierEmail } = require("../utils/verifyEmailSender");
 
 
 // Order HELPER
@@ -1426,5 +1427,90 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
-    }
+    },
+    // Cancel Order By Customer
+    orderCancelByCustomer: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { order_id,
+                order_status_id } = req;
+
+            // Update Doc 
+            const updateDoc = {
+                order_status_id,
+                updated_by: user.id
+            }
+
+
+            // Check If Has Alias with Order and Order Status
+            if (!db.order.hasAlias('order_status') && !db.order.hasAlias('orderstatus')) {
+
+                await db.order.hasOne(db.order_status, {
+                    sourceKey: 'order_status_id',
+                    foreignKey: 'id',
+                    as: 'orderstatus'
+                });
+            }
+
+            // Find Order
+            const findOrder = await db.order.findOne({
+                include: [
+                    { model: db.order_status, as: 'orderstatus' }, // Order Status
+                ],
+                where: {
+                    [Op.and]: [{
+                        id: order_id,
+                        customer_id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findOrder) return { message: "Order Not Found!!!", status: false }
+
+
+            if (findOrder.orderstatus.slug === "pending") {
+                // Update Order Status
+                const updateorderstatus = await db.order.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            id: order_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!updateorderstatus) return { message: "Order Cancelled!!!", status: false }
+
+
+                // Setting Up Data for EMAIL SENDER
+                let mailData = {
+                    email: user.email,
+                    subject: "About Cancel Order on Prime Server Parts",
+                    message: `Your Order Has Been Cancelled. If this is not you please contact to Support and login to Your account to see the details!!!`
+                }
+
+                // SENDING EMAIL
+                await verifierEmail(mailData);
+
+                // Return Formation
+                return {
+                    message: "Order Cancelled Successfully!!!",
+                    tenant_id: TENANTID,
+                    status: true
+                }
+
+            } else {
+                return {
+                    message: "You Cannot Cancel Your Order At This Point!!!",
+                    status: false
+                }
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

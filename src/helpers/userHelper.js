@@ -15,6 +15,8 @@ module.exports = {
             const { first_name, last_name, email, password } = req;
             const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
+            if (!email || !first_name || !password) return { message: "Account Valid Credentials Is Missing!!!", status: false }
+
             const user = await db.user.create({
                 first_name,
                 last_name,
@@ -157,6 +159,7 @@ module.exports = {
                 updatedAt: user.createdAt,
                 createdAt: user.updatedAt,
                 tenant_id: user.tenant_id,
+                image: user.image,
                 status: true
             }
 

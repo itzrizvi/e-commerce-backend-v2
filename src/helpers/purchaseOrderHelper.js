@@ -505,7 +505,7 @@ module.exports = {
             });
             if (!updatePurchaseOrder) return { message: "PO Update Failed!!!", status: false }
 
-
+            // If Products is Available For Update
             if (poProductList && poProductList.length > 0) {
                 // Update Product List With Loop
                 await poProductList.forEach(async (product) => {
@@ -522,6 +522,7 @@ module.exports = {
                 });
             }
 
+            // If NEW Products is Available For Update
             if (newPoProductList && newPoProductList.length > 0) {
                 // Insert NEW Product List
                 const insertNewProductList = await db.po_productlist.bulkCreate(newPoProductList);

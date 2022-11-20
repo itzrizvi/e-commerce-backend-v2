@@ -30,14 +30,15 @@ type AuthPayload {
     user_status:Boolean
     updatedAt:String
     createdAt:String
+    image:String
     status:Boolean
 }
 
 input UserInput {
-    first_name:String
+    first_name:String!
     last_name:String
-    email:String
-    password:String
+    email:String!
+    password:String!
 }
 
 input UserProfileUpdateInput {

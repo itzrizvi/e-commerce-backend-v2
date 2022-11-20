@@ -230,20 +230,11 @@ input GetRecentViewProductInput {
     max: Int!
 }
 
-type GetRecentViewProduct {
-    id:Int
-    user_id:Int
-    tenant_id: String
-    createdAt: String
-    updatedAt: String
-    product:ProductForList
-}
-
 type GetRecentViewProductOutput {
     message:String
     status:Boolean
     tenant_id:String
-    data:[GetRecentViewProduct]
+    data:[ProductForList]
 }
 
 

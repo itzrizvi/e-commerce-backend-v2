@@ -1281,13 +1281,18 @@ module.exports = {
                 order: [['updatedAt', 'DESC']]
             });
 
+            // Array For GET All The Recent Viewed Products
+            const recentlyViewedProducts = [];
+            await allRecentViewProducts.forEach(async (element) => {
+                await recentlyViewedProducts.push(element.product)
+            });
 
             // Return If Success
             return {
                 message: "Get Recent View Success!!!",
                 status: true,
                 tenant_id: TENANTID,
-                data: allRecentViewProducts
+                data: recentlyViewedProducts
             }
 
         } catch (error) {

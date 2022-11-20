@@ -59,7 +59,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
 
         // Return To Controller
-        return await getRecentViewProductController(args.query, db, user, isAuth, TENANTID, ip);
+        return await getRecentViewProductController(args.query, db, user, isAuth, TENANTID);
     },
     // GET Single Product Query
     publicProductView: async (root, args, { db, user, isAuth, TENANTID }, info) => {

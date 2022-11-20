@@ -1241,7 +1241,7 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    getRecentViewProducts: async (req, db, user, isAuth, TENANTID, ip) => {
+    getRecentViewProducts: async (req, db, user, isAuth, TENANTID) => {
         try {
 
             if (!db.recent_view_product.hasAlias('product')) {

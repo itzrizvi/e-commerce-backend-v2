@@ -75,8 +75,8 @@ type GetPurchaseOrderList {
 
 
 input GetSinglePurchaseOrderInput {
-    id:Int
-    po_id:String
+    id:Int!
+    po_id:String!
 }
 
 type GetSinglePurchaseOrderOutput {
@@ -86,6 +86,15 @@ type GetSinglePurchaseOrderOutput {
     data:PurchaseOrder
 }
 
+input UpdatePurchaseOrderInput {
+    id:Int!
+    po_id:String!
+    vendor_billing_id:Int
+    vendor_shipping_id:Int
+    tax_amount:Float
+    comment:String
+    products:JSON
+}
 
 
 
@@ -95,6 +104,7 @@ type GetSinglePurchaseOrderOutput {
 extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
     createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
+    updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
 }
 
 extend type Query {

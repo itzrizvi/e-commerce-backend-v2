@@ -108,49 +108,29 @@ module.exports = {
 
             }
 
-            // Calculate Grand Total Price
-            const productsIds = [];
-            products.forEach((product) => {
-                productsIds.push(product.id);
-            });
-
-            // Find Products
-            const findProducts = await db.product.findAll({
-                where: {
-                    [Op.and]: [{
-                        id: productsIds,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
 
             let grandTotal_price = 0; // Grand Total Price
             // PO Product List Array
             const poProductList = [];
-            findProducts.forEach(async (item) => {
+            products.forEach(async (element) => {
 
-                products.forEach(async (element) => {
+                const calculateTotal = element.price * element.quantity;
+                grandTotal_price += calculateTotal;
 
-                    if (element.id === parseInt(item.id)) { // Matching Input IDs For Quantity
+                // PO Product List Array Formation
+                await poProductList.push({
+                    product_id: element.id,
+                    quantity: element.quantity,
+                    price: element.price,
+                    totalPrice: calculateTotal,
+                    recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
+                    remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
+                    created_by: user.id,
+                    tenant_id: TENANTID
+                })
 
-                        const calculateTotal = item.prod_regular_price * element.quantity;
-                        grandTotal_price += calculateTotal;
-
-                        // PO Product List Array Formation
-                        await poProductList.push({
-                            product_id: element.id,
-                            price: item.prod_regular_price,
-                            quantity: element.quantity,
-                            price: item.prod_regular_price,
-                            totalPrice: calculateTotal,
-                            recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
-                            remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
-                            created_by: user.id,
-                            tenant_id: TENANTID
-                        })
-                    }
-                });
             });
+
 
 
             // Create Purchase Order 
@@ -423,6 +403,137 @@ module.exports = {
                 status: true,
                 tenant_id: TENANTID,
                 data: singlePO
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Update PO
+    updatePurchaseOrder: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id,
+                po_id,
+                vendor_billing_id,
+                vendor_shipping_id,
+                tax_amount,
+                comment,
+                products } = req;
+
+
+            // Find PO
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { grandTotal_price: previousGrandTotal } = findPO;
+
+            let grandTotal_price = 0; // Grand Total Price
+            // PO Product List Array
+            const poProductList = [];
+            const newPoProductList = [];
+            if (products) {
+                products.forEach(async (element) => {
+
+                    const calculateTotal = element.price * element.quantity;
+                    grandTotal_price += calculateTotal;
+
+                    if (!element.isNew) {
+                        // PO Product List Array Formation
+                        await poProductList.push({
+                            product_id: element.id,
+                            quantity: element.quantity,
+                            price: element.price,
+                            totalPrice: calculateTotal,
+                            recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
+                            remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
+                            updated_by: user.id,
+                            tenant_id: TENANTID
+                        })
+                    }
+                });
+
+
+                products.forEach(async (newElement) => {
+                    if (newElement.isNew) {
+                        const calculateTotal = newElement.price * newElement.quantity;
+                        // New PO Product List Array Formation
+                        await newPoProductList.push({
+                            purchase_order_id: id,
+                            product_id: newElement.id,
+                            quantity: newElement.quantity,
+                            price: newElement.price,
+                            totalPrice: calculateTotal,
+                            recieved_quantity: newElement.recieved_quantity ? newElement.recieved_quantity : 0,
+                            remaining_quantity: newElement.recieved_quantity ? newElement.quantity - newElement.recieved_quantity : newElement.quantity,
+                            created_by: user.id,
+                            tenant_id: TENANTID
+                        })
+                    }
+                });
+            }
+
+
+            // Update Doc For Purchase Order
+            const poUpdateDoc = {
+                vendor_billing_id,
+                vendor_shipping_id,
+                tax_amount,
+                comment,
+                grandTotal_price: grandTotal_price === 0 ? previousGrandTotal : grandTotal_price.toFixed(2),
+                updated_by: user.id
+            }
+
+            // Update Purchase Order
+            const updatePurchaseOrder = await db.purchase_order.update(poUpdateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updatePurchaseOrder) return { message: "PO Update Failed!!!", status: false }
+
+
+            if (poProductList && poProductList.length > 0) {
+                // Update Product List With Loop
+                await poProductList.forEach(async (product) => {
+
+                    await db.po_productlist.update(product, {
+                        where: {
+                            [Op.and]: [{
+                                purchase_order_id: id,
+                                product_id: product.product_id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                });
+            }
+
+            if (newPoProductList && newPoProductList.length > 0) {
+                // Insert NEW Product List
+                const insertNewProductList = await db.po_productlist.bulkCreate(newPoProductList);
+                if (!insertNewProductList) return { message: "New Product List Insert Failed!!!", status: false }
+            }
+
+
+            // Return Formation
+            return {
+                message: "Purchase Order Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
             }
 
 

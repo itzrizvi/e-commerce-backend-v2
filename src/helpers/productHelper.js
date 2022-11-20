@@ -1253,10 +1253,24 @@ module.exports = {
                 });
             }
 
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
             const allRecentViewProducts = await db.recent_view_product.findAll({
-                limit: req.max ?? 20,
+                limit: req?.max ?? 20,
                 include: [
-                    { model: db.product, as: 'product' }
+                    {
+                        model: db.product, as: 'product',
+                        include: {
+                            model: db.category, as: 'category'
+                        }
+                    }
                 ],
                 where: {
                     [Op.and]: [{

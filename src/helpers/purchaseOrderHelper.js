@@ -442,8 +442,8 @@ module.exports = {
             const poProductList = [];
             const newPoProductList = [];
             if (products) {
+                // In Case of Existing Products Update
                 products.forEach(async (element) => {
-
                     const calculateTotal = element.price * element.quantity;
                     grandTotal_price += calculateTotal;
 
@@ -462,7 +462,7 @@ module.exports = {
                     }
                 });
 
-
+                // In Case New Product Insert in PO
                 products.forEach(async (newElement) => {
                     if (newElement.isNew) {
                         const calculateTotal = newElement.price * newElement.quantity;

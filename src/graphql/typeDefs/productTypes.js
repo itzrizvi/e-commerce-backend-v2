@@ -226,9 +226,26 @@ type GetOnSaleProducts {
     data:[ProductForList]
 }
 
-input GetRecentViewProductInput{
+input GetRecentViewProductInput {
     max: Int!
 }
+
+type GetRecentViewProduct {
+    id:Int
+    user_id:Int
+    tenant_id: String
+    createdAt: String
+    updatedAt: String
+    product:ProductForList
+}
+
+type GetRecentViewProductOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[GetRecentViewProduct]
+}
+
 
 
 type PublicProductView {
@@ -340,7 +357,7 @@ extend type Query {
     publicProductView(query: PublicProductViewInput): PublicProductViewOutput!
     getProductList: GetAllProducts!
     getFeaturedProducts: GetFeaturedProducts!
-    getRecentViewProduct(query: GetRecentViewProductInput): GetFeaturedProducts!
+    getRecentViewProduct(query: GetRecentViewProductInput): GetRecentViewProductOutput!
     getSingleProductBySlug(query: GetSingleProductBySlugInput): GetSingleProductBySlugOutput!
     getProductsByIDs(query: GetProductsByIDInput): GetProductsByIDOutput!
     getOnSaleProducts: GetOnSaleProducts!

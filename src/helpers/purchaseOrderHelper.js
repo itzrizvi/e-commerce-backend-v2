@@ -542,4 +542,39 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Update PO STATUS
+    updatePOStatus: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id, status } = req;
+
+            // Update Purchase Order Status
+            const updatePOStatus = await db.purchase_order.update({
+                status
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!updatePOStatus) return { message: "PO Satus Change Failed!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Purchase Order Status Changed Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

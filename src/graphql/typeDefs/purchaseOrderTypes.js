@@ -96,6 +96,11 @@ input UpdatePurchaseOrderInput {
     products:JSON
 }
 
+input POStatusChangeInput{
+    id:Int
+    status:String
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -105,6 +110,7 @@ extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
     createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
+    updatePOStatus(data:POStatusChangeInput):CommonOutput!
 }
 
 extend type Query {

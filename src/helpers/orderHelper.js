@@ -1153,6 +1153,15 @@ module.exports = {
             });
             if (!updateorder) return { message: "Order Couldn't Updated!!!", status: false }
 
+            // Update Order History
+            await db.order_history.create({
+                operation: "Order Updated By Admin",
+                order_id,
+                user_id: user.id,
+                updated_by: user.id,
+                tenant_id: TENANTID
+            });
+
             // Update Order Items
             await db.order_item.destroy({
                 where: {
@@ -1220,6 +1229,15 @@ module.exports = {
                 }
             });
             if (!updateorderstatus) return { message: "Order Status Couldn't Changed!!!", status: false }
+
+            // Update Order History
+            await db.order_history.create({
+                operation: "Order Status Changed By Admin",
+                order_id,
+                user_id: user.id,
+                updated_by: user.id,
+                tenant_id: TENANTID
+            });
 
             // Return Formation
             return {
@@ -1497,6 +1515,15 @@ module.exports = {
                     }
                 });
                 if (!updateorderstatus) return { message: "Order Cancelled!!!", status: false }
+
+                // Update Order History
+                await db.order_history.create({
+                    operation: "Order Cancelled By User",
+                    order_id,
+                    user_id: user.id,
+                    updated_by: user.id,
+                    tenant_id: TENANTID
+                });
 
 
                 // Setting Up Data for EMAIL SENDER

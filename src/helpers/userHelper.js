@@ -94,7 +94,7 @@ module.exports = {
             });
             if (!user) {
                 return {
-                    message: "USER NOT FOUND",
+                    message: "Invalid Email or Password!!!",
                     status: false
                 };
             }
@@ -103,7 +103,7 @@ module.exports = {
             const isValid = await bcrypt.compare(password, user.password);
             if (!isValid) {
                 return {
-                    message: "USER NOT FOUND",
+                    message: "Invalid Email or Password!!!",
                     status: false
                 };
             }
@@ -112,8 +112,9 @@ module.exports = {
             const isVarified = user.email_verified;
             if (!isVarified) {
                 return {
-                    message: "User Not Found!!!",
-                    status: false
+                    message: "Email Is Not Verified!!!",
+                    status: false,
+                    emailVerified: user.email_verified
                 }
             }
 
@@ -265,67 +266,64 @@ module.exports = {
 
     },
     // Resend Email For Verification
-    resendVerificationEmail: async (req, db, user, isAuth, TENANTID) => {
-        if (!user || !isAuth) return { message: "Not Authenticated", email: "Not Found!", status: false }; // RReturn if not auth
+    resendVerificationEmail: async (req, db, TENANTID) => {
 
-        const confirmEmail = req.email === user.email; // Confirm that requested email and Auth Email is same
+        // EMAIL FROM REQUEST
+        const email = req.email;
+        // NEW VERIFICATION CODE GENERATE
+        const newVerificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
-
-        if (confirmEmail) { // Condirm Condition
-
-            // EMAIL FROM REQUEST
-            const email = req.email;
-            // NEW VERIFICATION CODE GENERATE
-            const newVerificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
-
-            // Updating Doc
-            const updateDoc = {
-                verification_code: newVerificationCode,
-                updated_by: user.id
+        // Check Email Has User
+        const findUser = await db.user.findOne({
+            where: {
+                [Op.and]: [{
+                    tenant_id: TENANTID,
+                    email
+                }]
             }
-            // Update User
-            const updateUser = await db.user.update(updateDoc, {
-                where: {
-                    [Op.and]: [{
-                        email,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
+        });
+        if (!findUser) return { message: "User Not Found!!!", status: false, email: email }
 
-
-
-            // If Updated then return values
-            if (updateUser) {
-
-                // Setting Up Data for EMAIL SENDER
-                const mailData = {
-                    email: email,
-                    subject: "Verification Code From Primer Server Parts",
-                    message: `Your NEW 6 Digit Verification Code is ${newVerificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
-                }
-
-                // SENDING EMAIL
-                await verifierEmail(mailData);
-                // Return The Response
-                return {
-                    email: email,
-                    message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!",
-                    status: true
-                }
-            } else {
-                return { // If Not updated
-                    email: email,
-                    message: "Failed To Send New Code",
-                    status: false
-                }
-            }
-
-        } else {
-
-            return { message: "Not Authenticated", email: "Not Found!", status: false }
-
+        // Updating Doc
+        const updateDoc = {
+            verification_code: newVerificationCode,
         }
+        // Update User
+        const updateUser = await db.user.update(updateDoc, {
+            where: {
+                [Op.and]: [{
+                    email,
+                    tenant_id: TENANTID
+                }]
+            }
+        });
+
+        // If Updated then return values
+        if (updateUser) {
+
+            // Setting Up Data for EMAIL SENDER
+            const mailData = {
+                email: email,
+                subject: "Verification Code From Primer Server Parts",
+                message: `Your NEW 6 Digit Verification Code is ${newVerificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+            }
+
+            // SENDING EMAIL
+            await verifierEmail(mailData);
+            // Return The Response
+            return {
+                email: email,
+                message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!",
+                status: true
+            }
+        } else {
+            return { // If Not updated
+                email: email,
+                message: "Failed To Send New Code",
+                status: false
+            }
+        }
+
     },
     // Forgot Password Initiation Helper (STEP 1)
     forgotPassInit: async (req, db, TENANTID) => {

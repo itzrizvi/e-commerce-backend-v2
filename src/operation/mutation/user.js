@@ -43,7 +43,7 @@ module.exports = {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
 
-        return await resendVerificationEmailController(args.data, db, user, isAuth, TENANTID);
+        return await resendVerificationEmailController(args.data, db, TENANTID);
     },
     // Forgot Password Initiation (FP STEP 1)
     forgotPassInit: async (root, args, { db, TENANTID }, info) => {

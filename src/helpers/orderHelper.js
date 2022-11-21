@@ -437,6 +437,14 @@ module.exports = {
             });
             if (!insertOrder) return { message: "Order Coulnd't Placed!!!", status: false }
 
+            await db.order_history.create({
+                operation: "Order Created By User",
+                order_id: insertOrder.id,
+                user_id: user.id,
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
+
             //
             if (tax_exempt) {
                 // Upload Tax Exempt Files
@@ -693,6 +701,14 @@ module.exports = {
                 tenant_id: TENANTID
             });
             if (!insertOrder) return { message: "Order Coulnd't Placed!!!", status: false }
+
+            await db.order_history.create({
+                operation: "Order Created By Admin",
+                order_id: insertOrder.id,
+                user_id: user.id,
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
 
             //
             if (tax_exempt) {

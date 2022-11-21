@@ -35,6 +35,13 @@ type GetSingleShippingMethodOutput {
     data:ShippingMethod
 }
 
+input UpdateShippingMethodInput {
+    id:Int!
+    name:String
+    description:String
+    shipping_cost:Float
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -42,6 +49,7 @@ type GetSingleShippingMethodOutput {
 
 extend type Mutation {
     addShippingMethod(data:AddShippingMethodInput):CommonOutput!
+    updateShippingMethod(data:UpdateShippingMethodInput):CommonOutput!
 }
 
 extend type Query {

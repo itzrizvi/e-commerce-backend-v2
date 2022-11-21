@@ -112,76 +112,76 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    // // Update Payment Method API
-    // updatePaymentMethod: async (req, db, user, isAuth, TENANTID) => {
-    //     // Try Catch Block
-    //     try {
+    // Update Shipping Method API
+    updateShippingMethod: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
 
-    //         // DATA FROM REQUEST
-    //         const { id, name, description, status } = req;
+            // DATA FROM REQUEST
+            const { id, name, description, shipping_cost } = req;
 
-    //         // If name also updated
-    //         let slug
-    //         if (name) {
-    //             // Payment Method Slug
-    //             slug = slugify(`${name}`, {
-    //                 replacement: '-',
-    //                 remove: /[*+~.()'"!:@]/g,
-    //                 lower: true,
-    //                 strict: true,
-    //                 trim: true
-    //             });
+            // If name also updated
+            let slug
+            if (name) {
+                // Shipping Method Slug
+                slug = slugify(`${name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
 
-    //             // Check Existence
-    //             const checkExist = await db.payment_method.findOne({
-    //                 where: {
-    //                     [Op.and]: [{
-    //                         slug,
-    //                         tenant_id: TENANTID
-    //                     }],
-    //                     [Op.not]: [{
-    //                         id
-    //                     }]
-    //                 }
-    //             });
+                // Check Existence
+                const checkExist = await db.shipping_method.findOne({
+                    where: {
+                        [Op.and]: [{
+                            slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            id
+                        }]
+                    }
+                });
 
-    //             if (checkExist) return { message: "Already Have This Payment Method!!!", status: false };
-    //         }
-
-
-    //         // Update Doc 
-    //         const updateDoc = {
-    //             name,
-    //             slug,
-    //             description,
-    //             status,
-    //             updated_by: user.id
-    //         }
-
-    //         // Update Payment Method
-    //         const updatePaymentM = await db.payment_method.update(updateDoc, {
-    //             where: {
-    //                 [Op.and]: [{
-    //                     id,
-    //                     tenant_id: TENANTID
-    //                 }]
-    //             }
-    //         });
+                if (checkExist) return { message: "Already Have This Shipping Method!!!", status: false };
+            }
 
 
-    //         // Return Formation
-    //         if (updatePaymentM) {
-    //             return {
-    //                 message: "Payment Method Updated Successfully!!!",
-    //                 status: true,
-    //                 tenant_id: TENANTID
-    //             }
-    //         }
+            // Update Doc 
+            const updateDoc = {
+                name,
+                slug,
+                description,
+                shipping_cost,
+                updated_by: user.id
+            }
 
-    //     } catch (error) {
-    //         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-    //     }
-    // },
+            // Update Shipping Method
+            const updateShippingM = await db.shipping_method.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            // Return Formation
+            if (updateShippingM) {
+                return {
+                    message: "Shipping Method Updated Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
     // // GET Payment Method List API
     // getPaymentMethodListAdmin: async (db, TENANTID) => {
     //     // Try Catch Block

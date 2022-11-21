@@ -1,4 +1,7 @@
-const { createCustomerController, addCustomerBillingAddressController, addCustomerShippingAddressController, updateCustomerAddressController } = require("../../controllers");
+const { createCustomerController,
+    addCustomerBillingAddressController,
+    addCustomerShippingAddressController,
+    updateCustomerAddressController } = require("../../controllers");
 
 // Customer Mutation Start
 module.exports = {

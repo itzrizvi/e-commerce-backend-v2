@@ -169,10 +169,9 @@ module.exports = {
         }
     },
     // Email Verify
-    verifyEmail: async (req, db, user, isAuth, TENANTID) => {
-        if (!user || !isAuth) return { emailVerified: false, isAuth: false, message: "Not Authenticated", email: "Not Found!", status: false }; // RReturn if not auth
+    verifyEmail: async (req, db, TENANTID) => {
 
-        const email = user.email; // Email From Request
+        const email = req.email; // Email From Request
 
         // User Find For Matching Code
         const findUser = await db.user.findOne({
@@ -186,7 +185,7 @@ module.exports = {
 
         // IF Not User
         if (!findUser) {
-            return { emailVerified: false, isAuth: true, message: "Something Went Wrong", email: email, status: false };
+            return { emailVerified: false, isAuth: false, message: "User Not Found!!!", email: email, status: false };
         };
 
         // Destructure Values

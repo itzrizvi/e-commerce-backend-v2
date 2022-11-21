@@ -36,7 +36,7 @@ module.exports = {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
 
 
-        return await emailVerifyController(args.data, db, user, isAuth, TENANTID);
+        return await emailVerifyController(args.data, db, TENANTID);
     },
     // Resend Verification Email MUTATION
     resendVerificationEmail: async (root, args, { db, user, isAuth, TENANTID }, info) => {

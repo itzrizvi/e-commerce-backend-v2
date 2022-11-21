@@ -185,7 +185,7 @@ module.exports = {
 
         // IF Not User
         if (!findUser) {
-            return { emailVerified: false, isAuth: false, message: "User Not Found!!!", email: email, status: false };
+            return { emailVerified: false, message: "User Not Found!!!", email: email, status: false };
         };
 
         // Destructure Values
@@ -224,7 +224,6 @@ module.exports = {
                         email: email,
                         emailVerified: true,
                         message: "Email Verified Successfully!!",
-                        isAuth: isAuth,
                         status: false
                     }
                 } else {
@@ -232,7 +231,6 @@ module.exports = {
                         email: email,
                         emailVerified: false,
                         message: "ERROR WHEN MATCHING",
-                        isAuth: isAuth,
                         status: false
                     }
                 }
@@ -243,7 +241,6 @@ module.exports = {
                     email: email,
                     emailVerified: false,
                     message: "CODE DIDN'T MATCHED",
-                    isAuth: isAuth,
                     status: false
                 }
             }
@@ -254,8 +251,7 @@ module.exports = {
             return {
                 email: email,
                 emailVerified: false,
-                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Resend Code From Profile!!!",
-                isAuth: isAuth,
+                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Try Again!!!",
                 status: false
             }
         }

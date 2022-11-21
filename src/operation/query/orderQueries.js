@@ -4,7 +4,8 @@ const { getSingleOrderStatusController,
     getOrderlistAdminController,
     getSingleOrderAdminController,
     getOrderListByCustomerIDController,
-    getSingleOrderCustomerController } = require("../../controllers");
+    getSingleOrderCustomerController,
+    getOrderActivityHistoryController } = require("../../controllers");
 
 
 // Order BASED QUERY
@@ -86,5 +87,17 @@ module.exports = {
 
         // Return To Controller
         return await getSingleOrderCustomerController(args.query, db, user, isAuth, TENANTID);
+    },
+    // GET ORDER Activity History LIST
+    getOrderActivityHistory: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getOrderActivityHistoryController(args.query, db, user, isAuth, TENANTID);
     },
 }

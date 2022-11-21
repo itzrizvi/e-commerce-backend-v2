@@ -231,6 +231,27 @@ input CancelOrderByCustomerInput {
     order_id:Int!
 }
 
+type OrderHistory {
+    id:Int
+    operation:String
+    order_id:Int
+    tenant_id:String
+    activity_by:Staff
+}
+
+input GetOrderHistoryInput {
+    id:Int!
+}
+
+type GetOrderHistoryOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[OrderHistory]
+}
+
+
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -253,6 +274,7 @@ extend type Query {
     getSingleOrderAdmin(query:GetSingleOrderAdminInput):GetSingleOrderAdminOutput!
     getSingleOrderCustomer(query:GetSingleOrderCustomerInput):GetSingleOrderCustomerOutput!
     getOrderListByCustomerID(query:GetOrderListByCustomerIDInput):GetOrderListByCustomerIDOutput!
+    getOrderActivityHistory(query:GetOrderHistoryInput):GetOrderHistoryOutput!
 }
 
 

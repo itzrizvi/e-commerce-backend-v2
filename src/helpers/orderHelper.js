@@ -1086,7 +1086,7 @@ module.exports = {
             });
             const { coupon_id, shipping_cost } = findOrder;
 
-            if (coupon_id) {
+            if (coupon_id) { // TODO ->>>>> NEED TO IMPLEMENT A LOGIC FOR COUPON ACCEPT PARTIALLY
                 //
                 const getCouponDetails = await db.coupon.findOne({
                     where: {
@@ -1550,6 +1550,60 @@ module.exports = {
                 }
             }
 
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET Order Activity History List Admin
+    getOrderActivityHistory: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id } = req;
+
+            // User and Roles Through Admin Roles Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Order and User
+            if (!db.order_history.hasAlias('user') && !db.order_history.hasAlias('activity_by')) {
+
+                await db.order_history.hasOne(db.user, {
+                    sourceKey: 'user_id',
+                    foreignKey: 'id',
+                    as: 'activity_by'
+                });
+            }
+
+            // Order Hsitory List
+            const orderhistoryList = await db.order_history.findAll({
+                include: [
+                    {
+                        model: db.user, as: 'activity_by', // User and Roles
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        order_id: id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET Order History Activity List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: orderhistoryList
+            }
 
 
         } catch (error) {

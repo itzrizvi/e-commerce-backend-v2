@@ -182,79 +182,85 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    // // GET Payment Method List API
-    // getPaymentMethodListAdmin: async (db, TENANTID) => {
-    //     // Try Catch Block
-    //     try {
+    // GET Shipping Method List Admin API
+    getShippingMethodListAdmin: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
 
-    //         // Created By Associations
-    //         db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-    //         db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
-    //         // Check If Has Alias with Users and Roles
-    //         if (!db.payment_method.hasAlias('user') && !db.payment_method.hasAlias('added_by')) {
+            // Check If Has Alias with Users and Roles
+            if (!db.shipping_method.hasAlias('user') && !db.shipping_method.hasAlias('added_by')) {
 
-    //             await db.payment_method.hasOne(db.user, {
-    //                 sourceKey: 'created_by',
-    //                 foreignKey: 'id',
-    //                 as: 'added_by'
-    //             });
-    //         }
+                await db.shipping_method.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
 
-    //         // GET PAYMENT METHOD List
-    //         const getPaymentMethodListAdmin = await db.payment_method.findAll({
-    //             include: [
-    //                 {
-    //                     model: db.user, as: 'added_by', // Include User who created this Payment MEthod
-    //                     include: {
-    //                         model: db.role,
-    //                         as: 'roles'
-    //                     }
-    //                 }
-    //             ],
-    //             where: {
-    //                 tenant_id: TENANTID
-    //             }
-    //         });
-
-
-    //         return {
-    //             message: "GET Payment Method List For Admin Success!!!",
-    //             tenant_id: TENANTID,
-    //             status: true,
-    //             data: getPaymentMethodListAdmin
-    //         }
+            // GET SHIPPING METHOD List
+            const getshippingMethodListAdmin = await db.shipping_method.findAll({
+                include: [
+                    {
+                        model: db.user, as: 'added_by', // Include User who created this Shipping MEthod
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    tenant_id: TENANTID
+                },
+                order: [
+                    ['slug', 'ASC']
+                ]
+            });
 
 
-    //     } catch (error) {
-    //         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-    //     }
-    // },
-    // // GET Payment Method List PUBLIC API
-    // getPaymentMethodListPublic: async (db, TENANTID) => {
-    //     // Try Catch Block
-    //     try {
-
-    //         // GET PAYMENT METHOD List PUBLIC
-    //         const getPaymentMethodListPublic = await db.payment_method.findAll({
-    //             where: {
-    //                 [Op.and]: [{
-    //                     status: true,
-    //                     tenant_id: TENANTID
-    //                 }]
-    //             }
-    //         });
-
-    //         return {
-    //             message: "GET Payment Method List For PUBLIC Success!!!",
-    //             tenant_id: TENANTID,
-    //             status: true,
-    //             data: getPaymentMethodListPublic
-    //         }
+            return {
+                message: "GET Shipping Method List For Admin Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getshippingMethodListAdmin
+            }
 
 
-    //     } catch (error) {
-    //         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-    //     }
-    // },
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET Shipping Method List PUBLIC API
+    getShippingMethodListPublic: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // GET SHIPPING METHOD List PUBLIC
+            const getshippingMethodListPublic = await db.shipping_method.findAll({
+                where: {
+                    [Op.and]: [{
+                        status: true,
+                        tenant_id: TENANTID
+                    }]
+                },
+                order: [
+                    ['slug', 'ASC']
+                ]
+            });
+
+            return {
+                message: "GET Shipping Method List For PUBLIC Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getshippingMethodListPublic
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

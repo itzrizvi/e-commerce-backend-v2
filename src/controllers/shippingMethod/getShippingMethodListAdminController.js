@@ -1,12 +1,11 @@
-// All Requires
-const { getSingleShippingMethod } = require("../../helpers/shippingMethodHelper");
+// ALL REQUIRES;
+const { getShippingMethodListAdmin } = require("../../helpers/shippingMethodHelper");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 
 
-// GET SINGLE PRODUCT DETAIL CONTROLLER
-module.exports = async (req, db, user, isAuth, TENANTID) => {
-
+// CONTROLLER
+module.exports = async (db, user, isAuth, TENANTID) => {
     // Permission Name of this API
     const permissionName = "shipping-method";
     // Check Permission
@@ -15,9 +14,9 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // Sending Request to Helper
-    const data = await getSingleShippingMethod(req, db, user, isAuth, TENANTID);
+    // SEND TO HELPER
+    const data = await getShippingMethodListAdmin(db, TENANTID);
 
-    // Final Response
     return singleResponse(data);
+
 }

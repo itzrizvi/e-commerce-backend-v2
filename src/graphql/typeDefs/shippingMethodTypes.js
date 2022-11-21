@@ -17,6 +17,16 @@ type ShippingMethod {
     added_by:Staff
 }
 
+type ShippingMethodPublic {
+    id:Int
+    name:String
+    slug:String
+    description:String
+    status:Boolean
+    shipping_cost:Float
+    tenant_id:String
+}
+
 input AddShippingMethodInput {
     name:String!
     description:String
@@ -42,7 +52,18 @@ input UpdateShippingMethodInput {
     shipping_cost:Float
 }
 
-
+type GetShippingMethodListPublic {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[ShippingMethodPublic]
+}
+type GetShippingMethodListAdmin {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[ShippingMethod]
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -54,6 +75,8 @@ extend type Mutation {
 
 extend type Query {
     getSingleShippingMethod(query:GetSingleShippingMethodInput):GetSingleShippingMethodOutput!
+    getShippingMethodListAdmin:GetShippingMethodListAdmin!
+    getShippingMethodListPublic:GetShippingMethodListPublic!
 }
 
 

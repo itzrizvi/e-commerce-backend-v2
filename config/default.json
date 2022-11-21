@@ -32,7 +32,7 @@
         "CATEGORY_IMG_SRC": "psp-image-storage/category",
         "CATEGORY_IMG_DEST": "psp-image-storage-resize/category",
         "CATEGORY_IMG_IDF": "id",
-        "USER_IMG_SRC": "psp-image-storage/user",
+        "USER_IMG_SRC": "psp-image-storage-resize/user",
         "USER_IMG_DEST": "psp-image-storage-resize/user",
         "USER_IMG_IDF": "id",
         "COMPANY_LOGO_IMG_SRC": "psp-image-storage-resize/logo",

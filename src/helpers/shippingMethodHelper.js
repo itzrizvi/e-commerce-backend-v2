@@ -58,60 +58,60 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    // // GET Single Payment Method API
-    // getSinglePaymentMethod: async (req, db, user, isAuth, TENANTID) => {
-    //     // Try Catch Block
-    //     try {
+    // GET Single Shipping Method API
+    getSingleShippingMethod: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
 
-    //         // DATA FROM REQUEST
-    //         const { paymentMethod_id } = req;
+            // DATA FROM REQUEST
+            const { id } = req;
 
-    //         // Created By Associations
-    //         db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-    //         db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
 
-    //         // Check If Has Alias with Users and Roles
-    //         if (!db.payment_method.hasAlias('user') && !db.payment_method.hasAlias('added_by')) {
+            // Check If Has Alias with Users and Roles
+            if (!db.shipping_method.hasAlias('user') && !db.shipping_method.hasAlias('added_by')) {
 
-    //             await db.payment_method.hasOne(db.user, {
-    //                 sourceKey: 'created_by',
-    //                 foreignKey: 'id',
-    //                 as: 'added_by'
-    //             });
-    //         }
+                await db.shipping_method.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
 
-    //         // GET SINGLE PAYMENT METHOD
-    //         const getPaymentMethod = await db.payment_method.findOne({
-    //             include: [
-    //                 {
-    //                     model: db.user, as: 'added_by', // Include User who created this Payment MEthod
-    //                     include: {
-    //                         model: db.role,
-    //                         as: 'roles'
-    //                     }
-    //                 }
-    //             ],
-    //             where: {
-    //                 [Op.and]: [{
-    //                     id: paymentMethod_id,
-    //                     tenant_id: TENANTID
-    //                 }]
-    //             }
-    //         });
-
-
-    //         return {
-    //             message: "GET Single Payment Method Success!!!",
-    //             tenant_id: TENANTID,
-    //             status: true,
-    //             data: getPaymentMethod
-    //         }
+            // GET SINGLE SHIPPING METHOD
+            const getShippingMethod = await db.shipping_method.findOne({
+                include: [
+                    {
+                        model: db.user, as: 'added_by', // Include User who created this Shipping Method
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
 
-    //     } catch (error) {
-    //         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-    //     }
-    // },
+            return {
+                message: "GET Single Shipping Method Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getShippingMethod
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
     // // Update Payment Method API
     // updatePaymentMethod: async (req, db, user, isAuth, TENANTID) => {
     //     // Try Catch Block

@@ -24,7 +24,16 @@ input AddShippingMethodInput {
     shipping_cost:Float
 }
 
+input GetSingleShippingMethodInput {
+    id:Int!
+}
 
+type GetSingleShippingMethodOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:ShippingMethod
+}
 
 
 
@@ -35,9 +44,9 @@ extend type Mutation {
     addShippingMethod(data:AddShippingMethodInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getSingleShippingMethod(query:GetSingleShippingMethodInput):GetSingleShippingMethodOutput!
+}
 
 
 `;

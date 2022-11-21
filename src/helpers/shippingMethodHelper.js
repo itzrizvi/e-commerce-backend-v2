@@ -263,4 +263,42 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Shipping Method Status Change API
+    shippingMethodStatus: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id, status } = req;
+
+            // Update Doc 
+            const updateDoc = {
+                status,
+                updated_by: user.id
+            }
+
+            // Update Shipping Method Status
+            const updateShippingMStatus = await db.shipping_method.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            // Return Formation
+            if (updateShippingMStatus) {
+                return {
+                    message: "Shipping Method Status Changed Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

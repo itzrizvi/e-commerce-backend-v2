@@ -65,12 +65,18 @@ type GetShippingMethodListAdmin {
     data:[ShippingMethod]
 }
 
+input ShippingStatusChangeInput {
+    id:Int!
+    status:Boolean!
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     addShippingMethod(data:AddShippingMethodInput):CommonOutput!
     updateShippingMethod(data:UpdateShippingMethodInput):CommonOutput!
+    shippingMethodStatus(data:ShippingStatusChangeInput):CommonOutput!
 }
 
 extend type Query {

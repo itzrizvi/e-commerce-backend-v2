@@ -4,4 +4,5 @@ module.exports = {
     updateShippingMethodController: require('./updateShippingMethodController'),
     getShippingMethodListAdminController: require('./getShippingMethodListAdminController'),
     getShippingMethodListPublicController: require('./getShippingMethodListPublicController'),
+    shippingMethodStatusController: require('./shippingMethodStatusController'),
 }

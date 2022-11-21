@@ -27,7 +27,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         shipping_cost: {
             type: DataTypes.FLOAT,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 0
         },
         created_by: {
             type: DataTypes.INTEGER,

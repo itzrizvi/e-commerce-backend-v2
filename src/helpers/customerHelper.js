@@ -216,6 +216,7 @@ module.exports = {
                     tenant_id: createBilling.tenant_id,
                     message: "Successfully Created Billing Address.",
                     status: true,
+                    id: createBilling.id
                 }
             }
         } catch (error) {
@@ -265,6 +266,7 @@ module.exports = {
                     tenant_id: createShipping.tenant_id,
                     message: "Successfully Created Shipping Address.",
                     status: true,
+                    id: createShipping.id
                 }
             }
         } catch (error) {

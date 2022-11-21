@@ -42,10 +42,18 @@ input GetSingleCustomerInput{
     customer_id: Int!
 }
 
+type AddAddressOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    id:Int
+}
+
+
 extend type Mutation {
     addCustomer(data: CustomerInput): CommonOutput!
-    addCustomerBillingAddress(data: Address): CommonOutput!
-    addCustomerShippingAddress(data: Address): CommonOutput!
+    addCustomerBillingAddress(data: Address): AddAddressOutput!
+    addCustomerShippingAddress(data: Address): AddAddressOutput!
     updateCustomerAddress(data: UpdateAddress): CommonOutput!
 }
 extend type Query {

@@ -8,6 +8,7 @@ module.exports = gql`
 
 input VerifyEmailInput {
     verificationCode:Int!
+    email:String!
 }
 
 type VerifyEmailOutput {

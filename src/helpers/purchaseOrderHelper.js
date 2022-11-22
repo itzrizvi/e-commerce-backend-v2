@@ -417,6 +417,7 @@ module.exports = {
             // DATA FROM REQUEST
             const { id,
                 po_id,
+                vendor_id,
                 vendor_billing_id,
                 vendor_shipping_id,
                 tax_amount,
@@ -488,6 +489,7 @@ module.exports = {
                 vendor_shipping_id,
                 tax_amount,
                 comment,
+                vendor_id,
                 grandTotal_price: grandTotal_price === 0 ? previousGrandTotal : grandTotal_price.toFixed(2),
                 updated_by: user.id
             }

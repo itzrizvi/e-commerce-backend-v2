@@ -88,6 +88,7 @@ type GetSinglePurchaseOrderOutput {
 input UpdatePurchaseOrderInput {
     id:Int!
     po_id:String!
+    vendor_id:Int
     vendor_billing_id:Int
     vendor_shipping_id:Int
     tax_amount:Float

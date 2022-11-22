@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         order_placed_via: {
-            type: DataTypes.ENUM("email"),
+            type: DataTypes.ENUM("email", "phone"),
             allowNull: false
         },
         status: {

@@ -384,4 +384,98 @@ module.exports = {
       if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
+  // Add Company Billing Addresses
+  addCompanyBillingAddress: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      // Data From Request
+      const { addresses } = req;
+
+      // Array Formation For Bulk Create
+      let companyBillingAddress = [];
+
+      addresses.forEach(async (address) => {
+        await companyBillingAddress.push({
+          ref_id: address.parent_id,
+          ref_model: "company_info",
+          phone: address.phone,
+          fax: address.fax,
+          email: address.email,
+          address1: address.address1,
+          address2: address.address2,
+          city: address.city,
+          state: address.state,
+          zip_code: address.zip_code,
+          country: address.country,
+          type: "billing",
+          status: address.status,
+          tenant_id: TENANTID,
+          created_by: user.id
+        });
+      });
+
+      if (companyBillingAddress && companyBillingAddress.length > 0) {
+        const createCompanyBilling = db.address.bulkCreate(companyBillingAddress);
+
+        if (createCompanyBilling) {
+          return {
+            tenant_id: TENANTID,
+            message: "Successfully Created Company Billing Address.",
+            status: true,
+          }
+        }
+      }
+
+    } catch (error) {
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+    }
+  },
+  // Add Company Shipping Addresses
+  addCompanyShippingAddress: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      // Data From Request
+      const { addresses } = req;
+
+      // Array Formation For Bulk Create
+      let companyShippingAddress = [];
+
+      addresses.forEach(async (address) => {
+        await companyShippingAddress.push({
+          ref_id: address.parent_id,
+          ref_model: "company_info",
+          phone: address.phone,
+          fax: address.fax,
+          email: address.email,
+          address1: address.address1,
+          address2: address.address2,
+          city: address.city,
+          state: address.state,
+          zip_code: address.zip_code,
+          country: address.country,
+          type: "shipping",
+          status: address.status,
+          tenant_id: TENANTID,
+          created_by: user.id
+        });
+      });
+
+      if (companyShippingAddress && companyShippingAddress.length > 0) {
+        const createCompanyBilling = db.address.bulkCreate(companyShippingAddress);
+
+        if (createCompanyBilling) {
+          return {
+            tenant_id: TENANTID,
+            message: "Successfully Created Company Shipping Address.",
+            status: true,
+          }
+        }
+      }
+
+    } catch (error) {
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+    }
+  },
 };

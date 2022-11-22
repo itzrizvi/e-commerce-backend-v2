@@ -83,8 +83,18 @@ module.exports = gql`
         data: CompanyInfo
     }
 
+    input AddCompanyBillingAddressInput {
+        addresses:[Address]
+    }
+
+    input AddCompanyShippingAddressInput {
+        addresses:[Address]
+    }
+
     extend type Mutation {
         companyInfo(data: CompanyInfoInput):CommonOutput!
+        addCompanyBillingAddress(data: AddCompanyBillingAddressInput): CommonOutput!
+        addCompanyShippingAddress(data: AddCompanyShippingAddressInput): CommonOutput!
     }
 
     extend type Query{

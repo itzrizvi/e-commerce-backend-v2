@@ -25,4 +25,5 @@ module.exports = {
     ...require('./wishList'),
     ...require('./purchaseOrder'),
     ...require('./shippingMethod'),
+    ...require('./contactUs'),
 }

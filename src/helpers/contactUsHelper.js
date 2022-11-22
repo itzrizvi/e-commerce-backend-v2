@@ -1,6 +1,8 @@
 // All Requires
 const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
+const { multipleFileUpload } = require("../utils/fileUpload");
+const config = require('config');
 
 
 // Contact Us HELPER
@@ -19,8 +21,33 @@ module.exports = {
                 email,
                 phone,
                 subject,
-                message
+                message,
+                tenant_id: TENANTID
             });
+
+            // If Images are Available
+            if (images) {
+                // 
+                let contactusImages = [];
+                // Upload Image to AWS S3
+                const contactus_image_src = config.get("AWS.CONTACTUS_IMG_SRC").split("/")
+                const contactus_image_bucketName = contactus_image_src[0];
+                const contactus_image_folder = contactus_image_src.slice(1).join("/");
+                const imageUrl = await multipleFileUpload({ file: images, idf: insertMessage.id, folder: contactus_image_folder, fileName: insertMessage.id, bucketName: contactus_image_bucketName });
+                if (!imageUrl) return { message: "Contact Us Images Couldnt Uploaded Properly!!!", status: false };
+
+                // 
+                imageUrl.forEach(async (contactUsImg) => {
+                    await contactusImages.push({ image: contactUsImg.upload.Key.split('/').slice(-1)[0], contactus_id: insertMessage.id, tenant_id: TENANTID });
+                });
+
+                // 
+                if (contactusImages) {
+                    // 
+                    const contactusImgesSave = await db.contactus_media.bulkCreate(contactusImages);
+                    if (!contactusImgesSave) return { message: "Contact Us Images Save Failed!!!", status: false }
+                }
+            }
 
             // Return Formation
             if (insertMessage) {

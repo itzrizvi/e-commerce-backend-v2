@@ -22,7 +22,7 @@
         "PRODUCT_IMG_GALLERY_DEST": "psp-image-storage-resize/product/image/gallery",
         "PRODUCT_VDO_SRC": "psp-image-storage/product/video",
         "PRODUCT_VDO_DEST": "psp-image-storage-resize/product/video",
-        "PRODUCT_IMG_IDF": "partno",
+        "PRODUCT_IMG_IDF": "prod_partnum",
         "BRAND_IMG_SRC": "psp-image-storage-resize/brand",
         "BRAND_IMG_DEST": "psp-image-storage-resize/brand",
         "BRND_IMG_IDF": "id",
@@ -42,6 +42,9 @@
         "COMPANY_DARK_LOGO_IMG_DEST": "psp-image-storage-resize/dark-logo",
         "COMPANY_FAV_ICON_DEST": "psp-image-storage-resize/fav",
         "COMPANY_LOGO_IMG_IDF": "tenant_id",
+        "CONTACTUS_IMG_SRC": "psp-image-storage-resize/brand",
+        "CONTACTUS_IMG_DEST": "psp-image-storage-resize/brand",
+        "CONTACTUS_IMG_IDF": "id",
         "ORDER_TAX_EXEMPT_FILE_SRC": "psp-image-storage-resize/order"
     },
     "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",

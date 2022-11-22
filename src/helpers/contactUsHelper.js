@@ -63,60 +63,52 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    // // GET SINGLE TAX CLASS ADMIN
-    // getSingleTaxClassAdmin: async (req, db, user, isAuth, TENANTID) => {
-    //     // Try Catch Block
-    //     try {
+    // GET SINGLE CONTACT US MESSAGE
+    getSingleContactUsMsg: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
 
-    //         // DATA FROM REQUEST
-    //         const { taxClass_id } = req;
-
-    //         // Created By Associations
-    //         db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-    //         db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
-
-    //         // Check If Has Alias with Users and Roles
-    //         if (!db.tax_class.hasAlias('user') && !db.tax_class.hasAlias('added_by')) {
-
-    //             await db.tax_class.hasOne(db.user, {
-    //                 sourceKey: 'created_by',
-    //                 foreignKey: 'id',
-    //                 as: 'added_by'
-    //             });
-    //         }
-
-    //         // GET TAX CLASS FOR ADMIN
-    //         const gettaxclass = await db.tax_class.findOne({
-    //             include: [
-    //                 {
-    //                     model: db.user, as: 'added_by', // Include User who created this Tax Class
-    //                     include: {
-    //                         model: db.role,
-    //                         as: 'roles'
-    //                     }
-    //                 }
-    //             ],
-    //             where: {
-    //                 [Op.and]: [{
-    //                     id: taxClass_id,
-    //                     tenant_id: TENANTID
-    //                 }]
-    //             }
-    //         });
+            // DATA FROM REQUEST
+            const { id } = req;
 
 
-    //         return {
-    //             message: "GET Single Tax Class Admin Success!!!",
-    //             tenant_id: TENANTID,
-    //             status: true,
-    //             data: gettaxclass
-    //         }
+            // 
+            if (!db.contact_us.hasAlias('contactus_media') && !db.contact_us.hasAlias('images')) {
+
+                await db.contact_us.hasMany(db.contactus_media, {
+                    foreignKey: 'contactus_id',
+                    as: 'images'
+                });
+            }
+
+            // 
+            const getsinglecontactus = await db.contact_us.findOne({
+                include: [
+                    {
+                        model: db.contactus_media, as: 'images', //
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
 
-    //     } catch (error) {
-    //         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-    //     }
-    // },
+            return {
+                message: "GET Single Contact Us Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getsinglecontactus
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
     // // GET TAX CLASS LIST
     // getTaxClassList: async (db, TENANTID) => {
     //     // Try Catch Block

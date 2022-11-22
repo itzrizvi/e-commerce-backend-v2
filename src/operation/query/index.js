@@ -25,4 +25,5 @@ module.exports = {
     ...require('./filterPaginationQueries'),
     ...require('./purchaseOrderQueries'),
     ...require('./shippingMethodQueries'),
+    ...require('./contactUsQueries'),
 }

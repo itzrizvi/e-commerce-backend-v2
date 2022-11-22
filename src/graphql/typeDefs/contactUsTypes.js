@@ -32,6 +32,16 @@ input ContactUsInput {
     images:[Upload]
 }
 
+input GetSingleContactMessageInput {
+    id:Int!
+}
+
+type GetSingleContactMessageOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data: ContactUs
+}
 
 
 
@@ -42,9 +52,9 @@ extend type Mutation {
     createContactUs(data:ContactUsInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getSingleContactUsMsg(query:GetSingleContactMessageInput):GetSingleContactMessageOutput!
+}
 
 
 `;

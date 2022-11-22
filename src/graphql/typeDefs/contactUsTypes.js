@@ -43,6 +43,12 @@ type GetSingleContactMessageOutput {
     data: ContactUs
 }
 
+type GetContactMessageList {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[ContactUs]
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -54,6 +60,7 @@ extend type Mutation {
 
 extend type Query {
     getSingleContactUsMsg(query:GetSingleContactMessageInput):GetSingleContactMessageOutput!
+    getContactUsMsgList:GetContactMessageList!
 }
 
 

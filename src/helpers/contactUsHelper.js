@@ -1,6 +1,5 @@
 // All Requires
 const { Op } = require("sequelize");
-const { default: slugify } = require("slugify");
 const { multipleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
 
@@ -109,51 +108,43 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    // // GET TAX CLASS LIST
-    // getTaxClassList: async (db, TENANTID) => {
-    //     // Try Catch Block
-    //     try {
+    // GET CONTACT US LIST
+    getContactUsMsgList: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
 
-    //         // Created By Associations
-    //         db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
-    //         db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+            // 
+            if (!db.contact_us.hasAlias('contactus_media') && !db.contact_us.hasAlias('images')) {
 
-    //         // Check If Has Alias with Users and Roles
-    //         if (!db.tax_class.hasAlias('user') && !db.tax_class.hasAlias('added_by')) {
+                await db.contact_us.hasMany(db.contactus_media, {
+                    foreignKey: 'contactus_id',
+                    as: 'images'
+                });
+            }
 
-    //             await db.tax_class.hasOne(db.user, {
-    //                 sourceKey: 'created_by',
-    //                 foreignKey: 'id',
-    //                 as: 'added_by'
-    //             });
-    //         }
-    //         // GET TAX CLASS LIST
-    //         const gettaxclasslist = await db.tax_class.findAll({
-    //             include: [
-    //                 {
-    //                     model: db.user, as: 'added_by', // Include User who created Tax Classes
-    //                     include: {
-    //                         model: db.role,
-    //                         as: 'roles'
-    //                     }
-    //                 }
-    //             ],
-    //             where: {
-    //                 tenant_id: TENANTID
-    //             }
-    //         });
+            // 
+            const getcontactuslist = await db.contact_us.findAll({
+                include: [
+                    {
+                        model: db.contactus_media, as: 'images', //
+                    }
+                ],
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
 
 
-    //         return {
-    //             message: "GET Tax Class List Success!!!",
-    //             tenant_id: TENANTID,
-    //             status: true,
-    //             data: gettaxclasslist
-    //         }
+            return {
+                message: "GET Contact Us List Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getcontactuslist
+            }
 
 
-    //     } catch (error) {
-    //         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-    //     }
-    // }
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    }
 }

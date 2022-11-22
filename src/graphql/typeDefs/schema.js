@@ -29,6 +29,7 @@ const wishListTypes = require('./wishListTypes');
 const filterPaginationTypes = require('./filterPaginationTypes');
 const purchaseOrderTypes = require('./purchaseOrderTypes');
 const shippingMethodTypes = require('./shippingMethodTypes');
+const contactUsTypes = require('./contactUsTypes');
 
 
 // Type Defs and Scalars
@@ -98,5 +99,6 @@ module.exports = [
     wishListTypes,
     filterPaginationTypes,
     purchaseOrderTypes,
-    shippingMethodTypes
+    shippingMethodTypes,
+    contactUsTypes
 ]

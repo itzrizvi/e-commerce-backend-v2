@@ -266,7 +266,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { id, po_id } = req;
+            const { id } = req;
             // ASSOCIATION STARTS
             // PO TO vendor
             if (!db.purchase_order.hasAlias('vendor')) {
@@ -391,7 +391,6 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id,
-                        po_id,
                         tenant_id: TENANTID
                     }]
                 }

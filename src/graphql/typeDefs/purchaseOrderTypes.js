@@ -76,7 +76,6 @@ type GetPurchaseOrderList {
 
 input GetSinglePurchaseOrderInput {
     id:Int!
-    po_id:String!
 }
 
 type GetSinglePurchaseOrderOutput {

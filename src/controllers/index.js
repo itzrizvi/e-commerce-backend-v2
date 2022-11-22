@@ -26,4 +26,5 @@ module.exports = {
     ...require('./filterPagination'),
     ...require('./purchaseOrder'),
     ...require('./shippingMethod'),
+    ...require('./contactUs'),
 }

@@ -418,6 +418,10 @@ module.exports = {
             const { id,
                 po_id,
                 vendor_id,
+                shipping_method_id,
+                payment_method_id,
+                order_placed_via,
+                status,
                 vendor_billing_id,
                 vendor_shipping_id,
                 tax_amount,
@@ -485,6 +489,10 @@ module.exports = {
 
             // Update Doc For Purchase Order
             const poUpdateDoc = {
+                shipping_method_id,
+                payment_method_id,
+                order_placed_via,
+                status,
                 vendor_billing_id,
                 vendor_shipping_id,
                 tax_amount,

@@ -91,6 +91,10 @@ input UpdatePurchaseOrderInput {
     vendor_id:Int
     vendor_billing_id:Int
     vendor_shipping_id:Int
+    shipping_method_id:Int
+    payment_method_id:Int
+    order_placed_via:String
+    status:String
     tax_amount:Float
     comment:String
     products:JSON

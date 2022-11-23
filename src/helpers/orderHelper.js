@@ -1290,18 +1290,34 @@ module.exports = {
                 });
             }
 
+            // Order and Order Items
+            if (!db.order.hasAlias("order_item") && !db.order.hasAlias("orderitems")) {
+                await db.order.hasMany(db.order_item, {
+                    foreignKey: "order_id",
+                    as: 'orderitems'
+                });
+            }
+
             // Order List For Admin
             const orderlist = await db.order.findAll({
                 include: [
                     { model: db.user, as: 'customer' },
                     { model: db.payment_method, as: 'paymentmethod' },
                     { model: db.order_status, as: 'orderStatus' },
+                    { model: db.order_item, as: 'orderitems' }
                 ],
                 where: {
                     [Op.and]: [{
                         customer_id,
                         tenant_id: TENANTID
                     }]
+                }
+            });
+
+            // Add Product Count Per Order
+            await orderlist.forEach(async (element) => {
+                if (element.orderitems && element.orderitems.length > 0) {
+                    element.productCount = element.orderitems.length
                 }
             });
 
@@ -1313,7 +1329,6 @@ module.exports = {
                 tenant_id: TENANTID,
                 data: orderlist
             }
-
 
 
         } catch (error) {

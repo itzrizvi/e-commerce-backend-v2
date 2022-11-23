@@ -170,6 +170,7 @@ type OrderList {
     discount_amount:Float
     tax_amount:Float
     orderStatus:OrderStatusPublic
+    productCount:Int
     tax_exempt:Boolean
     createdAt:String
     updatedAt:String

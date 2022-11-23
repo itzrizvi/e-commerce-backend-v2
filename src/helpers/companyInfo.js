@@ -394,26 +394,67 @@ module.exports = {
 
       // Array Formation For Bulk Create
       let companyBillingAddress = [];
+      // Default check
+      let defaultBilling = [];
+      // GET Ref ID
+      let ref_id;
 
       addresses.forEach(async (address) => {
-        await companyBillingAddress.push({
-          ref_id: address.parent_id,
-          ref_model: "company_info",
-          phone: address.phone,
-          fax: address.fax,
-          email: address.email,
-          address1: address.address1,
-          address2: address.address2,
-          city: address.city,
-          state: address.state,
-          zip_code: address.zip_code,
-          country: address.country,
-          type: "billing",
-          status: address.status,
-          tenant_id: TENANTID,
-          created_by: user.id
-        });
+        ref_id = address.parent_id
+        if (address.isDefault) {
+          defaultBilling.push(true);
+        }
+        if (defaultBilling.length === 1) {
+
+          await companyBillingAddress.push({
+            ref_id: address.parent_id,
+            ref_model: "company_info",
+            phone: address.phone,
+            fax: address.fax,
+            email: address.email,
+            address1: address.address1,
+            address2: address.address2,
+            city: address.city,
+            state: address.state,
+            zip_code: address.zip_code,
+            country: address.country,
+            type: "billing",
+            status: address.status,
+            tenant_id: TENANTID,
+            created_by: user.id,
+            isDefault: address.isDefault
+          });
+
+        }
+
       });
+
+      if (defaultBilling && defaultBilling.length > 1) {
+        return {
+          message: "You Can Only Select Maximum One Default Billing Address!!!",
+          status: false,
+          tenant_id: TENANTID
+        }
+      }
+
+      if (defaultBilling && defaultBilling.length > 0) {
+
+        const makesDefaultFalse = {
+          isDefault: false,
+          updated_by: user.id
+        }
+
+        await db.address.update(makesDefaultFalse, {
+          where: {
+            [Op.and]: [{
+              ref_id,
+              ref_model: "company_info",
+              type: "billing",
+              tenant_id: TENANTID
+            }]
+          }
+        });
+      }
 
       if (companyBillingAddress && companyBillingAddress.length > 0) {
         const createCompanyBilling = db.address.bulkCreate(companyBillingAddress);
@@ -441,26 +482,67 @@ module.exports = {
 
       // Array Formation For Bulk Create
       let companyShippingAddress = [];
+      // Default check
+      let defaultShipping = [];
+      // GET Ref ID
+      let ref_id;
 
       addresses.forEach(async (address) => {
-        await companyShippingAddress.push({
-          ref_id: address.parent_id,
-          ref_model: "company_info",
-          phone: address.phone,
-          fax: address.fax,
-          email: address.email,
-          address1: address.address1,
-          address2: address.address2,
-          city: address.city,
-          state: address.state,
-          zip_code: address.zip_code,
-          country: address.country,
-          type: "shipping",
-          status: address.status,
-          tenant_id: TENANTID,
-          created_by: user.id
-        });
+
+        ref_id = address.parent_id
+        if (address.isDefault) {
+          defaultShipping.push(true);
+        }
+
+        if (defaultShipping.length === 1) {
+          await companyShippingAddress.push({
+            ref_id: address.parent_id,
+            ref_model: "company_info",
+            phone: address.phone,
+            fax: address.fax,
+            email: address.email,
+            address1: address.address1,
+            address2: address.address2,
+            city: address.city,
+            state: address.state,
+            zip_code: address.zip_code,
+            country: address.country,
+            type: "shipping",
+            status: address.status,
+            tenant_id: TENANTID,
+            created_by: user.id,
+            isDefault: address.isDefault
+          });
+        }
+
       });
+
+      if (defaultShipping && defaultShipping.length > 1) {
+        return {
+          message: "You Can Only Select Maximum One Default Shipping Address!!!",
+          status: false,
+          tenant_id: TENANTID
+        }
+      }
+
+      if (defaultShipping && defaultShipping.length > 0) {
+
+        const makesDefaultFalse = {
+          isDefault: false,
+          updated_by: user.id
+        }
+
+        await db.address.update(makesDefaultFalse, {
+          where: {
+            [Op.and]: [{
+              ref_id,
+              ref_model: "company_info",
+              type: "shipping",
+              tenant_id: TENANTID
+            }]
+          }
+        });
+      }
 
       if (companyShippingAddress && companyShippingAddress.length > 0) {
         const createCompanyBilling = db.address.bulkCreate(companyShippingAddress);

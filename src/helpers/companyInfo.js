@@ -457,7 +457,7 @@ module.exports = {
       }
 
       if (companyBillingAddress && companyBillingAddress.length > 0) {
-        const createCompanyBilling = db.address.bulkCreate(companyBillingAddress);
+        const createCompanyBilling = await db.address.bulkCreate(companyBillingAddress);
 
         if (createCompanyBilling) {
           return {
@@ -545,15 +545,326 @@ module.exports = {
       }
 
       if (companyShippingAddress && companyShippingAddress.length > 0) {
-        const createCompanyBilling = db.address.bulkCreate(companyShippingAddress);
+        const createCompanyShipping = await db.address.bulkCreate(companyShippingAddress);
 
-        if (createCompanyBilling) {
+        if (createCompanyShipping) {
           return {
             tenant_id: TENANTID,
             message: "Successfully Created Company Shipping Address.",
             status: true,
           }
         }
+      }
+
+    } catch (error) {
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+    }
+  },
+  // Update Company Addresses
+  updateCompanyAddress: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      // Data From Request
+      const { ref_id, type, addresses } = req;
+
+      // Extract New Addresses
+      let newAddresses = [];
+      // Check Multiple Defaults in New Addresses
+      let multipleDefaults = [];
+      //
+      addresses.forEach(async (addrss) => {
+        if (addrss.isNew) {
+          //
+          if (addrss.isDefault) {
+            multipleDefaults.push(true);
+          }
+          //
+          newAddresses.push({
+            ref_id: addrss.parent_id,
+            ref_model: "company_info",
+            phone: addrss.phone,
+            fax: addrss.fax,
+            email: addrss.email,
+            address1: addrss.address1,
+            address2: addrss.address2,
+            city: addrss.city,
+            state: addrss.state,
+            zip_code: addrss.zip_code,
+            country: addrss.country,
+            type: type,
+            status: addrss.status,
+            tenant_id: TENANTID,
+            created_by: user.id,
+            isDefault: addrss.isDefault
+          });
+        }
+      });
+
+      //
+      let oldAddresses = addresses.filter((address) => !address.isNew);
+
+      // Differentiate By Type
+      if (type === "billing") {
+        //
+        companyUpdatedBillingAddress = [];
+        // Old Address IDS
+        let oldAddressIDs = [];
+
+        oldAddresses.forEach(async (address) => {
+          oldAddressIDs.push(address.id);
+          //
+          if (address.isDefault) {
+            multipleDefaults.push(true);
+          }
+          //
+          if (multipleDefaults.length === 1) {
+            await companyUpdatedBillingAddress.push({
+              id: address.id,
+              ref_id: address.parent_id,
+              ref_model: "company_info",
+              phone: address.phone,
+              fax: address.fax,
+              email: address.email,
+              address1: address.address1,
+              address2: address.address2,
+              city: address.city,
+              state: address.state,
+              zip_code: address.zip_code,
+              country: address.country,
+              type: "billing",
+              status: address.status,
+              tenant_id: TENANTID,
+              created_by: user.id,
+              isDefault: address.isDefault
+            });
+          }
+
+        });
+
+        //
+        if (multipleDefaults && multipleDefaults.length > 1) {
+          return {
+            message: "You Can Only Select Maximum One Default Billing Address!!!",
+            status: false,
+            tenant_id: TENANTID
+          }
+        }
+
+        // Delete Billing Addresses Which Were Removed
+        if (oldAddressIDs && oldAddressIDs.length > 0) {
+          await db.address.destroy({
+            where: {
+              [Op.and]: [{
+                id: {
+                  [Op.notIn]: oldAddressIDs
+                },
+                ref_id,
+                ref_model: "company_info",
+                type: type,
+                tenant_id: TENANTID
+              }]
+            }
+          });
+        }
+
+        //
+        if (multipleDefaults && multipleDefaults.length > 0) {
+          const makesDefaultFalse = {
+            isDefault: false,
+            updated_by: user.id
+          }
+          await db.address.update(makesDefaultFalse, {
+            where: {
+              [Op.and]: [{
+                ref_id,
+                ref_model: "company_info",
+                type: type,
+                tenant_id: TENANTID
+              }]
+            }
+          });
+        }
+
+        //
+        if (companyUpdatedBillingAddress && companyUpdatedBillingAddress.length > 0) {
+          //
+          companyUpdatedBillingAddress.forEach(async (element) => {
+            await db.address.update({
+              ref_id: element.parent_id,
+              ref_model: "company_info",
+              phone: element.phone,
+              fax: element.fax,
+              email: element.email,
+              address1: element.address1,
+              address2: element.address2,
+              city: element.city,
+              state: element.state,
+              zip_code: element.zip_code,
+              country: element.country,
+              type: type,
+              status: element.status,
+              tenant_id: TENANTID,
+              updated_by: user.id,
+              isDefault: element.isDefault
+            }, {
+              where: {
+                [Op.and]: [{
+                  id: element.id,
+                  ref_id,
+                  ref_model: "company_info",
+                  type: type,
+                  tenant_id: TENANTID
+                }]
+              }
+            });
+
+          });
+        }
+
+        if (newAddresses && newAddresses.length > 0) {
+          const createNewCompanyBilling = await db.address.bulkCreate(newAddresses);
+          if (!createNewCompanyBilling) return { message: "New Billing Address Couldn't Inserted!!!", status: false, tenant_id: TENANTID }
+        }
+
+        // Return Formation
+        return {
+          message: "Company Billing Address Updated Successfully!!!",
+          tenant_id: TENANTID,
+          status: true
+        }
+
+
+      } else if (type === "shipping") {
+
+        //
+        companyUpdatedShippingAddress = [];
+        // Old Address IDS
+        let oldAddressIDs = [];
+
+        oldAddresses.forEach(async (address) => {
+          oldAddressIDs.push(address.id);
+          //
+          if (address.isDefault) {
+            multipleDefaults.push(true);
+          }
+          //
+          if (multipleDefaults.length === 1) {
+            await companyUpdatedShippingAddress.push({
+              id: address.id,
+              ref_id: address.parent_id,
+              ref_model: "company_info",
+              phone: address.phone,
+              fax: address.fax,
+              email: address.email,
+              address1: address.address1,
+              address2: address.address2,
+              city: address.city,
+              state: address.state,
+              zip_code: address.zip_code,
+              country: address.country,
+              type: "shipping",
+              status: address.status,
+              tenant_id: TENANTID,
+              created_by: user.id,
+              isDefault: address.isDefault
+            });
+          }
+
+        });
+
+        //
+        if (multipleDefaults && multipleDefaults.length > 1) {
+          return {
+            message: "You Can Only Select Maximum One Default Shipping Address!!!",
+            status: false,
+            tenant_id: TENANTID
+          }
+        }
+
+        // Delete Shipping Addresses Which Were Removed
+        if (oldAddressIDs && oldAddressIDs.length > 0) {
+          await db.address.destroy({
+            where: {
+              [Op.and]: [{
+                id: {
+                  [Op.notIn]: oldAddressIDs
+                },
+                ref_id,
+                ref_model: "company_info",
+                type: type,
+                tenant_id: TENANTID
+              }]
+            }
+          });
+        }
+
+        //
+        if (multipleDefaults && multipleDefaults.length > 0) {
+          const makesDefaultFalse = {
+            isDefault: false,
+            updated_by: user.id
+          }
+          await db.address.update(makesDefaultFalse, {
+            where: {
+              [Op.and]: [{
+                ref_id,
+                ref_model: "company_info",
+                type: type,
+                tenant_id: TENANTID
+              }]
+            }
+          });
+        }
+
+        //
+        if (companyUpdatedShippingAddress && companyUpdatedShippingAddress.length > 0) {
+          //
+          companyUpdatedShippingAddress.forEach(async (element) => {
+            await db.address.update({
+              ref_id: element.parent_id,
+              ref_model: "company_info",
+              phone: element.phone,
+              fax: element.fax,
+              email: element.email,
+              address1: element.address1,
+              address2: element.address2,
+              city: element.city,
+              state: element.state,
+              zip_code: element.zip_code,
+              country: element.country,
+              type: type,
+              status: element.status,
+              tenant_id: TENANTID,
+              updated_by: user.id,
+              isDefault: element.isDefault
+            }, {
+              where: {
+                [Op.and]: [{
+                  id: element.id,
+                  ref_id,
+                  ref_model: "company_info",
+                  type: type,
+                  tenant_id: TENANTID
+                }]
+              }
+            });
+
+          });
+        }
+
+        if (newAddresses && newAddresses.length > 0) {
+          const createNewCompanyShipping = await db.address.bulkCreate(newAddresses);
+          if (!createNewCompanyShipping) return { message: "New Shipping Address Couldn't Inserted!!!", status: false, tenant_id: TENANTID }
+        }
+
+        // Return Formation
+        return {
+          message: "Company Shipping Address Updated Successfully!!!",
+          tenant_id: TENANTID,
+          status: true
+        }
+
       }
 
     } catch (error) {

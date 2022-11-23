@@ -3,4 +3,5 @@ module.exports = {
     getCompanyInfoController: require("./getCompanyInfoController"),
     addCompanyBillingAddressController: require("./addCompanyBillingAddressController"),
     addCompanyShippingAddressController: require("./addCompanyShippingAddressController"),
+    updateCompanyAddressController: require("./updateCompanyAddressController"),
 }

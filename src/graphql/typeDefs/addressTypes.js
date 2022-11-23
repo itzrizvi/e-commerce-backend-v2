@@ -35,7 +35,7 @@ input Address{
 }
 
 input UpdateAddress{
-    id: Int!
+    id: Int
     parent_id: Int!
     address1: String
     address2: String
@@ -48,6 +48,7 @@ input UpdateAddress{
     country: String
     status: Boolean
     isDefault:Boolean
+    isNew:Boolean
 }
 
 type AddressList {

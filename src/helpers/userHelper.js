@@ -610,7 +610,7 @@ module.exports = {
                 // Check Old Password Is Matching or Not
                 const isMatched = await bcrypt.compare(oldPassword, password);
                 // IF NOT MATCHED
-                if (!isMatched) return { message: "Unauthorized Request!!!", status: false };
+                if (!isMatched) return { message: "Incorrect Old Password!!!", status: false };
 
                 // Update Password Doc
                 const updateDoc = {

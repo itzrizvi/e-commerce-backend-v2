@@ -15,6 +15,7 @@ type AddressOutput{
     country: String
     type: String!
     status: Boolean
+    isDefault: Boolean
     updatedAt:String
     createdAt:String
 }

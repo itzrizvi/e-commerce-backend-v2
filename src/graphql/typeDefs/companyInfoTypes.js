@@ -13,6 +13,8 @@ module.exports = gql`
         company_phones: [PhoneOutput]
         company_emails: [EmailOutput]
         company_socials: [SocialOutput]
+        shippingAddresses: [AddressOutput]
+        billingAddresses: [AddressOutput]
         fax: String
         tenant_id: String
         createdAt: String

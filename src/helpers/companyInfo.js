@@ -362,6 +362,20 @@ module.exports = {
         });
       }
 
+      if (!db.company_info.hasAlias("address") && !db.company_info.hasAlias("shippingAddresses")) {
+        await db.company_info.hasMany(db.address, {
+          foreignKey: "ref_id",
+          as: 'shippingAddresses'
+        });
+      }
+
+      if (!db.company_info.hasAlias("address") && !db.company_info.hasAlias("billingAddresses")) {
+        await db.company_info.hasMany(db.address, {
+          foreignKey: "ref_id",
+          as: 'billingAddresses'
+        });
+      }
+
       const getCompanyInfo = await db.company_info.findOne({
         where: {
           tenant_id: TENANTID,
@@ -370,6 +384,24 @@ module.exports = {
           { model: db.company_email, as: 'company_emails' },
           { model: db.company_phone, as: 'company_phones' },
           { model: db.company_social, as: 'company_socials' },
+          {
+            model: db.address, as: 'shippingAddresses',
+            where: {
+              [Op.and]: [{
+                type: "shipping",
+                tenant_id: TENANTID
+              }]
+            }
+          },
+          {
+            model: db.address, as: 'billingAddresses',
+            where: {
+              [Op.and]: [{
+                type: "billing",
+                tenant_id: TENANTID
+              }]
+            }
+          },
         ]
       });
 

@@ -61,6 +61,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: true
         },
+        isDefault: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

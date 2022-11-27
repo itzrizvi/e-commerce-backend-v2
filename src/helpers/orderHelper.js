@@ -536,6 +536,8 @@ module.exports = {
                 payment_id,
                 coupon_id,
                 order_status_id,
+                po_id,
+                po_number,
                 billing_address_id,
                 shipping_address_id,
                 taxexempt_file } = req;
@@ -696,6 +698,8 @@ module.exports = {
                 coupon_id,
                 order_status_id,
                 shipping_address_id,
+                po_id,
+                po_number,
                 tax_exempt,
                 created_by: user.id,
                 tenant_id: TENANTID

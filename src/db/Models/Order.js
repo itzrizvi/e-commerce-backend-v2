@@ -56,6 +56,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: false
         },
+        po_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        po_number: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         created_by: {
             type: DataTypes.INTEGER,
             allowNull: true

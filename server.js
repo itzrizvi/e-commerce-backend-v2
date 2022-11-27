@@ -21,6 +21,7 @@ const app = express();
 // Middlewares Require
 const onReqTokenGenerate = require('./src/middlewares/onReqTokenGenerator');
 const onReqTenantCheck = require('./src/middlewares/onReqTenantCheckMiddleware');
+const logger = require('./logger');
 
 
 // MIDDLWARES ARRAY
@@ -37,6 +38,7 @@ app.use(middlewares); // Middlewares Using
 app.use(onReqTokenGenerate)
 app.use(onReqTenantCheck)
 app.set('trust proxy', true)
+
 
 // Get file from aws
 app.get('/images/*', getFileStream)
@@ -83,6 +85,7 @@ async function startApolloServer() {
 
     // LISTEN APP
     console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`);
+    logger.info("🚀 Server Ready To GO", { service: 'server.js' })
     return { server, app };
 }
 startApolloServer();

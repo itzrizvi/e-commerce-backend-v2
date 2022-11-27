@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 const { crypt, decrypt } = require('../utils/hashes');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const config = require('config');
+const logger = require('../../logger');
 
 
 // HELPER
@@ -26,6 +27,7 @@ module.exports = {
             });
 
             if (!user) {
+                logger.warning("User Not Found - Line:30", { service: 'adminSignIn.js' });
                 return {
                     message: "USER NOT FOUND",
                     status: false,
@@ -35,6 +37,7 @@ module.exports = {
             // Check Is Valid
             const isValid = await bcrypt.compare(password, user.password);
             if (!isValid) {
+                logger.warning("User Not Found - Line:40", { service: 'adminSignIn.js' });
                 return {
                     message: "USER NOT FOUND",
                     status: false,
@@ -44,14 +47,18 @@ module.exports = {
             // Check Roles
             const { has_role } = user;
 
-            if (has_role === '0') return {
-                message: "USER NOT FOUND",
-                status: false,
+            if (has_role === '0') {
+                logger.warning("User Not Found - Line:51", { service: 'adminSignIn.js' });
+                return {
+                    message: "USER NOT FOUND",
+                    status: false,
+                }
             };
 
             // IF USER STATUS IS FALSE
             const isActive = user.user_status;
             if (!isActive) {
+                logger.warning("Staff Is Disabled - Line:61", { service: 'adminSignIn.js' });
                 return {
                     message: "STAFF IS DISABLED",
                     status: false
@@ -91,6 +98,7 @@ module.exports = {
             }
 
         } catch (error) {
+            logger.crit("crit", error, { service: 'adminSignIn.js' });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
 

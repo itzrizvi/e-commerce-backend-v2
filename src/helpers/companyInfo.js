@@ -386,20 +386,16 @@ module.exports = {
           { model: db.company_social, as: 'company_socials' },
           {
             model: db.address, as: 'shippingAddresses',
+            required: false,
             where: {
-              [Op.and]: [{
-                type: "shipping",
-                tenant_id: TENANTID
-              }]
+              type: "shipping",
             }
           },
           {
             model: db.address, as: 'billingAddresses',
+            required: false,
             where: {
-              [Op.and]: [{
-                type: "billing",
-                tenant_id: TENANTID
-              }]
+              type: "billing",
             }
           },
         ]

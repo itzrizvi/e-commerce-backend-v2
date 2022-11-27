@@ -1,4 +1,5 @@
 // Require Controllers
+const logger = require("../../../logger")
 const { adminSignInController, adminSignUpController, setPasswordController, resetPasswordController } = require("../../controllers")
 
 
@@ -6,10 +7,10 @@ const { adminSignInController, adminSignUpController, setPasswordController, res
 // Admin Auth Based Mutation 
 module.exports = {
     // Admin Sign In
-    adminSignIn: async (root, { email, password }, { db, TENANTID }, info) => {
+    adminSignIn: async (root, { email, password }, { db, TENANTID, ip }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
-
+        logger.http("Admin Sign In Requested", { service: 'Mutation - admin.js', ip: ip });
         // Data from ARGS
         const data = {
             email,

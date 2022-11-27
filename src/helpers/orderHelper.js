@@ -1062,14 +1062,28 @@ module.exports = {
                             totalQuantity += item.quantity;
 
                             //
-                            await newOrderItemsArray.push({ product_id: element.id, price: element.prod_sale_price, quantity: item.quantity, order_id, updated_by: user.id, tenant_id: TENANTID })
+                            await newOrderItemsArray.push({
+                                product_id: element.id,
+                                price: element.prod_sale_price,
+                                quantity: item.quantity,
+                                order_id,
+                                updated_by: user.id,
+                                tenant_id: TENANTID
+                            })
                         } else {
                             const calculateTotal = await element.prod_regular_price * item.quantity;
                             sub_total += calculateTotal;
                             totalQuantity += item.quantity;
 
                             //
-                            await newOrderItemsArray.push({ product_id: element.id, price: element.prod_regular_price, quantity: item.quantity, order_id, updated_by: user.id, tenant_id: TENANTID })
+                            await newOrderItemsArray.push({
+                                product_id: element.id,
+                                price: element.prod_regular_price,
+                                quantity: item.quantity,
+                                order_id,
+                                updated_by: user.id,
+                                tenant_id: TENANTID
+                            })
                         }
                     }
 

@@ -60,6 +60,7 @@ module.exports = {
                 order_placed_via,
                 status,
                 comment,
+                order_id,
                 products } = req;
 
 
@@ -154,7 +155,9 @@ module.exports = {
                 status,
                 comment,
                 created_by: user.id,
-                tenant_id: TENANTID
+                tenant_id: TENANTID,
+                order_id,
+                type: order_id ? "drop_shipping" : "default"
             });
             if (!insertPO) return { message: "Purchase Order Creation Failed!!!", status: false }
 

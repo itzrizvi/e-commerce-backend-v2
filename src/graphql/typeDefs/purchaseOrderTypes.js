@@ -20,6 +20,7 @@ input CreatePurchaseOrderInput {
     payment_method_id:Int!
     tax_amount:Float!
     order_placed_via:String!
+    order_id:Int
     comment:String
     products:JSON!
 }

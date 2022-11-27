@@ -95,6 +95,18 @@ module.exports = {
                 }
             });
 
+            await db.contact_us.update({
+                isRead: true,
+                updated_by: user.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
 
             return {
                 message: "GET Single Contact Us Success!!!",
@@ -146,5 +158,47 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
-    }
+    },
+    // GET CONTACT US UNREAD LIST
+    getContactUsUnreadMsgList: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // 
+            if (!db.contact_us.hasAlias('contactus_media') && !db.contact_us.hasAlias('images')) {
+
+                await db.contact_us.hasMany(db.contactus_media, {
+                    foreignKey: 'contactus_id',
+                    as: 'images'
+                });
+            }
+
+            // 
+            const getcontactusunreadlist = await db.contact_us.findAll({
+                include: [
+                    {
+                        model: db.contactus_media, as: 'images', //
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        isRead: false,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            return {
+                message: "GET Contact Us Unread Message List Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getcontactusunreadlist
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

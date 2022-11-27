@@ -20,6 +20,7 @@ type ContactUs {
     subject:String
     message:String
     tenant_id:String
+    isRead:Boolean
     images:[ContactUsMedia]
 }
 
@@ -50,6 +51,12 @@ type GetContactMessageList {
     data:[ContactUs]
 }
 
+type GetUnreadMsgList {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[ContactUs]
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -61,6 +68,7 @@ extend type Mutation {
 extend type Query {
     getSingleContactUsMsg(query:GetSingleContactMessageInput):GetSingleContactMessageOutput!
     getContactUsMsgList:GetContactMessageList!
+    getContactUsUnreadMsgList:GetUnreadMsgList!
 }
 
 

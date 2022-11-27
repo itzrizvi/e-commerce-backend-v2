@@ -17,3 +17,25 @@
 {"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2022-11-27T06:36:18.666Z"}
 {"level":"warning","message":"User Not Found - Line:30","service":"adminSignIn.js","timestamp":"2022-11-27T06:36:18.957Z"}
 {"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2022-11-27T06:36:25.928Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T06:43:10.920Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T06:43:19.526Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:00:43.634Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:02:32.537Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:02:52.555Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:06:02.845Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:06:35.548Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:06:57.493Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:07:49.457Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:07:55.586Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:08:13.087Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:08:37.844Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:08:49.768Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:09:02.211Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:09:12.343Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:09:42.870Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:09:55.253Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:10:15.166Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:10:22.056Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:10:54.965Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:18:23.252Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2022-11-27T07:18:47.035Z"}

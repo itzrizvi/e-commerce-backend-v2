@@ -21,6 +21,7 @@ input CreatePurchaseOrderInput {
     tax_amount:Float!
     order_placed_via:String!
     order_id:Int
+    type:String
     comment:String
     products:JSON!
 }
@@ -34,6 +35,8 @@ type PurchaseOrderList {
     comment:String
     vendor:Vendor
     paymentmethod:PaymentMethod
+    order_id:Int
+    type:String
     POCreated_by:Staff
 }
 
@@ -59,6 +62,8 @@ type PurchaseOrder {
     comment: String
     shipping_method_id: Int
     tenant_id: String
+    order_id:Int
+    type:String
     vendor: Vendor
     vendorBillingAddress: AddressList
     vendorShippingAddress: AddressList
@@ -95,6 +100,8 @@ input UpdatePurchaseOrderInput {
     shipping_method_id:Int
     payment_method_id:Int
     order_placed_via:String
+    order_id:Int
+    type:String
     status:String
     tax_amount:Float
     comment:String

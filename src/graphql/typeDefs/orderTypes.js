@@ -103,6 +103,8 @@ type OrderAdmin {
     tax_amount:Float
     tax_exempt:Boolean
     tenant_id:String
+    po_id:Int
+    po_number:String
     createdAt:String
     updatedAt:String
     orderitems:[OrderItem]
@@ -167,6 +169,8 @@ type OrderList {
     customer:Customer
     paymentmethod:PaymentMethod
     total:Float
+    po_id:Int
+    po_number:String
     sub_total:Float
     shipping_cost:Float
     discount_amount:Float

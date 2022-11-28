@@ -61,6 +61,7 @@ module.exports = {
                 status,
                 comment,
                 order_id,
+                type,
                 products } = req;
 
 
@@ -157,7 +158,7 @@ module.exports = {
                 created_by: user.id,
                 tenant_id: TENANTID,
                 order_id,
-                type: order_id ? "drop_shipping" : "default"
+                type: type
             });
             if (!insertPO) return { message: "Purchase Order Creation Failed!!!", status: false }
 
@@ -420,6 +421,8 @@ module.exports = {
                 vendor_billing_id,
                 vendor_shipping_id,
                 tax_amount,
+                order_id,
+                type,
                 comment,
                 products } = req;
 
@@ -493,6 +496,8 @@ module.exports = {
                 vendor_shipping_id,
                 tax_amount,
                 comment,
+                order_id,
+                type,
                 vendor_id,
                 grandTotal_price: grandTotal_price === 0 ? previousGrandTotal : grandTotal_price.toFixed(2),
                 updated_by: user.id

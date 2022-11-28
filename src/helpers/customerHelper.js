@@ -68,6 +68,7 @@ module.exports = {
                     tenant_id: createUser.tenant_id,
                     message: "Successfully Created User.",
                     status: true,
+                    id: createUser.id
                 }
             }
 

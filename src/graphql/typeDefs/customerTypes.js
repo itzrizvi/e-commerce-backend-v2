@@ -49,9 +49,16 @@ type AddAddressOutput {
     id:Int
 }
 
+type AddCustomerOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    id:Int
+}
+
 
 extend type Mutation {
-    addCustomer(data: CustomerInput): CommonOutput!
+    addCustomer(data: CustomerInput): AddCustomerOutput!
     addCustomerBillingAddress(data: Address): AddAddressOutput!
     addCustomerShippingAddress(data: Address): AddAddressOutput!
     updateCustomerAddress(data: UpdateAddress): CommonOutput!

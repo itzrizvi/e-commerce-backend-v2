@@ -31,14 +31,14 @@ module.exports = gql`
 
     input UpdateRecevingProductInput {
         id:Int!
-        status:Boolean
+        status:String
         receivedProducts:JSON
     }
 
 
-    # extend type Mutation {
-    #     createRating(data: CreateRatingInput): CreateRatingOutput!
-    # }
+    extend type Mutation {
+        updateReceiving(data: UpdateRecevingProductInput): CommonOutput!
+    }
 
     extend type Query {
         getSingleReceivingProduct(query:GetSingleReceivingProductInput):GetSingleReceivingProductOutput!

@@ -210,4 +210,16 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Update Receiving Product List
+    updateReceiving: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    }
 }

@@ -130,6 +130,7 @@ type ProductForList {
     taxable:Boolean
     is_featured:Boolean
     is_sale:Boolean
+    is_serial:Boolean
     prod_condition:String
     prod_outofstock_status:String
     prod_thumbnail:String

@@ -26,4 +26,5 @@ module.exports = {
     ...require('./purchaseOrderQueries'),
     ...require('./shippingMethodQueries'),
     ...require('./contactUsQueries'),
+    ...require('./receivingProductQueries'),
 }

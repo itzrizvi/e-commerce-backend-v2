@@ -29,6 +29,12 @@ module.exports = gql`
         data:[ReceivingProduct]
     }
 
+    input UpdateRecevingProductInput {
+        id:Int!
+        status:Boolean
+        receivedProducts:JSON
+    }
+
 
     # extend type Mutation {
     #     createRating(data: CreateRatingInput): CreateRatingOutput!

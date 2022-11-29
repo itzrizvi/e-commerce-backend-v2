@@ -28,8 +28,6 @@ type PurchaseOrderList {
     id:Int
     po_id:String
     grandTotal_price:Float
-    order_placed_via:String
-    status:String
     comment:String
     vendor:Vendor
     paymentmethod:PaymentMethod
@@ -55,8 +53,6 @@ type PurchaseOrder {
     po_id: String
     grandTotal_price: Float
     tax_amount: Float
-    order_placed_via: String
-    status: String
     comment: String
     shipping_method_id: Int
     tenant_id: String

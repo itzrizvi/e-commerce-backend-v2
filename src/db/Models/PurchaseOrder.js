@@ -41,10 +41,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        order_placed_via: {
-            type: DataTypes.ENUM("email", "phone"),
-            allowNull: false
-        },
         type: {
             type: DataTypes.ENUM("default", "drop_shipping"),
             allowNull: false
@@ -52,10 +48,6 @@ module.exports = (sequelize, DataTypes) => {
         order_id: {
             type: DataTypes.INTEGER,
             allowNull: true
-        },
-        status: {
-            type: DataTypes.ENUM("new", "submitted", "partially_received", "received"),
-            allowNull: false
         },
         comment: {
             type: DataTypes.STRING,

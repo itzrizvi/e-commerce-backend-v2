@@ -15,11 +15,9 @@ input CreatePurchaseOrderInput {
     vendor_id:Int!
     vendor_billing_id:Int!
     vendor_shipping_id:Int!
-    status:String!
     shipping_method_id:Int!
     payment_method_id:Int!
     tax_amount:Float!
-    order_placed_via:String!
     order_id:Int
     type:String
     comment:String

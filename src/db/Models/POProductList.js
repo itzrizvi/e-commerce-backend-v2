@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        rec_prod_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         quantity: {
             type: DataTypes.INTEGER,
             allowNull: false

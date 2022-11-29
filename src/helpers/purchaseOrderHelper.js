@@ -57,8 +57,6 @@ module.exports = {
                 shipping_method_id,
                 payment_method_id,
                 tax_amount,
-                order_placed_via,
-                status,
                 comment,
                 order_id,
                 type,
@@ -152,8 +150,6 @@ module.exports = {
                 vendor_billing_id,
                 vendor_shipping_id,
                 shipping_method_id,
-                order_placed_via,
-                status,
                 comment,
                 created_by: user.id,
                 tenant_id: TENANTID,
@@ -162,10 +158,20 @@ module.exports = {
             });
             if (!insertPO) return { message: "Purchase Order Creation Failed!!!", status: false }
 
+            // Insert to Receiving Product
+            const insertReceiving = await db.receiving_product.create({
+                po_id: insertPO.id,
+                status: "new",
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
+            if (!insertReceiving) return { message: "Receiving Data Insert Failed!!!", status: false }
 
-            // Inseting Purchase Order ID to PO Product List Array
+
+            // Inseting Purchase Order ID and Receiving Product ID to PO Product List Array
             poProductList.forEach((item) => {
                 item.purchase_order_id = insertPO.id;
+                item.rec_prod_id = insertReceiving.id;
             });
 
             // Insert Product List

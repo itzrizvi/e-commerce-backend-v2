@@ -36,6 +36,13 @@ type PurchaseOrderList {
     POCreated_by:Staff
 }
 
+type ProductSerial {
+    id:Int
+    prod_id:Int
+    serial:String
+    rec_prod_id:Int
+}
+
 type POProductList {
     id:Int
     purchase_order_id:Int
@@ -45,6 +52,7 @@ type POProductList {
     recieved_quantity:Int
     remaining_quantity:Int
     tenant_id:String
+    serials:[ProductSerial]
     product:ProductForList
 }
 

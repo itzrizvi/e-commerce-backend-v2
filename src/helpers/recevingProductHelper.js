@@ -46,6 +46,16 @@ module.exports = {
                 });
             }
 
+            // 
+            if (!db.po_productlist.hasAlias('product_serial') && !db.po_productlist.hasAlias('serials')) {
+
+                await db.po_productlist.hasMany(db.product_serial, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'prod_id',
+                    as: 'serials'
+                });
+            }
+
             // ASSOCIATION ENDS
 
             // Single RP
@@ -53,10 +63,10 @@ module.exports = {
                 include: [
                     {
                         model: db.po_productlist, as: 'poProducts', // 
-                        include: {
-                            model: db.product,
-                            as: 'product'
-                        }
+                        include: [
+                            { model: db.product, as: 'product' },
+                            { model: db.product_serial, as: 'serials' },
+                        ]
                     },
                     {
                         model: db.user, as: "added_by",

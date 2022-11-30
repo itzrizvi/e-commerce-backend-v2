@@ -5,7 +5,8 @@ const { addProductController,
     deleteGalleryImageController,
     uploadGalleryImageController,
     recentViewProductController,
-    addRecentViewProductByArrayController } = require("../../controllers");
+    addRecentViewProductByArrayController,
+    changeProductIsSerialController } = require("../../controllers");
 
 
 // Product Mutations
@@ -60,6 +61,16 @@ module.exports = {
 
         // Return To Controller
         return await updateProductController(args.data, db, user, TENANTID);
+    },
+    // Update Product Is Serial Status Mutation
+    changeProductIsSerial: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await changeProductIsSerialController(args.data, db, user, TENANTID);
     },
     recentViewProduct: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID

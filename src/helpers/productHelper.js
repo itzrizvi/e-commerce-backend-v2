@@ -1970,5 +1970,40 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
-    }
+    },
+    // Update Product Is Serial Helper
+    changeProductIsSerial: async (req, db, user, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Data From Reqeust
+            const { id, is_serial } = req;
+
+            // Update Product Is Serial
+            const updateProdIsSerial = await db.product.update({
+                is_serial: is_serial
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateProdIsSerial) return { message: "Product Is Serial Status Change Failed!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Product Is Serial Status Changed Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

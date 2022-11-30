@@ -16,4 +16,5 @@ module.exports = {
     getSearchedProductsController: require('./getSearchedProductsController'),
     addRecentViewProductByArrayController: require('./addRecentViewProductByArrayController'),
     getLatestProductsController: require('./getLatestProductsController'),
+    changeProductIsSerialController: require('./changeProductIsSerialController'),
 }

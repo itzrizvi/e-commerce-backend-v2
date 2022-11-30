@@ -332,6 +332,12 @@ type GetLatestProducts {
     data:[ProductForList]
 }
 
+input ChangeProductIsSerialInput {
+    id:Int!
+    is_serial:Boolean!
+}
+
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -344,6 +350,7 @@ extend type Mutation {
     updateProduct(data: UpdateProductInput):CommonOutput!
     recentViewProduct(data: RecentViewProductInput): CommonOutput!
     addRecentViewProductByArray(data: AddRecentViewProductByArrayInput): CommonOutput!
+    changeProductIsSerial(data: ChangeProductIsSerialInput): CommonOutput!
 }
 
 extend type Query {

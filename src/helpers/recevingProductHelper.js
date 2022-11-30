@@ -28,7 +28,7 @@ module.exports = {
             }
 
             // 
-            if (!db.receiving_product.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProducts')) {
+            if (!db.receiving_product.hasAlias('po_productlist') && !db.receiving_product.hasAlias('poProducts')) {
 
                 await db.receiving_product.hasMany(db.po_productlist, {
                     foreignKey: 'rec_prod_id',

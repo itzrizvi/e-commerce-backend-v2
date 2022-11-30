@@ -65,7 +65,13 @@ module.exports = {
                         model: db.po_productlist, as: 'poProducts', // 
                         include: [
                             { model: db.product, as: 'product' },
-                            { model: db.product_serial, as: 'serials' },
+                            {
+                                model: db.product_serial, as: 'serials',
+                                required: false,
+                                where: {
+                                    rec_prod_id: id,
+                                }
+                            },
                         ]
                     },
                     {

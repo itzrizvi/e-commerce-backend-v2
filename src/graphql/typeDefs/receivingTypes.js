@@ -10,6 +10,14 @@ module.exports = gql`
         purchaseOrder:PurchaseOrder
         added_by:Staff
     }
+
+    type ReceivingProductSingle {
+        id:Int
+        status:String
+        tenant_id:String
+        poProducts:[POProductList]
+        added_by:Staff
+    }
     
     input GetSingleReceivingProductInput {
         id:Int!
@@ -19,7 +27,7 @@ module.exports = gql`
         message:String
         status:Boolean
         tenant_id:String
-        data:ReceivingProduct
+        data:ReceivingProductSingle
     }
 
     type GetReceivingProductList {

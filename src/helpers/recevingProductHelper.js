@@ -12,15 +12,6 @@ module.exports = {
             // Data From Request
             const { id } = req;
             // ASSOCIATION STARTS
-            // RP TO PO
-            if (!db.receiving_product.hasAlias('purchase_order') && !db.receiving_product.hasAlias('purchaseOrder')) {
-
-                await db.receiving_product.hasOne(db.purchase_order, {
-                    sourceKey: 'po_id',
-                    foreignKey: 'id',
-                    as: 'purchaseOrder'
-                });
-            }
 
             // Created By Associations
             db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
@@ -36,11 +27,11 @@ module.exports = {
             }
 
             // 
-            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
+            if (!db.receiving_product.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProducts')) {
 
-                await db.purchase_order.hasMany(db.po_productlist, {
-                    foreignKey: 'purchase_order_id',
-                    as: 'poProductlist'
+                await db.receiving_product.hasMany(db.po_productlist, {
+                    foreignKey: 'rec_prod_id',
+                    as: 'poProducts'
                 });
             }
 
@@ -54,45 +45,17 @@ module.exports = {
                 });
             }
 
-            // Check If Has Alias with Categories
-            if (!db.product.hasAlias('category')) {
-
-                await db.product.hasOne(db.category, {
-                    sourceKey: 'prod_category',
-                    foreignKey: 'id',
-                    as: 'category'
-                });
-            }
-
-            // Brand Table Association with Product
-            if (!db.product.hasAlias('brand')) {
-
-                await db.product.hasOne(db.brand, {
-                    sourceKey: 'brand_id',
-                    foreignKey: 'id',
-                    as: 'brand'
-                });
-            }
             // ASSOCIATION ENDS
 
             // Single RP
             const singleRP = await db.receiving_product.findOne({
                 include: [
                     {
-                        model: db.purchase_order, as: "purchaseOrder",
-                        include: [
-                            {
-                                model: db.po_productlist, as: 'poProductlist', // 
-                                include: {
-                                    model: db.product,
-                                    as: 'product',
-                                    include: [
-                                        { model: db.category, as: 'category' },
-                                        { model: db.brand, as: 'brand' }
-                                    ]
-                                }
-                            }
-                        ]
+                        model: db.po_productlist, as: 'poProducts', // 
+                        include: {
+                            model: db.product,
+                            as: 'product'
+                        }
                     },
                     {
                         model: db.user, as: "added_by",
@@ -215,7 +178,53 @@ module.exports = {
         // Try Catch Block
         try {
 
+            // Data From Request
+            const { id, status, receivedProducts } = req;
 
+            // Check
+            if (receivedProducts && receivedProducts.length > 0) {
+
+
+                for (const productData of receivedProducts) {
+
+                    if (productData.quantity > productData.received_quantity) {
+
+
+                        if (productData.is_serial) {
+
+                            if (productData.received_quantity === productData.serials.length) {
+
+                                let serials = productData.serials;
+
+                                for (const serial of serials) {
+
+                                }
+
+                            } else {
+
+                                return {
+                                    message: "Invalid Input!!!",
+                                    status: false,
+                                    tenant_id: TENANTID
+                                }
+                            }
+
+                        } else {
+
+                        }
+
+
+                    } else {
+                        return {
+                            message: "Given Quantity is Bigger Than Main Quantity!!!",
+                            status: false,
+                            tenant_id: TENANTID
+                        }
+                    }
+
+                }
+
+            }
 
 
         } catch (error) {

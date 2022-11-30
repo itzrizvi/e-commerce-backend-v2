@@ -72,6 +72,7 @@ type Product {
     taxable:Boolean
     is_featured:Boolean
     is_sale:Boolean
+    is_serial:Boolean
     prod_condition:String
     dimensions:ProductDimension
     prod_weight:String

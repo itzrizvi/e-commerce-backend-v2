@@ -206,7 +206,6 @@ module.exports = {
             if (receivedProducts && receivedProducts.length > 0) {
 
                 for (const productData of receivedProducts) {
-
                     if (productData.quantity > productData.received_quantity) {
 
                         if (productData.is_serial) {
@@ -359,5 +358,86 @@ module.exports = {
             await updateReceivingTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
-    }
+    },
+    // GET Receiving Activity History List Admin
+    getReceivingHistory: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { receiving_id } = req;
+
+            // User and Roles Through Admin Roles Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Receiving and User
+            if (!db.receiving_history.hasAlias('user') && !db.receiving_history.hasAlias('activity_by')) {
+
+                await db.receiving_history.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'activity_by'
+                });
+            }
+
+            // 
+            const receivinghistoryList = await db.receiving_history.findAll({
+                include: [
+                    {
+                        model: db.user, as: 'activity_by', // User and Roles
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        receiving_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            //
+            const modReceivinghistoryList = receivinghistoryList.map(item => {
+                var { data } = item;
+                item.data = JSON.parse(data)
+
+                item.data.products = item.data.products.map(async (element) => {
+
+                    const product = await db.product.findOne({
+                        where: {
+                            [Op.and]: [{
+                                id: element.product_id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+
+                    return {
+                        product_id: element.product_id,
+                        quantity: element.quantity,
+                        recieved_quantity: element.recieved_quantity,
+                        serials: element.serials,
+                        product,
+                    }
+                });
+                return item
+            });
+
+            // Return Formation
+            return {
+                message: "GET Receiving History List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: modReceivinghistoryList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

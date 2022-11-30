@@ -2,6 +2,7 @@
 const { Op } = require("sequelize");
 
 
+
 // PO HELPER
 module.exports = {
     // GET SINGLE RECEVING PRODUCT
@@ -175,6 +176,7 @@ module.exports = {
     },
     // Update Receiving Product List
     updateReceiving: async (req, db, user, isAuth, TENANTID) => {
+        const updateReceivingTransaction = await db.sequelize.transaction();
         // Try Catch Block
         try {
 
@@ -184,11 +186,9 @@ module.exports = {
             // Check
             if (receivedProducts && receivedProducts.length > 0) {
 
-
                 for (const productData of receivedProducts) {
 
                     if (productData.quantity > productData.received_quantity) {
-
 
                         if (productData.is_serial) {
 
@@ -196,12 +196,49 @@ module.exports = {
 
                                 let serials = productData.serials;
 
+                                // Delete Others
+                                await db.product_serial.destroy({
+                                    where: {
+                                        [Op.and]: [{
+                                            serial: {
+                                                [Op.notIn]: productData.serials
+                                            },
+                                            rec_prod_id: id,
+                                            prod_id: productData.prod_id
+                                        }]
+                                    },
+                                    transaction: updateReceivingTransaction
+                                });
+
                                 for (const serial of serials) {
 
+                                    //
+                                    const checkExists = await db.product_serial.findOne({
+                                        where: {
+                                            [Op.and]: [{
+                                                rec_prod_id: id,
+                                                serial: serial,
+                                                prod_id: productData.prod_id,
+                                                tenant_id: TENANTID
+                                            }]
+                                        }
+                                    });
+                                    if (!checkExists) {
+                                        //
+                                        const insertSerial = await db.product_serial.create({
+                                            prod_id: productData.prod_id,
+                                            serial: serial,
+                                            rec_prod_id: id,
+                                            created_by: user.id,
+                                            tenant_id: TENANTID
+                                        }, { transaction: updateReceivingTransaction });
+
+                                        if (!insertSerial) return { message: "Product Serial Insert Failed!!!", status: false, tenant_id: TENANTID }
+
+                                    }
                                 }
 
                             } else {
-
                                 return {
                                     message: "Invalid Input!!!",
                                     status: false,
@@ -209,10 +246,7 @@ module.exports = {
                                 }
                             }
 
-                        } else {
-
                         }
-
 
                     } else {
                         return {
@@ -224,10 +258,61 @@ module.exports = {
 
                 }
 
+
+                for (const productData of receivedProducts) {
+                    // Update Received and Remaining
+                    const updateDoc = {
+                        recieved_quantity: productData.received_quantity,
+                        remaining_quantity: productData.quantity - productData.received_quantity,
+                        updated_by: user.id
+                    }
+                    //
+                    const updateReceivingCounting = await db.po_productlist.update(updateDoc, {
+                        where: {
+                            [Op.and]: [{
+                                product_id: productData.prod_id,
+                                rec_prod_id: id,
+                                tenant_id: TENANTID
+                            }]
+                        },
+                        transaction: updateReceivingTransaction
+                    });
+                    if (!updateReceivingCounting) return { message: `${productData.prod_id} This Product Receiving Couldn't Updated!!!`, status: false, tenant_id: TENANTID }
+
+                }
+
+
+
+            }
+
+            //
+            const updateStatus = await db.receiving_product.update({
+                status: status
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                },
+                transaction: updateReceivingTransaction
+            });
+            if (!updateStatus) return { message: "Status Couldn't Updated!!!", status: false, tenant_id: TENANTID }
+
+
+            await updateReceivingTransaction.commit();
+
+            // Return Formation
+            return {
+                message: "Receiving Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
             }
 
 
+
         } catch (error) {
+            await updateReceivingTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     }

@@ -24,13 +24,13 @@ const db = {}
 const sequelize = new Sequelize(database, user, password, {
     host: host,
     dialect: "postgres",
-    pool: {
-        max: 50,
-        min: 5,
-        acquire: 30000,
-        idle: 10000,
-        evict: 600000
-    },
+    // pool: {
+    //     max: 50,
+    //     min: 5,
+    //     acquire: 30000,
+    //     idle: 10000,
+    //     evict: 600000
+    // },
     port: port,
     logging: false
 })

@@ -121,8 +121,9 @@ module.exports = {
             let grandTotal_price = 0; // Grand Total Price
             // PO Product List Array
             const poProductList = [];
-            products.forEach(async (element) => {
+            let historyProduct = [];
 
+            products.forEach(async (element) => {
                 const calculateTotal = element.price * element.quantity;
                 grandTotal_price += calculateTotal;
 
@@ -136,7 +137,15 @@ module.exports = {
                     remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
                     created_by: user.id,
                     tenant_id: TENANTID
-                })
+                });
+
+                //
+                await historyProduct.push({
+                    product_id: element.id,
+                    quantity: element.quantity,
+                    recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
+                    serials: []
+                });
 
             });
 
@@ -166,6 +175,15 @@ module.exports = {
                 tenant_id: TENANTID
             });
             if (!insertReceiving) return { message: "Receiving Data Insert Failed!!!", status: false }
+
+            //
+            await db.receiving_history.create({
+                data: JSON.stringify({ products: historyProduct, status: "new" }),
+                receiving_id: insertReceiving.id,
+                status: "insert",
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
 
 
             // Inseting Purchase Order ID and Receiving Product ID to PO Product List Array

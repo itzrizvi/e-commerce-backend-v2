@@ -193,6 +193,9 @@ module.exports = {
             // Data From Request
             const { id, status, receivedProducts } = req;
 
+            //
+            let productHistoryData = [];
+
             // Check
             if (receivedProducts && receivedProducts.length > 0) {
 
@@ -205,6 +208,12 @@ module.exports = {
                             if (productData.received_quantity === productData.serials.length) {
 
                                 let serials = productData.serials;
+                                productHistoryData.push({
+                                    product_id: productData.prod_id,
+                                    quantity: productData.quantity,
+                                    recieved_quantity: productData.received_quantity,
+                                    serials: serials
+                                })
 
                                 // Delete Others
                                 await db.product_serial.destroy({
@@ -219,6 +228,8 @@ module.exports = {
                                     },
                                     transaction: updateReceivingTransaction
                                 });
+
+
 
                                 for (const serial of serials) {
 
@@ -288,10 +299,16 @@ module.exports = {
                         transaction: updateReceivingTransaction
                     });
                     if (!updateReceivingCounting) return { message: `${productData.prod_id} This Product Receiving Couldn't Updated!!!`, status: false, tenant_id: TENANTID }
-
                 }
 
-
+                //
+                await db.receiving_history.create({
+                    data: JSON.stringify({ products: productHistoryData, status: null }),
+                    receiving_id: id,
+                    status: "update",
+                    created_by: user.id,
+                    tenant_id: TENANTID
+                });
 
             }
 
@@ -309,6 +326,17 @@ module.exports = {
             });
             if (!updateStatus) return { message: "Status Couldn't Updated!!!", status: false, tenant_id: TENANTID }
 
+            //
+            if (status) {
+                //
+                await db.receiving_history.create({
+                    data: JSON.stringify({ products: [], status: status }),
+                    receiving_id: id,
+                    status: "update",
+                    created_by: user.id,
+                    tenant_id: TENANTID
+                });
+            }
 
             await updateReceivingTransaction.commit();
 

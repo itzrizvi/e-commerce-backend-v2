@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.JSON,
             allowNull: true
         },
+        receiving_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         status: {
             type: DataTypes.STRING,
             allowNull: true

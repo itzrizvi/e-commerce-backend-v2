@@ -206,7 +206,7 @@ module.exports = {
             if (receivedProducts && receivedProducts.length > 0) {
 
                 for (const productData of receivedProducts) {
-                    if (productData.quantity > productData.received_quantity) {
+                    if (productData.quantity >= productData.received_quantity) {
 
                         if (productData.is_serial) {
 
@@ -397,7 +397,10 @@ module.exports = {
                         receiving_id,
                         tenant_id: TENANTID
                     }]
-                }
+                },
+                order: [
+                    ["createdAt", "DESC"]
+                ]
             });
 
             //

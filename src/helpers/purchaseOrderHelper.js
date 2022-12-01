@@ -177,6 +177,20 @@ module.exports = {
             if (!insertReceiving) return { message: "Receiving Data Insert Failed!!!", status: false }
 
             //
+            await db.purchase_order.update({
+                rec_id: insertReceiving.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id: insertPO.id,
+                        po_id: insertPO.po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            //
             await db.receiving_history.create({
                 data: JSON.stringify({ products: historyProduct, status: "new" }),
                 receiving_id: insertReceiving.id,

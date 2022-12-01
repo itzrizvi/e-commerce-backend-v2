@@ -27,6 +27,7 @@ input CreatePurchaseOrderInput {
 type PurchaseOrderList {
     id:Int
     po_id:String
+    rec_id:Int
     grandTotal_price:Float
     comment:String
     vendor:Vendor
@@ -59,6 +60,7 @@ type POProductList {
 type PurchaseOrder {
     id: Int
     po_id: String
+    rec_id:Int
     grandTotal_price: Float
     tax_amount: Float
     comment: String

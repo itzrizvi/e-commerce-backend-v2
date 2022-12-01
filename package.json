@@ -38,6 +38,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "sequelize-cli": "^6.5.2"
   }
 }

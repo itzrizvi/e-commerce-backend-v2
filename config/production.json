@@ -1,9 +1,1 @@
-{
-    "SERVER": {
-        "DATABASE": "ebdb",
-        "USER": "rizvi",
-        "PASSWORD": "PaBronx1995",
-        "HOST": "awseb-e-eujdhwvftb-stack-awsebrdsdatabase-lf16epkxvqra.cy4pyx9glsva.us-east-1.rds.amazonaws.com",
-        "PORT": 5432
-    }
-}
+{}

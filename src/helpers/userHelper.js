@@ -536,7 +536,7 @@ module.exports = {
             const mailData = {
                 email: email,
                 subject: "Password Reset of Primer Server Parts Account",
-                message: `Your Prime Server Parts Account Password Updated Successfully, Your Email is: ${email}, Your Updated Password is: ${confirmPassword}`
+                message: `Your Prime Server Parts Account Password Updated Successfully, Your Email is: ${email}`
             }
 
             // SENDING EMAIL FOR RESET PASSWORD

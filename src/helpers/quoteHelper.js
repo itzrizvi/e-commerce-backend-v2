@@ -8,9 +8,26 @@ module.exports = {
     addToQuote: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
-            console.log(req)
+
             // Data From Request
-            const { } = req;
+            const { user_id, product_id, quantity } = req;
+
+            // Check If User Already Have Quote Data
+            const findQuote = await db.quotes.findOne({
+                where: {
+                    [Op.and]: [{
+                        user_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF QUOTE FOUND
+            if (findQuote) {
+
+            } else {
+
+            }
 
 
         } catch (error) {

@@ -266,6 +266,7 @@ module.exports = {
 
             // Find ALL Products By Category
             const getProductsByCategory = await db.product.findAll({
+                limit: 20,
                 where: {
                     [Op.and]: [{
                         prod_category: cat_id,

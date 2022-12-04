@@ -41,7 +41,7 @@ module.exports = {
                 let updatedGrandTotal = grand_total + (prod_regular_price * quantity ?? 1);
 
                 // Update Quote
-                const updateQuote = await db.quote.update({
+                await db.quote.update({
                     grand_total: updatedGrandTotal
                 }, {
                     where: {
@@ -62,18 +62,27 @@ module.exports = {
                         tenant_id: TENANTID
                     }
                 });
-                const { total_price, quantity: quoteItemQuantity } = checkQuoteItem;
+                const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
 
-                // if (checkQuoteItem) {
+                if (checkQuoteItem) {
 
-                //     const updateQuoteItem = await db.quote_item.update({
-                //         quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity
-                //     }, {
+                    await db.quote_item.update({
+                        quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity,
+                        total_price: quantity ? quantity * prod_regular_price : total_price
+                    }, {
+                        [Op.and]: [{
+                            id: quoteItemID,
+                            product_id,
+                            quote_id: id,
+                            tenant_id: TENANTID
+                        }]
+                    });
 
-                //     })
 
 
-                // }
+
+
+                }
 
 
 

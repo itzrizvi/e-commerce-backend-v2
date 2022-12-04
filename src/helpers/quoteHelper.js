@@ -6,6 +6,7 @@ const { Op } = require("sequelize");
 module.exports = {
     // Add To Quote API
     addToQuote: async (req, db, user, isAuth, TENANTID) => {
+        const quoteTransaction = await db.sequelize.transaction();
         // Try Catch Block
         try {
 
@@ -41,8 +42,9 @@ module.exports = {
                 let updatedGrandTotal = grand_total + (prod_regular_price * quantity ?? 1);
 
                 // Update Quote
-                await db.quote.update({
-                    grand_total: updatedGrandTotal
+                const updateQuote = await db.quote.update({
+                    grand_total: updatedGrandTotal,
+                    updatedBy: user.id
                 }, {
                     where: {
                         [Op.and]: [{
@@ -52,6 +54,7 @@ module.exports = {
                         }]
                     }
                 });
+                if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
 
                 // Update Quote Items
                 // Check the Product is Already in Quote Items
@@ -62,41 +65,80 @@ module.exports = {
                         tenant_id: TENANTID
                     }
                 });
-                const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
+
 
                 if (checkQuoteItem) {
+                    const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
 
-                    await db.quote_item.update({
+                    const quoteItemUpdate = await db.quote_item.update({
                         quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity,
-                        total_price: quantity ? quantity * prod_regular_price : total_price
+                        total_price: quantity ? (quantity + quoteItemQuantity) * prod_regular_price : total_price,
+                        updatedBy: user.id
                     }, {
-                        [Op.and]: [{
-                            id: quoteItemID,
-                            product_id,
-                            quote_id: id,
-                            tenant_id: TENANTID
-                        }]
+                        where: {
+                            [Op.and]: [{
+                                id: quoteItemID,
+                                product_id,
+                                quote_id: id,
+                                tenant_id: TENANTID
+                            }]
+                        }
                     });
+                    if (!quoteItemUpdate) return { message: "Quote Item Update Failed!!", status: false }
 
+                } else {
 
-
-
-
+                    const quoteItemCreate = await db.quote_item.create({
+                        product_id,
+                        quote_id: id,
+                        price: prod_regular_price,
+                        quantity: quantity ?? 1,
+                        total_price: quantity ? quantity * prod_regular_price : 1 * prod_regular_price,
+                        tenant_id: TENANTID,
+                        createdBy: user.id,
+                        updatedBy: user.id
+                    });
+                    if (!quoteItemCreate) return { message: "Quote Item Create Failed!!", status: false }
                 }
-
-
-
-
 
 
             } else {
 
+                // Create Quote
+                const createQuote = await db.quote.create({
+                    user_id,
+                    status: "new",
+                    grand_total: quantity ? quantity * prod_regular_price : prod_regular_price,
+                    createdBy: user.id,
+                    tenant_id: TENANTID
+                });
+                if (!createQuote) return { message: "Quote Create Failed!!", status: false }
 
+                // Create Quote Item
+                const createQuoteItem = await db.quote_item.create({
+                    product_id,
+                    quote_id: createQuote.id,
+                    price: prod_regular_price,
+                    quantity: quantity ?? 1,
+                    total_price: quantity ? quantity * prod_regular_price : prod_regular_price,
+                    createdBy: user.id,
+                    tenant_id: TENANTID
+                });
+                if (!createQuoteItem) return { message: "New Quote Item Create Failed!!", status: false }
+            }
 
+            await quoteTransaction.commit();
+
+            // Return Formation
+            return {
+                message: "Successfully Created a Quote",
+                status: true,
+                tenant_id: TENANTID
             }
 
 
         } catch (error) {
+            await quoteTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },

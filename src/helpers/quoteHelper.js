@@ -142,5 +142,63 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Add To Quote API
+    submitQuote: async (req, db, user, isAuth, TENANTID) => {
+        const quoteTransaction = await db.sequelize.transaction();
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { quote_id, user_id } = req;
+
+            // Check If User Already Have Quote Data
+            const findQuote = await db.quote.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: quote_id,
+                        user_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!findQuote) return { message: "User Has No Quote Yet", status: false }
+
+            // Check Already Have Quotation
+            const checkQuote = await db.submitted_quote.findOne({
+                where: {
+                    [Op.and]: [{
+                        user_id,
+                        quote_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (checkQuote) return { message: "You Cannot Make Quote When You Have One Pending Already!!!", status: false };
+
+            // Submit Quote
+            const submitquote = await db.submitted_quote.create({
+                user_id,
+                quote_id,
+                createdBy: user.id,
+                tenant_id: TENANTID
+            });
+            if (!submitquote) return { message: "Quote Cannot Be Submitted!!!", status: false }
+
+
+            await quoteTransaction.commit();
+
+            // Return Formation
+            return {
+                message: "Submitted The Quote!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            await quoteTransaction.rollback();
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 
 }

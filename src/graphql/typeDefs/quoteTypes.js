@@ -37,12 +37,18 @@ input AddToQuoteInput {
     quantity:Int
 }
 
+input SubmitQuoteInput {
+    quote_id:Int!
+    user_id:Int!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     addToQuote(data:AddToQuoteInput):CommonOutput!
+    submitQuote(data:SubmitQuoteInput):CommonOutput!
 }
 
 # extend type Query {

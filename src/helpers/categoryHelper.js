@@ -627,6 +627,7 @@ module.exports = {
 
             // Find ALL Products By Category
             const getCategoryWithProducts = await db.category.findOne({
+                limit: 20,
                 include: [{
                     model: db.product,
                     as: 'products',

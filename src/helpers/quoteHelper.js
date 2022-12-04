@@ -13,7 +13,7 @@ module.exports = {
             const { user_id, product_id, quantity } = req;
 
             // Check If User Already Have Quote Data
-            const findQuote = await db.quotes.findOne({
+            const findQuote = await db.quote.findOne({
                 where: {
                     [Op.and]: [{
                         user_id,
@@ -22,10 +22,67 @@ module.exports = {
                 }
             });
 
+            // GET Product Data
+            const findProduct = await db.product.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: product_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { prod_regular_price } = findProduct
+
             // IF QUOTE FOUND
             if (findQuote) {
 
+                // GET QUOTE DATA
+                const { id, grand_total } = findQuote;
+                let updatedGrandTotal = grand_total + (prod_regular_price * quantity ?? 1);
+
+                // Update Quote
+                const updateQuote = await db.quote.update({
+                    grand_total: updatedGrandTotal
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            user_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Update Quote Items
+                // Check the Product is Already in Quote Items
+                const checkQuoteItem = await db.quote_item.findOne({
+                    where: {
+                        product_id,
+                        quote_id: id,
+                        tenant_id: TENANTID
+                    }
+                });
+                const { total_price, quantity: quoteItemQuantity } = checkQuoteItem;
+
+                // if (checkQuoteItem) {
+
+                //     const updateQuoteItem = await db.quote_item.update({
+                //         quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity
+                //     }, {
+
+                //     })
+
+
+                // }
+
+
+
+
+
+
             } else {
+
+
 
             }
 

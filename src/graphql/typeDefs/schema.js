@@ -31,6 +31,7 @@ const purchaseOrderTypes = require('./purchaseOrderTypes');
 const shippingMethodTypes = require('./shippingMethodTypes');
 const contactUsTypes = require('./contactUsTypes');
 const receivingTypes = require('./receivingTypes');
+const quoteTypes = require('./quoteTypes');
 
 
 // Type Defs and Scalars
@@ -102,5 +103,6 @@ module.exports = [
     purchaseOrderTypes,
     shippingMethodTypes,
     contactUsTypes,
-    receivingTypes
+    receivingTypes,
+    quoteTypes
 ]

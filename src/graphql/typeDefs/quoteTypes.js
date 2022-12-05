@@ -71,6 +71,10 @@ module.exports = gql`
         id:Int
     }
 
+    input QuoteItemDeleteInput {
+        id:Int!
+    }
+
     input SubmitQuoteInput {
         quote_id:Int!
         note:String
@@ -105,6 +109,14 @@ module.exports = gql`
         data:SubmittedQuote
     }
 
+
+    
+    # input SubmittedQuoteUpdateInput {
+    #     id:Int!
+    #     status:String!
+
+    # }
+
     # Extended QUERIES AND MUTATIONS ######################################
     #######################################################################
 
@@ -112,6 +124,7 @@ module.exports = gql`
         addToQuote(data:AddToQuoteInput):AddToQuoteOutput!
         submitQuote(data:SubmitQuoteInput):CommonOutput!
         quoteSync(data:QuoteSyncInput):AddToQuoteOutput!
+        quoteItemDelete(data:QuoteItemDeleteInput):CommonOutput!
     }
 
     extend type Query {

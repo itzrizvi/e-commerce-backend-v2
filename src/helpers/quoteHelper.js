@@ -159,6 +159,79 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Quote Item Delete API
+    quoteItemDelete: async (req, db, user, isAuth, TENANTID) => {
+        const quoteTransaction = await db.sequelize.transaction();
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id } = req;
+
+            // Inlcude Quote Items
+            if (!db.quote_item.hasAlias('quote')) {
+                await db.quote_item.hasOne(db.quote, {
+                    sourceKey: "quote_id",
+                    foreignKey: 'id',
+                    as: 'quote'
+                });
+            }
+            // Check If User Already Have Quote Data
+            const findQuoteitem = await db.quote_item.findOne({
+                include: { model: db.quote, as: "quote" },
+                where: {
+                    [Op.and]: [{
+                        id,
+                        createdBy: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            //
+            const { grand_total, id: quoteID } = findQuoteitem.quote;
+            const { total_price } = findQuoteitem;
+
+            // Update Grand Total On Quote
+            const updategrandtotal = await db.quote.update({
+                grand_total: grand_total - total_price
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id: quoteID,
+                        user_id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updategrandtotal) return { message: "Quote Grand Total Couldn't Updated", status: false }
+
+            // Delete Quote Item
+            const deleteQuoteItem = await db.quote_item.destroy({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        createdBy: user.id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!deleteQuoteItem) return { message: "Quote Item Couldn't Deleted", status: false }
+
+
+            await quoteTransaction.commit();
+            // Return Formation
+            return {
+                message: "Successfully Deleted Quote Item",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            await quoteTransaction.rollback();
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
     // Add To Quote API
     submitQuote: async (req, db, user, isAuth, TENANTID) => {
         const quoteTransaction = await db.sequelize.transaction();

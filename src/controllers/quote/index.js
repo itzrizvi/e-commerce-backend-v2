@@ -5,4 +5,5 @@ module.exports = {
     getQuoteListController: require('./getQuoteListController'),
     getSubmittedQuoteListController: require('./getSubmittedQuoteListController'),
     getSingleSubmittedQuoteController: require('./getSingleSubmittedQuoteController'),
+    quoteItemDeleteController: require('./quoteItemDeleteController'),
 }

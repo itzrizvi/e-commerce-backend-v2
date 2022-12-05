@@ -40,6 +40,7 @@ input AddToQuoteInput {
 input SubmitQuoteInput {
     quote_id:Int!
     user_id:Int!
+    note:String
 }
 
 

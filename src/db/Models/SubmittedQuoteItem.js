@@ -1,28 +1,32 @@
-// Submitted Quote model
+// Submitted Quote Item model
 module.exports = (sequelize, DataTypes) => {
 
-    const SubmittedQuote = sequelize.define("submitted_quote", {
+    const SubmittedQuoteItem = sequelize.define("submittedquote_item", {
         id: {
             type: DataTypes.BIGINT,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        user_id: {
-            type: DataTypes.INTEGER,
+        product_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
-        status: {
-            type: DataTypes.ENUM("submitted", "received", "sent_to_customer"),
+        submittedquote_id: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
-        grand_total: {
+        price: {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        note: {
-            type: DataTypes.TEXT,
-            allowNull: true
+        quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        total_price: {
+            type: DataTypes.FLOAT,
+            allowNull: false
         },
         createdBy: {
             type: DataTypes.INTEGER,
@@ -41,5 +45,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return SubmittedQuote
+    return SubmittedQuoteItem
 }

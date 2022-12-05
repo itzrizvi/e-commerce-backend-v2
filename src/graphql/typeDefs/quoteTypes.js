@@ -43,6 +43,11 @@ input SubmitQuoteInput {
     note:String
 }
 
+input QuoteSyncInput {
+    user_id:Int!
+    products:JSON!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -50,6 +55,7 @@ input SubmitQuoteInput {
 extend type Mutation {
     addToQuote(data:AddToQuoteInput):CommonOutput!
     submitQuote(data:SubmitQuoteInput):CommonOutput!
+    quoteSync(data:QuoteSyncInput):CommonOutput!
 }
 
 # extend type Query {

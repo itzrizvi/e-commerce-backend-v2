@@ -253,5 +253,152 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Quote Sync API
+    quoteSyncController: async (req, db, user, isAuth, TENANTID) => {
+        const quoteTransaction = await db.sequelize.transaction();
+        // Try Catch Block
+        try {
+
+            console.log(req)
+
+            // // Data From Request
+            // const { user_id, product_id, quantity } = req;
+
+            // // Check If User Already Have Quote Data
+            // const findQuote = await db.quote.findOne({
+            //     where: {
+            //         [Op.and]: [{
+            //             user_id,
+            //             tenant_id: TENANTID
+            //         }]
+            //     }
+            // });
+
+            // // GET Product Data
+            // const findProduct = await db.product.findOne({
+            //     where: {
+            //         [Op.and]: [{
+            //             id: product_id,
+            //             tenant_id: TENANTID
+            //         }]
+            //     }
+            // });
+            // const { prod_regular_price, prod_sale_price } = findProduct
+
+            // let productPrice;
+            // if (prod_sale_price > 0) {
+            //     productPrice = prod_sale_price;
+            // } else {
+            //     productPrice = prod_regular_price;
+            // }
+
+            // // IF QUOTE FOUND
+            // if (findQuote) {
+
+            //     // GET QUOTE DATA
+            //     const { id, grand_total } = findQuote;
+            //     let updatedGrandTotal = grand_total + (productPrice * quantity ?? 1);
+
+            //     // Update Quote
+            //     const updateQuote = await db.quote.update({
+            //         grand_total: updatedGrandTotal,
+            //         updatedBy: user.id
+            //     }, {
+            //         where: {
+            //             [Op.and]: [{
+            //                 id,
+            //                 user_id,
+            //                 tenant_id: TENANTID
+            //             }]
+            //         }
+            //     });
+            //     if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
+
+            //     // Update Quote Items
+            //     // Check the Product is Already in Quote Items
+            //     const checkQuoteItem = await db.quote_item.findOne({
+            //         where: {
+            //             product_id,
+            //             quote_id: id,
+            //             tenant_id: TENANTID
+            //         }
+            //     });
+
+
+            //     if (checkQuoteItem) {
+            //         const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
+
+            //         const quoteItemUpdate = await db.quote_item.update({
+            //             quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity,
+            //             total_price: quantity ? (quantity + quoteItemQuantity) * productPrice : total_price,
+            //             updatedBy: user.id
+            //         }, {
+            //             where: {
+            //                 [Op.and]: [{
+            //                     id: quoteItemID,
+            //                     product_id,
+            //                     quote_id: id,
+            //                     tenant_id: TENANTID
+            //                 }]
+            //             }
+            //         });
+            //         if (!quoteItemUpdate) return { message: "Quote Item Update Failed!!", status: false }
+
+            //     } else {
+
+            //         const quoteItemCreate = await db.quote_item.create({
+            //             product_id,
+            //             quote_id: id,
+            //             price: productPrice,
+            //             quantity: quantity ?? 1,
+            //             total_price: quantity ? quantity * productPrice : 1 * productPrice,
+            //             tenant_id: TENANTID,
+            //             createdBy: user.id,
+            //             updatedBy: user.id
+            //         });
+            //         if (!quoteItemCreate) return { message: "Quote Item Create Failed!!", status: false }
+            //     }
+
+
+            // } else {
+
+            //     // Create Quote
+            //     const createQuote = await db.quote.create({
+            //         user_id,
+            //         status: "new",
+            //         grand_total: quantity ? quantity * productPrice : productPrice,
+            //         createdBy: user.id,
+            //         tenant_id: TENANTID
+            //     });
+            //     if (!createQuote) return { message: "Quote Create Failed!!", status: false }
+
+            //     // Create Quote Item
+            //     const createQuoteItem = await db.quote_item.create({
+            //         product_id,
+            //         quote_id: createQuote.id,
+            //         price: productPrice,
+            //         quantity: quantity ?? 1,
+            //         total_price: quantity ? quantity * productPrice : productPrice,
+            //         createdBy: user.id,
+            //         tenant_id: TENANTID
+            //     });
+            //     if (!createQuoteItem) return { message: "New Quote Item Create Failed!!", status: false }
+            // }
+
+            // await quoteTransaction.commit();
+
+            // // Return Formation
+            // return {
+            //     message: "Successfully Created a Quote",
+            //     status: true,
+            //     tenant_id: TENANTID
+            // }
+
+
+        } catch (error) {
+            await quoteTransaction.rollback();
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 
 }

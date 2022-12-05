@@ -1,6 +1,7 @@
 // All Requires
 const { addToQuoteController,
-    submitQuoteController } = require("../../controllers");
+    submitQuoteController,
+    quoteSyncController } = require("../../controllers");
 
 
 // Quote Mutation Start
@@ -9,8 +10,6 @@ module.exports = {
     addToQuote: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
-        // Return If No Auth
-        if (!user || !isAuth) return { message: "Not Authorized", status: false };
 
         // Send to Controller
         return await addToQuoteController(args.data, db, user, isAuth, TENANTID);
@@ -24,6 +23,16 @@ module.exports = {
 
         // Send to Controller
         return await submitQuoteController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Quote Sync From Guest User To Registered User Mutation
+    quoteSync: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+
+        // Send to Controller
+        return await quoteSyncController(args.data, db, user, isAuth, TENANTID);
     },
 
 }

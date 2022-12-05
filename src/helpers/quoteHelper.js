@@ -44,10 +44,19 @@ module.exports = {
 
             // IF QUOTE FOUND
             if (findQuote) {
-
                 // GET QUOTE DATA
                 const { id, grand_total } = findQuote;
-                let updatedGrandTotal = grand_total + (productPrice * quantity ?? 1);
+                // Check the Product is Already in Quote Items
+                const checkQuoteItem = await db.quote_item.findOne({
+                    where: {
+                        product_id,
+                        quote_id: id,
+                        tenant_id: TENANTID
+                    }
+                });
+
+                let restTotal = grand_total - checkQuoteItem.total_price;
+                let updatedGrandTotal = restTotal + (productPrice * quantity ?? 1);
 
                 // Update Quote
                 const updateQuote = await db.quote.update({
@@ -65,16 +74,6 @@ module.exports = {
                 if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
 
                 // Update Quote Items
-                // Check the Product is Already in Quote Items
-                const checkQuoteItem = await db.quote_item.findOne({
-                    where: {
-                        product_id,
-                        quote_id: id,
-                        tenant_id: TENANTID
-                    }
-                });
-
-
                 if (checkQuoteItem) {
                     const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
 

@@ -4,4 +4,5 @@ module.exports = {
     quoteSyncController: require('./quoteSyncController'),
     getQuoteListController: require('./getQuoteListController'),
     getSubmittedQuoteListController: require('./getSubmittedQuoteListController'),
+    getSingleSubmittedQuoteController: require('./getSingleSubmittedQuoteController'),
 }

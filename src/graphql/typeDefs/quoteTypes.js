@@ -32,20 +32,24 @@ type Quote {
 }
 
 input AddToQuoteInput {
-    user_id:Int!
     product_id:Int!
     quantity:Int
 }
 
 input SubmitQuoteInput {
     quote_id:Int!
-    user_id:Int!
     note:String
 }
 
 input QuoteSyncInput {
-    user_id:Int!
     products:JSON!
+}
+
+type GetQuoteListOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[Quote]
 }
 
 
@@ -58,9 +62,9 @@ extend type Mutation {
     quoteSync(data:QuoteSyncInput):CommonOutput!
 }
 
-# extend type Query {
-
-# }
+extend type Query {
+    getQuoteList:GetQuoteListOutput!
+}
 
 
 `;

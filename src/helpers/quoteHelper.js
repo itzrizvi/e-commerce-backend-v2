@@ -11,13 +11,13 @@ module.exports = {
         try {
 
             // Data From Request
-            const { user_id, product_id, quantity } = req;
+            const { product_id, quantity } = req;
 
             // Check If User Already Have Quote Data
             const findQuote = await db.quote.findOne({
                 where: {
                     [Op.and]: [{
-                        user_id,
+                        user_id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -56,7 +56,7 @@ module.exports = {
                     where: {
                         [Op.and]: [{
                             id,
-                            user_id,
+                            user_id: user.id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -113,7 +113,7 @@ module.exports = {
 
                 // Create Quote
                 const createQuote = await db.quote.create({
-                    user_id,
+                    user_id: user.id,
                     status: "new",
                     grand_total: quantity ? quantity * productPrice : productPrice,
                     createdBy: user.id,
@@ -156,7 +156,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { quote_id, user_id, note } = req;
+            const { quote_id, note } = req;
 
             // Inlcude Quote Items
             if (!db.quote.hasAlias('quote_item') && !db.quote.hasAlias('quoteitems')) {
@@ -173,7 +173,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id: quote_id,
-                        user_id,
+                        user_id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -188,7 +188,7 @@ module.exports = {
 
             // Insert Submitted Quote
             const submitquote = await db.submitted_quote.create({
-                user_id,
+                user_id: user.id,
                 status: "submitted",
                 grand_total: grandTotal,
                 note,
@@ -232,7 +232,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id: quote_id,
-                        user_id,
+                        user_id: user.id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -259,20 +259,9 @@ module.exports = {
         // Try Catch Block
         try {
 
-            console.log(req)
+            // Data From Request
+            const { products } = req;
 
-            // // Data From Request
-            // const { user_id, product_id, quantity } = req;
-
-            // // Check If User Already Have Quote Data
-            // const findQuote = await db.quote.findOne({
-            //     where: {
-            //         [Op.and]: [{
-            //             user_id,
-            //             tenant_id: TENANTID
-            //         }]
-            //     }
-            // });
 
             // // GET Product Data
             // const findProduct = await db.product.findOne({
@@ -397,6 +386,86 @@ module.exports = {
 
         } catch (error) {
             await quoteTransaction.rollback();
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET Quote List API
+    getQuoteList: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Associations
+            // Inlcude Quote Items
+            if (!db.quote.hasAlias('quote_item') && !db.quote.hasAlias('quoteitems')) {
+
+                await db.quote.hasMany(db.quote_item, {
+                    foreignKey: 'quote_id',
+                    as: 'quoteitems'
+                });
+            }
+            // Inlcude Quote Items
+            if (!db.quote_item.hasAlias('product')) {
+
+                await db.quote_item.hasOne(db.product, {
+                    sourceKey: "product_id",
+                    foreignKey: 'id',
+                    as: 'product'
+                });
+            }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.quote.hasAlias('user') && !db.quote.hasAlias('quotedby')) {
+                await db.quote.hasOne(db.user, {
+                    sourceKey: 'user_id',
+                    foreignKey: 'id',
+                    as: 'quotedby'
+                });
+            }
+
+
+            // GET QUOTE LIST
+            const quotelist = await db.quote.findAll({
+                include: [
+                    {
+                        model: db.quote_item, as: "quoteitems",
+                        include: {
+                            model: db.product,
+                            as: "product"
+                        }
+                    },
+                    {
+                        model: db.user, as: 'quotedby', // Include User 
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        user_id: user.id,
+                        tenant_id: TENANTID
+                    }]
+                },
+                order: [
+                    ["createdAt", "DESC"]
+                ]
+            })
+
+            // Return Formation
+            return {
+                message: "Successfully GET Quotes",
+                status: true,
+                tenant_id: TENANTID,
+                data: quotelist
+            }
+
+
+        } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },

@@ -27,4 +27,5 @@ module.exports = {
     ...require('./shippingMethodQueries'),
     ...require('./contactUsQueries'),
     ...require('./receivingProductQueries'),
+    ...require('./quoteQueries'),
 }

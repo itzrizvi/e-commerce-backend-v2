@@ -79,8 +79,8 @@ module.exports = {
                     const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
 
                     const quoteItemUpdate = await db.quote_item.update({
-                        quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity,
-                        total_price: quantity ? (quantity + quoteItemQuantity) * productPrice : total_price,
+                        quantity: quantity ? quantity : quoteItemQuantity,
+                        total_price: quantity ? quantity * productPrice : total_price,
                         updatedBy: user.id
                     }, {
                         where: {

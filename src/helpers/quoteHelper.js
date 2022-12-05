@@ -319,118 +319,35 @@ module.exports = {
                 });
             });
 
-            console.log(grandTotal)
+            //
+            const syncquote = await db.quote.create({
+                user_id: user.id,
+                status: "new",
+                grand_total: grandTotal,
+                createdBy: user.id,
+                tenant_id: TENANTID
+            });
+            if (!syncquote) return { message: "Quote Sync Failed!!", status: false }
 
+            //
+            if (quoteItems && quoteItems.length > 0) {
+                //
+                quoteItems.forEach((element) => {
+                    element.quote_id = syncquote.id
+                });
 
-            // const { prod_regular_price, prod_sale_price } = findProduct
-            // let productPrice;
-            // if (prod_sale_price > 0) {
-            //     productPrice = prod_sale_price;
-            // } else {
-            //     productPrice = prod_regular_price;
-            // }
+                const quoteitemsync = await db.quote_item.bulkCreate(quoteItems);
+                if (!quoteitemsync) return { message: "Quote Items Sync Failed!!", status: false }
+            }
 
-            // // IF QUOTE FOUND
-            // if (findQuote) {
-
-            //     // GET QUOTE DATA
-            //     const { id, grand_total } = findQuote;
-            //     let updatedGrandTotal = grand_total + (productPrice * quantity ?? 1);
-
-            //     // Update Quote
-            //     const updateQuote = await db.quote.update({
-            //         grand_total: updatedGrandTotal,
-            //         updatedBy: user.id
-            //     }, {
-            //         where: {
-            //             [Op.and]: [{
-            //                 id,
-            //                 user_id,
-            //                 tenant_id: TENANTID
-            //             }]
-            //         }
-            //     });
-            //     if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
-
-            //     // Update Quote Items
-            //     // Check the Product is Already in Quote Items
-            //     const checkQuoteItem = await db.quote_item.findOne({
-            //         where: {
-            //             product_id,
-            //             quote_id: id,
-            //             tenant_id: TENANTID
-            //         }
-            //     });
-
-
-            //     if (checkQuoteItem) {
-            //         const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
-
-            //         const quoteItemUpdate = await db.quote_item.update({
-            //             quantity: quantity ? quoteItemQuantity + quantity : quoteItemQuantity,
-            //             total_price: quantity ? (quantity + quoteItemQuantity) * productPrice : total_price,
-            //             updatedBy: user.id
-            //         }, {
-            //             where: {
-            //                 [Op.and]: [{
-            //                     id: quoteItemID,
-            //                     product_id,
-            //                     quote_id: id,
-            //                     tenant_id: TENANTID
-            //                 }]
-            //             }
-            //         });
-            //         if (!quoteItemUpdate) return { message: "Quote Item Update Failed!!", status: false }
-
-            //     } else {
-
-            //         const quoteItemCreate = await db.quote_item.create({
-            //             product_id,
-            //             quote_id: id,
-            //             price: productPrice,
-            //             quantity: quantity ?? 1,
-            //             total_price: quantity ? quantity * productPrice : 1 * productPrice,
-            //             tenant_id: TENANTID,
-            //             createdBy: user.id,
-            //             updatedBy: user.id
-            //         });
-            //         if (!quoteItemCreate) return { message: "Quote Item Create Failed!!", status: false }
-            //     }
-
-
-            // } else {
-
-            //     // Create Quote
-            //     const createQuote = await db.quote.create({
-            //         user_id,
-            //         status: "new",
-            //         grand_total: quantity ? quantity * productPrice : productPrice,
-            //         createdBy: user.id,
-            //         tenant_id: TENANTID
-            //     });
-            //     if (!createQuote) return { message: "Quote Create Failed!!", status: false }
-
-            //     // Create Quote Item
-            //     const createQuoteItem = await db.quote_item.create({
-            //         product_id,
-            //         quote_id: createQuote.id,
-            //         price: productPrice,
-            //         quantity: quantity ?? 1,
-            //         total_price: quantity ? quantity * productPrice : productPrice,
-            //         createdBy: user.id,
-            //         tenant_id: TENANTID
-            //     });
-            //     if (!createQuoteItem) return { message: "New Quote Item Create Failed!!", status: false }
-            // }
-
-            // await quoteTransaction.commit();
-
-            // // Return Formation
-            // return {
-            //     message: "Successfully Created a Quote",
-            //     status: true,
-            //     tenant_id: TENANTID
-            // }
+            await quoteTransaction.commit();
+            // Return Formation
+            return {
+                message: "Successfully Synced Your Quote",
+                status: true,
+                tenant_id: TENANTID,
+                id: syncquote.id,
+            }
 
 
         } catch (error) {
@@ -477,10 +394,12 @@ module.exports = {
 
 
             // GET QUOTE LIST
-            const quotelist = await db.quote.findAll({
+            const quotelist = await db.quote.findOne({
                 include: [
                     {
                         model: db.quote_item, as: "quoteitems",
+                        seperate: true,
+                        order: [{ model: db.quote_item }, 'createdAt', 'DESC'],
                         include: {
                             model: db.product,
                             as: "product"
@@ -499,10 +418,7 @@ module.exports = {
                         user_id: user.id,
                         tenant_id: TENANTID
                     }]
-                },
-                order: [
-                    ["createdAt", "DESC"]
-                ]
+                }
             })
 
             // Return Formation

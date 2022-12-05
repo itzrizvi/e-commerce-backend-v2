@@ -56,7 +56,7 @@ type GetQuoteListOutput {
     message:String
     status:Boolean
     tenant_id:String
-    data:[Quote]
+    data:Quote
 }
 
 
@@ -66,7 +66,7 @@ type GetQuoteListOutput {
 extend type Mutation {
     addToQuote(data:AddToQuoteInput):AddToQuoteOutput!
     submitQuote(data:SubmitQuoteInput):CommonOutput!
-    quoteSync(data:QuoteSyncInput):CommonOutput!
+    quoteSync(data:QuoteSyncInput):AddToQuoteOutput!
 }
 
 extend type Query {

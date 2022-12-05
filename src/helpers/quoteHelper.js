@@ -1,5 +1,6 @@
 // All Requires
 const { Op } = require("sequelize");
+const { Mail } = require("../utils/email");
 
 
 // Quote HELPER
@@ -246,6 +247,29 @@ module.exports = {
                     }]
                 }
             });
+
+            // Setting Up Data for EMAIL SENDER
+            const mailSubject = "About Quote Submission From Prime Server Parts"
+            const mailData = {
+                companyInfo: {
+                    logo: 'https://i.ibb.co/Kh8QDFg/image-5.png',
+                    banner: 'https://i.ibb.co/p4vh3XK/image-6.jpg',
+                    companyName: 'Prime Server Parts',
+                    companyUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                    shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                    fb: 'https://i.ibb.co/vZVT4sQ/image-1.png',
+                    tw: 'https://i.ibb.co/41j5tdG/image-2.png',
+                    li: 'https://i.ibb.co/0JS5Xsq/image-3.png',
+                    insta: 'https://i.ibb.co/WFs1krt/image-4.png'
+                },
+                about: 'Your Quote Has Been Submitted',
+                message: `You Will Be Notified By Email After Review The Submitted Quote.`
+            }
+
+            // SENDING EMAIL
+            // await verifierEmail(mailData);
+            // SENDING EMAIL
+            await Mail(user.email, mailSubject, mailData, 'quote_submit');
 
             await quoteTransaction.commit();
 

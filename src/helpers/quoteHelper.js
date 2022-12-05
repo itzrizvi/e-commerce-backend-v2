@@ -434,5 +434,81 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // GET Submitted Quote List API
+    getSubmittedQuoteList: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Associations
+            // Inlcude Submitted Quote Items
+            if (!db.submitted_quote.hasAlias('submittedquote_item') && !db.submitted_quote.hasAlias('submittedquoteitems')) {
+
+                await db.submitted_quote.hasMany(db.submittedquote_item, {
+                    foreignKey: 'submittedquote_id',
+                    as: 'submittedquoteitems'
+                });
+            }
+            // Inlcude Quote Items
+            if (!db.submittedquote_item.hasAlias('product')) {
+
+                await db.submittedquote_item.hasOne(db.product, {
+                    sourceKey: "product_id",
+                    foreignKey: 'id',
+                    as: 'product'
+                });
+            }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.submitted_quote.hasAlias('user') && !db.submitted_quote.hasAlias('quotedby')) {
+                await db.submitted_quote.hasOne(db.user, {
+                    sourceKey: 'user_id',
+                    foreignKey: 'id',
+                    as: 'quotedby'
+                });
+            }
+
+
+            // GET SUBMITTED QUOTE LIST
+            const submittedquotelist = await db.submitted_quote.findAll({
+                include: [
+                    {
+                        model: db.submittedquote_item, as: "submittedquoteitems",
+                        seperate: true,
+                        order: [{ model: db.quote_item }, 'createdAt', 'DESC'],
+                        include: {
+                            model: db.product,
+                            as: "product"
+                        }
+                    },
+                    {
+                        model: db.user, as: 'quotedby', // Include User 
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    tenant_id: TENANTID
+                }
+            })
+
+            // Return Formation
+            return {
+                message: "Successfully GET Submitted Quotes",
+                status: true,
+                tenant_id: TENANTID,
+                data: submittedquotelist
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 
 }

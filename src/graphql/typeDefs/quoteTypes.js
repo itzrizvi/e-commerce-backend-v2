@@ -31,6 +31,34 @@ type Quote {
     quotedby:Staff
 }
 
+
+type SubmittedQuoteItem {
+    id:Int
+    submittedquote_id:Int
+    price:Float
+    quantity:Float
+    total_price:Float
+    product:ProductForList
+    createdBy:Int
+    updatedBy:Int
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type SubmittedQuote {
+    id:Int
+    status:String
+    grand_total:Float
+    note:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    submittedquoteitems:[SubmittedQuoteItem]
+    quotedby:Staff
+}
+
+
 input AddToQuoteInput {
     product_id:Int!
     quantity:Int
@@ -59,6 +87,13 @@ type GetQuoteListOutput {
     data:Quote
 }
 
+type GetSibmittedQuoteList {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[SubmittedQuote]
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -71,6 +106,7 @@ extend type Mutation {
 
 extend type Query {
     getQuoteList:GetQuoteListOutput!
+    getSubmittedQuoteList:GetSibmittedQuoteList!
 }
 
 

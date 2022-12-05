@@ -108,6 +108,16 @@ module.exports = {
                     if (!quoteItemCreate) return { message: "Quote Item Create Failed!!", status: false }
                 }
 
+                await quoteTransaction.commit();
+                // Return Formation
+                return {
+                    message: "Successfully Added The New Item In Your Quote",
+                    status: true,
+                    tenant_id: TENANTID,
+                    id,
+                }
+
+
 
             } else {
 
@@ -132,17 +142,16 @@ module.exports = {
                     tenant_id: TENANTID
                 });
                 if (!createQuoteItem) return { message: "New Quote Item Create Failed!!", status: false }
+
+                await quoteTransaction.commit();
+                // Return Formation
+                return {
+                    message: "Successfully Created Quote",
+                    status: true,
+                    tenant_id: TENANTID,
+                    id: createQuote.id,
+                }
             }
-
-            await quoteTransaction.commit();
-
-            // Return Formation
-            return {
-                message: "Successfully Created a Quote",
-                status: true,
-                tenant_id: TENANTID
-            }
-
 
         } catch (error) {
             await quoteTransaction.rollback();
@@ -262,18 +271,58 @@ module.exports = {
             // Data From Request
             const { products } = req;
 
+            // Product ID Array
+            const productIds = [];
+            products.forEach(async (element) => {
+                await productIds.push(element.product_id)
+            });
 
-            // // GET Product Data
-            // const findProduct = await db.product.findOne({
-            //     where: {
-            //         [Op.and]: [{
-            //             id: product_id,
-            //             tenant_id: TENANTID
-            //         }]
-            //     }
-            // });
+            // GET Products Data
+            const findProducts = await db.product.findAll({
+                where: {
+                    [Op.and]: [{
+                        id: productIds,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            //
+            let grandTotal = 0;
+            let quoteItems = [];
+
+            // Find Product and Get Details and push to array
+            await products.forEach(async (item) => {
+                findProducts.forEach(async (element) => {
+                    if (item.product_id === parseInt(element.id)) {
+                        //
+                        const { prod_regular_price, prod_sale_price } = element;
+                        let productPrice;
+                        if (prod_sale_price > 0) {
+                            productPrice = prod_sale_price;
+                        } else {
+                            productPrice = prod_regular_price;
+                        }
+                        //
+                        grandTotal += productPrice * item.quantity;
+
+                        quoteItems.push({
+                            product_id: item.product_id,
+                            price: productPrice,
+                            quantity: item.quantity ?? 1,
+                            total_price: item.quantity ? item.quantity * productPrice : 1 * productPrice,
+                            createdBy: user.id,
+                            tenant_id: TENANTID
+                        })
+
+                    }
+                });
+            });
+
+            console.log(grandTotal)
+
+
             // const { prod_regular_price, prod_sale_price } = findProduct
-
             // let productPrice;
             // if (prod_sale_price > 0) {
             //     productPrice = prod_sale_price;

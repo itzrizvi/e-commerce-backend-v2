@@ -36,6 +36,13 @@ input AddToQuoteInput {
     quantity:Int
 }
 
+type AddToQuoteOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    id:Int
+}
+
 input SubmitQuoteInput {
     quote_id:Int!
     note:String
@@ -57,7 +64,7 @@ type GetQuoteListOutput {
 #######################################################################
 
 extend type Mutation {
-    addToQuote(data:AddToQuoteInput):CommonOutput!
+    addToQuote(data:AddToQuoteInput):AddToQuoteOutput!
     submitQuote(data:SubmitQuoteInput):CommonOutput!
     quoteSync(data:QuoteSyncInput):CommonOutput!
 }

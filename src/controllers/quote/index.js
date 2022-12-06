@@ -7,4 +7,5 @@ module.exports = {
     getSingleSubmittedQuoteController: require('./getSingleSubmittedQuoteController'),
     quoteItemDeleteController: require('./quoteItemDeleteController'),
     updateSubmittedQuoteController: require('./updateSubmittedQuoteController'),
+    getReviewedQuoteController: require('./getReviewedQuoteController'),
 }

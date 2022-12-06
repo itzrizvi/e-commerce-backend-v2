@@ -116,6 +116,17 @@ module.exports = gql`
         products:JSON
     }
 
+    input GetReviewedQuoteInput {
+        id:String!
+    }
+
+    type GetReviewedQuoteOutput {
+        message:String
+        tenant_id:String
+        status:Boolean
+        data:SubmittedQuote
+    }
+
     # Extended QUERIES AND MUTATIONS ######################################
     #######################################################################
 
@@ -131,6 +142,7 @@ module.exports = gql`
         getQuoteList:GetQuoteListOutput!
         getSubmittedQuoteList:GetSibmittedQuoteList!
         getSingleSubmittedQuote(query:GetSingleSubmittedQuoteInput):GetSingleSubmittedQuoteOutput!
+        getReviewedQuote(query:GetReviewedQuoteInput):GetReviewedQuoteOutput!
     }
 
 

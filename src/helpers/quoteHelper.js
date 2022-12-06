@@ -855,6 +855,104 @@ module.exports = {
             await quoteTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
-    }
+    },
+    // GET REVIEWED Submitted Quote  API
+    getReviewedQuote: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id } = req;
+            const decryptID = decrypt(id).split("#");
+            const submittedQuoteID = parseInt(decryptID[0]);
+            const email = decryptID[1];
+
+            // Check User Is OK
+            if (email === user.email) {
+
+                // Associations
+                // Inlcude Submitted Quote Items
+                if (!db.submitted_quote.hasAlias('submittedquote_item') && !db.submitted_quote.hasAlias('submittedquoteitems')) {
+
+                    await db.submitted_quote.hasMany(db.submittedquote_item, {
+                        foreignKey: 'submittedquote_id',
+                        as: 'submittedquoteitems'
+                    });
+                }
+                // Inlcude Quote Items
+                if (!db.submittedquote_item.hasAlias('product')) {
+
+                    await db.submittedquote_item.hasOne(db.product, {
+                        sourceKey: "product_id",
+                        foreignKey: 'id',
+                        as: 'product'
+                    });
+                }
+
+                // Created By Associations
+                db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+                db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+                // Check If Has Alias with Users and Roles
+                if (!db.submitted_quote.hasAlias('user') && !db.submitted_quote.hasAlias('quotedby')) {
+                    await db.submitted_quote.hasOne(db.user, {
+                        sourceKey: 'user_id',
+                        foreignKey: 'id',
+                        as: 'quotedby'
+                    });
+                }
+
+
+                // GET SINGLE SUBMITTED QUOTE
+                const singlesubmittedquote = await db.submitted_quote.findOne({
+                    include: [
+                        {
+                            model: db.submittedquote_item, as: "submittedquoteitems",
+                            seperate: true,
+                            order: [{ model: db.quote_item }, 'createdAt', 'DESC'],
+                            include: {
+                                model: db.product,
+                                as: "product"
+                            }
+                        },
+                        {
+                            model: db.user, as: 'quotedby', // Include User 
+                            include: {
+                                model: db.role,
+                                as: 'roles'
+                            }
+                        }
+                    ],
+                    where: {
+                        [Op.and]: [{
+                            id: submittedQuoteID,
+                            status: "submitted",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                })
+
+                //Return Formation
+                return {
+                    message: "Successfully GET Single Submitted Quote",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: singlesubmittedquote
+                }
+
+
+            } else {
+                return {
+                    message: "Please Authenticate With Correct User!!!",
+                    status: false,
+                    tenant_id: TENANTID,
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 
 }

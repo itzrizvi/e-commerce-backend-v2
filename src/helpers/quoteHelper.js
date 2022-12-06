@@ -821,7 +821,6 @@ module.exports = {
                 let quoteApproveURL = config.get("ECOM_URL").concat(config.get("QUOTE_APPROVE")).concat(hashedID);
                 const mailData = {
                     companyInfo: {
-                        first_name,
                         logo: 'https://i.ibb.co/Kh8QDFg/image-5.png',
                         banner: 'https://i.ibb.co/p4vh3XK/image-6.jpg',
                         companyName: 'Prime Server Parts',
@@ -832,6 +831,7 @@ module.exports = {
                         li: 'https://i.ibb.co/0JS5Xsq/image-3.png',
                         insta: 'https://i.ibb.co/WFs1krt/image-4.png'
                     },
+                    first_name,
                     about: 'Your Quote Has Been Reviewed',
                     message: `Please Check The Link To See Your Reviewed Quote From Prime Server Parts System.`,
                     link: quoteApproveURL

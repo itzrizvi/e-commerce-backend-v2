@@ -108,14 +108,12 @@ module.exports = gql`
         status:Boolean
         data:SubmittedQuote
     }
-
-
     
-    # input SubmittedQuoteUpdateInput {
-    #     id:Int!
-    #     status:String!
-
-    # }
+    input SubmittedQuoteUpdateInput {
+        id:Int!
+        status:String
+        products:JSON
+    }
 
     # Extended QUERIES AND MUTATIONS ######################################
     #######################################################################
@@ -125,6 +123,7 @@ module.exports = gql`
         submitQuote(data:SubmitQuoteInput):CommonOutput!
         quoteSync(data:QuoteSyncInput):AddToQuoteOutput!
         quoteItemDelete(data:QuoteItemDeleteInput):CommonOutput!
+        updateSubmittedQuote(data:SubmittedQuoteUpdateInput):CommonOutput!
     }
 
     extend type Query {

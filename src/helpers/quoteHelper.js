@@ -55,27 +55,27 @@ module.exports = {
                     }
                 });
 
-                let restTotal = grand_total - checkQuoteItem.total_price;
-                let updatedGrandTotal = restTotal + (productPrice * quantity ?? 1);
-
-                // Update Quote
-                const updateQuote = await db.quote.update({
-                    grand_total: updatedGrandTotal,
-                    updatedBy: user.id
-                }, {
-                    where: {
-                        [Op.and]: [{
-                            id,
-                            user_id: user.id,
-                            tenant_id: TENANTID
-                        }]
-                    }
-                });
-                if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
-
                 // Update Quote Items
                 if (checkQuoteItem) {
                     const { id: quoteItemID, total_price, quantity: quoteItemQuantity } = checkQuoteItem;
+
+                    let restTotal = grand_total - total_price;
+                    let updatedGrandTotal = restTotal + (productPrice * quantity ?? 1);
+
+                    // Update Quote
+                    const updateQuote = await db.quote.update({
+                        grand_total: updatedGrandTotal,
+                        updatedBy: user.id
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                id,
+                                user_id: user.id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
 
                     const quoteItemUpdate = await db.quote_item.update({
                         quantity: quantity ? quantity : quoteItemQuantity,
@@ -94,6 +94,24 @@ module.exports = {
                     if (!quoteItemUpdate) return { message: "Quote Item Update Failed!!", status: false }
 
                 } else {
+
+                    let updatedGrandTotal = grand_total + (productPrice * quantity ?? 1);
+
+                    // Update Quote
+                    const updateQuote = await db.quote.update({
+                        grand_total: updatedGrandTotal,
+                        updatedBy: user.id
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                id,
+                                user_id: user.id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    if (!updateQuote) return { message: "Quote Update Failed!!", status: false }
+
 
                     const quoteItemCreate = await db.quote_item.create({
                         product_id,
@@ -116,8 +134,6 @@ module.exports = {
                     tenant_id: TENANTID,
                     id,
                 }
-
-
 
             } else {
 
@@ -271,7 +287,7 @@ module.exports = {
             // Insert Submitted Quote
             const submitquote = await db.submitted_quote.create({
                 user_id: user.id,
-                status: "submitted",
+                status: "new",
                 grand_total: grandTotal,
                 note,
                 createdBy: user.id,
@@ -688,5 +704,55 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    updateSubmittedQuote: async (req, db, user, isAuth, TENANTID) => {
+        const quoteTransaction = await db.sequelize.transaction();
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id, status, products } = req;
+
+            if (products && products.length > 0) {
+
+                // 
+                // Inlcude Quote Items
+                if (!db.submitted_quote.hasAlias('submittedquote_item') && !db.submitted_quote.hasAlias('submittedquoteitems')) {
+                    await db.submitted_quote.hasMany(db.submittedquote_item, {
+                        foreignKey: 'submittedquote_id',
+                        as: 'submittedquoteitems'
+                    });
+                }
+                // Check If User Already Have Quote Data
+                const submittedqoute = await db.submitted_quote.findOne({
+                    include: { model: db.submittedquote_item, as: "submittedquoteitems" },
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+
+
+
+            }
+
+
+
+            await quoteTransaction.commit();
+            // Return Formation
+            return {
+                message: "Update Quote Success!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            await quoteTransaction.rollback();
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    }
 
 }

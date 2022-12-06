@@ -600,15 +600,10 @@ module.exports = {
 
         // Extract New Addresses
         let newAddresses = [];
-        // Check Multiple Defaults in New Addresses
-        let multipleDefaults = [];
         //
         addresses.forEach(async (addrss) => {
           if (addrss.isNew) {
-            //
-            if (addrss.isDefault) {
-              multipleDefaults.push(true);
-            }
+
             //
             newAddresses.push({
               ref_id: addrss.parent_id,
@@ -643,44 +638,32 @@ module.exports = {
 
           oldAddresses.forEach(async (address) => {
             oldAddressIDs.push(address.id);
+
             //
-            if (address.isDefault) {
-              multipleDefaults.push(true);
-            }
-            //
-            if (multipleDefaults.length === 1) {
-              await companyUpdatedBillingAddress.push({
-                id: address.id,
-                ref_id: address.parent_id,
-                ref_model: "company_info",
-                phone: address.phone,
-                fax: address.fax,
-                email: address.email,
-                address1: address.address1,
-                address2: address.address2,
-                city: address.city,
-                state: address.state,
-                zip_code: address.zip_code,
-                country: address.country,
-                type: "billing",
-                status: address.status,
-                tenant_id: TENANTID,
-                created_by: user.id,
-                isDefault: address.isDefault
-              });
-            }
+            companyUpdatedBillingAddress.push({
+              id: address.id,
+              ref_id: address.parent_id,
+              ref_model: "company_info",
+              phone: address.phone,
+              fax: address.fax,
+              email: address.email,
+              address1: address.address1,
+              address2: address.address2,
+              city: address.city,
+              state: address.state,
+              zip_code: address.zip_code,
+              country: address.country,
+              type: "billing",
+              status: address.status,
+              tenant_id: TENANTID,
+              created_by: user.id,
+              isDefault: address.isDefault
+            });
+
 
           });
 
-          //
-          if (multipleDefaults && multipleDefaults.length > 1) {
-            return {
-              message: "You Can Only Select Maximum One Default Billing Address!!!",
-              status: false,
-              tenant_id: TENANTID
-            }
-          }
-
+          // console.log("BILLING", companyUpdatedBillingAddress)
           // Delete Billing Addresses Which Were Removed
           if (oldAddressIDs && oldAddressIDs.length > 0) {
             await db.address.destroy({
@@ -698,23 +681,6 @@ module.exports = {
             });
           }
 
-          //
-          if (multipleDefaults && multipleDefaults.length > 0) {
-            const makesDefaultFalse = {
-              isDefault: false,
-              updated_by: user.id
-            }
-            await db.address.update(makesDefaultFalse, {
-              where: {
-                [Op.and]: [{
-                  ref_id,
-                  ref_model: "company_info",
-                  type: type,
-                  tenant_id: TENANTID
-                }]
-              }
-            });
-          }
 
           //
           if (companyUpdatedBillingAddress && companyUpdatedBillingAddress.length > 0) {
@@ -774,43 +740,32 @@ module.exports = {
 
           oldAddresses.forEach(async (address) => {
             oldAddressIDs.push(address.id);
+
             //
-            if (address.isDefault) {
-              multipleDefaults.push(true);
-            }
-            //
-            if (multipleDefaults.length === 1) {
-              await companyUpdatedShippingAddress.push({
-                id: address.id,
-                ref_id: address.parent_id,
-                ref_model: "company_info",
-                phone: address.phone,
-                fax: address.fax,
-                email: address.email,
-                address1: address.address1,
-                address2: address.address2,
-                city: address.city,
-                state: address.state,
-                zip_code: address.zip_code,
-                country: address.country,
-                type: "shipping",
-                status: address.status,
-                tenant_id: TENANTID,
-                created_by: user.id,
-                isDefault: address.isDefault
-              });
-            }
+            await companyUpdatedShippingAddress.push({
+              id: address.id,
+              ref_id: address.parent_id,
+              ref_model: "company_info",
+              phone: address.phone,
+              fax: address.fax,
+              email: address.email,
+              address1: address.address1,
+              address2: address.address2,
+              city: address.city,
+              state: address.state,
+              zip_code: address.zip_code,
+              country: address.country,
+              type: "shipping",
+              status: address.status,
+              tenant_id: TENANTID,
+              created_by: user.id,
+              isDefault: address.isDefault
+            });
 
           });
 
-          //
-          if (multipleDefaults && multipleDefaults.length > 1) {
-            return {
-              message: "You Can Only Select Maximum One Default Shipping Address!!!",
-              status: false,
-              tenant_id: TENANTID
-            }
-          }
+          // console.log("SHIPPING", companyUpdatedShippingAddress)
+
 
           // Delete Shipping Addresses Which Were Removed
           if (oldAddressIDs && oldAddressIDs.length > 0) {
@@ -829,23 +784,6 @@ module.exports = {
             });
           }
 
-          //
-          if (multipleDefaults && multipleDefaults.length > 0) {
-            const makesDefaultFalse = {
-              isDefault: false,
-              updated_by: user.id
-            }
-            await db.address.update(makesDefaultFalse, {
-              where: {
-                [Op.and]: [{
-                  ref_id,
-                  ref_model: "company_info",
-                  type: type,
-                  tenant_id: TENANTID
-                }]
-              }
-            });
-          }
 
           //
           if (companyUpdatedShippingAddress && companyUpdatedShippingAddress.length > 0) {

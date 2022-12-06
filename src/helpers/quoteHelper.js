@@ -1,6 +1,8 @@
 // All Requires
 const { Op } = require("sequelize");
 const { Mail } = require("../utils/email");
+const config = require('config');
+const { crypt, decrypt } = require("../utils/hashes");
 
 
 // Quote HELPER
@@ -704,27 +706,64 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Update Submitted Quote API
     updateSubmittedQuote: async (req, db, user, isAuth, TENANTID) => {
         const quoteTransaction = await db.sequelize.transaction();
         // Try Catch Block
         try {
 
             // Data From Request
-            const { id, status, products } = req;
+            const { id, status, products, note } = req;
+
+            // GET SUBMITTED QUOTE DATA
+            const { user_id } = await db.submitted_quote.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            // Find CUSTOMER DATA 
+            const { email, first_name } = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: user_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
 
             if (products && products.length > 0) {
 
-                // 
-                // Inlcude Quote Items
-                if (!db.submitted_quote.hasAlias('submittedquote_item') && !db.submitted_quote.hasAlias('submittedquoteitems')) {
-                    await db.submitted_quote.hasMany(db.submittedquote_item, {
-                        foreignKey: 'submittedquote_id',
-                        as: 'submittedquoteitems'
-                    });
-                }
-                // Check If User Already Have Quote Data
-                const submittedqoute = await db.submitted_quote.findOne({
-                    include: { model: db.submittedquote_item, as: "submittedquoteitems" },
+                // Product ID Array
+                const productIds = [];
+                let grandTotal = 0;
+                products.forEach(async (element) => {
+                    grandTotal += element.price * element.quantity;
+                    await productIds.push(element.product_id);
+                });
+
+                await db.submittedquote_item.destroy({
+                    where: {
+                        [Op.and]: [{
+                            product_id: {
+                                [Op.notIn]: productIds
+                            },
+                            submittedquote_id: id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Update Submitted Quote Grand Total
+                await db.submitted_quote.update({
+                    grand_total: grandTotal,
+                    note,
+                    status,
+                    updatedBy: user.id
+                }, {
                     where: {
                         [Op.and]: [{
                             id,
@@ -734,11 +773,74 @@ module.exports = {
                 });
 
 
+                // Update Submitted Quote Item
+                await products.forEach(async (item) => {
+
+                    await db.submittedquote_item.update({
+                        product_id: item.product_id,
+                        submittedquote_id: id,
+                        price: item.price,
+                        quantity: item.quantity,
+                        total_price: item.quantity * item.price,
+                        updatedBy: user.id
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                product_id: item.product_id,
+                                submittedquote_id: id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    })
+
+                });
 
 
+            } else {
+                // Update Submitted Quote Grand Total
+                await db.submitted_quote.update({
+                    note,
+                    status,
+                    updatedBy: user.id
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
             }
 
+            // If Submitted
+            if (status === "submitted") {
+                let hashedID = crypt(`${id + '#' + email}`);
 
+                // Setting Up Data for EMAIL SENDER
+                const mailSubject = "Your Quote Has Been Reviewed From Prime Server Parts"
+                let quoteApproveURL = config.get("ECOM_URL").concat(config.get("QUOTE_APPROVE")).concat(hashedID);
+                const mailData = {
+                    companyInfo: {
+                        first_name,
+                        logo: 'https://i.ibb.co/Kh8QDFg/image-5.png',
+                        banner: 'https://i.ibb.co/p4vh3XK/image-6.jpg',
+                        companyName: 'Prime Server Parts',
+                        companyUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                        shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                        fb: 'https://i.ibb.co/vZVT4sQ/image-1.png',
+                        tw: 'https://i.ibb.co/41j5tdG/image-2.png',
+                        li: 'https://i.ibb.co/0JS5Xsq/image-3.png',
+                        insta: 'https://i.ibb.co/WFs1krt/image-4.png'
+                    },
+                    about: 'Your Quote Has Been Reviewed',
+                    message: `Please Check The Link To See Your Reviewed Quote From Prime Server Parts System.`,
+                    link: quoteApproveURL
+                }
+
+                // SENDING EMAIL
+                await Mail(email, mailSubject, mailData, 'approve_quote');
+
+            }
 
             await quoteTransaction.commit();
             // Return Formation

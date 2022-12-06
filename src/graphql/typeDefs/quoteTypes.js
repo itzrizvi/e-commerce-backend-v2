@@ -111,6 +111,7 @@ module.exports = gql`
     
     input SubmittedQuoteUpdateInput {
         id:Int!
+        note:String
         status:String
         products:JSON
     }

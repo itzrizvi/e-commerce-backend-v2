@@ -1,6 +1,11 @@
 {
   "AWS": {
-    "IMAGE_SIZE": ["128x128", "400x400", "800x800", "1200x1200"],
+    "IMAGE_SIZE": [
+      "128x128",
+      "400x400",
+      "800x800",
+      "1200x1200"
+    ],
     "WRITE_BUCKET": "psp-image-storage",
     "READ_BUCKET": "psp-image-storage-resize",
     "BUCKET_REGION": "us-east-1",
@@ -38,5 +43,6 @@
   "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",
   "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",
   "RESET_PASSWORD": "reset-password/",
-  "SET_PASSWORD": "set-password/"
+  "SET_PASSWORD": "set-password/",
+  "QUOTE_APPROVE": "quote-approve/"
 }

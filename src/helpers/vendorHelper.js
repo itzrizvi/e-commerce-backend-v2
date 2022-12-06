@@ -261,113 +261,448 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    addVendorBillingAddress: async (req, db, user, isAuth, TENANTID) => {
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        try {
-            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
-            const createBilling = db.address.create({
-                ref_id: parent_id,
-                ref_model: "vendor",
-                tenant_id: TENANTID,
-                address1,
-                address2,
-                city,
-                state,
-                zip_code,
-                country,
-                type: "billing",
-                status,
-                phone,
-                fax,
-                email,
-                created_by: user.id
-            });
-
-            if (createBilling) {
-                return {
-                    tenant_id: createBilling.tenant_id,
-                    message: "Successfully Created Billing Address.",
-                    status: true,
-                }
-            }
-        } catch (error) {
-            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-        }
-    },
-    addVendorShippingAddress: async (req, db, user, isAuth, TENANTID) => {
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        try {
-            const { parent_id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
-            const createShipping = db.address.create({
-                ref_id: parent_id,
-                ref_model: "vendor",
-                tenant_id: TENANTID,
-                address1,
-                address2,
-                city,
-                state,
-                zip_code,
-                country,
-                type: "shipping",
-                status,
-                phone,
-                fax,
-                email,
-                created_by: user.id
-            });
-
-            if (createShipping) {
-                return {
-                    tenant_id: createShipping.tenant_id,
-                    message: "Successfully Created Shipping Address.",
-                    status: true,
-                }
-            }
-        } catch (error) {
-            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-        }
-    },
     updateVendorAddress: async (req, db, user, isAuth, TENANTID) => {
-        // Auth Check
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
+        // Try Catch Block
         try {
-            const { id, phone, fax, email, address1, address2, city, state, zip_code, country, status } = req
-            const updateAddress = db.address.update({
-                address1,
-                address2,
-                city,
-                state,
-                zip_code,
-                country,
-                status,
-                phone,
-                fax,
-                email,
-                updated_by: user.id
-            }, {
-                where: {
-                    [Op.and]: [{
-                        id,
-                        tenant_id: TENANTID
-                    }]
+
+            // Data From Request
+            const { ref_id, type, addresses } = req;
+
+            if (addresses && addresses.length > 0) {
+
+                // Extract New Addresses
+                let newAddresses = [];
+                //
+                addresses.forEach(async (addrss) => {
+                    if (addrss.isNew) {
+
+                        //
+                        newAddresses.push({
+                            ref_id: addrss.parent_id,
+                            ref_model: "vendor",
+                            phone: addrss.phone,
+                            fax: addrss.fax,
+                            email: addrss.email,
+                            address1: addrss.address1,
+                            address2: addrss.address2,
+                            city: addrss.city,
+                            state: addrss.state,
+                            zip_code: addrss.zip_code,
+                            country: addrss.country,
+                            type: type,
+                            status: addrss.status,
+                            tenant_id: TENANTID,
+                            created_by: user.id,
+                            isDefault: addrss.isDefault
+                        });
+                    }
+                });
+
+                //
+                let oldAddresses = addresses.filter((address) => !address.isNew);
+
+                // Differentiate By Type
+                if (type === "billing") {
+                    //
+                    vendorUpdatedBillingAddress = [];
+                    // Old Address IDS
+                    let oldAddressIDs = [];
+
+                    oldAddresses.forEach(async (address) => {
+                        oldAddressIDs.push(address.id);
+
+                        //
+                        vendorUpdatedBillingAddress.push({
+                            id: address.id,
+                            ref_id: address.parent_id,
+                            ref_model: "vendor",
+                            phone: address.phone,
+                            fax: address.fax,
+                            email: address.email,
+                            address1: address.address1,
+                            address2: address.address2,
+                            city: address.city,
+                            state: address.state,
+                            zip_code: address.zip_code,
+                            country: address.country,
+                            type: "billing",
+                            status: address.status,
+                            tenant_id: TENANTID,
+                            created_by: user.id,
+                            isDefault: address.isDefault
+                        });
+
+
+                    });
+
+                    // console.log("BILLING", vendorUpdatedBillingAddress)
+                    // Delete Billing Addresses Which Were Removed
+                    if (oldAddressIDs && oldAddressIDs.length > 0) {
+                        await db.address.destroy({
+                            where: {
+                                [Op.and]: [{
+                                    id: {
+                                        [Op.notIn]: oldAddressIDs
+                                    },
+                                    ref_id,
+                                    ref_model: "vendor",
+                                    type: type,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        });
+                    }
+
+
+                    //
+                    if (vendorUpdatedBillingAddress && vendorUpdatedBillingAddress.length > 0) {
+                        //
+                        vendorUpdatedBillingAddress.forEach(async (element) => {
+                            await db.address.update({
+                                ref_id: element.parent_id,
+                                ref_model: "vendor",
+                                phone: element.phone,
+                                fax: element.fax,
+                                email: element.email,
+                                address1: element.address1,
+                                address2: element.address2,
+                                city: element.city,
+                                state: element.state,
+                                zip_code: element.zip_code,
+                                country: element.country,
+                                type: type,
+                                status: element.status,
+                                tenant_id: TENANTID,
+                                updated_by: user.id,
+                                isDefault: element.isDefault
+                            }, {
+                                where: {
+                                    [Op.and]: [{
+                                        id: element.id,
+                                        ref_id,
+                                        ref_model: "vendor",
+                                        type: type,
+                                        tenant_id: TENANTID
+                                    }]
+                                }
+                            });
+
+                        });
+                    }
+
+                    if (newAddresses && newAddresses.length > 0) {
+                        const createNewVendorBilling = await db.address.bulkCreate(newAddresses);
+                        if (!createNewVendorBilling) return { message: "New Billing Address Couldn't Inserted!!!", status: false, tenant_id: TENANTID }
+                    }
+
+                    // Return Formation
+                    return {
+                        message: "Vendor Billing Address Updated Successfully!!!",
+                        tenant_id: TENANTID,
+                        status: true
+                    }
+
+
+                } else if (type === "shipping") {
+
+                    //
+                    vendorUpdatedShippingAddress = [];
+                    // Old Address IDS
+                    let oldAddressIDs = [];
+
+                    oldAddresses.forEach(async (address) => {
+                        oldAddressIDs.push(address.id);
+
+                        //
+                        await vendorUpdatedShippingAddress.push({
+                            id: address.id,
+                            ref_id: address.parent_id,
+                            ref_model: "vendor",
+                            phone: address.phone,
+                            fax: address.fax,
+                            email: address.email,
+                            address1: address.address1,
+                            address2: address.address2,
+                            city: address.city,
+                            state: address.state,
+                            zip_code: address.zip_code,
+                            country: address.country,
+                            type: "shipping",
+                            status: address.status,
+                            tenant_id: TENANTID,
+                            created_by: user.id,
+                            isDefault: address.isDefault
+                        });
+
+                    });
+
+                    // console.log("SHIPPING", vendorUpdatedShippingAddress)
+
+
+                    // Delete Shipping Addresses Which Were Removed
+                    if (oldAddressIDs && oldAddressIDs.length > 0) {
+                        await db.address.destroy({
+                            where: {
+                                [Op.and]: [{
+                                    id: {
+                                        [Op.notIn]: oldAddressIDs
+                                    },
+                                    ref_id,
+                                    ref_model: "vendor",
+                                    type: type,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        });
+                    }
+
+                    //
+                    if (vendorUpdatedShippingAddress && vendorUpdatedShippingAddress.length > 0) {
+                        //
+                        vendorUpdatedShippingAddress.forEach(async (element) => {
+                            await db.address.update({
+                                ref_id: element.parent_id,
+                                ref_model: "vendor",
+                                phone: element.phone,
+                                fax: element.fax,
+                                email: element.email,
+                                address1: element.address1,
+                                address2: element.address2,
+                                city: element.city,
+                                state: element.state,
+                                zip_code: element.zip_code,
+                                country: element.country,
+                                type: type,
+                                status: element.status,
+                                tenant_id: TENANTID,
+                                updated_by: user.id,
+                                isDefault: element.isDefault
+                            }, {
+                                where: {
+                                    [Op.and]: [{
+                                        id: element.id,
+                                        ref_id,
+                                        ref_model: "vendor",
+                                        type: type,
+                                        tenant_id: TENANTID
+                                    }]
+                                }
+                            });
+
+                        });
+                    }
+
+                    if (newAddresses && newAddresses.length > 0) {
+                        const createNewVendorShipping = await db.address.bulkCreate(newAddresses);
+                        if (!createNewVendorShipping) return { message: "New Shipping Address Couldn't Inserted!!!", status: false, tenant_id: TENANTID }
+                    }
+
+                    // Return Formation
+                    return {
+                        message: "Vendor Shipping Address Updated Successfully!!!",
+                        tenant_id: TENANTID,
+                        status: true
+                    }
+
                 }
+
+            } else {
+
+                await db.address.destroy({
+                    where: {
+                        [Op.and]: [{
+                            ref_id,
+                            ref_model: "vendor",
+                            type: type,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Return Formation
+                return {
+                    message: "Vendor Address Updated Successfully!!!",
+                    tenant_id: TENANTID,
+                    status: true
+                }
+
+            }
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Add Vendor Billing Addresses
+    addVendorBillingAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { addresses } = req;
+
+            // Array Formation For Bulk Create
+            let vendorBillingAddress = [];
+            // Default check
+            let defaultBilling = [];
+            // GET Ref ID
+            let ref_id;
+
+            addresses.forEach(async (address) => {
+                ref_id = address.parent_id
+                if (address.isDefault) {
+                    defaultBilling.push(true);
+                }
+                if (defaultBilling.length === 1) {
+
+                    await vendorBillingAddress.push({
+                        ref_id: address.parent_id,
+                        ref_model: "vendor",
+                        phone: address.phone,
+                        fax: address.fax,
+                        email: address.email,
+                        address1: address.address1,
+                        address2: address.address2,
+                        city: address.city,
+                        state: address.state,
+                        zip_code: address.zip_code,
+                        country: address.country,
+                        type: "billing",
+                        status: address.status,
+                        tenant_id: TENANTID,
+                        created_by: user.id,
+                        isDefault: address.isDefault
+                    });
+
+                }
+
             });
 
-            if (updateAddress) {
+            if (defaultBilling && defaultBilling.length > 1) {
                 return {
-                    tenant_id: updateAddress.tenant_id,
-                    message: "Successfully Updated Address.",
-                    status: true,
+                    message: "You Can Only Select Maximum One Default Billing Address!!!",
+                    status: false,
+                    tenant_id: TENANTID
                 }
             }
+
+            if (defaultBilling && defaultBilling.length > 0) {
+
+                const makesDefaultFalse = {
+                    isDefault: false,
+                    updated_by: user.id
+                }
+
+                await db.address.update(makesDefaultFalse, {
+                    where: {
+                        [Op.and]: [{
+                            ref_id,
+                            ref_model: "vendor",
+                            type: "billing",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
+
+            if (vendorBillingAddress && vendorBillingAddress.length > 0) {
+                const createVendorBilling = await db.address.bulkCreate(vendorBillingAddress);
+
+                if (createVendorBilling) {
+                    return {
+                        tenant_id: TENANTID,
+                        message: "Successfully Created Vendor Billing Address.",
+                        status: true,
+                    }
+                }
+            }
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Add Vendor Shipping Addresses
+    addVendorShippingAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { addresses } = req;
+
+            // Array Formation For Bulk Create
+            let vendorShippingAddress = [];
+            // Default check
+            let defaultShipping = [];
+            // GET Ref ID
+            let ref_id;
+
+            addresses.forEach(async (address) => {
+
+                ref_id = address.parent_id
+                if (address.isDefault) {
+                    defaultShipping.push(true);
+                }
+
+                if (defaultShipping.length === 1) {
+                    await vendorShippingAddress.push({
+                        ref_id: address.parent_id,
+                        ref_model: "vendor",
+                        phone: address.phone,
+                        fax: address.fax,
+                        email: address.email,
+                        address1: address.address1,
+                        address2: address.address2,
+                        city: address.city,
+                        state: address.state,
+                        zip_code: address.zip_code,
+                        country: address.country,
+                        type: "shipping",
+                        status: address.status,
+                        tenant_id: TENANTID,
+                        created_by: user.id,
+                        isDefault: address.isDefault
+                    });
+                }
+
+            });
+
+            if (defaultShipping && defaultShipping.length > 1) {
+                return {
+                    message: "You Can Only Select Maximum One Default Shipping Address!!!",
+                    status: false,
+                    tenant_id: TENANTID
+                }
+            }
+
+            if (defaultShipping && defaultShipping.length > 0) {
+
+                const makesDefaultFalse = {
+                    isDefault: false,
+                    updated_by: user.id
+                }
+
+                await db.address.update(makesDefaultFalse, {
+                    where: {
+                        [Op.and]: [{
+                            ref_id,
+                            ref_model: "vendor",
+                            type: "shipping",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
+
+            if (vendorShippingAddress && vendorShippingAddress.length > 0) {
+                const createVendorShipping = await db.address.bulkCreate(vendorShippingAddress);
+
+                if (createVendorShipping) {
+                    return {
+                        tenant_id: TENANTID,
+                        message: "Successfully Created Vendor Shipping Address.",
+                        status: true,
+                    }
+                }
+            }
+
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }

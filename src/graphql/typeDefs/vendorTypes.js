@@ -81,16 +81,31 @@ input GetSingleVendorInput{
     id:Int!
 }
 
+
+input AddVendorBillingAddressInput {
+    addresses:[Address]
+}
+
+input AddVendorShippingAddressInput {
+    addresses:[Address]
+}
+
+input UpdateVendorAddressInput {
+    ref_id:Int!
+    type:String!
+    addresses:[UpdateAddress]
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     createVendor(data: CreateVendorInput): CreateVendorOutput!
     updateVendor(data: UpdateVendorInput): UpdateVendorOutput!
-    addVendorBillingAddress(data: Address): CommonOutput!
-    addVendorShippingAddress(data: Address): CommonOutput!
+    addVendorBillingAddress(data: AddVendorBillingAddressInput): CommonOutput!
+    addVendorShippingAddress(data: AddVendorShippingAddressInput): CommonOutput!
     updateVendorStatus(data: UpdateVendorStatusInput): CreateVendorOutput!
-    updateVendorAddress(data: UpdateAddress): CommonOutput!
+    updateVendorAddress(data: UpdateVendorAddressInput): CommonOutput!
 }
 
 extend type Query {

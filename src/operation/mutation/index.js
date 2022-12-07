@@ -28,4 +28,5 @@ module.exports = {
     ...require('./contactUs'),
     ...require('./recevingProduct'),
     ...require('./quote'),
+    ...require('./emailTemplate'),
 }

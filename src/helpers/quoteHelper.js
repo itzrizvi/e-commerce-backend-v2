@@ -812,6 +812,25 @@ module.exports = {
                 });
             }
 
+
+            // Update Submitted QUote Status
+            if (status === "new") {
+
+                // Update Submitted Quote Grand Total
+                await db.submitted_quote.update({
+                    status: "in_progress"
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
+
+
+
             // If Submitted
             if (status === "submitted") {
                 let hashedID = crypt(`${id + '#' + email}`);
@@ -841,6 +860,9 @@ module.exports = {
                 await Mail(email, mailSubject, mailData, 'approve_quote');
 
             }
+
+
+
 
             await quoteTransaction.commit();
             // Return Formation

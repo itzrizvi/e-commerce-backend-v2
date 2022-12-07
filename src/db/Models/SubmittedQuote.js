@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.ENUM("new", "in_progress", "submitted"),
+            type: DataTypes.ENUM("new", "in_progress", "save", "submitted"),
             allowNull: false
         },
         grand_total: {

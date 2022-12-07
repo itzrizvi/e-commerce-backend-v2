@@ -22,8 +22,6 @@ module.exports = {
                 trim: true
             });
 
-            console.log(slug)
-
             // Check Existence
             const findEmailTemplateOnList = await db.email_template_list.findOne({
                 where: {
@@ -35,22 +33,22 @@ module.exports = {
             });
             if (findEmailTemplateOnList) return { message: "Already Have This Email Template on The List!!!!", status: false }
 
-            // // Add Tax Class TO DB
-            // const insertTaxClass = await db.tax_class.create({
-            //     zip_code,
-            //     tax_amount,
-            //     tenant_id: TENANTID,
-            //     created_by: user.id
-            // });
+            // Add TO DB
+            const insertEmailTemplateOnList = await db.email_template_list.create({
+                name,
+                slug,
+                tenant_id: TENANTID,
+                created_by: user.id
+            });
 
-            // // Return Formation
-            // if (insertTaxClass) {
-            //     return {
-            //         message: "Tax Class Added Successfully!!!",
-            //         status: true,
-            //         tenant_id: TENANTID
-            //     }
-            // }
+            // Return Formation
+            if (insertEmailTemplateOnList) {
+                return {
+                    message: "Email Template Added On List Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
 
 
         } catch (error) {

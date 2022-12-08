@@ -12,12 +12,19 @@ input AddEmailTemplateListInput {
     name:String!
 }
 
+input UpdateEmailTemplateListInput {
+    id:Int!
+    email_template_id:Int
+    name:String
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     addEmailTemplateOnList(data:AddEmailTemplateListInput):CommonOutput!
+    updateEmailTemplateOnList(data:UpdateEmailTemplateListInput):CommonOutput!
 }
 
 # extend type Query {

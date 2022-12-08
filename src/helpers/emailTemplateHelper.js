@@ -123,4 +123,54 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // GET EMAIL TEMPLATE LIST API
+    getAllEmailTemplateList: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.email_template_list.hasAlias('user') && !db.email_template_list.hasAlias('added_by')) {
+
+                await db.email_template_list.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
+            // GET LIST
+            const getlist = await db.email_template_list.findAll({
+                include: [
+                    {
+                        model: db.user, as: 'added_by', // Include User who created
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    tenant_id: TENANTID
+                },
+                order: [
+                    ["slug", "ASC"]
+                ]
+            });
+
+
+            return {
+                message: "GET List Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getlist
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

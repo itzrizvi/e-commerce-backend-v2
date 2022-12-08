@@ -1,5 +1,5 @@
 // ALL REQUIRES;
-const { } = require("../../helpers/emailTemplateHelper");
+const { updateEmailTemplateOnList } = require("../../helpers/emailTemplateHelper");
 const { checkPermission } = require("../../utils/permissionChecker");
 const { singleResponse } = require("../../utils/response");
 
@@ -14,9 +14,9 @@ module.exports = async (req, db, user, isAuth, TENANTID) => {
         return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
     }
 
-    // // SEND TO HELPER
-    // const data = await addEmailTemplateOnList(req, db, user, isAuth, TENANTID);
+    // SEND TO HELPER
+    const data = await updateEmailTemplateOnList(req, db, user, isAuth, TENANTID);
 
-    // return singleResponse(data);
+    return singleResponse(data);
 
 }

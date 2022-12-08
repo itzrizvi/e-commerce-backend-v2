@@ -35,6 +35,17 @@ type GetAllEmailTemplateList {
     data:[EmailTemplateList]
 }
 
+input GetSingleEmailTemplateListInput {
+    id:Int!
+}
+
+type GetSingleEmailTemplateList {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:EmailTemplateList
+}
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -47,6 +58,7 @@ extend type Mutation {
 
 extend type Query {
     getAllEmailTemplateList:GetAllEmailTemplateList!
+    getSingleEmailTemplateList(query:GetSingleEmailTemplateListInput):GetSingleEmailTemplateList!
 }
 
 

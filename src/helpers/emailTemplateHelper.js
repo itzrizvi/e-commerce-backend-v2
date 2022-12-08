@@ -173,4 +173,60 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    //
+    getSingleEmailTemplateList: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id } = req;
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.email_template_list.hasAlias('user') && !db.email_template_list.hasAlias('added_by')) {
+
+                await db.email_template_list.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
+            // GET LIST
+            const getsinglelist = await db.email_template_list.findOne({
+                include: [
+                    {
+                        model: db.user, as: 'added_by', // Include User who created
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                },
+                order: [
+                    ["slug", "ASC"]
+                ]
+            });
+
+
+            return {
+                message: "GET Single Email List Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getsinglelist
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    }
 }

@@ -228,5 +228,57 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
-    }
+    },
+    // Add Email Template Header Footer API
+    addEmailTempHeaderFooter: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { name, content, type } = req;
+
+            // Create Slug
+            const slug = slugify(`${name}`, {
+                replacement: '-',
+                remove: /[*+~.()'"!:@]/g,
+                lower: true,
+                strict: true,
+                trim: true
+            });
+
+            // Check Existence
+            const findEmailHeaderFoooter = await db.email_header_footer.findOne({
+                where: {
+                    [Op.and]: [{
+                        slug,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (findEmailHeaderFoooter) return { message: "Already Have This Email Header or Footer!!!!", status: false }
+
+            // Add TO DB
+            const insertEmailTemplateHF = await db.email_header_footer.create({
+                name,
+                slug,
+                content,
+                type,
+                tenant_id: TENANTID,
+                created_by: user.id
+            });
+
+            // Return Formation
+            if (insertEmailTemplateHF) {
+                return {
+                    message: "Email Template Header or Footer Component Added Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

@@ -17,7 +17,19 @@ type EmailTemplateList {
     added_by:Staff
 }
 
+type EmailHeaderFooter {
+    id:Int
+    name:String
+    slug:String
+    content:String
+    type:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    added_by:Staff
+}
 
+#################################
 input AddEmailTemplateListInput {
     name:String!
 }
@@ -46,6 +58,16 @@ type GetSingleEmailTemplateList {
     data:EmailTemplateList
 }
 
+################################
+
+input AddEmailTempHFInput {
+    name:String
+    content:JSON
+    type:String
+}
+
+
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -54,6 +76,7 @@ type GetSingleEmailTemplateList {
 extend type Mutation {
     addEmailTemplateOnList(data:AddEmailTemplateListInput):CommonOutput!
     updateEmailTemplateOnList(data:UpdateEmailTemplateListInput):CommonOutput!
+    addEmailTempHeaderFooter(data:AddEmailTempHFInput):CommonOutput!
 }
 
 extend type Query {

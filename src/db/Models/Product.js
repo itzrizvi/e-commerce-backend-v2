@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         prod_category: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         prod_regular_price: {
             type: DataTypes.FLOAT,
@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         brand_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         prod_partnum: {
             type: DataTypes.STRING,
@@ -113,7 +113,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         prod_thumbnail: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         added_by: {
             type: DataTypes.BIGINT,

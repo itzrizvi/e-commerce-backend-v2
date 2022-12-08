@@ -7,4 +7,5 @@ module.exports = {
     addEmailTempHeaderFooterController: require('./addEmailTempHeaderFooterController'),
     updateEmailTempHeaderFooterController: require('./updateEmailTempHeaderFooterController'),
     getSingleEmailTempHeaderFooterController: require('./getSingleEmailTempHeaderFooterController'),
+    getEmailTempHeaderFooterListController: require('./getEmailTempHeaderFooterListController'),
 }

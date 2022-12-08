@@ -84,6 +84,13 @@ type GetSingleEmailHeaderFooterOutput {
     data:EmailHeaderFooter
 }
 
+type GetEmailHeaderFooterListOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[EmailHeaderFooter]
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -99,6 +106,7 @@ extend type Query {
     getAllEmailTemplateList:GetAllEmailTemplateList!
     getSingleEmailTemplateList(query:GetSingleEmailTemplateListInput):GetSingleEmailTemplateList!
     getSingleEmailTempHeaderFooter(query:GetSingleEmailHeaderFooterInput):GetSingleEmailHeaderFooterOutput!
+    getEmailTempHeaderFooterList:GetEmailHeaderFooterListOutput!
 }
 
 

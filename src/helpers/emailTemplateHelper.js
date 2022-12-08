@@ -98,7 +98,8 @@ module.exports = {
             const updateDoc = {
                 name,
                 slug,
-                email_template_id
+                email_template_id,
+                updated_by: user.id
             };
             const updateList = await db.email_template_list.update(updateDoc, {
                 where: {
@@ -274,6 +275,129 @@ module.exports = {
                     status: true,
                     tenant_id: TENANTID
                 }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Update Email Template Header Footer API
+    updateEmailTempHeaderFooter: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id, name, content, type } = req;
+
+            let slug;
+            if (name) {
+                // Create Slug
+                slug = slugify(`${name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
+
+                // Check If Already Exist
+                const checkExistence = await db.email_header_footer.findOne({
+                    where: {
+                        [Op.and]: [{
+                            slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            id
+                        }]
+                    }
+                });
+
+                // If Found Brand
+                if (checkExistence) return { message: "Already Have This Email Template Header or Footer!!!", status: false };
+            }
+
+
+            // Add TO DB
+            const updateEmailTemplateHF = await db.email_header_footer.update({
+                name,
+                slug,
+                content,
+                type,
+                updated_by: user.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            if (updateEmailTemplateHF) {
+                return {
+                    message: "Email Template Header or Footer Component Updated Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET SINGLE Email Template Header Footer API
+    getSingleEmailTempHeaderFooter: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id } = req;
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.email_header_footer.hasAlias('user') && !db.email_header_footer.hasAlias('added_by')) {
+
+                await db.email_header_footer.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'added_by'
+                });
+            }
+            // GET LIST
+            const getsingleTempHF = await db.email_header_footer.findOne({
+                include: [
+                    {
+                        model: db.user, as: 'added_by', // Include User who created
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                },
+                order: [
+                    ["slug", "ASC"]
+                ]
+            });
+
+
+            return {
+                message: "GET Single Email Template Component Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getsingleTempHF
             }
 
 

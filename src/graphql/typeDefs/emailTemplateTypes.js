@@ -66,8 +66,23 @@ input AddEmailTempHFInput {
     type:String
 }
 
+input UpdateEmailTempHFInput {
+    id:Int!
+    name:String
+    content:JSON
+    type:String
+}
 
+input GetSingleEmailHeaderFooterInput {
+    id:Int!
+}
 
+type GetSingleEmailHeaderFooterOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:EmailHeaderFooter
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -77,11 +92,13 @@ extend type Mutation {
     addEmailTemplateOnList(data:AddEmailTemplateListInput):CommonOutput!
     updateEmailTemplateOnList(data:UpdateEmailTemplateListInput):CommonOutput!
     addEmailTempHeaderFooter(data:AddEmailTempHFInput):CommonOutput!
+    updateEmailTempHeaderFooter(data:UpdateEmailTempHFInput):CommonOutput!
 }
 
 extend type Query {
     getAllEmailTemplateList:GetAllEmailTemplateList!
     getSingleEmailTemplateList(query:GetSingleEmailTemplateListInput):GetSingleEmailTemplateList!
+    getSingleEmailTempHeaderFooter(query:GetSingleEmailHeaderFooterInput):GetSingleEmailHeaderFooterOutput!
 }
 
 

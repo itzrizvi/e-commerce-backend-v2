@@ -5,4 +5,6 @@ module.exports = {
     getAllEmailTemplateListController: require('./getAllEmailTemplateListController'),
     getSingleEmailTemplateListController: require('./getSingleEmailTemplateListController'),
     addEmailTempHeaderFooterController: require('./addEmailTempHeaderFooterController'),
+    updateEmailTempHeaderFooterController: require('./updateEmailTempHeaderFooterController'),
+    getSingleEmailTempHeaderFooterController: require('./getSingleEmailTempHeaderFooterController'),
 }

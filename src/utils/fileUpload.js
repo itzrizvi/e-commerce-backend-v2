@@ -111,6 +111,28 @@ async function getFileStream(req, res) {
 }
 exports.getFileStream = getFileStream;
 
+
+// downloads a file from s3
+async function getMediaStream(key) {
+
+  let bucketName = config.get("AWS.READ_BUCKET");
+
+  const downloadParams = {
+    Key: key,
+    Bucket: bucketName
+  }
+  // Using callbacks
+  s3.headObject(downloadParams, function (err) {
+    if (err && err.name) {
+      return 'Inavalid file key, Please provide valid file key.'
+    }
+    return s3.getObject(downloadParams).createReadStream().pipe()
+  });
+}
+exports.getMediaStream = getMediaStream
+
+
+
 // Delete Single file from aws
 module.exports.deleteFile = ({ fileName, folder, idf, bucketName }) => {
   const uploadParams2 = {

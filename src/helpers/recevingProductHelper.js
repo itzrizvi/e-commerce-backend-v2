@@ -206,19 +206,32 @@ module.exports = {
             if (receivedProducts && receivedProducts.length > 0) {
 
                 for (const productData of receivedProducts) {
-                    if (productData.quantity > productData.received_quantity) {
+                    if (productData.quantity >= productData.received_quantity) {
+
+
+                        const checkexistPoList = await db.po_productlist.findOne({
+                            where: {
+                                [Op.and]: [{
+                                    product_id: productData.prod_id,
+                                    rec_prod_id: id
+                                }]
+                            }
+                        });
+
+                        if (!checkexistPoList) {
+                            productHistoryData.push({
+                                product_id: productData.prod_id,
+                                quantity: productData.quantity,
+                                recieved_quantity: productData.received_quantity,
+                                serials: productData.serials
+                            })
+                        }
 
                         if (productData.is_serial) {
 
                             if (productData.received_quantity === productData.serials.length) {
 
                                 let serials = productData.serials;
-                                productHistoryData.push({
-                                    product_id: productData.prod_id,
-                                    quantity: productData.quantity,
-                                    recieved_quantity: productData.received_quantity,
-                                    serials: serials
-                                })
 
                                 // Delete Others
                                 await db.product_serial.destroy({
@@ -306,15 +319,6 @@ module.exports = {
                     if (!updateReceivingCounting) return { message: `${productData.prod_id} This Product Receiving Couldn't Updated!!!`, status: false, tenant_id: TENANTID }
                 }
 
-                //
-                await db.receiving_history.create({
-                    data: JSON.stringify({ products: productHistoryData, status: null }),
-                    receiving_id: id,
-                    status: "update",
-                    created_by: user.id,
-                    tenant_id: TENANTID
-                });
-
             }
 
             //
@@ -331,17 +335,16 @@ module.exports = {
             });
             if (!updateStatus) return { message: "Status Couldn't Updated!!!", status: false, tenant_id: TENANTID }
 
+
             //
-            if (status) {
-                //
-                await db.receiving_history.create({
-                    data: JSON.stringify({ products: [], status: status }),
-                    receiving_id: id,
-                    status: "update",
-                    created_by: user.id,
-                    tenant_id: TENANTID
-                });
-            }
+            await db.receiving_history.create({
+                data: JSON.stringify({ products: productHistoryData, status }),
+                receiving_id: id,
+                status: "update",
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
+
 
             await updateReceivingTransaction.commit();
 
@@ -397,7 +400,10 @@ module.exports = {
                         receiving_id,
                         tenant_id: TENANTID
                     }]
-                }
+                },
+                order: [
+                    ["createdAt", "DESC"]
+                ]
             });
 
             //

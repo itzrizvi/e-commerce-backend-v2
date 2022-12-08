@@ -391,7 +391,7 @@ module.exports = {
             }
 
             // IF Brand Category Exist for Update
-            if (categories) {
+            if (categories && categories.length > 0) {
                 // Loop For Assign Other Values to Role Data
                 categories.forEach(element => {
                     element.tenant_id = TENANTID;

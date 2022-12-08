@@ -28,4 +28,6 @@ module.exports = {
     ...require('./shippingMethod'),
     ...require('./contactUs'),
     ...require('./receivingProduct'),
+    ...require('./quote'),
+    ...require('./emailTemplate'),
 }

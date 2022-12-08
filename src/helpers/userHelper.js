@@ -3,13 +3,15 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const { Op } = require('sequelize');
-const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
+const { deleteFile, singleFileUpload, getMediaStream } = require("../utils/fileUpload");
 const config = require('config');
+const { Mail } = require('../utils/email');
 
 
 module.exports = {
     // SIGN UP
     userSignUp: async (req, db, TENANTID) => {
+
         try {
 
             const { first_name, last_name, email, password } = req;
@@ -34,14 +36,29 @@ module.exports = {
             );
 
             // Setting Up Data for EMAIL SENDER
+            const mailSubject = "Profile Verification Code From Prime Server Parts"
             const mailData = {
+                companyInfo: {
+                    logo: 'https://i.ibb.co/Kh8QDFg/image-5.png',
+                    banner: 'https://i.ibb.co/p4vh3XK/image-6.jpg',
+                    companyName: 'Prime Server Parts',
+                    companyUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                    shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                    fb: 'https://i.ibb.co/vZVT4sQ/image-1.png',
+                    tw: 'https://i.ibb.co/41j5tdG/image-2.png',
+                    li: 'https://i.ibb.co/0JS5Xsq/image-3.png',
+                    insta: 'https://i.ibb.co/WFs1krt/image-4.png'
+                },
+                about: 'Account Verification From Prime Server Parts',
                 email: user.email,
-                subject: "Verification Code From Primer Server Parts",
+                verificationCode: user.verification_code,
                 message: `Your 6 Digit Verification Code is ${user.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${user.email}.`
             }
 
             // SENDING EMAIL
-            await verifierEmail(mailData);
+            // await verifierEmail(mailData);
+            // SENDING EMAIL
+            await Mail(user.email, mailSubject, mailData, 'user_signup_verification');
 
             // Update Last Login
             const updateLastLogin = {
@@ -519,7 +536,7 @@ module.exports = {
             const mailData = {
                 email: email,
                 subject: "Password Reset of Primer Server Parts Account",
-                message: `Your Prime Server Parts Account Password Updated Successfully, Your Email is: ${email}, Your Updated Password is: ${confirmPassword}`
+                message: `Your Prime Server Parts Account Password Updated Successfully, Your Email is: ${email}`
             }
 
             // SENDING EMAIL FOR RESET PASSWORD

@@ -148,6 +148,9 @@ module.exports = {
                         [Op.and]: [{
                             roles_permission_slug: roles_permission_slug,
                             tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            id
                         }]
                     }
                 });

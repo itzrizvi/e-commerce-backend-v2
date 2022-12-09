@@ -2,8 +2,8 @@
   "development": {
     "username": "rizvi",
     "password": "PaBronx1995",
-    "database": "primeserverparts",
-    "host": "localhost",
+    "database": "ebdb",
+    "host": "awseb-e-eujdhwvftb-stack-awsebrdsdatabase-lf16epkxvqra.cy4pyx9glsva.us-east-1.rds.amazonaws.com",
     "port": 5432,
     "dialect": "postgres"
   },

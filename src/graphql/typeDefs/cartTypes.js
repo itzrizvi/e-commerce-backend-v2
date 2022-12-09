@@ -1,8 +1,9 @@
 const { gql } = require("apollo-server-express");
 module.exports = gql`
   input AddCartInput {
-    customer_id: Int!
-    cart_item: [CartItemInput]
+    promo_id: String
+    promo_type: String
+    cart_item: CartItemInput
   }
 
   input CartItemInput {
@@ -14,28 +15,15 @@ module.exports = gql`
     status: Boolean!
     message: String!
     id: Int!
+    cart_item_id: Int!
   }
 
   input RemoveCartItemInput {
     cart_item_id: Int!
   }
 
-  input AddSingleCartItemInput {
-    cart_id: Int!
-    product_id: Int!
-    quantity: Int!
-  }
-
   input RemoveCartInput {
     cart_id: Int!
-  }
-
-  input GetCartInput {
-    customer_id: Int!
-  }
-
-  input GetSingleCartItemInput {
-    cart_item_id: Int!
   }
 
   type GetCartOutput {
@@ -49,34 +37,44 @@ module.exports = gql`
     customer_id: Int
     createdAt: String
     updatedAt: String
+    createdBy: String
+    updatedBy: String
     cart_items: [CartItem]
   }
 
   type CartItem {
-    id: Int!
-    product_id: Int!
-    cart_id: Int!
-    quantity: Int!
+    id: String
+    product_id: String
+    cart_id: String
+    prod_price: Float
+    promo_type: String
+    promo_id: String
+    quantity: Int
     createdAt: String
     updatedAt: String
-    product:ProductForList
+    updatedBy: String
+    createdBy: String
+    product: CartProduct
   }
 
-  type GetSingleCartItemOutput {
-    status: Boolean
-    message: String
-    data: CartItem
+  type CartProduct {
+    id: String!
+    prod_name: String!
+    prod_slug: String!
+    prod_short_desc: String
+    prod_price: Float!
+    prod_partnum: String!
+    prod_sku: String!
+    prod_thumbnail: String
   }
 
   extend type Mutation {
     addCart(data: AddCartInput): AddCartOutput!
-    addSingleCartItem(data: AddSingleCartItemInput): CommonOutput!
     removeCartItem(data: RemoveCartItemInput): CommonOutput!
     removeCart(data: RemoveCartInput): CommonOutput!
   }
 
   extend type Query {
-    getCart(query: GetCartInput): GetCartOutput!
-    getSingleCartItem(query: GetSingleCartItemInput): GetSingleCartItemOutput!
+    getCart: GetCartOutput!
   }
 `;

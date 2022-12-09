@@ -1741,6 +1741,11 @@ module.exports = {
         },
       });
 
+      //
+      singleOrder.orderitems.forEach((elem) => {
+        elem.product.prod_price = elem.prod_price;
+      });
+
       // Return Formation
       return {
         message: "GET Single Order Success",

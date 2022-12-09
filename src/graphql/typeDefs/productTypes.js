@@ -63,6 +63,7 @@ type Product {
     part_of_products:[PartofProduct]
     prod_attributes:[ProductAttributes]
     related_products:[RelatedProduct]
+    prod_price:Float
     prod_regular_price:Float
     prod_sale_price:Float
     discount_type:[DiscountType]
@@ -123,6 +124,7 @@ type ProductForList {
     prod_name:String
     prod_slug:String
     prod_short_desc:JSON
+    prod_price:Float
     prod_regular_price:Float
     prod_sale_price:Float
     prod_partnum:String

@@ -16,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        promo_type: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        promo_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         price: {
             type: DataTypes.FLOAT,
             allowNull: false

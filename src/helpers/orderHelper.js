@@ -4,6 +4,7 @@ const { default: slugify } = require("slugify");
 const { multipleFileUpload } = require("../utils/fileUpload");
 const config = require("config");
 const { verifierEmail } = require("../utils/verifyEmailSender");
+const { decrypt } = require("../utils/hashes");
 
 // Order HELPER
 module.exports = {
@@ -357,34 +358,58 @@ module.exports = {
       //
       const orderItems = [];
       cartItems.forEach(async (item) => {
-        if (item.product.prod_sale_price != 0) {
-          const calculateTotal = item.product.prod_sale_price * item.quantity;
+
+        if (item.promo_type) {
+
+
+          const calculateTotal = item.prod_price * item.quantity;
           sub_total += calculateTotal;
           totalQuantity += item.quantity;
 
           //
           await orderItems.push({
             product_id: item.product.id,
-            price: item.product.prod_sale_price,
+            price: item.prod_price,
             quantity: item.quantity,
+            promo_type: item.promo_type,
+            promo_id: await decrypt(item.promo_id).split("#")[0],
             created_by: user.id,
             tenant_id: TENANTID,
           });
+
+
+
         } else {
-          const calculateTotal =
-            item.product.prod_regular_price * item.quantity;
-          sub_total += calculateTotal;
-          totalQuantity += item.quantity;
+          if (item.product.prod_sale_price != 0) {
+            const calculateTotal = item.product.prod_sale_price * item.quantity;
+            sub_total += calculateTotal;
+            totalQuantity += item.quantity;
 
-          //
-          await orderItems.push({
-            product_id: item.product.id,
-            price: item.product.prod_regular_price,
-            quantity: item.quantity,
-            created_by: user.id,
-            tenant_id: TENANTID,
-          });
+            //
+            await orderItems.push({
+              product_id: item.product.id,
+              price: item.product.prod_sale_price,
+              quantity: item.quantity,
+              created_by: user.id,
+              tenant_id: TENANTID,
+            });
+          } else {
+            const calculateTotal =
+              item.product.prod_regular_price * item.quantity;
+            sub_total += calculateTotal;
+            totalQuantity += item.quantity;
+
+            //
+            await orderItems.push({
+              product_id: item.product.id,
+              price: item.product.prod_regular_price,
+              quantity: item.quantity,
+              created_by: user.id,
+              tenant_id: TENANTID,
+            });
+          }
         }
+
       });
 
       //

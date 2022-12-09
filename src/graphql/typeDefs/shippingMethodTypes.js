@@ -23,6 +23,7 @@ type ShippingMethodPublic {
     slug:String
     description:String
     status:Boolean
+    isDefault: Boolean
     shipping_cost:Float
     tenant_id:String
 }

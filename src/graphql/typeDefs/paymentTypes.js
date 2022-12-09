@@ -53,6 +53,7 @@ type PaymentMethodPublic {
     slug:String!
     description:String!
     status:Boolean!
+    isDefault: Boolean
     tenant_id:String!
 }
 

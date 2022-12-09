@@ -144,8 +144,9 @@ input createOrderByCustomerInput {
     tax_exempt:Boolean!
     taxexempt_file:[Upload]
     payment_id:Int!
+    shipping_method_id:Int!
     coupon_id:Int
-    order_status_id:Int!
+    order_status_slug:String!
     billing_address_id:Int!
     shipping_address_id:Int!
 }

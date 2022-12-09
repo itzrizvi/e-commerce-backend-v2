@@ -74,6 +74,8 @@ type OrderItem {
     product:ProductForList
     price:Float
     quantity:Int
+    promo_type:String
+    promo_id:Int
     tenant_id:String
 }
 

@@ -1743,7 +1743,7 @@ module.exports = {
 
       //
       singleOrder.orderitems.forEach((elem) => {
-        elem.product.prod_price = elem.prod_price;
+        elem.product.prod_price = elem.price;
       });
 
       // Return Formation

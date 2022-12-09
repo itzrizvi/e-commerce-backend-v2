@@ -29,6 +29,19 @@ type EmailHeaderFooter {
     added_by:Staff
 }
 
+type EmailTemplate {
+    id:Int
+    name:String
+    slug:String
+    content:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    emailHeader:EmailHeaderFooter
+    emailFooter:EmailHeaderFooter
+    added_by:Staff
+}
+
 #################################
 input AddEmailTemplateListInput {
     name:String!
@@ -91,6 +104,17 @@ type GetEmailHeaderFooterListOutput {
     data:[EmailHeaderFooter]
 }
 
+#####################################
+
+input addEmailTemplateInput {
+    name:String!
+    content:JSON!
+    header_id:Int!
+    footer_id:Int!
+}
+
+
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -100,6 +124,7 @@ extend type Mutation {
     updateEmailTemplateOnList(data:UpdateEmailTemplateListInput):CommonOutput!
     addEmailTempHeaderFooter(data:AddEmailTempHFInput):CommonOutput!
     updateEmailTempHeaderFooter(data:UpdateEmailTempHFInput):CommonOutput!
+    createEmailTemplate(data:addEmailTemplateInput):CommonOutput!
 }
 
 extend type Query {

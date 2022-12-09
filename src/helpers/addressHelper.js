@@ -15,22 +15,6 @@ module.exports = {
 
             let shippingDefaultID;
             let billingDefaultID;
-            // Check If Has Alias with subcategories
-            if (!db.default_address.hasAlias('address') && !db.default_address.hasAlias('defaultAddress')) {
-
-                await db.default_address.hasOne(db.address, {
-                    targetKey: 'address_id',
-                    foreignKey: 'id',
-                    as: 'defaultAddress'
-                });
-
-                await db.address.hasOne(db.default_address, {
-                    targetKey: 'id',
-                    foreignKey: 'address_id',
-                    as: 'defaultAddress'
-                });
-            }
-
 
             // GET ADDRESS
             const allAddressById = await db.address.findAll({
@@ -40,18 +24,15 @@ module.exports = {
                         tenant_id: TENANTID
 
                     }]
-                },
-                include: [{
-                    model: db.default_address, as: "defaultAddress"
-                }]
+                }
             });
 
             //
             allAddressById.forEach(async (address) => {
-                if (address.defaultAddress != null && address.type === "shipping") {
+                if (address.isDefault && address.type === "shipping") {
                     shippingDefaultID = address.id;
 
-                } else if (address.defaultAddress != null && address.type === "billing") {
+                } else if (address.isDefault && address.type === "billing") {
                     billingDefaultID = address.id
                 }
             });

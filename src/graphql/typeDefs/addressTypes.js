@@ -66,6 +66,7 @@ type AddressList {
     zip_code: String
     country: String
     type:String
+    isDefault:Boolean
     status: Boolean
     tenant_id:String
 }

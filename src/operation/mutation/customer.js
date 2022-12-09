@@ -1,7 +1,9 @@
 const { createCustomerController,
     addCustomerBillingAddressController,
     addCustomerShippingAddressController,
-    updateCustomerAddressController } = require("../../controllers");
+    updateCustomerAddressController,
+    addCustomerSingleBillingAddressController,
+    addCustomerSingleShippingAddressController } = require("../../controllers");
 
 // Customer Mutation Start
 module.exports = {
@@ -41,5 +43,23 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
         return await updateCustomerAddressController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Create Customer Single Billing Address Mutation
+    addCustomerSingleBillingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        // Send to Controller
+        return await addCustomerSingleBillingAddressController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Create Customer Single Shipping Address Mutation
+    addCustomerSingleShippingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        // Send to Controller
+        return await addCustomerSingleShippingAddressController(args.data, db, user, isAuth, TENANTID);
     },
 }

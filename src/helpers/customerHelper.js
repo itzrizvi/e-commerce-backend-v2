@@ -620,4 +620,156 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Add Customer Single Billing Addresses
+    addCustomerSingleBillingAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { phone,
+                fax,
+                email,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                status,
+                isDefault } = req;
+
+
+            const customerSingleBillingAddress = {
+                ref_id: user.id,
+                ref_model: "customer",
+                phone,
+                fax,
+                email: email ?? user.email,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                type: "billing",
+                status,
+                tenant_id: TENANTID,
+                created_by: user.id,
+                isDefault
+            };
+
+
+            if (isDefault) {
+
+                const makesDefaultFalse = {
+                    isDefault: false,
+                    updated_by: user.id
+                }
+
+                await db.address.update(makesDefaultFalse, {
+                    where: {
+                        [Op.and]: [{
+                            ref_id: user.id,
+                            ref_model: "customer",
+                            type: "billing",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
+
+            const insertAddress = await db.address.create(customerSingleBillingAddress);
+            if (!insertAddress) return { message: "Address Couldn't Inserted!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Customer Billing Address Added Successfully!!!",
+                tenant_id: TENANTID,
+                status: true,
+                id: insertAddress.id
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Add Customer Single Shipping Addresses
+    addCustomerSingleShippingAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { phone,
+                fax,
+                email,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                status,
+                isDefault } = req;
+
+
+            const customerSingleShippingAddress = {
+                ref_id: user.id,
+                ref_model: "customer",
+                phone,
+                fax,
+                email: email ?? user.email,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                type: "shipping",
+                status,
+                tenant_id: TENANTID,
+                created_by: user.id,
+                isDefault
+            };
+
+
+            if (isDefault) {
+
+                const makesDefaultFalse = {
+                    isDefault: false,
+                    updated_by: user.id
+                }
+
+                await db.address.update(makesDefaultFalse, {
+                    where: {
+                        [Op.and]: [{
+                            ref_id: user.id,
+                            ref_model: "customer",
+                            type: "shipping",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
+
+            const insertAddress = await db.address.create(customerSingleShippingAddress);
+            if (!insertAddress) return { message: "Address Couldn't Inserted!!!", status: false }
+
+
+            // Return Formation
+            return {
+                message: "Customer Shipping Address Added Successfully!!!",
+                tenant_id: TENANTID,
+                status: true,
+                id: insertAddress.id
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

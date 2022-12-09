@@ -319,6 +319,7 @@ module.exports = {
       if (!db.cart.hasAlias("cart_items")) {
         await db.cart.hasMany(db.cart_item, {
           foreignKey: "cart_id",
+          as: "cart_items"
         });
       }
 
@@ -333,6 +334,7 @@ module.exports = {
         include: [
           {
             model: db.cart_item,
+            as: "cart_items",
             include: {
               model: db.product,
             },

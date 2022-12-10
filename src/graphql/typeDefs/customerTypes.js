@@ -105,6 +105,22 @@ type addCustomerAddressOutput {
     id:Int
 }
 
+input UpdateCustomerSingleAddressInput {
+    id:Int!
+    type:String!
+    address1: String
+    address2: String
+    phone: String
+    fax: String
+    email: String
+    city: String
+    state: String
+    zip_code: String
+    country: String
+    status: Boolean
+    isDefault: Boolean
+}
+
 extend type Mutation {
     addCustomer(data: CustomerInput): AddCustomerOutput!
     addCustomerBillingAddress(data: AddCustomerBillingAddressInput): CommonOutput!
@@ -112,6 +128,7 @@ extend type Mutation {
     updateCustomerAddress(data: UpdateCustomerAddressInput): CommonOutput!
     addCustomerSingleBillingAddress(data:addCustomerSingleBillingInput):addCustomerAddressOutput!
     addCustomerSingleShippingAddress(data:addCustomerSingleShippingInput):addCustomerAddressOutput!
+    updateCustomerSingleAddress(data:UpdateCustomerSingleAddressInput):CommonOutput!
 }
 extend type Query {
     getAllCustomer: getAllCustomerOutput!

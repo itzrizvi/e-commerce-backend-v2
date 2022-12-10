@@ -772,4 +772,159 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Update Customer Addresses
+    updateCustomerSingleAddress: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id,
+                type,
+                phone,
+                fax,
+                email,
+                address1,
+                address2,
+                city,
+                state,
+                zip_code,
+                country,
+                status,
+                isDefault } = req;
+
+            //
+            if (type === "shipping") {
+
+                const updateDoc = {
+                    ref_id: user.id,
+                    ref_model: "customer",
+                    phone,
+                    fax,
+                    email: email ?? user.email,
+                    address1,
+                    address2,
+                    city,
+                    state,
+                    zip_code,
+                    country,
+                    type: "shipping",
+                    status,
+                    tenant_id: TENANTID,
+                    created_by: user.id,
+                    isDefault
+                };
+
+
+                if (isDefault) {
+
+                    const makesDefaultFalse = {
+                        isDefault: false,
+                        updated_by: user.id
+                    }
+
+                    await db.address.update(makesDefaultFalse, {
+                        where: {
+                            [Op.and]: [{
+                                ref_id: user.id,
+                                ref_model: "customer",
+                                type: "shipping",
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                }
+
+                const updateAddress = await db.address.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            ref_id: user.id,
+                            ref_model: "customer",
+                            type: "shipping",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!updateAddress) return { message: "Shipping Address Update Failed!!!", status: false }
+
+
+                // Return Formation
+                return {
+                    message: "Customer Shipping Address Updated Successfully!!!",
+                    tenant_id: TENANTID,
+                    status: true
+                }
+
+
+            } else if (type === "billing") {
+
+
+                const updateDoc = {
+                    ref_id: user.id,
+                    ref_model: "customer",
+                    phone,
+                    fax,
+                    email: email ?? user.email,
+                    address1,
+                    address2,
+                    city,
+                    state,
+                    zip_code,
+                    country,
+                    type: "billing",
+                    status,
+                    tenant_id: TENANTID,
+                    created_by: user.id,
+                    isDefault
+                };
+
+
+                if (isDefault) {
+
+                    const makesDefaultFalse = {
+                        isDefault: false,
+                        updated_by: user.id
+                    }
+
+                    await db.address.update(makesDefaultFalse, {
+                        where: {
+                            [Op.and]: [{
+                                ref_id: user.id,
+                                ref_model: "customer",
+                                type: "billing",
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                }
+
+                const updateAddress = await db.address.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            ref_id: user.id,
+                            ref_model: "customer",
+                            type: "billing",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!updateAddress) return { message: "Billing Address Update Failed!!!", status: false }
+
+
+                // Return Formation
+                return {
+                    message: "Customer Billing Address Updated Successfully!!!",
+                    tenant_id: TENANTID,
+                    status: true
+                }
+
+
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

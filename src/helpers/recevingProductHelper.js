@@ -299,10 +299,21 @@ module.exports = {
 
 
                 for (const productData of receivedProducts) {
+
+                    const findPoProductList = await db.po_productlist.findOne({
+                        where: {
+                            [Op.and]: [{
+                                product_id: productData.prod_id,
+                                rec_prod_id: id
+                            }]
+                        }
+                    });
+
+
                     // Update Received and Remaining
                     const updateDoc = {
-                        recieved_quantity: productData.received_quantity,
-                        remaining_quantity: productData.quantity - productData.received_quantity,
+                        recieved_quantity: parseInt(findPoProductList.recieved_quantity) + productData.received_quantity,
+                        remaining_quantity: productData.quantity - (parseInt(findPoProductList.recieved_quantity) + productData.received_quantity),
                         updated_by: user.id
                     }
                     //

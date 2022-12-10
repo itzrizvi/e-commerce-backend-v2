@@ -508,4 +508,75 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // Update Email Template API
+    updateEmailTemplate: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id, name, content, header_id, footer_id } = req;
+
+            let slug;
+            if (name) {
+                // Create Slug
+                slug = slugify(`${name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
+
+                // Check If Already Exist
+                const checkExistence = await db.email_template.findOne({
+                    where: {
+                        [Op.and]: [{
+                            slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            id
+                        }]
+                    }
+                });
+
+                // If Found Brand
+                if (checkExistence) return { message: "Already Have This Email Template!!!", status: false };
+            }
+
+            //
+            const updateDoc = {
+                name,
+                slug,
+                content,
+                header_id,
+                footer_id,
+                updated_by: user.id
+            }
+
+            // Update
+            const updateEmailTemplate = await db.email_template.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updateEmailTemplate) return { message: "Update Failed!!!", status: false };
+
+            // Return Formation
+            if (updateEmailTemplate) {
+                return {
+                    message: "Email Template Updated Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

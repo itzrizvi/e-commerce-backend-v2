@@ -113,7 +113,13 @@ input addEmailTemplateInput {
     footer_id:Int!
 }
 
-
+input updateEmailTemplateInput {
+    id:Int!
+    name:String
+    content:JSON
+    header_id:Int
+    footer_id:Int
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -125,6 +131,7 @@ extend type Mutation {
     addEmailTempHeaderFooter(data:AddEmailTempHFInput):CommonOutput!
     updateEmailTempHeaderFooter(data:UpdateEmailTempHFInput):CommonOutput!
     createEmailTemplate(data:addEmailTemplateInput):CommonOutput!
+    updateEmailTemplate(data:updateEmailTemplateInput):CommonOutput!
 }
 
 extend type Query {

@@ -56,6 +56,16 @@ module.exports = {
                 });
             }
 
+            //
+            if (!db.receiving_product.hasAlias('purchase_order') && !db.receiving_product.hasAlias('purchaseOrder')) {
+
+                await db.receiving_product.hasOne(db.purchase_order, {
+                    sourceKey: 'po_id',
+                    foreignKey: 'id',
+                    as: 'purchaseOrder'
+                });
+            }
+
             // ASSOCIATION ENDS
 
             // Single RP
@@ -74,6 +84,7 @@ module.exports = {
                             },
                         ]
                     },
+                    { model: db.purchase_order, as: "purchaseOrder" },
                     {
                         model: db.user, as: "added_by",
                         include: {

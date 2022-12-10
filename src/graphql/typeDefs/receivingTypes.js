@@ -16,6 +16,7 @@ module.exports = gql`
         status:String
         tenant_id:String
         poProducts:[POProductList]
+        purchaseOrder:PurchaseOrder
         added_by:Staff
     }
     

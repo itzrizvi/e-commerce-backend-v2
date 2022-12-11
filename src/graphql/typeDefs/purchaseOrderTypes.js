@@ -117,7 +117,10 @@ input POStatusChangeInput{
     status:String
 }
 
-
+input createReceivingInput {
+    purchaseOrder_id:Int
+    status:String
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -127,6 +130,7 @@ extend type Mutation {
     createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
+    createReceiving(data:createReceivingInput):CommonOutput!
 }
 
 extend type Query {

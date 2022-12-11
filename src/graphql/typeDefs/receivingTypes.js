@@ -41,7 +41,7 @@ module.exports = gql`
     input UpdateRecevingProductInput {
         id:Int!
         status:String
-        receivedProducts:JSON
+        receivingProducts:JSON
     }
 
     type HistoryProducts {

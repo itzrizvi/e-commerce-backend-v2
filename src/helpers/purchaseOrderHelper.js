@@ -121,7 +121,6 @@ module.exports = {
             let grandTotal_price = 0; // Grand Total Price
             // PO Product List Array
             const poProductList = [];
-            let historyProduct = [];
 
             products.forEach(async (element) => {
                 const calculateTotal = element.price * element.quantity;
@@ -133,18 +132,8 @@ module.exports = {
                     quantity: element.quantity,
                     price: element.price,
                     totalPrice: calculateTotal,
-                    recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
-                    remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
                     created_by: user.id,
                     tenant_id: TENANTID
-                });
-
-                //
-                await historyProduct.push({
-                    product_id: element.id,
-                    quantity: element.quantity,
-                    recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
-                    serials: []
                 });
 
             });
@@ -167,43 +156,9 @@ module.exports = {
             });
             if (!insertPO) return { message: "Purchase Order Creation Failed!!!", status: false }
 
-            // Insert to Receiving Product
-            const insertReceiving = await db.receiving_product.create({
-                po_id: insertPO.id,
-                status: "new",
-                created_by: user.id,
-                tenant_id: TENANTID
-            });
-            if (!insertReceiving) return { message: "Receiving Data Insert Failed!!!", status: false }
-
-            //
-            await db.purchase_order.update({
-                rec_id: insertReceiving.id
-            }, {
-                where: {
-                    [Op.and]: [{
-                        id: insertPO.id,
-                        po_id: insertPO.po_id,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-
-            //
-            await db.receiving_history.create({
-                data: JSON.stringify({ products: historyProduct, status: "new" }),
-                receiving_id: insertReceiving.id,
-                status: "insert",
-                created_by: user.id,
-                tenant_id: TENANTID
-            });
-
-
-            // Inseting Purchase Order ID and Receiving Product ID to PO Product List Array
+            // Inseting Purchase Order ID to PO Product List Array
             poProductList.forEach((item) => {
                 item.purchase_order_id = insertPO.id;
-                item.rec_prod_id = insertReceiving.id;
             });
 
             // Insert Product List
@@ -618,6 +573,67 @@ module.exports = {
                 message: "Purchase Order Status Changed Successfully!!!",
                 status: true,
                 tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Create Receiving
+    createReceiving: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { purchaseOrder_id, status } = req;
+
+            // Check Exist 
+            const checkExist = await db.receiving_product.findOne({
+                where: {
+                    [Op.and]: [{
+                        po_id: purchaseOrder_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!checkExist || checkExist.status === "canceled") {
+                // Insert to Receiving Product
+                const insertReceiving = await db.receiving_product.create({
+                    po_id: purchaseOrder_id,
+                    status,
+                    created_by: user.id,
+                    tenant_id: TENANTID
+                });
+                if (!insertReceiving) return { message: "Receiving Data Insert Failed!!!", status: false }
+
+                // Update Purchase Order
+                await db.purchase_order.update({
+                    rec_id: insertReceiving.id
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id: purchaseOrder_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // Return Formation
+                return {
+                    message: "Receiving Inserted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+
+            } else {
+                // Return Formation
+                return {
+                    message: "Already Have This Receiving Record!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
             }
 
 

@@ -5,4 +5,5 @@ module.exports = {
     getPurchaseOrderListController: require('./getPurchaseOrderListController'),
     getSinglePurchaseOrderController: require('./getSinglePurchaseOrderController'),
     updatePOStatusController: require('./updatePOStatusController'),
+    createReceivingController: require('./createReceivingController'),
 }

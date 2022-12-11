@@ -208,95 +208,53 @@ module.exports = {
         try {
 
             // Data From Request
-            const { id, status, receivedProducts } = req;
-
-            //
-            let productHistoryData = [];
+            const { id, status, receivingProducts } = req;
 
             // Check
-            if (receivedProducts && receivedProducts.length > 0) {
+            if (receivingProducts && receivingProducts.length > 0) {
 
-                for (const productData of receivedProducts) {
-                    if (productData.quantity >= productData.received_quantity) {
+                for (const productData of receivingProducts) {
+                    if (productData.quantity >= productData.receiving_quantity) {
 
+                        if (productData.receiving_quantity === productData.serials.length) {
 
-                        const checkexistPoList = await db.po_productlist.findOne({
-                            where: {
-                                [Op.and]: [{
-                                    product_id: productData.prod_id,
-                                    rec_prod_id: id
-                                }]
-                            }
-                        });
+                            let serials = productData.serials;
 
-                        if (!checkexistPoList) {
-                            productHistoryData.push({
-                                product_id: productData.prod_id,
-                                quantity: productData.quantity,
-                                recieved_quantity: productData.received_quantity,
-                                serials: productData.serials
-                            })
-                        }
+                            for (const serial of serials) {
 
-                        if (productData.is_serial) {
-
-                            if (productData.received_quantity === productData.serials.length) {
-
-                                let serials = productData.serials;
-
-                                // Delete Others
-                                await db.product_serial.destroy({
+                                //
+                                const checkExists = await db.product_serial.findOne({
                                     where: {
                                         [Op.and]: [{
-                                            serial: {
-                                                [Op.notIn]: productData.serials
-                                            },
                                             rec_prod_id: id,
-                                            prod_id: productData.prod_id
-                                        }]
-                                    },
-                                    transaction: updateReceivingTransaction
-                                });
-
-
-
-                                for (const serial of serials) {
-
-                                    //
-                                    const checkExists = await db.product_serial.findOne({
-                                        where: {
-                                            [Op.and]: [{
-                                                rec_prod_id: id,
-                                                serial: serial,
-                                                prod_id: productData.prod_id,
-                                                tenant_id: TENANTID
-                                            }]
-                                        }
-                                    });
-                                    if (!checkExists) {
-                                        //
-                                        const insertSerial = await db.product_serial.create({
-                                            prod_id: productData.prod_id,
                                             serial: serial,
-                                            rec_prod_id: id,
-                                            created_by: user.id,
+                                            prod_id: productData.prod_id,
                                             tenant_id: TENANTID
-                                        }, { transaction: updateReceivingTransaction });
-
-                                        if (!insertSerial) return { message: "Product Serial Insert Failed!!!", status: false, tenant_id: TENANTID }
-
+                                        }]
                                     }
-                                }
+                                });
+                                if (checkExists) return { message: `${productData.prod_id} Product ${serial} Serial Already Exist!!!`, status: false }
 
-                            } else {
-                                return {
-                                    message: "Invalid Input!!!",
-                                    status: false,
+                                //
+                                const insertSerial = await db.product_serial.create({
+                                    prod_id: productData.prod_id,
+                                    serial: serial,
+                                    rec_prod_id: id,
+                                    created_by: user.id,
                                     tenant_id: TENANTID
-                                }
+                                }, { transaction: updateReceivingTransaction });
+                                if (!insertSerial) return { message: `Serial Insert Failed!!!`, status: false }
+
                             }
 
+                        } else {
+                            return {
+                                message: "Invalid Input!!!",
+                                status: false,
+                                tenant_id: TENANTID
+                            }
                         }
+
 
                     } else {
                         return {
@@ -309,36 +267,20 @@ module.exports = {
                 }
 
 
-                for (const productData of receivedProducts) {
+                for (const productData of receivingProducts) {
 
-                    const findPoProductList = await db.po_productlist.findOne({
-                        where: {
-                            [Op.and]: [{
-                                product_id: productData.prod_id,
-                                rec_prod_id: id
-                            }]
-                        }
-                    });
-
-
-                    // Update Received and Remaining
-                    const updateDoc = {
-                        recieved_quantity: parseInt(findPoProductList.recieved_quantity) + productData.received_quantity,
-                        remaining_quantity: productData.quantity - (parseInt(findPoProductList.recieved_quantity) + productData.received_quantity),
-                        updated_by: user.id
+                    // Insert Receiving
+                    const receiving = {
+                        receiving_id: id,
+                        product_id: productData.prod_id,
+                        quantity: productData.quantity,
+                        received_quantity: productData.receiving_quantity,
+                        remaining_quantity: productData.quantity - productData.receiving_quantity,
+                        created_by: user.id,
+                        tenant_id: TENANTID
                     }
-                    //
-                    const updateReceivingCounting = await db.po_productlist.update(updateDoc, {
-                        where: {
-                            [Op.and]: [{
-                                product_id: productData.prod_id,
-                                rec_prod_id: id,
-                                tenant_id: TENANTID
-                            }]
-                        },
-                        transaction: updateReceivingTransaction
-                    });
-                    if (!updateReceivingCounting) return { message: `${productData.prod_id} This Product Receiving Couldn't Updated!!!`, status: false, tenant_id: TENANTID }
+                    const insertreceiving = await db.receiving_item.create(receiving);
+                    if (!insertreceiving) return { message: `${productData.prod_id} This Product Receiving Insert Failed!!!`, status: false }
                 }
 
             }
@@ -356,16 +298,6 @@ module.exports = {
                 transaction: updateReceivingTransaction
             });
             if (!updateStatus) return { message: "Status Couldn't Updated!!!", status: false, tenant_id: TENANTID }
-
-
-            //
-            await db.receiving_history.create({
-                data: JSON.stringify({ products: productHistoryData, status }),
-                receiving_id: id,
-                status: "update",
-                created_by: user.id,
-                tenant_id: TENANTID
-            });
 
 
             await updateReceivingTransaction.commit();

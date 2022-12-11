@@ -1,14 +1,14 @@
-// Purchase Order model
+// Receiving Item model
 module.exports = (sequelize, DataTypes) => {
 
-    const POProductList = sequelize.define("po_productlist", {
+    const ReceivingItem = sequelize.define("receiving_item", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        purchase_order_id: {
+        receiving_id: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
@@ -20,13 +20,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        price: {
-            type: DataTypes.FLOAT,
-            allowNull: false
+        received_quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
         },
-        totalPrice: {
-            type: DataTypes.FLOAT,
-            allowNull: false
+        remaining_quantity: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
         },
         created_by: {
             type: DataTypes.INTEGER,
@@ -45,5 +47,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return POProductList
+    return ReceivingItem
 }

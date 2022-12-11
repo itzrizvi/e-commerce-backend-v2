@@ -482,33 +482,28 @@ module.exports = {
             ],
           },
         });
-        if (!getZipCode)
-          return { message: "Address Not Found!!!", status: false };
-        const { zip_code } = getZipCode;
 
-        //
-        const findTaxClass = await db.tax_class.findOne({
-          where: {
-            [Op.and]: [
-              {
-                zip_code,
-                tenant_id: TENANTID,
-              },
-            ],
-          },
-        });
-        if (!findTaxClass)
-          return { message: "Zip Code Not Found!!!", status: false };
+        if (getZipCode) {
+          const { zip_code } = getZipCode;
 
-        const { tax_amount: taxamount } = findTaxClass;
+          //
+          const findTaxClass = await db.tax_class.findOne({
+            where: {
+              [Op.and]: [
+                {
+                  zip_code,
+                  tenant_id: TENANTID,
+                },
+              ],
+            },
+          });
 
-        tax_amount = taxamount;
-        total += tax_amount;
-      } else if (tax_exempt && !taxexempt_file) {
-        return {
-          message: "Tax Exempt Certificates Required!!!",
-          status: false,
-        };
+          if (findTaxClass) {
+            const { tax_amount: taxamount } = findTaxClass;
+            tax_amount = taxamount;
+            total += tax_amount;
+          }
+        }
       }
 
       const order_status = await db.order_status.findOne({

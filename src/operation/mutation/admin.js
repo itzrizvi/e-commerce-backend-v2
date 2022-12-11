@@ -1,6 +1,9 @@
 // Require Controllers
 const logger = require("../../../logger")
-const { adminSignInController, adminSignUpController, setPasswordController, resetPasswordController } = require("../../controllers")
+const { adminSignInController,
+    adminSignUpController,
+    setPasswordController,
+    resetPasswordController } = require("../../controllers")
 
 
 
@@ -9,7 +12,10 @@ module.exports = {
     // Admin Sign In
     adminSignIn: async (root, { email, password }, { db, TENANTID, ip }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID) {
+            logger.warning("Tenant ID Is Missing", { service: 'admin.js', ip: ip, line: "16" });
+            return { message: "TENANT ID IS MISSING!!!", status: false }
+        }
         logger.http("Admin Sign In Requested", { service: 'Mutation - admin.js', ip: ip });
         // Data from ARGS
         const data = {
@@ -21,7 +27,10 @@ module.exports = {
     // Admin Sign Up From Admin Panel
     adminSignUp: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID) {
+            logger.warning("Tenant ID Is Missing", { service: 'admin.js', ip: ip, line: "31" });
+            return { message: "TENANT ID IS MISSING!!!", status: false }
+        }
         // Return If No Auth and No Role
         if (!user || !isAuth) return { message: "Not Authorized", email: args.data.email, status: false };
         if (user.has_role === '0') return { message: "Not Authorized", email: args.data.email, status: false };

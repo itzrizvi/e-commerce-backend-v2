@@ -212,7 +212,29 @@ module.exports = {
 
             // Check
             if (receivingProducts && receivingProducts.length > 0) {
+                // For Remaining Check
+                for (const productData of receivingProducts) {
+                    // Check Remaining
+                    const totalReceived = await db.receiving_item.sum('received_quantity', {
+                        where: {
+                            [Op.and]: [{
+                                receiving_id: id,
+                                product_id: productData.prod_id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    const remaining = productData.quantity - parseInt(totalReceived);
 
+                    if (remaining < productData.receiving_quantity) {
+                        return {
+                            message: `${productData.prod_id} This Product Have Only Remaining ${remaining}!!!`,
+                            status: false
+                        }
+                    }
+                }
+
+                // For Serial Insert and Calculation
                 for (const productData of receivingProducts) {
                     if (productData.quantity >= productData.receiving_quantity) {
 
@@ -266,7 +288,7 @@ module.exports = {
 
                 }
 
-
+                // For Receiving Insert
                 for (const productData of receivingProducts) {
 
                     // Insert Receiving

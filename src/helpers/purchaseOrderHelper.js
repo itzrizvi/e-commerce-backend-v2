@@ -608,6 +608,45 @@ module.exports = {
                 });
                 if (!insertReceiving) return { message: "Receiving Data Insert Failed!!!", status: false }
 
+
+                // 
+                if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poproducts')) {
+                    await db.purchase_order.hasMany(db.po_productlist, {
+                        foreignKey: 'purchase_order_id',
+                        as: 'poproducts'
+                    });
+                }
+                // GET PO
+                const getPO = await db.purchase_order.findOne({
+                    include: [{ model: db.po_productlist, as: "poproducts" }],
+                    where: {
+                        [Op.and]: [{
+                            id: purchaseOrder_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // RECEIVING ITEMS
+                let receivingItems = [];
+                await getPO.poproducts.forEach(async (item) => {
+                    await receivingItems.push({
+                        receiving_id: insertReceiving.id,
+                        product_id: item.product_id,
+                        quantity: item.quantity,
+                        price: item.price,
+                        totalPrice: item.totalPrice,
+                        received_quantity: 0,
+                        remaining_quantity: item.quantity,
+                        created_by: user.id,
+                        tenant_id: TENANTID
+                    });
+                });
+
+                // RECEIVING ITEM BULK CREATE
+                const createreceivingitems = await db.receiving_item.bulkCreate(receivingItems);
+                if (!createreceivingitems) return { message: "Receiving Items Insert Failed!!!", status: false }
+
                 // Update Purchase Order
                 await db.purchase_order.update({
                     rec_id: insertReceiving.id

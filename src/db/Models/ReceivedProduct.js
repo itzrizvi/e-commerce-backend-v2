@@ -1,7 +1,7 @@
-// Receiving Item model
+// Received Product Item model
 module.exports = (sequelize, DataTypes) => {
 
-    const ReceivingItem = sequelize.define("receiving_item", {
+    const ReceivedProduct = sequelize.define("received_product", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -12,28 +12,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        receiving_item_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         product_id: {
             type: DataTypes.BIGINT,
             allowNull: false
         },
-        quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        price: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        totalPrice: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
         received_quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0
-        },
-        remaining_quantity: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
@@ -55,5 +42,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return ReceivingItem
+    return ReceivedProduct
 }

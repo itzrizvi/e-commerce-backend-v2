@@ -11,11 +11,39 @@ module.exports = gql`
         added_by:Staff
     }
 
+    type ReceivedProductsHistory {
+        id:Int
+        receiving_id:Int
+        receiving_item_id:Int
+        product_id:Int
+        received_quantity:Int
+        received_by:Staff
+        tenant_id:String
+        createdAt:String
+        updatedAt:String
+    }
+
+    type ReceivingItem {
+        id:Int
+        receiving_id:Int
+        product:ProductForList
+        receivinghistory:[ReceivedProductsHistory]
+        serials:[ProductSerial]
+        quantity:Int
+        price:Float
+        totalPrice:Float
+        received_quantity:Int
+        remaining_quantity:Int
+        tenant_id:String
+        createdAt:String
+        updatedAt:String
+    }
+
     type ReceivingProductSingle {
         id:Int
         status:String
         tenant_id:String
-        poProducts:[POProductList]
+        receivingitems:[ReceivingItem]
         purchaseOrder:PurchaseOrder
         added_by:Staff
     }
@@ -41,7 +69,7 @@ module.exports = gql`
     input UpdateRecevingProductInput {
         id:Int!
         status:String
-        receivingProducts:JSON
+        receivedProducts:JSON
     }
 
     type HistoryProducts {

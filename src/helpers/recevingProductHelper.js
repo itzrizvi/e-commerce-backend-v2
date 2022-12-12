@@ -281,6 +281,23 @@ module.exports = {
                 for (const productData of receivedProducts) {
                     if (productData.quantity >= productData.receiving_quantity) {
 
+                        const checkisSerial = await db.product.findOne({
+                            where: {
+                                [Op.and]: [{
+                                    id: productData.prod_id,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        });
+
+                        if (checkisSerial.is_serial && productData.receiving_quantity != productData.serials.length) {
+                            return {
+                                message: `Product Serial is Required For This ${productData.prod_id} Product!!!`,
+                                status: false,
+                                tenant_id: TENANTID
+                            }
+                        }
+
                         if (productData.serials) {
                             if (productData.receiving_quantity === productData.serials.length) {
 

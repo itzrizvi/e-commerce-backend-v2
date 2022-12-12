@@ -1,20 +1,9 @@
 var nodemailer = require('nodemailer');
 var handlebars = require('handlebars');
+const db = require("../db")
 var fs = require('fs');
 
-const Mail = (mail_address, subject, data = {}, file_name) => {
-    var readHTMLFile = function (path, callback) {
-        fs.readFile(path, { encoding: 'utf-8' }, function (err, html) {
-            if (err) {
-                callback(err);
-                throw err;
-
-            }
-            else {
-                callback(null, html);
-            }
-        });
-    };
+const Mail = async (mail_address, subject, data = {}, alias) => {
 
     // Transport Creator From Nodemailer
     const transport = nodemailer.createTransport({
@@ -27,21 +16,24 @@ const Mail = (mail_address, subject, data = {}, file_name) => {
         }
     });
 
-    readHTMLFile(__dirname + '/../template/email/' + file_name + '.html', async function (err, html) {
-        var template = handlebars.compile(html);
-        var htmlToSend = template(data);
-        var mailOptions = {
-            from: process.env.MAIL_ADDRESS,
-            to: mail_address,
-            subject: subject,
-            html: htmlToSend
-        };
-        await transport.sendMail(mailOptions, function (error, response) {
-            if (error) {
-                console.log(error);
-            }
-        });
+    // 
+    // const gettemplate = await db.
+
+    var template = handlebars.compile(html);
+    var htmlToSend = template(data);
+    var mailOptions = {
+        from: process.env.MAIL_ADDRESS,
+        to: mail_address,
+        subject: subject,
+        html: htmlToSend
+    };
+
+    await transport.sendMail(mailOptions, function (error, response) {
+        if (error) {
+            console.log(error);
+        }
     });
+
 }
 
 module.exports = {

@@ -56,7 +56,7 @@ module.exports = {
             }
 
             // SENDING EMAIL
-            await Mail(user.email, mailSubject, mailData, 'user-sign-up-verification');
+            await Mail(user.email, mailSubject, mailData, 'user-sign-up-verification', TENANTID);
 
             // Update Last Login
             const updateLastLogin = {

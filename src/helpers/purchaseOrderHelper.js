@@ -670,7 +670,7 @@ module.exports = {
                 // Return Formation
                 return {
                     message: "Already Have This Receiving Record!!!",
-                    status: true,
+                    status: false,
                     tenant_id: TENANTID
                 }
             }

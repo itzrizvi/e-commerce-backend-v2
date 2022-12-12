@@ -45,6 +45,7 @@ type EmailTemplate {
 #################################
 input AddEmailTemplateListInput {
     name:String!
+    email_template_id:Int
 }
 
 input UpdateEmailTemplateListInput {

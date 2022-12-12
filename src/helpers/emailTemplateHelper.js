@@ -11,7 +11,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { name } = req;
+            const { name, email_template_id } = req;
 
             // Create Slug
             const slug = slugify(`${name}`, {
@@ -37,6 +37,7 @@ module.exports = {
             const insertEmailTemplateOnList = await db.email_template_list.create({
                 name,
                 slug,
+                email_template_id,
                 tenant_id: TENANTID,
                 created_by: user.id
             });

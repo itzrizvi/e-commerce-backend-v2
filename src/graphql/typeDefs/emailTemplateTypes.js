@@ -121,6 +121,23 @@ input updateEmailTemplateInput {
     footer_id:Int
 }
 
+input GetSingleEmailTemplateInput {
+    id:Int!
+}
+
+type GetSingleEmailTemplateOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:EmailTemplate
+}
+
+type GetEmailTemplateList {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[EmailTemplate]
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -139,6 +156,8 @@ extend type Query {
     getSingleEmailTemplateList(query:GetSingleEmailTemplateListInput):GetSingleEmailTemplateList!
     getSingleEmailTempHeaderFooter(query:GetSingleEmailHeaderFooterInput):GetSingleEmailHeaderFooterOutput!
     getEmailTempHeaderFooterList:GetEmailHeaderFooterListOutput!
+    getSingleEmailTemplate(query:GetSingleEmailTemplateInput):GetSingleEmailTemplateOutput!
+    getEmailTemplateList:GetEmailTemplateList!
 }
 
 

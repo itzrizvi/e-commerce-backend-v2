@@ -432,7 +432,7 @@ module.exports = {
         if (address.isDefault) {
           defaultBilling.push(true);
         }
-        if (defaultBilling.length === 1) {
+        if (defaultBilling.length <= 1) {
 
           await companyBillingAddress.push({
             ref_id: address.parent_id,
@@ -522,7 +522,7 @@ module.exports = {
           defaultShipping.push(true);
         }
 
-        if (defaultShipping.length === 1) {
+        if (defaultShipping.length <= 1) {
           await companyShippingAddress.push({
             ref_id: address.parent_id,
             ref_model: "company_info",

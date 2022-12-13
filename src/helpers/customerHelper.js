@@ -193,7 +193,7 @@ module.exports = {
                 if (address.isDefault) {
                     defaultBilling.push(true);
                 }
-                if (defaultBilling.length === 1) {
+                if (defaultBilling.length <= 1) {
 
                     await customerBillingAddress.push({
                         ref_id: user.has_role === '1' ? address.parent_id : user.id,

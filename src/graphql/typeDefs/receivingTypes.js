@@ -86,7 +86,6 @@ module.exports = gql`
 
     type ReceivingHistory {
         id:Int
-        data:HistoryData
         receiving_id:Int
         status:String
         tenant_id:String

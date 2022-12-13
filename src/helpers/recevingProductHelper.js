@@ -421,6 +421,16 @@ module.exports = {
             });
             if (!updateStatus) return { message: "Status Couldn't Updated!!!", status: false, tenant_id: TENANTID }
 
+            if (status) {
+
+                await db.receiving_history.create({
+                    receiving_id: id,
+                    status: status,
+                    created_by: user.id,
+                    tenant_id: TENANTID
+                });
+            }
+
 
             await updateReceivingTransaction.commit();
 
@@ -482,39 +492,13 @@ module.exports = {
                 ]
             });
 
-            //
-            const modReceivinghistoryList = receivinghistoryList.map(item => {
-                var { data } = item;
-                item.data = JSON.parse(data)
-
-                item.data.products = item.data.products.map(async (element) => {
-
-                    const product = await db.product.findOne({
-                        where: {
-                            [Op.and]: [{
-                                id: element.product_id,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    });
-
-                    return {
-                        product_id: element.product_id,
-                        quantity: element.quantity,
-                        recieved_quantity: element.recieved_quantity,
-                        serials: element.serials,
-                        product,
-                    }
-                });
-                return item
-            });
 
             // Return Formation
             return {
                 message: "GET Receiving History List Success!!!",
                 status: true,
                 tenant_id: TENANTID,
-                data: modReceivinghistoryList
+                data: receivinghistoryList
             }
 
 

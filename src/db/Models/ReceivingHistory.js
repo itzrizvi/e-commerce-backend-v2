@@ -8,10 +8,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             autoIncrement: true
         },
-        data: {
-            type: DataTypes.JSON,
-            allowNull: true
-        },
         receiving_id: {
             type: DataTypes.INTEGER,
             allowNull: true

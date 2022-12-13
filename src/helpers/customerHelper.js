@@ -269,6 +269,7 @@ module.exports = {
             // Data From Request
             const { addresses } = req;
 
+
             // Array Formation For Bulk Create
             let customerShippingAddress = [];
             // Default check
@@ -276,14 +277,13 @@ module.exports = {
             // GET Ref ID
             let ref_id;
 
-            addresses.forEach(async (address) => {
+            await addresses.forEach(async (address) => {
 
                 ref_id = address.parent_id
                 if (address.isDefault) {
-                    defaultShipping.push(true);
+                    await defaultShipping.push(true);
                 }
-
-                if (defaultShipping.length === 1) {
+                if (defaultShipping.length <= 1) {
                     await customerShippingAddress.push({
                         ref_id: user.has_role === '1' ? address.parent_id : user.id,
                         ref_model: "customer",

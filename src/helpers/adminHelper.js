@@ -6,6 +6,7 @@ const { crypt, decrypt } = require('../utils/hashes');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const config = require('config');
 const logger = require('../../logger');
+const { Mail } = require('../utils/email');
 
 
 // HELPER
@@ -171,14 +172,36 @@ module.exports = {
                         const setPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
 
                         // Setting Up Data for EMAIL SENDER
+                        // const mailData = {
+                        //     email: createStuff.email,
+                        //     subject: "Admin Created Successfully for Primer Server Parts",
+                        //     message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your SET NEW PASSWORD Link is: ${setPasswordURL.concat(codeHashed)}`
+                        // }
+
+                        // // SENDING EMAIL
+                        // await verifierEmail(mailData);
+                        // Setting Up Data for EMAIL SENDER
+                        const mailSubject = "Admin Verification Code From Prime Server Parts"
                         const mailData = {
-                            email: createStuff.email,
-                            subject: "Admin Created Successfully for Primer Server Parts",
-                            message: `Your 6 Digit Verification Code is ${createStuff.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your SET NEW PASSWORD Link is: ${setPasswordURL.concat(codeHashed)}`
+                            companyInfo: {
+                                logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                                banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                                companyName: config.get("COMPANY_NAME"),
+                                companyUrl: config.get("ECOM_URL"),
+                                shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                                fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                                tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                                li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                                insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                            },
+                            about: 'Account Verification From Prime Server Parts',
+                            email: user.email,
+                            verificationCode: user.verification_code,
+                            message: `Your 6 Digit Verification Code is ${user.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${user.email}.`
                         }
 
                         // SENDING EMAIL
-                        await verifierEmail(mailData);
+                        await Mail(createStuff.email, mailSubject, mailData, 'user-sign-up-verification', TENANTID);
                     }
 
 

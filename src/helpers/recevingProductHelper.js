@@ -84,6 +84,18 @@ module.exports = {
                 });
             }
 
+            //
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+
+
             // ASSOCIATION ENDS
 
             // Single RP
@@ -112,7 +124,11 @@ module.exports = {
                             },
                         ]
                     },
-                    { model: db.purchase_order, as: "purchaseOrder" },
+                    {
+                        model: db.purchase_order,
+                        as: "purchaseOrder",
+                        include: { model: db.vendor, as: "vendor" }
+                    },
                     {
                         model: db.user, as: "added_by",
                         include: {

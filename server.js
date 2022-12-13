@@ -14,6 +14,7 @@ const { ApolloServerPluginLandingPageGraphQLPlayground,
     ApolloServerPluginLandingPageDisabled } = require('apollo-server-core'); // FOR DISABLING APOLLO STUDIO ONLY
 const { graphqlUploadExpress } = require("graphql-upload-minimal");
 const { getFileStream } = require('./src/utils/fileUpload');
+const path = require('path');
 
 // CREATE SERVER APP
 const app = express();
@@ -40,8 +41,10 @@ app.use(onReqTenantCheck)
 app.set('trust proxy', true)
 
 
+
 // Get file from aws
 app.get('/images/*', getFileStream)
+app.use("/media", express.static(path.join(__dirname, "media")));
 
 
 // APOLLO SERVER STARTS

@@ -40,6 +40,8 @@
     "CONTACTUS_IMG_IDF": "id",
     "ORDER_TAX_EXEMPT_FILE_SRC": "psp-image-storage-resize/order"
   },
+  "SERVER_URL": "http://api.primeserverparts.com/",
+  "COMPANY_NAME": "Prime Server Parts",
   "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",
   "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",
   "RESET_PASSWORD": "reset-password/",

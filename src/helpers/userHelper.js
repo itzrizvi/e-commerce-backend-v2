@@ -39,15 +39,15 @@ module.exports = {
             const mailSubject = "Profile Verification Code From Prime Server Parts"
             const mailData = {
                 companyInfo: {
-                    logo: 'https://i.ibb.co/Kh8QDFg/image-5.png',
-                    banner: 'https://i.ibb.co/p4vh3XK/image-6.jpg',
-                    companyName: 'Prime Server Parts',
-                    companyUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                    companyName: config.get("COMPANY_NAME"),
+                    companyUrl: config.get("ECOM_URL"),
                     shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
-                    fb: 'https://i.ibb.co/vZVT4sQ/image-1.png',
-                    tw: 'https://i.ibb.co/41j5tdG/image-2.png',
-                    li: 'https://i.ibb.co/0JS5Xsq/image-3.png',
-                    insta: 'https://i.ibb.co/WFs1krt/image-4.png'
+                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
                 },
                 about: 'Account Verification From Prime Server Parts',
                 email: user.email,

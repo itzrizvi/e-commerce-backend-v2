@@ -72,18 +72,6 @@ module.exports = gql`
         receivedProducts:JSON
     }
 
-    type HistoryProducts {
-        product:ProductForList
-        quantity:Int
-        recieved_quantity:Int
-        serials:[String]
-    }
-
-    type HistoryData {
-        products:[HistoryProducts]
-        status:String
-    }
-
     type ReceivingHistory {
         id:Int
         receiving_id:Int

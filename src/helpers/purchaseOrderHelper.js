@@ -663,7 +663,8 @@ module.exports = {
                 return {
                     message: "Receiving Inserted Successfully!!!",
                     status: true,
-                    tenant_id: TENANTID
+                    tenant_id: TENANTID,
+                    id: insertReceiving.id
                 }
 
             } else {

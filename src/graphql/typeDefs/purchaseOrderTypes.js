@@ -122,6 +122,14 @@ input createReceivingInput {
     status:String
 }
 
+type createReceivingOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    id:Int
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -130,7 +138,7 @@ extend type Mutation {
     createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
-    createReceiving(data:createReceivingInput):CommonOutput!
+    createReceiving(data:createReceivingInput):createReceivingOutput!
 }
 
 extend type Query {

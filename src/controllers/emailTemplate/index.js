@@ -12,4 +12,5 @@ module.exports = {
     updateEmailTemplateController: require('./updateEmailTemplateController'),
     getSingleEmailTemplateController: require('./getSingleEmailTemplateController'),
     getEmailTemplateListController: require('./getEmailTemplateListController'),
+    getEmailTemplatePreviewController: require('./getEmailTemplatePreviewController'),
 }

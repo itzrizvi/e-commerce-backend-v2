@@ -1,6 +1,7 @@
 // All Requires
 const { Op } = require("sequelize");
 const { default: slugify } = require("slugify");
+const logger = require("../../logger");
 
 
 // Email Template HELPER
@@ -727,6 +728,83 @@ module.exports = {
 
 
         } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET Email Template Preview
+    getEmailTemplatePreview: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { templatelist_id } = req;
+
+
+            // 
+            if (!db.email_template_list.hasAlias('email_template') && !db.email_template_list.hasAlias('emailteamplate')) {
+                await db.email_template_list.hasOne(db.email_template, {
+                    sourceKey: 'email_template_id',
+                    foreignKey: 'id',
+                    as: 'emailteamplate'
+                });
+            }
+
+            // 
+            if (!db.email_template.hasAlias('email_header_footer') && !db.email_template.hasAlias('templateHeader')) {
+                await db.email_template.hasOne(db.email_header_footer, {
+                    sourceKey: 'header_id',
+                    foreignKey: 'id',
+                    as: 'templateHeader'
+                });
+            }
+
+            // 
+            if (!db.email_template.hasAlias('email_header_footer') && !db.email_template.hasAlias('templateFooter')) {
+                await db.email_template.hasOne(db.email_header_footer, {
+                    sourceKey: 'footer_id',
+                    foreignKey: 'id',
+                    as: 'templateFooter'
+                });
+            }
+
+            //
+            const gettemplate = await db.email_template_list.findOne({
+                include: [
+                    {
+                        model: db.email_template, as: "emailteamplate",
+                        include: [
+                            { model: db.email_header_footer, as: "templateHeader" },
+                            { model: db.email_header_footer, as: "templateFooter" },
+                        ]
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id: templatelist_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // CONCATE TEMPLATE
+            const emailBody = gettemplate.emailteamplate.content;
+            const emailHeader = gettemplate.emailteamplate.templateHeader.content;
+            const emailFooter = gettemplate.emailteamplate.templateFooter.content;
+            const emailTemplate = emailHeader.concat(emailBody).concat(emailFooter);
+
+
+            // Return Formation
+            return {
+                message: "GET Email Template Preview Success",
+                tenant_id: TENANTID,
+                status: true,
+                data: emailTemplate
+            }
+
+
+
+        } catch (error) {
+            logger.crit("crit", error, { service: 'emailTemplateHelper.js', operation: "getEmailTemplatePreview - query" });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },

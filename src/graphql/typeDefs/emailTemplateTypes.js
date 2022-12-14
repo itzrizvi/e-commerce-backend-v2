@@ -146,6 +146,17 @@ type GetEmailTemplateList {
     data:[EmailTemplate]
 }
 
+input GetEmailTemplatePreviewInput {
+    templatelist_id:Int!
+}
+
+type GetEmailTemplatePreviewOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:String
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -165,6 +176,7 @@ extend type Query {
     getEmailTempHeaderFooterList:GetEmailHeaderFooterListOutput!
     getSingleEmailTemplate(query:GetSingleEmailTemplateInput):GetSingleEmailTemplateOutput!
     getEmailTemplateList:GetEmailTemplateList!
+    getEmailTemplatePreview(query:GetEmailTemplatePreviewInput):GetEmailTemplatePreviewOutput!
 }
 
 

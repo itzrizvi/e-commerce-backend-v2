@@ -90,7 +90,7 @@ const Mail = async (mail_address, subject, data = {}, alias, tenant_id) => {
         });
 
     } catch (error) {
-        logger.crit("crit", error, { service: 'adminSignIn.js' });
+        logger.crit("crit", error, { service: 'email.js' });
         console.log(error)
         if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
     }

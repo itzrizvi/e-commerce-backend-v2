@@ -3,7 +3,8 @@ const { getAllEmailTemplateListController,
     getSingleEmailTempHeaderFooterController,
     getEmailTempHeaderFooterListController,
     getSingleEmailTemplateController,
-    getEmailTemplateListController } = require("../../controllers");
+    getEmailTemplateListController,
+    getEmailTemplatePreviewController } = require("../../controllers");
 
 
 // Email Template BASED QUERY
@@ -79,6 +80,18 @@ module.exports = {
 
         // Return To Controller
         return await getEmailTemplateListController(db, user, isAuth, TENANTID);
+    },
+    // GET EMAIL TEMPLATE PREVIEW
+    getEmailTemplatePreview: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getEmailTemplatePreviewController(args.query, db, user, isAuth, TENANTID);
     },
 
 }

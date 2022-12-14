@@ -23,6 +23,7 @@ type EmailHeaderFooter {
     slug:String
     content:String
     type:String
+    layout_type:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -34,6 +35,7 @@ type EmailTemplate {
     name:String
     slug:String
     content:String
+    layout_type:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -78,6 +80,7 @@ input AddEmailTempHFInput {
     name:String
     content:JSON
     type:String
+    layout_type:String!
 }
 
 input UpdateEmailTempHFInput {
@@ -85,6 +88,7 @@ input UpdateEmailTempHFInput {
     name:String
     content:JSON
     type:String
+    layout_type:String!
 }
 
 input GetSingleEmailHeaderFooterInput {
@@ -112,6 +116,7 @@ input addEmailTemplateInput {
     content:JSON!
     header_id:Int!
     footer_id:Int!
+    layout_type:String!
 }
 
 input updateEmailTemplateInput {
@@ -120,6 +125,7 @@ input updateEmailTemplateInput {
     content:JSON
     header_id:Int
     footer_id:Int
+    layout_type:String!
 }
 
 input GetSingleEmailTemplateInput {

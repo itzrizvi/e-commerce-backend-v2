@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: false
         },
+        layout_type: {
+            type: DataTypes.ENUM("custom", "dynamic"),
+            allowNull: false
+        },
         header_id: {
             type: DataTypes.INTEGER,
             allowNull: false

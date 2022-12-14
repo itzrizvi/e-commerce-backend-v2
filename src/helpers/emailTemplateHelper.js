@@ -175,7 +175,7 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
-    //
+    // GET SINGLE EMAIL TEMPLATE LIST
     getSingleEmailTemplateList: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
@@ -237,7 +237,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { name, content, type } = req;
+            const { name, content, layout_type, type } = req;
 
             // Create Slug
             const slug = slugify(`${name}`, {
@@ -264,6 +264,7 @@ module.exports = {
                 name,
                 slug,
                 content,
+                layout_type,
                 type,
                 tenant_id: TENANTID,
                 created_by: user.id
@@ -289,7 +290,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { id, name, content, type } = req;
+            const { id, name, content, layout_type, type } = req;
 
             let slug;
             if (name) {
@@ -325,6 +326,7 @@ module.exports = {
                 name,
                 slug,
                 content,
+                layout_type,
                 type,
                 updated_by: user.id
             }, {
@@ -462,7 +464,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { name, content, header_id, footer_id } = req;
+            const { name, content, layout_type, header_id, footer_id } = req;
 
             // Create Slug
             const slug = slugify(`${name}`, {
@@ -489,6 +491,7 @@ module.exports = {
                 name,
                 slug,
                 content,
+                layout_type,
                 header_id,
                 footer_id,
                 tenant_id: TENANTID,
@@ -515,7 +518,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { id, name, content, header_id, footer_id } = req;
+            const { id, name, content, layout_type, header_id, footer_id } = req;
 
             let slug;
             if (name) {
@@ -550,6 +553,7 @@ module.exports = {
                 name,
                 slug,
                 content,
+                layout_type,
                 header_id,
                 footer_id,
                 updated_by: user.id

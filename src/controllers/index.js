@@ -30,4 +30,5 @@ module.exports = {
     ...require('./receivingProduct'),
     ...require('./quote'),
     ...require('./emailTemplate'),
+    ...require('./dashboard'),
 }

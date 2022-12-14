@@ -1,4 +1,4 @@
-const { } = require("../../controllers");
+const { getDashboardAnalyticsController } = require("../../controllers");
 
 
 // Dasboard BASED QUERY
@@ -13,7 +13,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        // return await getSingleTaxClassAdminController(args.query, db, user, isAuth, TENANTID);
+        return await getDashboardAnalyticsController(db, user, isAuth, TENANTID);
     }
 
 }

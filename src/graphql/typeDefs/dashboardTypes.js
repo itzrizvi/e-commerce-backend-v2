@@ -8,11 +8,18 @@ module.exports = gql`
 
 
 type GetDashboardAnyalytics {
+    message:String
+    tenant_id:String
+    status:Boolean
     orderCount:Int
-    customerCount:Int
     todayProductSoldCount:Int
+    todayProductPendingCount:Int
+    todayOrderPendingCount:Int
+    todayDeliveredOrderCount:Int
+    customerCount:Int
     revenueCount:Int
 }
+
 
 
 # Extended QUERIES AND MUTATIONS ######################################

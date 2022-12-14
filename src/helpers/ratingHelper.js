@@ -1,4 +1,5 @@
 const { Op } = require("sequelize");
+const logger = require("../../logger");
 
 // Rating HELPER
 module.exports = {
@@ -136,6 +137,7 @@ module.exports = {
 
 
         } catch (error) {
+            logger.crit("crit", error, { service: 'ratingHelper.js', operation: "createRating - mutation" });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
 
@@ -395,6 +397,7 @@ module.exports = {
             }
 
         } catch (error) {
+            logger.crit("crit", error, { service: 'ratingHelper.js', operation: "getRatingsByUserID - query" });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },

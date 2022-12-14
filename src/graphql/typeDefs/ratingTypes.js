@@ -6,22 +6,11 @@ module.exports = gql`
         id: Int
         rating_description:String
         rating:Float
+        product:ProductForList
         createdAt:String
         updatedAt:String
         tenant_id:String
         ratedBy:Customer
-    }
-
-    type Product{
-        product_id:Int
-        product_name:String
-        product_slug:String
-        product_description:JSON
-        product_image:String
-        product_sku:String
-        product_regular_price:Float
-        product_sale_price:Float
-        product_status:String
     }
 
     type RatingOutput{
@@ -69,6 +58,17 @@ module.exports = gql`
         data:[ProductForList]
     }
 
+    input GetRatingsByUserInput {
+        user_id:Int!
+    }
+
+    type GetRatingsByUserOutput {
+        message:String
+        status:Boolean
+        tenant_id:String
+        data: [Rating]
+    }
+
     extend type Mutation {
         createRating(data: CreateRatingInput): CreateRatingOutput!
     }
@@ -78,5 +78,6 @@ module.exports = gql`
         getAllRatingByProduct(query: GetAllRatingByProductInput): getAllRatingOutput!
         getSingleRating(query: GetSingleRatingInput): getSingleRatingOutput!
         getTopRatedProducts: GetTopRatedProducts!
+        getRatingsByUserID(query:GetRatingsByUserInput):GetRatingsByUserOutput!
     }
 `;

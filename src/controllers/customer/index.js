@@ -8,4 +8,5 @@ module.exports = {
     addCustomerSingleBillingAddressController: require("./addCustomerSingleBillingAddressController"),
     addCustomerSingleShippingAddressController: require("./addCustomerSingleShippingAddressController"),
     updateCustomerSingleAddressController: require("./updateCustomerSingleAddressController"),
+    updateCustomerController: require("./updateCustomerController"),
 }

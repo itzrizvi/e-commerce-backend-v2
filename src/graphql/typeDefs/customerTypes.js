@@ -121,6 +121,16 @@ input UpdateCustomerSingleAddressInput {
     isDefault: Boolean
 }
 
+
+input UpdateCustomerInput {
+    id:Int!
+    first_name:String
+    last_name:String
+    user_status:Boolean
+    send_mail:Boolean
+}
+
+
 extend type Mutation {
     addCustomer(data: CustomerInput): AddCustomerOutput!
     addCustomerBillingAddress(data: AddCustomerBillingAddressInput): CommonOutput!
@@ -129,6 +139,7 @@ extend type Mutation {
     addCustomerSingleBillingAddress(data:addCustomerSingleBillingInput):addCustomerAddressOutput!
     addCustomerSingleShippingAddress(data:addCustomerSingleShippingInput):addCustomerAddressOutput!
     updateCustomerSingleAddress(data:UpdateCustomerSingleAddressInput):CommonOutput!
+    updateCustomer(data:UpdateCustomerInput):CommonOutput!
 }
 extend type Query {
     getAllCustomer: getAllCustomerOutput!

@@ -3,6 +3,7 @@ const { verifierEmail } = require("../utils/verifyEmailSender");
 const bcrypt = require('bcrypt');
 const { crypt } = require("../utils/hashes");
 const config = require('config');
+const { Mail } = require("../utils/email");
 
 // Customer HELPER
 module.exports = {
@@ -926,5 +927,86 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
+    },
+    // UPDATE Customer API
+    updateCustomer: async (req, db, user, isAuth, TENANTID) => {
+
+        try {
+            // GET DATA
+            const {
+                id,
+                first_name,
+                last_name,
+                user_status,
+                send_mail
+            } = req;
+
+            // Update Doc
+            const updateDoc = {
+                first_name,
+                last_name,
+                user_status
+            }
+            const updatecustomer = await db.user.update(updateDoc, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (!updatecustomer) return { message: "Customer Update Failed!!!", status: false }
+
+
+            if (updatecustomer) {
+
+                const findUpdatedUser = await db.user.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                const { email } = findUpdatedUser;
+
+                // if (send_mail) {
+                //     // Setting Up Data for EMAIL SENDER
+                //     const mailSubject = "Profile Update From Prime Server Parts"
+                //     const mailData = {
+                //         companyInfo: {
+                //             logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                //             banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                //             companyName: config.get("COMPANY_NAME"),
+                //             companyUrl: config.get("ECOM_URL"),
+                //             shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                //             fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                //             tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                //             li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                //             insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                //         },
+                //         about: 'About Profile Update From Prime Server Parts',
+                //         email: email,
+                //         message: `Your Profile Has Been Updated From Prime Server Parts System.`
+                //     }
+
+                //     // SENDING EMAIL
+                //     await Mail(email, mailSubject, mailData, 'customer-profile-update', TENANTID);
+                // }
+
+
+                return {
+                    tenant_id: TENANTID,
+                    message: "Successfully Updated Customer.",
+                    status: true,
+                    id: id
+                }
+            }
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+
     },
 }

@@ -4,6 +4,7 @@ var nodemailer = require('nodemailer');
 var handlebars = require('handlebars');
 const db = require("../db")
 var fs = require('fs');
+const logger = require("../../logger");
 
 const Mail = async (mail_address, subject, data = {}, alias, tenant_id) => {
 

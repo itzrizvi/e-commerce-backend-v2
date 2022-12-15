@@ -17,7 +17,9 @@ type GetDashboardAnyalytics {
     todayOrderPendingCount:Int
     todayDeliveredOrderCount:Int
     customerCount:Int
+    newCustomer:Int
     revenueCount:Int
+    todayRevenue:Int
 }
 
 

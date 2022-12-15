@@ -90,6 +90,16 @@ module.exports = {
                 }
             });
 
+            // Today Revenue
+            const todayRevenue = await db.order.sum("total", {
+                where: {
+                    [Op.and]: [{
+                        id: deliveredOrderIDS,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             // Today Pending Product Count
             const pendingProductCountToday = await db.order_item.sum("quantity", {
                 where: {
@@ -110,14 +120,23 @@ module.exports = {
                 }
             });
 
-
-            // console.log("Total Revenue: ", totalRevenueCount ?? 0)
-            // console.log("PRODUCT SOLD TODAY: ", productSoldToday ?? 0)
-            // console.log("PRODUCT PENDING TODAY: ", pendingProductCountToday ?? 0)
-            // console.log("Order PENDING TODAY: ", todayPendingOrderIDS.length)
-            // console.log("TODAY Delivered Order: ", deliveredOrderIDS.length)
-            // console.log("ORDER COUNT: ", orderCount)
-            // console.log("CUSTOMER COUNT: ", customerCount)
+            // New Customers
+            const allCustomers = await db.user.findAll({
+                where: {
+                    [Op.and]: [{
+                        has_role: 0,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            let newCustomers = [];
+            await allCustomers.forEach(async (item) => {
+                let updatedAt = new Date(item.createdAt).toLocaleDateString();
+                let serverTime = new Date().toLocaleDateString();
+                if (updatedAt === serverTime) {
+                    await newCustomers.push(item.id)
+                }
+            });
 
 
             // Return Formation
@@ -131,7 +150,9 @@ module.exports = {
                 todayOrderPendingCount: todayPendingOrderIDS.length,
                 todayDeliveredOrderCount: deliveredOrderIDS.length,
                 customerCount: customerCount ?? 0,
-                revenueCount: totalRevenueCount ?? 0
+                revenueCount: totalRevenueCount ?? 0,
+                todayRevenue: todayRevenue ?? 0,
+                newCustomer: newCustomers.length
             }
 
         } catch (error) {

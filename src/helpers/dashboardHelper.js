@@ -28,11 +28,11 @@ module.exports = {
 
 
             // Check If Has Alias with Order and Order Status
-            if (!db.order.hasAlias("order_status") && !db.order.hasAlias("orderstatus")) {
+            if (!db.order.hasAlias("order_status") && !db.order.hasAlias("orderStatus")) {
                 await db.order.hasOne(db.order_status, {
                     sourceKey: "order_status_id",
                     foreignKey: "id",
-                    as: "orderstatus",
+                    as: "orderStatus",
                 });
             }
 
@@ -43,11 +43,28 @@ module.exports = {
                     as: "orderitems",
                 });
             }
+            // Check If Has Alias with Users and Order
+            if (!db.order.hasAlias("user") && !db.order.hasAlias("customer")) {
+                await db.order.hasOne(db.user, {
+                    sourceKey: "customer_id",
+                    foreignKey: "id",
+                    as: "customer",
+                });
+            }
+
+            // Check If Has Alias with Order and Payment Method
+            if (!db.order.hasAlias("payment_method") && !db.order.hasAlias("paymentmethod")) {
+                await db.order.hasOne(db.payment_method, {
+                    sourceKey: "payment_id",
+                    foreignKey: "id",
+                    as: "paymentmethod",
+                });
+            }
 
             // GET Today Product Sold and Pending
             const orders = await db.order.findAll({
                 include: [
-                    { model: db.order_status, as: "orderstatus" },
+                    { model: db.order_status, as: "orderStatus" },
                     { model: db.order_item, as: "orderitems" },
                 ],
                 where: {
@@ -61,7 +78,7 @@ module.exports = {
             let todayPendingOrderIDS = [];
             await orders.forEach(async (item) => {
 
-                if (item.orderstatus.slug === "delivered") {
+                if (item.orderStatus.slug === "delivered") {
                     overAllOrderDeliveredIDS.push(item.id)
                     let updatedAt = new Date(item.updatedAt).toLocaleDateString();
                     let serverTime = new Date().toLocaleDateString();
@@ -71,7 +88,7 @@ module.exports = {
 
                 }
 
-                if (item.orderstatus.slug === "pending") {
+                if (item.orderStatus.slug === "pending") {
                     let updatedAt = new Date(item.updatedAt).toLocaleDateString();
                     let serverTime = new Date().toLocaleDateString();
                     if (updatedAt === serverTime) {
@@ -138,6 +155,22 @@ module.exports = {
                 }
             });
 
+            // Recent Orders 
+            const recentOrders = await db.order.findAll({
+                include: [
+                    { model: db.user, as: "customer" },
+                    { model: db.payment_method, as: "paymentmethod" },
+                    { model: db.order_status, as: "orderStatus" }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id: todayPendingOrderIDS,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
 
             // Return Formation
             return {
@@ -152,7 +185,8 @@ module.exports = {
                 customerCount: customerCount ?? 0,
                 revenueCount: totalRevenueCount ?? 0,
                 todayRevenue: todayRevenue ?? 0,
-                newCustomer: newCustomers.length
+                newCustomer: newCustomers.length,
+                recentOrders: recentOrders,
             }
 
         } catch (error) {

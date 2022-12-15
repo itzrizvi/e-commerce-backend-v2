@@ -20,6 +20,7 @@ type GetDashboardAnyalytics {
     newCustomer:Int
     revenueCount:Int
     todayRevenue:Int
+    recentOrders:[OrderList]
 }
 
 

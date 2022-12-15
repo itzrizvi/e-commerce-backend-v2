@@ -137,7 +137,7 @@ module.exports = {
             const isActive = user.user_status;
             if (!isActive) {
                 return {
-                    message: "USER IS DISABLED",
+                    message: "User Has Been Deactivated, Please Contact To Support",
                     status: false
                 }
             }

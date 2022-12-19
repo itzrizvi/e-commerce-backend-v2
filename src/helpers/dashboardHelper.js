@@ -25,6 +25,28 @@ module.exports = {
                     }]
                 }
             });
+            // GET Verified Customer Count
+            const verifiedCustomer = await db.user.count({
+                where: {
+                    [Op.and]: [{
+                        has_role: 0,
+                        email_verified: true,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Total Quotes
+            const totalQuotes = await db.submitted_quote.count({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+            const allQuotes = await db.submitted_quote.findAll({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
 
 
             // Check If Has Alias with Order and Order Status
@@ -76,66 +98,48 @@ module.exports = {
             let deliveredOrderIDS = [];
             let overAllOrderDeliveredIDS = [];
             let todayPendingOrderIDS = [];
-            await orders.forEach(async (item) => {
+            let shippingInProgress = [];
+            if (orders && orders.length > 0) {
+                await orders.forEach(async (item) => {
 
-                if (item.orderStatus.slug === "delivered") {
-                    overAllOrderDeliveredIDS.push(item.id)
-                    let updatedAt = new Date(item.updatedAt).toLocaleDateString();
-                    let serverTime = new Date().toLocaleDateString();
-                    if (updatedAt === serverTime) {
-                        await deliveredOrderIDS.push(item.id)
+                    if (item.orderStatus.slug === "delivered") {
+                        overAllOrderDeliveredIDS.push(item.id)
+                        let updatedAt = new Date(item.updatedAt).toLocaleDateString();
+                        let serverTime = new Date().toLocaleDateString();
+                        if (updatedAt === serverTime) {
+                            await deliveredOrderIDS.push(item.id)
+                        }
+
                     }
 
-                }
-
-                if (item.orderStatus.slug === "pending") {
-                    let updatedAt = new Date(item.updatedAt).toLocaleDateString();
-                    let serverTime = new Date().toLocaleDateString();
-                    if (updatedAt === serverTime) {
-                        await todayPendingOrderIDS.push(item.id)
+                    if (item.orderStatus.slug === "pending") {
+                        let updatedAt = new Date(item.updatedAt).toLocaleDateString();
+                        let serverTime = new Date().toLocaleDateString();
+                        if (updatedAt === serverTime) {
+                            await todayPendingOrderIDS.push(item.id)
+                        }
                     }
-                }
-            });
 
-            // Today Product SOld Count
-            const productSoldToday = await db.order_item.sum("quantity", {
-                where: {
-                    [Op.and]: [{
-                        order_id: deliveredOrderIDS,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
+                    if (item.orderStatus.slug === "in-progress") {
+                        await shippingInProgress.push(item.id)
+                    }
+                });
+            }
 
-            // Today Revenue
-            const todayRevenue = await db.order.sum("total", {
-                where: {
-                    [Op.and]: [{
-                        id: deliveredOrderIDS,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
 
-            // Today Pending Product Count
-            const pendingProductCountToday = await db.order_item.sum("quantity", {
-                where: {
-                    [Op.and]: [{
-                        order_id: todayPendingOrderIDS,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
 
-            // Total Revenue Count
-            const totalRevenueCount = await db.order.sum("total", {
-                where: {
-                    [Op.and]: [{
-                        id: overAllOrderDeliveredIDS,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
+            // New Quotes
+            let newQuotes = [];
+            if (allQuotes && allQuotes.length > 0) {
+                allQuotes.forEach(async (item) => {
+                    let createdAt = new Date(item.createdAt).toLocaleDateString();
+                    let serverTime = new Date().toLocaleDateString();
+                    if (createdAt === serverTime) {
+                        await newQuotes.push(item.id);
+                    }
+                });
+            }
+
 
             // New Customers
             const allCustomers = await db.user.findAll({
@@ -170,6 +174,65 @@ module.exports = {
                 }
             });
 
+            // GET RECENT POs
+            const purchaseOrders = await db.purchase_order.findAll({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Recent Purchase Orders
+            let recentPurchaseOrderIDS = [];
+            if (purchaseOrders && purchaseOrders.length > 0) {
+                purchaseOrders.forEach(async (item) => {
+                    let createdAt = new Date(item.createdAt).toLocaleDateString();
+                    let serverTime = new Date().toLocaleDateString();
+                    if (createdAt === serverTime) {
+                        await recentPurchaseOrderIDS.push(item.id)
+                    }
+                });
+            }
+            let recentPurchaseOrders = await db.purchase_order.findAll({
+                where: {
+                    [Op.and]: [{
+                        id: recentPurchaseOrderIDS,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.submitted_quote.hasAlias('user') && !db.submitted_quote.hasAlias('quotedby')) {
+                await db.submitted_quote.hasOne(db.user, {
+                    sourceKey: 'user_id',
+                    foreignKey: 'id',
+                    as: 'quotedby'
+                });
+            }
+
+            // Recent Quotes
+            let recentQuotes = await db.submitted_quote.findAll({
+                include: [
+                    {
+                        model: db.user, as: 'quotedby', // Include User 
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        id: newQuotes,
+                        tenant_id: TENANTID
+                    }]
+                }
+            })
+
 
 
             // Return Formation
@@ -177,16 +240,19 @@ module.exports = {
                 message: "Dashboard Analytics GET Success!!",
                 tenant_id: TENANTID,
                 status: true,
-                orderCount: orderCount ?? 0,
-                todayProductSoldCount: productSoldToday ?? 0,
-                todayProductPendingCount: pendingProductCountToday ?? 0,
-                todayOrderPendingCount: todayPendingOrderIDS.length,
-                todayDeliveredOrderCount: deliveredOrderIDS.length,
-                customerCount: customerCount ?? 0,
-                revenueCount: totalRevenueCount ?? 0,
-                todayRevenue: todayRevenue ?? 0,
+                totalCustomer: customerCount ?? 0,
                 newCustomer: newCustomers.length,
+                verifiedCustomer: verifiedCustomer ?? 0,
+                orderCount: orderCount ?? 0,
+                totalShippedOrder: overAllOrderDeliveredIDS.length,
+                todayShippedOrder: deliveredOrderIDS.length,
+                shippingInProgress: shippingInProgress.length,
+                newOrderCount: todayPendingOrderIDS.length,
+                totalQuotes: totalQuotes ?? 0,
+                todayQuotes: newQuotes.length,
                 recentOrders: recentOrders,
+                recentPurchaseOrders: recentPurchaseOrders,
+                recentQuotes: recentQuotes
             }
 
         } catch (error) {

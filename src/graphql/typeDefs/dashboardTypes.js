@@ -11,16 +11,19 @@ type GetDashboardAnyalytics {
     message:String
     tenant_id:String
     status:Boolean
-    orderCount:Int
-    todayProductSoldCount:Int
-    todayProductPendingCount:Int
-    todayOrderPendingCount:Int
-    todayDeliveredOrderCount:Int
-    customerCount:Int
+    totalCustomer:Int
     newCustomer:Int
-    revenueCount:Int
-    todayRevenue:Int
+    verifiedCustomer:Int
+    orderCount:Int
+    totalShippedOrder:Int
+    todayShippedOrder:Int
+    shippingInProgress:Int
+    newOrderCount:Int
+    totalQuotes:Int
+    todayQuotes:Int
+    recentPurchaseOrders:[PurchaseOrderList]
     recentOrders:[OrderList]
+    recentQuotes:[SubmittedQuote]
 }
 
 

@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const { verifierEmail } = require("../utils/verifyEmailSender");
 const bcrypt = require('bcrypt');
 const { crypt } = require("../utils/hashes");
@@ -1008,5 +1008,47 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
 
+    },
+    // GET SEARCHED CUSTOMERS
+    getSearchedCustomers: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { searchQuery } = req;
+
+            // GET Searched Customer
+            const getsearchedcustomers = await db.user.findAll({
+                where: {
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        has_role: '0',
+                        user_status: true,
+                    }],
+                    // first_name: {
+                    //     [Op.iLike]: `%${searchQuery}%`
+                    // },
+                    // last_name: {
+                    //     [Op.iLike]: `%${searchQuery}%`
+                    // }
+                    email: {
+                        [Op.iLike]: `%${searchQuery}%`
+                    }
+
+                }
+            });
+
+            // Return 
+            return {
+                message: "Get Searched Customer!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getsearchedcustomers
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
     },
 }

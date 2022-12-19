@@ -131,6 +131,18 @@ input UpdateCustomerInput {
 }
 
 
+input CustomerSearchInput {
+    searchQuery:String
+}
+
+type CustomerSearchOutput {
+    status: Boolean
+    message: String
+    tenant_id:String
+    data: [Customer]
+}
+
+
 extend type Mutation {
     addCustomer(data: CustomerInput): AddCustomerOutput!
     addCustomerBillingAddress(data: AddCustomerBillingAddressInput): CommonOutput!
@@ -144,5 +156,6 @@ extend type Mutation {
 extend type Query {
     getAllCustomer: getAllCustomerOutput!
     getSingleCustomer(query: GetSingleCustomerInput): SingleCustomerOutput!
+    getSearchedCustomers(query: CustomerSearchInput): CustomerSearchOutput!
 }
 `;

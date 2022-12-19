@@ -126,8 +126,6 @@ module.exports = {
                 });
             }
 
-
-
             // New Quotes
             let newQuotes = [];
             if (allQuotes && allQuotes.length > 0) {

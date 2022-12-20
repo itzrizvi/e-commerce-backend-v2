@@ -14,7 +14,7 @@ input CustomerInput {
     send_mail: Boolean!
 }
 
-type Customer{
+type Customer {
     id: Int!
     first_name: String!
     last_name: String!

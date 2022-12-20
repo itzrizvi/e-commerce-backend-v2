@@ -115,6 +115,7 @@ type OrderAdmin {
     orderstatus:OrderStatusPublic
     customer:Customer
     shippingAddress:AddressList
+    shippingmethod:ShippingMethod
     taxExemptFiles:[TaxExemptFiles]
     coupon:Coupon
     added_by:Staff

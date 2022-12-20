@@ -674,6 +674,22 @@ module.exports = {
         orderProducts
       } = req;
 
+      // GET Product IDS
+      let productIDS = [];
+      orderProducts.forEach(async (element) => {
+        await productIDS.push(element.product_id)
+      });
+
+      // FIND PRODUCTS
+      const findProducts = await db.product.findAll({
+        where: {
+          [Op.and]: [{
+            id: productIDS,
+            tenant_id: TENANTID
+          }]
+        }
+      });
+
       // const {
       //   customer_id,
       //   cart_id,
@@ -688,43 +704,47 @@ module.exports = {
       //   taxexempt_file,
       // } = req;
 
-      const shipping_cost = 50; // TODO ->> IT WILL CHANGE
-
+      const shipping_cost = 0; // TODO ->> IT WILL CHANGE
 
       let sub_total = 0; // sub_total
       let totalQuantity = 0;
-
       //
       orderItems.forEach(async (item) => {
 
-        if (item.product.prod_sale_price != 0) {
-          const calculateTotal = item.product.prod_sale_price * item.quantity;
-          sub_total += calculateTotal;
-          totalQuantity += item.quantity;
+        findProducts.forEach(async (element) => {
 
-          //
-          await orderItems.push({
-            product_id: item.product.id,
-            price: item.product.prod_sale_price,
-            quantity: item.quantity,
-            created_by: user.id,
-            tenant_id: TENANTID,
-          });
-        } else {
-          const calculateTotal =
-            item.product.prod_regular_price * item.quantity;
-          sub_total += calculateTotal;
-          totalQuantity += item.quantity;
 
-          //
-          await orderItems.push({
-            product_id: item.product.id,
-            price: item.product.prod_regular_price,
-            quantity: item.quantity,
-            created_by: user.id,
-            tenant_id: TENANTID,
-          });
-        }
+          if (item.product.prod_sale_price != 0) {
+            const calculateTotal = item.product.prod_sale_price * item.quantity;
+            sub_total += calculateTotal;
+            totalQuantity += item.quantity;
+
+            //
+            await orderItems.push({
+              product_id: item.product.id,
+              price: item.product.prod_sale_price,
+              quantity: item.quantity,
+              created_by: user.id,
+              tenant_id: TENANTID,
+            });
+          } else {
+            const calculateTotal = item.product.prod_regular_price * item.quantity;
+            sub_total += calculateTotal;
+            totalQuantity += item.quantity;
+
+            //
+            await orderItems.push({
+              product_id: item.product.id,
+              price: item.product.prod_regular_price,
+              quantity: item.quantity,
+              created_by: user.id,
+              tenant_id: TENANTID,
+            });
+          }
+
+        });
+
+
       });
 
       //
@@ -1163,6 +1183,16 @@ module.exports = {
         });
       }
 
+
+      // Order and Shipping method
+      if (!db.order.hasAlias("shipping_method") && !db.order.hasAlias("shippingmethod")) {
+        await db.order.hasOne(db.shipping_method, {
+          sourceKey: "shipping_method_id",
+          foreignKey: "id",
+          as: "shippingmethod",
+        });
+      }
+
       // Single Order For Admin
       const singleOrder = await db.order.findOne({
         include: [
@@ -1190,6 +1220,7 @@ module.exports = {
             },
           },
           { model: db.address, as: "shippingAddress" }, // Address
+          { model: db.shipping_method, as: "shippingmethod" }, // Shipping Method
           { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
           { model: db.coupon, as: "coupon" }, // Coupon
           {

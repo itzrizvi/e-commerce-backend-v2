@@ -155,16 +155,15 @@ input createOrderByCustomerInput {
 
 input createOrderByAdminInput {
     customer_id:Int!
-    cart_id:Int!
-    tax_exempt:Boolean!
+    tax_exempt:Boolean
     taxexempt_file:[Upload]
     payment_id:Int!
     coupon_id:Int
-    po_id:Int
-    po_number:String
     order_status_id:Int!
     billing_address_id:Int!
     shipping_address_id:Int!
+    shipping_method_id:Int
+    orderItems:JSON
 }
 
 type OrderList {

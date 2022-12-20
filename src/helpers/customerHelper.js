@@ -1017,8 +1017,28 @@ module.exports = {
             // Data From Request
             const { searchQuery } = req;
 
+
+            if (!db.user.hasAlias('address') && !db.user.hasAlias('addresses')) {
+                await db.user.hasMany(db.address,
+                    {
+                        foreignKey: 'ref_id',
+                        as: "addresses",
+                        constraints: false,
+                        scope: {
+                            ref_model: 'customer'
+                        }
+                    });
+            }
+
             // GET Searched Customer
             const getsearchedcustomers = await db.user.findAll({
+                include: [
+                    {
+                        model: db.address,
+                        as: "addresses",
+                        separate: true,
+                    }
+                ],
                 where: {
                     [Op.and]: [{
                         tenant_id: TENANTID,

@@ -1217,7 +1217,14 @@ module.exports = {
     // Try Catch Block
     try {
       // Data From Request
-      const { order_id, orderItems } = req;
+      const { order_id,
+        shipping_address_id,
+        billing_address_id,
+        shipping_method_id,
+        payment_id,
+        coupon_id,
+        order_status_id,
+        orderItems } = req;
 
       // Product ID Array
       const productIds = [];
@@ -1281,18 +1288,17 @@ module.exports = {
         });
       });
 
-      // Find Oder
-      const findOrder = await db.order.findOne({
+      // GET PAYMENT
+      const getPayment = await db.payment.findOne({
         where: {
-          [Op.and]: [
-            {
-              id: order_id,
-              tenant_id: TENANTID,
-            },
-          ],
-        },
+          [Op.and]: [{
+            order_id,
+            tenant_id: TENANTID
+          }]
+        }
       });
-      const { coupon_id, shipping_cost } = findOrder;
+      const { provider_id } = getPayment;
+
 
       if (coupon_id) {
         // TODO ->>>>> NEED TO IMPLEMENT A LOGIC FOR COUPON ACCEPT PARTIALLY
@@ -1352,8 +1358,12 @@ module.exports = {
       const updateDoc = {
         total,
         sub_total,
+        shipping_address_id,
+        shipping_method_id,
+        payment_id,
         discount_amount,
         coupon_id,
+        order_status_id,
         updated_by: user.id,
       };
       const updateorder = await db.order.update(updateDoc, {
@@ -1366,8 +1376,7 @@ module.exports = {
           ],
         },
       });
-      if (!updateorder)
-        return { message: "Order Couldn't Updated!!!", status: false };
+      if (!updateorder) return { message: "Order Couldn't Updated!!!", status: false };
 
       // Update Order History
       await db.order_history.create({
@@ -1398,6 +1407,8 @@ module.exports = {
       //
       const updateDocPayment = {
         amount: total,
+        provider_id: payment_id ?? provider_id,
+        billing_address_id
       };
       const updateOrderPayment = await db.payment.update(updateDocPayment, {
         where: {

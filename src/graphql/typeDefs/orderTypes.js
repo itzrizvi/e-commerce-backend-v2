@@ -217,6 +217,12 @@ type GetSingleOrderCustomerOutput {
 
 input UpdateOrderInput {
     order_id:Int!
+    shipping_address_id:Int
+    billing_address_id:Int
+    shipping_method_id:Int
+    payment_id:Int
+    coupon_id:Int
+    order_status_id:Int
     orderItems:JSON
 }
 

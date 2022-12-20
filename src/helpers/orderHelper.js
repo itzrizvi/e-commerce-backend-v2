@@ -690,61 +690,47 @@ module.exports = {
         }
       });
 
-      // const {
-      //   customer_id,
-      //   cart_id,
-      //   tax_exempt,
-      //   payment_id,
-      //   coupon_id,
-      //   order_status_id,
-      //   po_id,
-      //   po_number,
-      //   billing_address_id,
-      //   shipping_address_id,
-      //   taxexempt_file,
-      // } = req;
-
       const shipping_cost = 0; // TODO ->> IT WILL CHANGE
 
       let sub_total = 0; // sub_total
       let totalQuantity = 0;
+      let orderProductItems = [];
       //
-      orderItems.forEach(async (item) => {
+      orderProducts.forEach(async (item) => {
 
         findProducts.forEach(async (element) => {
 
+          if (item.product_id === parseInt(element.id)) {
 
-          if (item.product.prod_sale_price != 0) {
-            const calculateTotal = item.product.prod_sale_price * item.quantity;
-            sub_total += calculateTotal;
-            totalQuantity += item.quantity;
+            if (element.prod_sale_price != 0) {
+              const calculateTotal = element.prod_sale_price * item.quantity;
+              sub_total += calculateTotal;
+              totalQuantity += item.quantity;
 
-            //
-            await orderItems.push({
-              product_id: item.product.id,
-              price: item.product.prod_sale_price,
-              quantity: item.quantity,
-              created_by: user.id,
-              tenant_id: TENANTID,
-            });
-          } else {
-            const calculateTotal = item.product.prod_regular_price * item.quantity;
-            sub_total += calculateTotal;
-            totalQuantity += item.quantity;
+              //
+              await orderProductItems.push({
+                product_id: item.product_id,
+                price: element.prod_sale_price,
+                quantity: item.quantity,
+                created_by: user.id,
+                tenant_id: TENANTID,
+              });
+            } else {
+              const calculateTotal = element.prod_regular_price * item.quantity;
+              sub_total += calculateTotal;
+              totalQuantity += item.quantity;
 
-            //
-            await orderItems.push({
-              product_id: item.product.id,
-              price: item.product.prod_regular_price,
-              quantity: item.quantity,
-              created_by: user.id,
-              tenant_id: TENANTID,
-            });
+              //
+              await orderProductItems.push({
+                product_id: item.product_id,
+                price: element.prod_regular_price,
+                quantity: item.quantity,
+                created_by: user.id,
+                tenant_id: TENANTID,
+              });
+            }
           }
-
         });
-
-
       });
 
       //
@@ -815,33 +801,28 @@ module.exports = {
             ],
           },
         });
-        if (!getZipCode)
-          return { message: "Address Not Found!!!", status: false };
-        const { zip_code } = getZipCode;
 
-        //
-        const findTaxClass = await db.tax_class.findOne({
-          where: {
-            [Op.and]: [
-              {
-                zip_code,
-                tenant_id: TENANTID,
-              },
-            ],
-          },
-        });
-        if (!findTaxClass)
-          return { message: "Zip Code Not Found!!!", status: false };
+        if (getZipCode) {
+          const { zip_code } = getZipCode;
 
-        const { tax_amount: taxamount } = findTaxClass;
+          //
+          const findTaxClass = await db.tax_class.findOne({
+            where: {
+              [Op.and]: [
+                {
+                  zip_code,
+                  tenant_id: TENANTID,
+                },
+              ],
+            },
+          });
 
-        tax_amount = taxamount;
-        total += tax_amount;
-      } else if (tax_exempt && !taxexempt_file) {
-        return {
-          message: "Tax Exempt Certificates Required!!!",
-          status: false,
-        };
+          if (findTaxClass) {
+            const { tax_amount: taxamount } = findTaxClass;
+            tax_amount = taxamount;
+            total += tax_amount;
+          }
+        }
       }
 
       // Insert Order
@@ -856,14 +837,12 @@ module.exports = {
         coupon_id,
         order_status_id,
         shipping_address_id,
-        po_id,
-        po_number,
+        shipping_method_id,
         tax_exempt,
         created_by: user.id,
         tenant_id: TENANTID,
       });
-      if (!insertOrder)
-        return { message: "Order Coulnd't Placed!!!", status: false };
+      if (!insertOrder) return { message: "Order Coulnd't Placed!!!", status: false };
 
       await db.order_history.create({
         operation: "Order Created By Admin",
@@ -923,7 +902,7 @@ module.exports = {
       }
 
       //
-      orderItems.forEach(async (item) => {
+      orderProductItems.forEach(async (item) => {
         item.order_id = insertOrder.id;
       });
 
@@ -937,38 +916,13 @@ module.exports = {
         created_by: user.id,
         tenant_id: TENANTID,
       });
-      if (!insertPayment)
-        return { message: "Payment Details Insert Failed!!!", status: false };
+      if (!insertPayment) return { message: "Payment Details Insert Failed!!!", status: false };
 
       //
-      if (orderItems) {
-        const createOrderItem = await db.order_item.bulkCreate(orderItems);
-        if (!createOrderItem)
-          return { message: "Order Items Insert Failed", status: false };
+      if (orderProductItems && orderProductItems.length > 0) {
+        const createOrderItem = await db.order_item.bulkCreate(orderProductItems);
+        if (!createOrderItem) return { message: "Order Items Insert Failed", status: false };
       }
-
-      // DELETE CART AND CART ITEMS
-      db.cart_item.destroy({
-        where: {
-          [Op.and]: [
-            {
-              cart_id,
-              tenant_id: TENANTID,
-            },
-          ],
-        },
-      });
-      // DELETE CART AND CART ITEMS
-      db.cart.destroy({
-        where: {
-          [Op.and]: [
-            {
-              id: cart_id,
-              tenant_id: TENANTID,
-            },
-          ],
-        },
-      });
 
       // Return Formation
       return {
@@ -976,6 +930,7 @@ module.exports = {
         status: true,
         tenant_id: TENANTID,
       };
+
     } catch (error) {
       if (error)
         return {

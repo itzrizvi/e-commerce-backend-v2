@@ -663,63 +663,40 @@ module.exports = {
       // Data From Request
       const {
         customer_id,
-        cart_id,
         tax_exempt,
+        taxexempt_file,
         payment_id,
         coupon_id,
         order_status_id,
-        po_id,
-        po_number,
         billing_address_id,
         shipping_address_id,
-        taxexempt_file,
+        shipping_method_id,
+        orderProducts
       } = req;
+
+      // const {
+      //   customer_id,
+      //   cart_id,
+      //   tax_exempt,
+      //   payment_id,
+      //   coupon_id,
+      //   order_status_id,
+      //   po_id,
+      //   po_number,
+      //   billing_address_id,
+      //   shipping_address_id,
+      //   taxexempt_file,
+      // } = req;
 
       const shipping_cost = 50; // TODO ->> IT WILL CHANGE
 
-      // GET Product Details For The Order
-      if (!db.cart.hasAlias("cart_items")) {
-        await db.cart.hasMany(db.cart_item, {
-          foreignKey: "cart_id",
-        });
-      }
 
-      if (!db.cart_item.hasAlias("product")) {
-        await db.cart_item.hasOne(db.product, {
-          sourceKey: "product_id",
-          foreignKey: "id",
-        });
-      }
-      //
-      const cartWithProductsAndQuantities = await db.cart.findOne({
-        include: [
-          {
-            model: db.cart_item,
-            include: {
-              model: db.product,
-            },
-          },
-        ],
-        where: {
-          [Op.and]: [
-            {
-              id: cart_id,
-              tenant_id: TENANTID,
-            },
-          ],
-        },
-      });
-
-      if (!cartWithProductsAndQuantities)
-        return { message: "Couldn't Found The Cart Details!!!", status: false };
-
-      //
-      let cartItems = cartWithProductsAndQuantities.cart_items;
       let sub_total = 0; // sub_total
       let totalQuantity = 0;
+
       //
-      const orderItems = [];
-      cartItems.forEach(async (item) => {
+      orderItems.forEach(async (item) => {
+
         if (item.product.prod_sale_price != 0) {
           const calculateTotal = item.product.prod_sale_price * item.quantity;
           sub_total += calculateTotal;
@@ -1067,6 +1044,14 @@ module.exports = {
         });
       }
 
+      // Check If Has Alias with Users and Order
+      if (!db.user.hasAlias("address") && !db.user.hasAlias("addresses")) {
+        await db.user.hasMany(db.address, {
+          foreignKey: "ref_id",
+          as: "addresses",
+        });
+      }
+
       // Check If Has Alias with Order and Payment Method
       if (
         !db.order.hasAlias("payment_method") &&
@@ -1181,7 +1166,11 @@ module.exports = {
       // Single Order For Admin
       const singleOrder = await db.order.findOne({
         include: [
-          { model: db.user, as: "customer" }, // User as customer
+          {
+            model: db.user,
+            as: "customer",
+            include: { model: db.address, as: "addresses" }
+          }, // User as customer
           { model: db.payment_method, as: "paymentmethod" }, // Payment method
           { model: db.order_status, as: "orderstatus" }, // Order Status
           {

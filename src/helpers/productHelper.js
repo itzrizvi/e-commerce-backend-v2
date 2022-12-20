@@ -1265,7 +1265,7 @@ module.exports = {
             }
 
             const allRecentViewProducts = await db.recent_view_product.findAll({
-                limit: req?.max ?? 20,
+                limit: req?.max ?? 10,
                 include: [
                     {
                         model: db.product, as: 'product',
@@ -1946,7 +1946,7 @@ module.exports = {
                         }
                     },
                 ],
-                limit: 30,
+                limit: 10,
                 where: {
                     tenant_id,
                     prod_status: true

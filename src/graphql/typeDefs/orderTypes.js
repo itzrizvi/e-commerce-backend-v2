@@ -163,7 +163,7 @@ input createOrderByAdminInput {
     billing_address_id:Int!
     shipping_address_id:Int!
     shipping_method_id:Int
-    orderItems:JSON
+    orderProducts:JSON
 }
 
 type OrderList {

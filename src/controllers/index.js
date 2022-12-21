@@ -31,4 +31,5 @@ module.exports = {
     ...require('./quote'),
     ...require('./emailTemplate'),
     ...require('./dashboard'),
+    ...require('./report'),
 }

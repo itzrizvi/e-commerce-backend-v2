@@ -30,4 +30,5 @@ module.exports = {
     ...require('./quoteQueries'),
     ...require('./emailTemplateQueries'),
     ...require('./dashboardQueries'),
+    ...require('./reportQueries'),
 }

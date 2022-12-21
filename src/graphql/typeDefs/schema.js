@@ -34,6 +34,7 @@ const receivingTypes = require('./receivingTypes');
 const quoteTypes = require('./quoteTypes');
 const emailTemplateTypes = require('./emailTemplateTypes');
 const dashboardTypes = require('./dashboardTypes');
+const reportTypes = require('./reportTypes');
 
 
 // Type Defs and Scalars
@@ -108,5 +109,6 @@ module.exports = [
     receivingTypes,
     quoteTypes,
     emailTemplateTypes,
-    dashboardTypes
+    dashboardTypes,
+    reportTypes
 ]

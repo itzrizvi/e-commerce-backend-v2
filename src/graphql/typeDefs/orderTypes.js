@@ -222,6 +222,8 @@ input UpdateOrderInput {
     shipping_method_id:Int
     payment_id:Int
     coupon_id:Int
+    tax_exempt:Boolean
+    taxexempt_file:[Upload]
     order_status_id:Int
     orderItems:JSON
 }

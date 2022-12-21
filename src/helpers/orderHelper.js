@@ -313,7 +313,7 @@ module.exports = {
         taxexempt_file,
       } = req;
 
-      const shipping_cost = 50; // TODO ->> IT WILL CHANGE
+      const shipping_cost = 0; // TODO ->> IT WILL CHANGE
 
       // GET Product Details For The Order
       if (!db.cart.hasAlias("cart_items")) {
@@ -1224,7 +1224,11 @@ module.exports = {
         payment_id,
         coupon_id,
         order_status_id,
+        tax_exempt,
+        taxexempt_file,
         orderItems } = req;
+
+      const shipping_cost = 0;
 
       // Product ID Array
       const productIds = [];
@@ -1352,17 +1356,123 @@ module.exports = {
         }
       }
 
+      //
+      const getOrder = await db.order.findOne({
+        where: {
+          [Op.and]: [{
+            id: order_id,
+            tenant_id: TENANTID
+          }]
+        }
+      });
+      const { shipping_address_id: oldShippingID, tax_amount: oldTaxAmount } = getOrder;
+
       // Calculate Total
       let total = sub_total + shipping_cost - discount_amount;
+      // 
+      const tax_amount = 0;
+      if (!tax_exempt) {
+        const getZipCode = await db.address.findOne({
+          where: {
+            [Op.and]: [
+              {
+                id: shipping_address_id ?? oldShippingID,
+                tenant_id: TENANTID,
+              },
+            ],
+          },
+        });
+
+        if (getZipCode) {
+          const { zip_code } = getZipCode;
+
+          //
+          const findTaxClass = await db.tax_class.findOne({
+            where: {
+              [Op.and]: [
+                {
+                  zip_code,
+                  tenant_id: TENANTID,
+                },
+              ],
+            },
+          });
+
+          if (findTaxClass) {
+            const { tax_amount: taxamount } = findTaxClass;
+            tax_amount = taxamount;
+            total += tax_amount;
+          }
+        }
+      }
+
+      //
+      if (tax_exempt && taxexempt_file.length > 0) return { message: "Tax Exempt File Is Required!!!", status: false }
+      //
+      if (tax_exempt) {
+
+        // Upload Tax Exempt Files
+        let taxExemptFiles = [];
+        // Upload Tax Exempt Files to AWS S3
+        const order_tax_exempt_file_src = config
+          .get("AWS.ORDER_TAX_EXEMPT_FILE_SRC")
+          .split("/");
+        const order_tax_exempt_file_bucketName = order_tax_exempt_file_src[0];
+        const order_tax_exempt_folder = order_tax_exempt_file_src
+          .slice(1)
+          .join("/");
+        const fileUrl = await multipleFileUpload({
+          file: taxexempt_file,
+          idf: order_id,
+          folder: order_tax_exempt_folder,
+          fileName: order_id,
+          bucketName: order_tax_exempt_file_bucketName,
+        });
+        if (!fileUrl)
+          return {
+            message: "Tax Exempt Certificates Couldnt Uploaded Properly!!!",
+            status: false,
+          };
+
+        // Assign Values To Tax Exempt File Array For Bulk Create
+        fileUrl.forEach(async (taxFile) => {
+          await taxExemptFiles.push({
+            file_name: taxFile.upload.Key.split("/").slice(-1)[0],
+            order_id: order_id,
+            tenant_id: TENANTID,
+            updated_by: user.id,
+          });
+        });
+
+        // If Tax File Array Created Successfully then Bulk Create In Tax Exempt Table
+        if (taxExemptFiles && taxExemptFiles.length > 0) {
+          // Tax File Exempts Save Bulk
+          const taxExemptFilesSave = await db.tax_exempt.bulkCreate(taxExemptFiles);
+          if (!taxExemptFilesSave)
+            return {
+              message: "Tax Exempt Files Save Failed!!!",
+              status: false,
+            };
+        }
+
+        if (oldTaxAmount != 0) {
+          tax_amount = 0;
+          total -= oldTaxAmount
+        }
+      }
+
+
       // Update Order
       const updateDoc = {
         total,
         sub_total,
+        tax_amount,
         shipping_address_id,
         shipping_method_id,
         payment_id,
         discount_amount,
         coupon_id,
+        tax_exempt,
         order_status_id,
         updated_by: user.id,
       };
@@ -1377,6 +1487,7 @@ module.exports = {
         },
       });
       if (!updateorder) return { message: "Order Couldn't Updated!!!", status: false };
+
 
       // Update Order History
       await db.order_history.create({

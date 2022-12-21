@@ -44,7 +44,7 @@
   "COMPANY_NAME": "Prime Server Parts",
   "ECOM_URL": "https://main.dhgmx4ths2j4g.amplifyapp.com/",
   "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",
-  "RESET_PASSWORD": "reset-password/",
+  "RESET_PASSWORD": "set-password/",
   "SET_PASSWORD": "set-password/",
   "QUOTE_APPROVE": "shop/quote-approve/"
 }

@@ -28,7 +28,7 @@ type ForgotPassCodeMatchOutput {
 }
 
 input ForgotPassFinalInput {
-    email:String!
+    codeHashed:String!
     forgotPassVerifyCode:Int!
     newPassword:String!
     confirmPassword:String!

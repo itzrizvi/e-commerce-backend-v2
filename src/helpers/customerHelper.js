@@ -1,6 +1,4 @@
-const { Op, Sequelize } = require("sequelize");
-const { verifierEmail } = require("../utils/verifyEmailSender");
-const bcrypt = require('bcrypt');
+const { Op } = require("sequelize");
 const { crypt } = require("../utils/hashes");
 const config = require('config');
 const { Mail } = require("../utils/email");
@@ -53,16 +51,31 @@ module.exports = {
                 if (send_mail) {
                     let codeHashed = crypt(createUser.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
                     // SET PASSWORD URL
-                    const setPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
+                    const setPasswordURL = config.get("ECOM_URL").concat(config.get("SET_PASSWORD"));
+
                     // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "Customer Registration From Prime Server Parts"
                     const mailData = {
-                        email: email,
-                        subject: "Registration Successfully From Primer Server Parts",
-                        message: `Your 6 Digit Verification Code is ${createUser.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your SET NEW PASSWORD Link is: ${setPasswordURL.concat(codeHashed)}`
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'User Created From Prime Server Parts',
+                        email: createUser.email,
+                        verificationCode: createUser.verification_code,
+                        passwordSetLink: setPasswordURL.concat(codeHashed),
+                        message: `This Code Will Be Valid Till 20 Minutes From You Got The Email`
                     }
 
                     // SENDING EMAIL
-                    await verifierEmail(mailData);
+                    await Mail(user.email, mailSubject, mailData, 'customer-sign-up-from-admin', TENANTID);
                 }
 
                 return {
@@ -971,29 +984,28 @@ module.exports = {
 
                 const { email } = findUpdatedUser;
 
-                // if (send_mail) {
-                //     // Setting Up Data for EMAIL SENDER
-                //     const mailSubject = "Profile Update From Prime Server Parts"
-                //     const mailData = {
-                //         companyInfo: {
-                //             logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
-                //             banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
-                //             companyName: config.get("COMPANY_NAME"),
-                //             companyUrl: config.get("ECOM_URL"),
-                //             shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
-                //             fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
-                //             tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
-                //             li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
-                //             insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
-                //         },
-                //         about: 'About Profile Update From Prime Server Parts',
-                //         email: email,
-                //         message: `Your Profile Has Been Updated From Prime Server Parts System.`
-                //     }
+                if (send_mail) {
+                    // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "Profile Update From Prime Server Parts"
+                    const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Your Profile Has Been Updated on Prime Server Parts',
+                        message: `Your Profile Has Been Updated From Prime Server Parts System. If Your Did not recognze it please contact with support team!!!`
+                    }
 
-                //     // SENDING EMAIL
-                //     await Mail(email, mailSubject, mailData, 'customer-profile-update', TENANTID);
-                // }
+                    // SENDING EMAIL
+                    await Mail(email, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
+                }
 
 
                 return {

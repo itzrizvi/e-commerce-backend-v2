@@ -3,9 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const { Op } = require('sequelize');
-const { deleteFile, singleFileUpload, getMediaStream } = require("../utils/fileUpload");
+const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
 const { Mail } = require('../utils/email');
+const { crypt, decrypt } = require('../utils/hashes');
 
 
 module.exports = {
@@ -43,7 +44,7 @@ module.exports = {
                     banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
                     companyName: config.get("COMPANY_NAME"),
                     companyUrl: config.get("ECOM_URL"),
-                    shopUrl: 'https://main.dhgmx4ths2j4g.amplifyapp.com/',
+                    shopUrl: config.get("ECOM_URL"),
                     fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
                     tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
                     li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
@@ -52,7 +53,7 @@ module.exports = {
                 about: 'Account Verification From Prime Server Parts',
                 email: user.email,
                 verificationCode: user.verification_code,
-                message: `Your 6 Digit Verification Code is ${user.verification_code}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${user.email}.`
+                message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
             }
 
             // SENDING EMAIL
@@ -235,6 +236,32 @@ module.exports = {
 
                 // If Updated then return values
                 if (updateUser) {
+
+                    // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "Email Verification Success From Prime Server Parts"
+                    const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Email Verification on Prime Server Parts',
+                        email: email,
+                        message: `Your Email Has Been Verified Successfully on Prime Server Parts.`
+                    }
+
+                    // SENDING EMAIL
+                    await Mail(email, mailSubject, mailData, 'email-verification-confirmation', TENANTID);
+
+
+
+
                     return {
                         email: email,
                         emailVerified: true,
@@ -311,14 +338,31 @@ module.exports = {
         if (updateUser) {
 
             // Setting Up Data for EMAIL SENDER
+            const mailSubject = "Email Verification Code From Primer Server Parts"
             const mailData = {
+                companyInfo: {
+                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                    companyName: config.get("COMPANY_NAME"),
+                    companyUrl: config.get("ECOM_URL"),
+                    shopUrl: config.get("ECOM_URL"),
+                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                },
+                about: 'Verify Your Email on Prime Server Parts',
                 email: email,
-                subject: "Verification Code From Primer Server Parts",
-                message: `Your NEW 6 Digit Verification Code is ${newVerificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+                verificationCode: newVerificationCode,
+                message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
             }
 
             // SENDING EMAIL
-            await verifierEmail(mailData);
+            await Mail(user.email, mailSubject, mailData, 'user-email-verification', TENANTID);
+
+
+
+
             // Return The Response
             return {
                 email: email,
@@ -372,15 +416,35 @@ module.exports = {
             // IF USER UPDATED
             if (updateUser) {
 
+                // IF SEND EMAIL IS TRUE
+                let codeHashed = crypt(email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
+                // SET PASSWORD URL
+                const setPasswordURL = config.get("ECOM_URL").concat(config.get("SET_PASSWORD"));
+
                 // Setting Up Data for EMAIL SENDER
+                const mailSubject = "Reset Password Verification Code From Primer Server Parts"
                 const mailData = {
+                    companyInfo: {
+                        logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                        banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                        companyName: config.get("COMPANY_NAME"),
+                        companyUrl: config.get("ECOM_URL"),
+                        shopUrl: config.get("ECOM_URL"),
+                        fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                        tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                        li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                        insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                    },
+                    about: 'Reset Password From Prime Server Parts',
                     email: email,
-                    subject: "Reset Password Verification Code From Primer Server Parts",
-                    message: `Your Reset Password Verification 6 Digit Code is ${forgotPasswordCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email!!!`
+                    forgotPasswordCode: forgotPasswordCode,
+                    resetPasswordLink: setPasswordURL.concat(codeHashed),
+                    message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
                 }
 
-                // SENDING EMAIL FOR RESET PASSWORD
-                await verifierEmail(mailData);
+                // SENDING EMAIL
+                await Mail(email, mailSubject, mailData, 'password-reset-initiation', TENANTID);
+
 
                 // Return The Response
                 return {
@@ -472,11 +536,12 @@ module.exports = {
     forgotPassFinal: async (req, db, TENANTID) => {
 
         // Details From Request 
-        const email = req.email;
+        const codeHashed = req.codeHashed;
         const forgotPassVerifyCode = req.forgotPassVerifyCode;
         const newPassword = req.newPassword;
         const confirmPassword = req.confirmPassword;
-
+        // decrypting Code for email
+        const email = decrypt(codeHashed);
         // CHECK USER 
         const checkUser = await db.user.findOne({
             where: {
@@ -530,15 +595,28 @@ module.exports = {
 
             if (!updateUser) return { email: email, message: "Something Went Wrong Please Start Again After A Moment!!!", status: false };
 
+
             // Setting Up Data for EMAIL SENDER
+            const mailSubject = "Password Reset of Primer Server Parts Account"
             const mailData = {
+                companyInfo: {
+                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                    companyName: config.get("COMPANY_NAME"),
+                    companyUrl: config.get("ECOM_URL"),
+                    shopUrl: config.get("ECOM_URL"),
+                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                },
+                about: 'Reset Password Success From Prime Server Parts',
                 email: email,
-                subject: "Password Reset of Primer Server Parts Account",
-                message: `Your Prime Server Parts Account Password Updated Successfully, Your Email is: ${email}`
+                message: `Your Prime Server Parts Account Password Updated Successfully, If You didn't reset your password please contact to Support Team.`
             }
 
-            // SENDING EMAIL FOR RESET PASSWORD
-            await verifierEmail(mailData);
+            // SENDING EMAIL
+            await Mail(email, mailSubject, mailData, 'password-reset-confirmation', TENANTID);
 
 
             return {
@@ -657,15 +735,29 @@ module.exports = {
                             }]
                         }
                     });
-                    // If Update Success
+
                     // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "User Password Changed on Prime Server Parts"
                     const mailData = {
-                        email: findUpdatedUser.email,
-                        subject: "Password Changed on Prime Server Parts",
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Password Changed on Prime Server Parts',
                         message: `Your Prime Server Parts Account Password is Changed. If this is not you please contact to Support!!!`
                     }
+
                     // SENDING EMAIL
-                    await verifierEmail(mailData);
+                    await Mail(findUpdatedUser.email, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
+
+
 
                     // Return Formation
                     return {
@@ -706,17 +798,27 @@ module.exports = {
                         }
                     });
 
-                    let mailData
 
                     // Setting Up Data for EMAIL SENDER
-                    mailData = {
-                        email: findUpdatedUser.email,
-                        subject: "Account Update on Prime Server Parts",
+                    const mailSubject = "Account Update on Prime Server Parts"
+                    const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Your Account Updated on Prime Server Parts',
                         message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
                     }
 
                     // SENDING EMAIL
-                    await verifierEmail(mailData);
+                    await Mail(findUpdatedUser.email, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
 
                     // Return Formation
                     return {

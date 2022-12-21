@@ -346,6 +346,30 @@ module.exports = {
 
                     // If Updated then return values
                     if (updateUser) {
+
+                        // Setting Up Data for EMAIL SENDER
+                        const mailSubject = "Admin Staff Password Change Prime Server Parts"
+                        const mailData = {
+                            companyInfo: {
+                                logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                                banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                                companyName: config.get("COMPANY_NAME"),
+                                companyUrl: config.get("ECOM_URL"),
+                                shopUrl: config.get("ECOM_URL"),
+                                fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                                tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                                li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                                insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                            },
+                            about: 'Your Password Has Been Changed',
+                            email: email,
+                            message: 'Your Admin Password Has Been Changed if you did not recognize the action please contact with support team!!!',
+                        }
+
+                        // SENDING EMAIL
+                        await Mail(email, mailSubject, mailData, 'admin-password-change-confirmation', TENANTID);
+
+
                         return {
                             message: "Your Password Was Set Successfully!!",
                             status: true,
@@ -428,14 +452,27 @@ module.exports = {
                     resetPasswordURL = config.get("ADMIN_URL").concat(config.get("RESET_PASSWORD"));
 
                     // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "Admin Reset Password for Primer Server Parts"
                     const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Admin Staff Password Reset on Primer Server Parts',
                         email: email,
-                        subject: "Admin Reset Password for Primer Server Parts",
-                        message: `Your 6 Digit Verification Code is ${verificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your RESET PASSWORD Link is: ${resetPasswordURL.concat(codeHashed)}`
+                        verificationCode: verificationCode,
+                        setPasswordLink: resetPasswordURL.concat(codeHashed)
                     }
 
                     // SENDING EMAIL
-                    await verifierEmail(mailData);
+                    await Mail(email, mailSubject, mailData, 'admin-reset-password-initiation', TENANTID);
 
                     // Return Formation
                     return {
@@ -449,14 +486,28 @@ module.exports = {
                     resetPasswordURL = config.get("ECOM_URL").concat(config.get("RESET_PASSWORD"));
 
                     // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "Reset Password Verification Code From Primer Server Parts"
                     const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Reset Password From Prime Server Parts',
                         email: email,
-                        subject: "Reset Password for Primer Server Parts",
-                        message: `Your 6 Digit Verification Code is ${verificationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your RESET PASSWORD Link is: ${resetPasswordURL.concat(codeHashed)}`
+                        forgotPasswordCode: forgotPasswordCode,
+                        resetPasswordLink: resetPasswordURL.concat(codeHashed),
+                        message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
                     }
 
                     // SENDING EMAIL
-                    await verifierEmail(mailData);
+                    await Mail(email, mailSubject, mailData, 'password-reset-initiation', TENANTID);
 
                     // Return Formation
                     return {

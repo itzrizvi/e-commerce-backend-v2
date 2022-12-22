@@ -1078,7 +1078,7 @@ module.exports = {
 
             // Find ALL Featured Product
             const allFeaturedProducts = await db.product.findAll({
-                limit: 10,
+                limit: 12,
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
                     {
@@ -1170,7 +1170,7 @@ module.exports = {
 
             // Find ALL On Sale Product
             const allOnSaleProducts = await db.product.findAll({
-                limit: 10,
+                limit: 12,
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
                     {
@@ -1948,7 +1948,7 @@ module.exports = {
                         }
                     },
                 ],
-                limit: 10,
+                limit: 12,
                 where: {
                     tenant_id,
                     prod_status: true

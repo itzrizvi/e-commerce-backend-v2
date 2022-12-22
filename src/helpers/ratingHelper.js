@@ -296,7 +296,7 @@ module.exports = {
                 include: [
                     {
                         model: db.product, as: 'ratedProducts',
-                        limit: 10,
+                        limit: 12,
                         include: {
                             model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                             include: {

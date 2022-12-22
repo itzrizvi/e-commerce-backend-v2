@@ -171,7 +171,7 @@ module.exports = {
                         discount_amount: order.discount_amount,
                         tax_amount: order.tax_amount,
                         tax_exempt: order.tax_exempt,
-                        createdAt: order.createdAt,
+                        createdAt: new Date(order.createdAt).toGMTString(),
                         updatedAt: order.updatedAt,
                         paymentmethod: order.paymentmethod.name,
                         orderstatus: order.orderstatus.name,

@@ -59,47 +59,47 @@ module.exports = {
                 });
             }
 
-            // Order and Payment
-            if (!db.order.hasAlias("payment")) {
-                await db.order.hasOne(db.payment, {
-                    foreignKey: "order_id",
-                    as: "payment",
-                });
-            }
-            //  Payment and Address For Billing Address
-            if (
-                !db.payment.hasAlias("address") &&
-                !db.payment.hasAlias("billingAddress")
-            ) {
-                await db.payment.hasOne(db.address, {
-                    sourceKey: "billing_address_id",
-                    foreignKey: "id",
-                    as: "billingAddress",
-                });
-            }
+            // // Order and Payment
+            // if (!db.order.hasAlias("payment")) {
+            //     await db.order.hasOne(db.payment, {
+            //         foreignKey: "order_id",
+            //         as: "payment",
+            //     });
+            // }
+            // //  Payment and Address For Billing Address
+            // if (
+            //     !db.payment.hasAlias("address") &&
+            //     !db.payment.hasAlias("billingAddress")
+            // ) {
+            //     await db.payment.hasOne(db.address, {
+            //         sourceKey: "billing_address_id",
+            //         foreignKey: "id",
+            //         as: "billingAddress",
+            //     });
+            // }
 
-            // Order and Address For Shipping Address
-            if (
-                !db.order.hasAlias("address") &&
-                !db.order.hasAlias("shippingAddress")
-            ) {
-                await db.order.hasOne(db.address, {
-                    sourceKey: "shipping_address_id",
-                    foreignKey: "id",
-                    as: "shippingAddress",
-                });
-            }
+            // // Order and Address For Shipping Address
+            // if (
+            //     !db.order.hasAlias("address") &&
+            //     !db.order.hasAlias("shippingAddress")
+            // ) {
+            //     await db.order.hasOne(db.address, {
+            //         sourceKey: "shipping_address_id",
+            //         foreignKey: "id",
+            //         as: "shippingAddress",
+            //     });
+            // }
 
-            // Order and Tax Exempt For File Names
-            if (
-                !db.order.hasAlias("tax_exempt") &&
-                !db.order.hasAlias("taxExemptFiles")
-            ) {
-                await db.order.hasMany(db.tax_exempt, {
-                    foreignKey: "order_id",
-                    as: "taxExemptFiles",
-                });
-            }
+            // // Order and Tax Exempt For File Names
+            // if (
+            //     !db.order.hasAlias("tax_exempt") &&
+            //     !db.order.hasAlias("taxExemptFiles")
+            // ) {
+            //     await db.order.hasMany(db.tax_exempt, {
+            //         foreignKey: "order_id",
+            //         as: "taxExemptFiles",
+            //     });
+            // }
 
             // Order and Coupon
             if (!db.order.hasAlias("coupon")) {
@@ -118,8 +118,8 @@ module.exports = {
                 });
             }
 
-            // Order List For Admin
-            const orderlist = await db.order.findAll({
+            // Order Report List For Admin
+            const orderReportlist = await db.order.findAll({
                 include: [
                     { model: db.user, as: "customer" },
                     { model: db.payment_method, as: "paymentmethod" },
@@ -132,16 +132,16 @@ module.exports = {
                             as: "product",
                         },
                     },
-                    {
-                        model: db.payment, // Payment and Address
-                        as: "payment",
-                        include: {
-                            model: db.address,
-                            as: "billingAddress",
-                        },
-                    },
-                    { model: db.address, as: "shippingAddress" }, // Address
-                    { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
+                    // {
+                    //     model: db.payment, // Payment and Address
+                    //     as: "payment",
+                    //     include: {
+                    //         model: db.address,
+                    //         as: "billingAddress",
+                    //     },
+                    // },
+                    // { model: db.address, as: "shippingAddress" }, // Address
+                    // { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
                     { model: db.coupon, as: "coupon" }, // Coupon
                     { model: db.shipping_method, as: "shippingmethod" }, // Shipping Method
 
@@ -151,13 +151,58 @@ module.exports = {
                 },
             });
 
-            // Return Formation
-            return {
-                message: "GET Order List Report Success",
-                status: true,
-                tenant_id: TENANTID,
-                data: orderlist,
-            };
+
+            if (orderReportlist && orderReportlist.length > 0) {
+                //
+                let orderListReportData = [];
+                await orderReportlist.forEach(async (order) => {
+                    let totalquantity = 0;
+                    order.orderitems.forEach((orderitem) => {
+                        totalquantity += orderitem.quantity;
+                    });
+
+                    await orderListReportData.push({
+                        order_id: order.id,
+                        customer_name: order.customer.first_name + ' ' + order.customer.last_name,
+                        customer_email: order.customer.email,
+                        total_amount: order.total,
+                        sub_total: order.sub_total,
+                        shipping_cost: order.shipping_cost,
+                        discount_amount: order.discount_amount,
+                        tax_amount: order.tax_amount,
+                        tax_exempt: order.tax_exempt,
+                        createdAt: order.createdAt,
+                        updatedAt: order.updatedAt,
+                        paymentmethod: order.paymentmethod.name,
+                        orderstatus: order.orderstatus.name,
+                        shippingmethod: order.shippingmethod.name,
+                        coupon_name: order?.coupon?.coupon_name ?? null,
+                        coupon_code: order?.coupon?.coupon_code ?? null,
+                        coupon_type: order?.coupon?.coupon_type ?? null,
+                        coupon_amount: order?.coupon?.coupon_amount ?? null,
+                        totalproducts: order.orderitems.length,
+                        totalquantity: totalquantity
+
+                    });
+                });
+
+                // Return Formation
+                return {
+                    message: "GET Order List Report Success",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: orderListReportData,
+                };
+
+            } else {
+                // Return Formation
+                return {
+                    message: "Something Went Wrong!!!",
+                    status: false
+                };
+            }
+
+
         } catch (error) {
             if (error)
                 return {

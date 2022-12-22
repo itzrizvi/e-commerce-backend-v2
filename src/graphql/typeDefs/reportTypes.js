@@ -6,11 +6,34 @@ module.exports = gql`
 # Report Based Input and Types ###########################
 ##########################################################
 
+type OrderListReport {
+    order_id: Int
+    customer_name: String
+    customer_email: String
+    total_amount: Float
+    sub_total: Float
+    shipping_cost: Float
+    discount_amount: Float
+    tax_amount: Float
+    tax_exempt: Boolean
+    totalproducts: Int
+    totalquantity: Int
+    createdAt: String
+    updatedAt: String
+    paymentmethod: String
+    orderstatus: String
+    shippingmethod: String
+    coupon_name: String
+    coupon_code: String
+    coupon_type: String
+    coupon_amount: Float
+}
+
 type OrderListReportOutput {
     message:String
     status:Boolean
     tenant_id:String
-    data:[OrderAdmin]
+    data:[OrderListReport]
 }
 
 input GetSingleOrderReportInput {

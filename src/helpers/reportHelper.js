@@ -160,7 +160,6 @@ module.exports = {
                     order.orderitems.forEach((orderitem) => {
                         totalquantity += orderitem.quantity;
                     });
-
                     await orderListReportData.push({
                         order_id: order.id,
                         customer_name: order.customer.first_name + ' ' + order.customer.last_name,

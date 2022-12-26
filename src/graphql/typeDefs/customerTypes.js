@@ -27,15 +27,15 @@ type Customer {
 
 
 type getAllCustomerOutput{
-    status: Boolean!
-    message: String!
-    data: [Customer]!
+    status: Boolean
+    message: String
+    data: [Customer]
 }
 
 type SingleCustomerOutput{
-    status: Boolean!
-    message: String!
-    data: Customer!
+    status: Boolean
+    message: String
+    data: Customer
 }
 
 input GetSingleCustomerInput{

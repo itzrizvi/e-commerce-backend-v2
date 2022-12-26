@@ -102,6 +102,7 @@ module.exports = {
                     {
                         foreignKey: 'ref_id',
                         constraints: false,
+                        as: "addresses",
                         scope: {
                             ref_model: 'customer'
                         }
@@ -114,6 +115,7 @@ module.exports = {
                 include: [
                     {
                         model: db.address,
+                        as: "addresses",
                         separate: true,
                     }
                 ],
@@ -149,6 +151,7 @@ module.exports = {
                 await db.user.hasMany(db.address,
                     {
                         foreignKey: 'ref_id',
+                        as: "addresses",
                         constraints: false,
                         scope: {
                             ref_model: 'customer'
@@ -164,6 +167,7 @@ module.exports = {
                 include: [
                     {
                         model: db.address,
+                        as: "addresses",
                         separate: true,
                     }
                 ],

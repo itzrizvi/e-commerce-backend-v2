@@ -181,7 +181,6 @@ module.exports = {
                         coupon_amount: order?.coupon?.coupon_amount ?? null,
                         totalproducts: order.orderitems.length,
                         totalquantity: totalquantity
-
                     });
                 });
 

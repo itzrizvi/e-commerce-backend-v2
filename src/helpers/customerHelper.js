@@ -118,8 +118,10 @@ module.exports = {
                     }
                 ],
                 where: {
-                    tenant_id: TENANTID,
-                    has_role: '0'
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        has_role: '0'
+                    }]
                 }
             });
 

@@ -244,7 +244,24 @@ module.exports = {
 
       if (carts) {
         carts.cart_items.forEach((elem) => {
-          elem.product.prod_price = elem.prod_price;
+
+          if (!elem.product) {
+
+            db.cart_item.destroy({
+              where: {
+                [Op.and]: [{
+                  id: elem.id,
+                  cart_id: elem.cart_id,
+                  tenant_id: TENANTID
+                }]
+              }
+            });
+
+          } else {
+            elem.product.prod_price = elem.prod_price;
+          }
+
+
         });
         // Return Data
         return {

@@ -66,6 +66,7 @@ module.exports = gql`
     prod_partnum: String!
     prod_sku: String!
     prod_thumbnail: String
+    prod_condition:String
   }
 
   extend type Mutation {

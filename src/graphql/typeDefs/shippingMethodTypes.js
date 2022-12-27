@@ -26,6 +26,18 @@ type ShippingMethodPublic {
     tenant_id:String
 }
 
+type ShippingAccount {
+    id:Int
+    name:String
+    account:String
+    description:String
+    status:Boolean
+    sort_order:Int
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
 input AddShippingMethodInput {
     name:String!
     description:String
@@ -71,6 +83,13 @@ input ShippingStatusChangeInput {
     status:Boolean!
 }
 
+type GetShippingAccounListAdmin {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ShippingAccount]
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -84,6 +103,7 @@ extend type Query {
     getSingleShippingMethod(query:GetSingleShippingMethodInput):GetSingleShippingMethodOutput!
     getShippingMethodListAdmin:GetShippingMethodListAdmin!
     getShippingMethodListPublic:GetShippingMethodListPublic!
+    getShippingAccountListAdmin:GetShippingAccounListAdmin!
 }
 
 

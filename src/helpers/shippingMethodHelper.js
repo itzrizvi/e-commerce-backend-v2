@@ -215,6 +215,57 @@ module.exports = {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
+    // GET Shipping Account List Admin API
+    getShippingAccountListAdmin: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // // Created By Associations
+            // db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            // db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // // Check If Has Alias with Users and Roles
+            // if (!db.shipping_method.hasAlias('user') && !db.shipping_method.hasAlias('added_by')) {
+
+            //     await db.shipping_method.hasOne(db.user, {
+            //         sourceKey: 'created_by',
+            //         foreignKey: 'id',
+            //         as: 'added_by'
+            //     });
+            // }
+
+            // GET SHIPPING Account List
+            const getshippingAccountListAdmin = await db.shipping_account.findAll({
+                // include: [
+                //     {
+                //         model: db.user, as: 'added_by', // Include User who created this Shipping MEthod
+                //         include: {
+                //             model: db.role,
+                //             as: 'roles'
+                //         }
+                //     }
+                // ],
+                where: {
+                    tenant_id: TENANTID
+                },
+                order: [
+                    ['sort_order', 'ASC']
+                ]
+            });
+
+
+            return {
+                message: "GET Shipping Account List For Admin Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getshippingAccountListAdmin
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
     // GET Shipping Method List PUBLIC API
     getShippingMethodListPublic: async (db, TENANTID) => {
         // Try Catch Block

@@ -147,7 +147,6 @@ module.exports = {
 
             // Extract Filtered Products
             let data = [];
-
             await filteredPaginatedProducts.forEach(async (product) => {
                 if (brand_slug && category_slug) {
                     if (product.brand && product.category) {

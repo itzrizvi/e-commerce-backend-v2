@@ -58,13 +58,12 @@ module.exports = gql`
   }
 
   type CartProduct {
-    id: String!
-    prod_name: String!
-    prod_slug: String!
+    id: String
+    prod_name: String
+    prod_slug: String
     prod_short_desc: String
-    prod_price: Float!
-    prod_partnum: String!
-    prod_sku: String!
+    prod_partnum: String
+    prod_sku: String
     prod_thumbnail: String
     prod_condition:String
   }

@@ -16,24 +16,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        slug: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
         status: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: true
         },
-        isDefault: {
+        internal_type: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: false
+            defaultValue: true
         },
-        shipping_cost: {
-            type: DataTypes.FLOAT,
-            allowNull: false,
-            defaultValue: 0
+        sort_order: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         created_by: {
             type: DataTypes.INTEGER,

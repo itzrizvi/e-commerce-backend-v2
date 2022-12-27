@@ -9,10 +9,10 @@ module.exports = gql`
 type ShippingMethod {
     id:Int
     name:String
-    slug:String
     description:String
     status:Boolean
-    shipping_cost:Float
+    sort_order:Int
+    internal_type:Boolean
     tenant_id:String
     added_by:Staff
 }
@@ -20,11 +20,9 @@ type ShippingMethod {
 type ShippingMethodPublic {
     id:Int
     name:String
-    slug:String
     description:String
     status:Boolean
-    isDefault: Boolean
-    shipping_cost:Float
+    sort_order:Int
     tenant_id:String
 }
 
@@ -32,7 +30,8 @@ input AddShippingMethodInput {
     name:String!
     description:String
     status:Boolean
-    shipping_cost:Float
+    sort_order:Int
+    internal_type:Boolean
 }
 
 input GetSingleShippingMethodInput {
@@ -50,7 +49,8 @@ input UpdateShippingMethodInput {
     id:Int!
     name:String
     description:String
-    shipping_cost:Float
+    sort_order:Int
+    internal_type:Boolean
 }
 
 type GetShippingMethodListPublic {

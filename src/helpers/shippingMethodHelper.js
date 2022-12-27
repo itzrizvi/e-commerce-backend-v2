@@ -11,22 +11,13 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { name, description, status, shipping_cost } = req;
-
-            // Shipping Method Slug
-            const slug = slugify(`${name}`, {
-                replacement: '-',
-                remove: /[*+~.()'"!:@]/g,
-                lower: true,
-                strict: true,
-                trim: true
-            });
+            const { name, description, status, sort_order, internal_type } = req;
 
             // Check Existence
             const findShippingMethod = await db.shipping_method.findOne({
                 where: {
                     [Op.and]: [{
-                        slug,
+                        name,
                         tenant_id: TENANTID
                     }]
                 }
@@ -36,10 +27,10 @@ module.exports = {
             // Add Shipping Method TO DB
             const insertShippingMethod = await db.shipping_method.create({
                 name,
-                slug,
                 description,
                 status,
-                shipping_cost,
+                sort_order,
+                internal_type,
                 tenant_id: TENANTID,
                 created_by: user.id
             });
@@ -118,25 +109,16 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { id, name, description, shipping_cost } = req;
+            const { id, name, description, sort_order, internal_type } = req;
 
             // If name also updated
-            let slug
             if (name) {
-                // Shipping Method Slug
-                slug = slugify(`${name}`, {
-                    replacement: '-',
-                    remove: /[*+~.()'"!:@]/g,
-                    lower: true,
-                    strict: true,
-                    trim: true
-                });
 
                 // Check Existence
                 const checkExist = await db.shipping_method.findOne({
                     where: {
                         [Op.and]: [{
-                            slug,
+                            name,
                             tenant_id: TENANTID
                         }],
                         [Op.not]: [{
@@ -152,9 +134,9 @@ module.exports = {
             // Update Doc 
             const updateDoc = {
                 name,
-                slug,
                 description,
-                shipping_cost,
+                sort_order,
+                internal_type,
                 updated_by: user.id
             }
 
@@ -216,7 +198,7 @@ module.exports = {
                     tenant_id: TENANTID
                 },
                 order: [
-                    ['slug', 'ASC']
+                    ['sort_order', 'ASC']
                 ]
             });
 
@@ -243,11 +225,12 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         status: true,
-                        tenant_id: TENANTID
+                        tenant_id: TENANTID,
+                        internal_type: false
                     }]
                 },
                 order: [
-                    ['slug', 'ASC']
+                    ['sort_order', 'ASC']
                 ]
             });
 

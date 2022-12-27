@@ -28,86 +28,86 @@ module.exports = {
       } else cart_id = checkCart.id;
 
 
-        const { product_id, quantity } = cart_item;
-        const product = await db.product.findOne({
-          where: {
-            [Op.and]: [
-              {
-                id: product_id,
-                tenant_id: TENANTID,
-              },
-            ],
-          },
-        });
-        let prod_price =
-          product.prod_sale_price === 0
-            ? product.prod_regular_price
-            : product.prod_sale_price;
-
-        if (promo_type === "quote") {
-          const promo_data = decrypt(promo_id);
-          const quote_id = promo_data.split("#")[0];
-          const quote_data = await db.submittedquote_item.findOne({
-            where: {
-              [Op.and]: [
-                {
-                  product_id,
-                  submittedquote_id: quote_id,
-                  tenant_id: TENANTID,
-                },
-              ],
+      const { product_id, quantity } = cart_item;
+      const product = await db.product.findOne({
+        where: {
+          [Op.and]: [
+            {
+              id: product_id,
+              tenant_id: TENANTID,
             },
-          });
-          prod_price = quote_data.price;
-        }
+          ],
+        },
+      });
+      let prod_price =
+        product.prod_sale_price === 0
+          ? product.prod_regular_price
+          : product.prod_sale_price;
 
-        const checkCartItem = await db.cart_item.findOne({
+      if (promo_type === "quote") {
+        const promo_data = decrypt(promo_id);
+        const quote_id = promo_data.split("#")[0];
+        const quote_data = await db.submittedquote_item.findOne({
           where: {
             [Op.and]: [
               {
                 product_id,
-                cart_id,
+                submittedquote_id: quote_id,
                 tenant_id: TENANTID,
               },
             ],
           },
         });
+        prod_price = quote_data.price;
+      }
 
-        let checkCartItemUpdate;
-
-        if (checkCartItem) {
-          await db.cart_item.update(
+      const checkCartItem = await db.cart_item.findOne({
+        where: {
+          [Op.and]: [
             {
-              quantity,
-              prod_price,
-              promo_type,
-              promo_id,
-              updatedBy: user.id,
+              product_id,
+              cart_id,
+              tenant_id: TENANTID,
             },
-            {
-              where: {
-                [Op.and]: [
-                  {
-                    product_id,
-                    cart_id,
-                    tenant_id: TENANTID,
-                  },
-                ],
-              },
-            }
-          );
-        } else {
-          checkCartItemUpdate = await db.cart_item.create({
+          ],
+        },
+      });
+
+      let checkCartItemUpdate;
+
+      if (checkCartItem) {
+        await db.cart_item.update(
+          {
             quantity,
-            cart_id,
-            product_id,
             prod_price,
             promo_type,
             promo_id,
-            createdBy: user.id,
-            tenant_id: TENANTID,
-          });
-        }
+            updatedBy: user.id,
+          },
+          {
+            where: {
+              [Op.and]: [
+                {
+                  product_id,
+                  cart_id,
+                  tenant_id: TENANTID,
+                },
+              ],
+            },
+          }
+        );
+      } else {
+        checkCartItemUpdate = await db.cart_item.create({
+          quantity,
+          cart_id,
+          product_id,
+          prod_price,
+          promo_type,
+          promo_id,
+          createdBy: user.id,
+          tenant_id: TENANTID,
+        });
+      }
 
 
       // Return Formation
@@ -216,6 +216,7 @@ module.exports = {
         await db.cart_item.hasOne(db.product, {
           sourceKey: "product_id",
           foreignKey: "id",
+          as: "product"
         });
       }
 
@@ -226,6 +227,7 @@ module.exports = {
             as: "cart_items",
             include: {
               model: db.product,
+              as: "product"
             },
           },
         ],
@@ -239,6 +241,7 @@ module.exports = {
           ],
         },
       });
+
       if (carts) {
         carts.cart_items.forEach((elem) => {
           elem.product.prod_price = elem.prod_price;
@@ -256,6 +259,7 @@ module.exports = {
           status: false,
         };
       }
+
     } catch (error) {
       if (error)
         return {

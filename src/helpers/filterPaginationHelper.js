@@ -15,6 +15,8 @@ module.exports = {
                 pageNumber,
                 minPrice,
                 maxPrice,
+                minRating,
+                maxRating,
                 brand_slug,
                 category_slug,
                 searchQuery } = req;
@@ -182,7 +184,6 @@ module.exports = {
 
             });
 
-
             // Count Average Rating and Rating Count
             await data.forEach(async (item) => {
 
@@ -198,6 +199,20 @@ module.exports = {
 
                     item.overallRating = overallRating;
                     item.totalRating = totalRating;
+                } else {
+                    item.overallRating = 0;
+                    item.totalRating = 0;
+                }
+            });
+
+
+            //  Filter For Rating
+            let filteredData = [];
+            await data.forEach(async (item) => {
+                if (minRating >= 0 && maxRating <= 5) {
+                    if (item.overallRating >= minRating && item.overallRating <= maxRating) {
+                        await filteredData.push(item)
+                    }
                 }
             });
 
@@ -205,10 +220,10 @@ module.exports = {
             // Pagination Related Calculation
             const pageQuery = parseInt(pageNumber); // starts from 0
             const sizeQuery = parseInt(perPage) || 40;
-            const count = data.length;
+            const count = filteredData.length;
             const startIndex = (pageQuery - 1) * sizeQuery;
             const endIndex = pageQuery * sizeQuery;
-            const mainData = await data.slice(startIndex, endIndex);
+            const mainData = await filteredData.slice(startIndex, endIndex);
             const totalPage = Math.ceil(count / perPage)
 
             // Return Formation

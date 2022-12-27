@@ -13,6 +13,8 @@ input FilterPaginationInput {
     pageNumber:Int!
     minPrice:Int
     maxPrice:Int!
+    minRating:Float
+    maxRating:Float
     brand_slug:String
     category_slug:String
 }

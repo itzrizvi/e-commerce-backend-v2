@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        shipping_account_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         type: {
             type: DataTypes.ENUM("default", "drop_shipping"),
             allowNull: false

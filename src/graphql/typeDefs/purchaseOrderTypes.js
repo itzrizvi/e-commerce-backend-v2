@@ -16,6 +16,7 @@ input CreatePurchaseOrderInput {
     vendor_billing_id:Int!
     vendor_shipping_id:Int!
     shipping_method_id:Int!
+    shipping_account_id:Int
     payment_method_id:Int!
     tax_amount:Float!
     order_id:Int
@@ -102,6 +103,7 @@ input UpdatePurchaseOrderInput {
     vendor_billing_id:Int
     vendor_shipping_id:Int
     shipping_method_id:Int
+    shipping_account_id:Int
     payment_method_id:Int
     order_placed_via:String
     order_id:Int

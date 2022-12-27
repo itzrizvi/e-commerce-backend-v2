@@ -55,6 +55,7 @@ module.exports = {
                 vendor_billing_id,
                 vendor_shipping_id,
                 shipping_method_id,
+                shipping_account_id,
                 payment_method_id,
                 tax_amount,
                 comment,
@@ -148,6 +149,7 @@ module.exports = {
                 vendor_billing_id,
                 vendor_shipping_id,
                 shipping_method_id,
+                shipping_account_id,
                 comment,
                 created_by: user.id,
                 tenant_id: TENANTID,
@@ -408,6 +410,7 @@ module.exports = {
                 po_id,
                 vendor_id,
                 shipping_method_id,
+                shipping_account_id,
                 payment_method_id,
                 order_placed_via,
                 status,
@@ -482,6 +485,7 @@ module.exports = {
             // Update Doc For Purchase Order
             const poUpdateDoc = {
                 shipping_method_id,
+                shipping_account_id,
                 payment_method_id,
                 order_placed_via,
                 status,

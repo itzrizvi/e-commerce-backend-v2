@@ -3,11 +3,13 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
     input ProductConditionInput{
         name: String!
+        status:Boolean!
     }
 
     input UpdateProductConditionInput{
-        id: Int!,
-        name: String!
+        id: Int!
+        name: String
+        status:Boolean
     }
 
     input GetSingleProductConditionInput {
@@ -15,23 +17,24 @@ module.exports = gql`
     }
 
     type GetAllProductConditionOutput{
-        message:String!
-        status:Boolean!
+        message:String
+        status:Boolean
         data: [ProductCondition]
     }
 
     type GetSingleProductConditionOutput{
-        message:String!
-        status:Boolean!
+        message:String
+        status:Boolean
         data: ProductCondition
     }
     
     type ProductCondition{
-        id: Int!
-        name: String!
-        slug: String!
-        createdAt:String!
-        updatedAt:String!
+        id: Int
+        name: String
+        slug: String
+        status:Boolean
+        createdAt:String
+        updatedAt:String
     }
 
     extend type Mutation {

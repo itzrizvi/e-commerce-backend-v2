@@ -12,8 +12,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        slug:{
+        slug: {
             type: DataTypes.STRING,
+            allowNull: false
+        },
+        status: {
+            type: DataTypes.BOOLEAN,
             allowNull: false
         },
         tenant_id: {

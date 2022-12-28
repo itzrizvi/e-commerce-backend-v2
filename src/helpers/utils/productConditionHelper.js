@@ -5,7 +5,7 @@ module.exports = {
     createProductCondition: async (req, db, TENANTID) => {
         try {
             // Data From Request
-            const { name } = req;
+            const { name, status } = req;
             // Slugify Product Condition
             const product_condition_slug = slugify(`${name}`, {
                 replacement: '-',
@@ -32,6 +32,7 @@ module.exports = {
             const createProductCondition = await db.product_condition.create({
                 name,
                 slug: product_condition_slug,
+                status,
                 tenant_id: TENANTID
             });
 
@@ -53,37 +54,42 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { id, name } = req;
+            const { id, name, status } = req;
 
-            // Create New Slug
-            const product_condition_slug = slugify(`${name}`, {
-                replacement: '-',
-                remove: /[*+~.()'"!:@]/g,
-                lower: true,
-                strict: true,
-                trim: true
-            });
+            let slug;
+            if (name) {
+                // Create New Slug
+                slug = slugify(`${name}`, {
+                    replacement: '-',
+                    remove: /[*+~.()'"!:@]/g,
+                    lower: true,
+                    strict: true,
+                    trim: true
+                });
 
-            // Check If Already Exist the Production Condition
-            const checkExistence = await db.product_condition.findOne({
-                where: {
-                    [Op.and]: [{
-                        slug: product_condition_slug,
-                        tenant_id: TENANTID
-                    }],
-                    [Op.not]: [{
-                        id
-                    }]
-                }
-            });
+                // Check If Already Exist the Production Condition
+                const checkExistence = await db.product_condition.findOne({
+                    where: {
+                        [Op.and]: [{
+                            slug,
+                            tenant_id: TENANTID
+                        }],
+                        [Op.not]: [{
+                            id
+                        }]
+                    }
+                });
 
-            // If Found Production Condition
-            if (checkExistence) return { message: "Already Have This Product Condition!!!", status: false };
+                // If Found Production Condition
+                if (checkExistence) return { message: "Already Have This Product Condition!!!", status: false };
+            }
+
 
             // Update Production Condition
             const updateProductionCondition = await db.product_condition.update({
                 name,
-                slug: product_condition_slug
+                slug,
+                status
             }, {
                 where: {
                     [Op.and]: [{
@@ -112,7 +118,10 @@ module.exports = {
         try {
             const allProductCondition = await db.product_condition.findAll({
                 where: {
-                    tenant_id: TENANTID
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        status: true
+                    }]
                 },
                 order: [
                     ['name', 'ASC']

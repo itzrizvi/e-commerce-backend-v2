@@ -111,6 +111,35 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        extended_warranty: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            defaultValue: false
+        },
+        extended_warranty_value: {
+            type: DataTypes.FLOAT,
+            allowNull: true
+        },
+        location: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        hs_code: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        product_rank: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        mfg_build_part_number: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        product_rep: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         prod_thumbnail: {
             type: DataTypes.STRING,
             allowNull: true

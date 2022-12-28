@@ -1,6 +1,5 @@
 const { gql } = require("apollo-server-express");
 
-
 module.exports = gql`
 type AddressOutput{
     id: Int
@@ -84,10 +83,25 @@ type GetAdressListByCustomerIDOutput{
     data:[AddressList]
 }
 
+type State {
+    state: String,
+    abbreviation: String
+}
+
+type StateListOutput{
+    message:String
+    tenant_id:String
+    status:Boolean
+    data: [State]
+}
+
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Query {
     getAddressListByCustomerID(query:GetAdressListByCustomerIDInput):GetAdressListByCustomerIDOutput!
+    getStateList:StateListOutput!
 }
-`
+`;

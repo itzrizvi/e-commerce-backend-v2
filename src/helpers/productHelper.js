@@ -327,6 +327,16 @@ module.exports = {
                 });
             }
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Part of Product Table Association with Product
             if (!db.product.hasAlias('partof_product') && !db.product.hasAlias('part_of_products')) {
 
@@ -407,6 +417,7 @@ module.exports = {
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
                     { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
                     {
                         model: db.user, as: 'created_by', // Include User who created the product and his roles
@@ -456,6 +467,13 @@ module.exports = {
                 },
             });
 
+            // Condition Assign
+            if (findProduct.condition) {
+                findProduct.prod_condition = findProduct.condition.name
+            } else {
+                findProduct.prod_condition = 'N/A'
+            }
+
             // Return Final Data
             return {
                 message: "Get Single Product Success!!!",
@@ -491,6 +509,16 @@ module.exports = {
                 });
             }
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Product Attributes Table Association with Product
             if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
 
@@ -522,6 +550,7 @@ module.exports = {
             const allProducts = await db.product.findAll({
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -538,6 +567,17 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await allProducts.forEach(async (item) => {
+
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -1038,6 +1078,15 @@ module.exports = {
             const tenant_id = TENANTID;
 
             // ## ASSOCIATION STARTS ##
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1081,6 +1130,7 @@ module.exports = {
                 limit: 12,
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -1103,6 +1153,17 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await allFeaturedProducts.forEach(async (item) => {
+
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -1130,6 +1191,15 @@ module.exports = {
             const tenant_id = TENANTID;
 
             // ## ASSOCIATION STARTS ##
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1173,6 +1243,7 @@ module.exports = {
                 limit: 12,
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -1195,6 +1266,17 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await allOnSaleProducts.forEach(async (item) => {
+
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -1266,14 +1348,25 @@ module.exports = {
                 });
             }
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             const allRecentViewProducts = await db.recent_view_product.findAll({
                 limit: req?.max ?? 10,
                 include: [
                     {
                         model: db.product, as: 'product',
-                        include: {
-                            model: db.category, as: 'category'
-                        }
+                        include: [
+                            { model: db.category, as: 'category' },
+                            { model: db.product_condition, as: 'condition' }, // Include Product Condition
+                        ]
                     }
                 ],
                 where: {
@@ -1289,6 +1382,18 @@ module.exports = {
             const recentlyViewedProducts = [];
             await allRecentViewProducts.forEach(async (element) => {
                 await recentlyViewedProducts.push(element.product)
+            });
+
+
+            // Condition Assign
+            await recentlyViewedProducts.forEach(async (item) => {
+
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -1313,6 +1418,15 @@ module.exports = {
             const id = req.prod_id;
 
             // ### ASSOCIATION STARTS ### //
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1401,6 +1515,7 @@ module.exports = {
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
                     { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -1428,6 +1543,13 @@ module.exports = {
                 },
             });
 
+            // Condition Assign
+            if (findProduct.condition) {
+                findProduct.prod_condition = findProduct.condition.name
+            } else {
+                findProduct.prod_condition = 'N/A'
+            }
+
             // Return Final Data
             return {
                 message: "Get Public View Product Success!!!",
@@ -1453,6 +1575,16 @@ module.exports = {
             const { prod_slug } = req;
 
             // ### ASSOCIATION STARTS ### //
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1590,6 +1722,7 @@ module.exports = {
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
                     { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.user, as: 'created_by', // Include User who created the product and his roles
                         include: {
@@ -1638,6 +1771,14 @@ module.exports = {
                 },
             });
 
+
+            // Condition Assign
+            if (findProduct.condition) {
+                findProduct.prod_condition = findProduct.condition.name
+            } else {
+                findProduct.prod_condition = 'N/A'
+            }
+
             // Return Final Data
             return {
                 message: "Get Single Product By Slug Success!!!",
@@ -1665,6 +1806,17 @@ module.exports = {
             const tenant_id = TENANTID;
 
             // ## ASSOCIATION STARTS ##
+
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1706,6 +1858,7 @@ module.exports = {
             const allProducts = await db.product.findAll({
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -1727,6 +1880,17 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await allProducts.forEach(async (item) => {
+
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -1756,6 +1920,17 @@ module.exports = {
             const tenant_id = TENANTID;
 
             // ## ASSOCIATION STARTS ##
+
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1797,6 +1972,7 @@ module.exports = {
             const searchedProducts = await db.product.findAll({
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -1824,6 +2000,17 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await searchedProducts.forEach(async (item) => {
+
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -1895,6 +2082,17 @@ module.exports = {
             const tenant_id = TENANTID;
 
             // ## ASSOCIATION STARTS ##
+
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Check If Has Alias with Categories
             if (!db.product.hasAlias('category')) {
 
@@ -1936,6 +2134,7 @@ module.exports = {
             const latestProducts = await db.product.findAll({
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
+                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
@@ -1956,6 +2155,16 @@ module.exports = {
                 order: [
                     ['createdAt', 'DESC']
                 ],
+            });
+
+            // Condition Assign
+            await latestProducts.forEach(async (item) => {
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success

@@ -14,6 +14,7 @@ module.exports = {
                 perPage,
                 pageNumber,
                 minPrice,
+                conditions,
                 maxPrice,
                 minRating,
                 maxRating,
@@ -50,6 +51,15 @@ module.exports = {
                     sourceKey: 'brand_id',
                     foreignKey: 'id',
                     as: 'brand'
+                });
+            }
+
+            // Check If Has Alias
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
                 });
             }
 
@@ -112,6 +122,13 @@ module.exports = {
                         model: db.rating, as: 'ratings'
                     },
                     {
+                        model: db.product_condition,
+                        as: 'condition',
+                        where: {
+                            id: conditions
+                        }
+                    }, // Include Product Condition
+                    {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {
                             model: db.attribute,
@@ -144,6 +161,17 @@ module.exports = {
                     [sortingOrder, orderType]
                 ]
             });
+
+            if (conditions) {
+                // Condition Assign
+                await filteredPaginatedProducts.forEach(async (item) => {
+                    if (item.condition) {
+                        item.prod_condition = item.condition.name
+                    } else {
+                        item.prod_condition = 'N/A'
+                    }
+                });
+            }
 
             // Extract Filtered Products
             let data = [];
@@ -215,6 +243,36 @@ module.exports = {
                 }
             });
 
+            // Category Parents
+            let getCategories = null;
+            if (category_slug) {
+
+                // Check If Has Alias with Parent
+                if (!db.category.hasAlias('category') && !db.category.hasAlias('parentCategory')) {
+                    await db.category.hasOne(db.category, {
+                        sourceKey: 'cat_parent_id',
+                        foreignKey: 'id',
+                        as: 'parentCategory'
+                    });
+                }
+
+                getCategories = await db.category.findOne({
+                    include: [
+                        {
+                            model: db.category, as: "parentCategory",
+                            include: { model: db.category, as: "parentCategory" }
+                        }
+                    ],
+                    where: {
+                        [Op.and]: [{
+                            cat_slug: category_slug,
+                            tenant_id: TENANTID
+                        }]
+                    },
+                });
+
+            }
+
 
             // Pagination Related Calculation
             const pageQuery = parseInt(pageNumber); // starts from 0
@@ -234,6 +292,7 @@ module.exports = {
                 hasNextPage: totalPage > pageQuery ? true : false,
                 hasPreviousPage: (pageQuery <= totalPage) && pageQuery > 1 ? true : false,
                 perPage,
+                breadCrumbs: getCategories,
                 data: mainData
             }
 

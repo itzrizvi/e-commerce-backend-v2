@@ -131,6 +131,24 @@ type GetProductByCategorySlugOutput {
 
 }
 
+
+type BreadCrumbCategories {
+    id:Int
+    cat_name:String
+    cat_slug:String
+    cat_description:JSON
+    cat_meta_tag_title:String
+    cat_meta_tag_description:JSON
+    cat_meta_tag_keywords:JSON
+    image:String
+    cat_sort_order:Int
+    cat_status:Boolean
+    is_featured:Boolean
+    tenant_id:String
+    cat_parent_id:Int
+    parentCategory:BreadCrumbCategories
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 

@@ -256,6 +256,16 @@ module.exports = {
                 });
             }
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Product Attributes Table Association with Product
             if (!db.product.hasAlias('product_attributes') && !db.product.hasAlias('prod_attributes')) {
 
@@ -308,7 +318,8 @@ module.exports = {
                                 }
                             }
                         },
-                        include: { model: db.category, as: 'category' }
+                        include: { model: db.category, as: 'category' },
+                        include: { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     },
                 ],
                 where: {
@@ -333,6 +344,15 @@ module.exports = {
                 });
             });
 
+            // Condition Assign
+            await topRatedProducts.forEach(async (item) => {
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
+            });
 
             // Return Formation
             return {

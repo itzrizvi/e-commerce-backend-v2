@@ -220,6 +220,16 @@ module.exports = {
         });
       }
 
+      // Condition Table Association with Product
+      if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+        await db.product.hasOne(db.product_condition, {
+          sourceKey: 'prod_condition',
+          foreignKey: 'id',
+          as: 'condition'
+        });
+      }
+
       const carts = await db.cart.findOne({
         include: [
           {
@@ -227,7 +237,8 @@ module.exports = {
             as: "cart_items",
             include: {
               model: db.product,
-              as: "product"
+              as: "product",
+              include: { model: db.product_condition, as: 'condition' }
             },
           },
         ],
@@ -259,10 +270,17 @@ module.exports = {
 
           } else {
             elem.product.prod_price = elem.prod_price;
+            if (elem.product.condition) {
+              elem.product.prod_condition = elem.product.condition.name
+            } else {
+              elem.product.prod_condition = 'N/A'
+            }
           }
-
-
         });
+
+
+
+
         // Return Data
         return {
           message: "Get Cart Success!!!",

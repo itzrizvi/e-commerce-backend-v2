@@ -419,7 +419,7 @@ module.exports = {
                 });
 
                 // Delete Previous Entry
-                const deletePreviousEntry = await db.brand_category.destroy({
+                await db.brand_category.destroy({
                     where: {
                         [Op.and]: [{
                             brand_id,
@@ -427,8 +427,6 @@ module.exports = {
                         }]
                     }
                 });
-                // If Not Deleted
-                if (!deletePreviousEntry) return { message: "Previous Brand Categories Delete Failed!!!!", status: false }
 
                 // Update Brand Categories Bulk
                 const brandCategoriesDataUpdate = await db.brand_category.bulkCreate(categories);

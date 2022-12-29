@@ -64,7 +64,7 @@ type AddressList {
     state: String
     zip_code: String
     country:String
-    countryCode: Country
+    countryCode:Country
     type:String
     isDefault:Boolean
     status: Boolean
@@ -97,8 +97,8 @@ type StateListOutput{
 }
 
 type Country {
-    name: String,
-    code: String,
+    name: String
+    code: String
     status: Boolean
 }
 

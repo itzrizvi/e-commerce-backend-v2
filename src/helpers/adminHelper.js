@@ -314,7 +314,7 @@ module.exports = {
             if (!findUser) return { message: "User Not Found!!!", status: false };
 
             // Check Verification Code is Valid or Not
-            const { verification_code, updatedAt } = findUser;
+            const { forgot_password_code, updatedAt } = findUser;
             // Time Calculating
             const reqTime = new Date();
             const recordTime = new Date(updatedAt);
@@ -327,12 +327,12 @@ module.exports = {
             // IF Difference Less than or Equal to 20 minutes
             if (diffs <= 20) {
                 // Matching Codes
-                if (verification_code === verificationCode) {
+                if (forgot_password_code === verificationCode) {
                     // Updating Doc
                     const updateDoc = {
                         password: await bcrypt.hash(confirmPassword, 10),
                         email_verified: true,
-                        verification_code: null
+                        forgot_password_code: null
                     }
                     // Update User
                     const updateUser = await db.user.update(updateDoc, {
@@ -428,7 +428,7 @@ module.exports = {
 
             // Update Doc
             const updateDoc = {
-                verification_code: verificationCode,
+                forgot_password_code: verificationCode,
                 password: null,
                 updated_by: user.id
             }
@@ -449,7 +449,7 @@ module.exports = {
 
                 if (permissionName === 'user') {
                     // RESET PASSWORD URL
-                    resetPasswordURL = config.get("ADMIN_URL").concat(config.get("RESET_PASSWORD"));
+                    resetPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
 
                     // Setting Up Data for EMAIL SENDER
                     const mailSubject = "Admin Reset Password for Primer Server Parts"

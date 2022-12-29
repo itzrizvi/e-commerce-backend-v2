@@ -1,18 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const State = sequelize.define("state", {
-        state: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        abbreviation: {
+    const Country = sequelize.define("country", {
+        code: {
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
         },
-        country_code: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
         },
         tenant_id: {
             type: DataTypes.STRING,
@@ -23,5 +24,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return State
+    return Country
 }

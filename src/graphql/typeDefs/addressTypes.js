@@ -95,6 +95,22 @@ type StateListOutput{
     data: [State]
 }
 
+type Country {
+    name: String,
+    code: String,
+    status: Boolean
+}
+
+type CountryListOutput{
+    message:String
+    tenant_id:String
+    status:Boolean
+    data: [Country]
+}
+
+input CountryCode{
+    code: String!
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -102,6 +118,7 @@ type StateListOutput{
 
 extend type Query {
     getAddressListByCustomerID(query:GetAdressListByCustomerIDInput):GetAdressListByCustomerIDOutput!
-    getStateList:StateListOutput!
+    getStateList(query: CountryCode):StateListOutput!
+    getCountryList:CountryListOutput!
 }
 `;

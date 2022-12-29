@@ -51,13 +51,17 @@ module.exports = {
         };
     }
   },
-  getStateList: async (db, TENANTID) => {
+  getStateList: async (db, args, TENANTID) => {
+
+    const { code } = args.query
     // Try Catch Block
     try {
       // GET All State
       const allState = await db.state.findAll({
         where: {
-          tenant_id: TENANTID
+          tenant_id: TENANTID,
+          status: true,
+          country_code: code
         },
       });
 
@@ -67,6 +71,32 @@ module.exports = {
         status: true,
         tenant_id: TENANTID,
         data: allState,
+      };
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+    }
+  },
+  getCountryList: async (db, TENANTID) => {
+    // Try Catch Block
+    try {
+      // GET All Country
+      const allCountry = await db.country.findAll({
+        where: {
+          tenant_id: TENANTID,
+          status: true,
+        },
+      });
+
+      // Return
+      return {
+        message: "GET All Country Success!!!",
+        status: true,
+        tenant_id: TENANTID,
+        data: allCountry,
       };
     } catch (error) {
       if (error)

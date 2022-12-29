@@ -13,8 +13,20 @@ module.exports = {
       let shippingDefaultID;
       let billingDefaultID;
 
+      // 
+      if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+        await db.address.hasOne(db.country, {
+          sourceKey: 'country',
+          foreignKey: 'code',
+          as: 'countryCode'
+        });
+      }
+
       // GET ADDRESS
       const allAddressById = await db.address.findAll({
+        include: [
+          { model: db.country, as: "countryCode" }
+        ],
         where: {
           [Op.and]: [
             {

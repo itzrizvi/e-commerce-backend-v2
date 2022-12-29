@@ -63,7 +63,8 @@ type AddressList {
     city: String
     state: String
     zip_code: String
-    country: String
+    country:String
+    countryCode: Country
     type:String
     isDefault:Boolean
     status: Boolean

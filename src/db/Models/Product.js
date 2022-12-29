@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         prod_sku: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         dimension_id: {
             type: DataTypes.BIGINT,

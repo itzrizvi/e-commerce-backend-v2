@@ -105,7 +105,7 @@ input AddProductInput {
     prod_regular_price:Float!
     prod_sale_price:Float
     prod_partnum:String!
-    prod_sku:String!
+    prod_sku:String
     brand_id:Int!
     prod_category:Int!
     related_product:JSON

@@ -36,6 +36,13 @@ module.exports = {
                 is_sale,
                 is_serial,
                 prod_condition,
+                extended_warranty,
+                extended_warranty_value,
+                location,
+                hs_code,
+                product_rank,
+                mfg_build_part_number,
+                product_rep,
                 related_product,
                 prod_thumbnail,
                 prod_gallery,
@@ -130,6 +137,13 @@ module.exports = {
                 is_sale,
                 is_serial,
                 prod_condition,
+                extended_warranty,
+                extended_warranty_value,
+                location,
+                hs_code,
+                product_rank,
+                mfg_build_part_number,
+                product_rep,
                 dimension_id,
                 prod_thumbnail: "demo.jpg",
                 added_by: user.id,
@@ -409,6 +423,18 @@ module.exports = {
                     as: 'created_by'
                 });
             }
+
+            // Check If Has Alias with Users and Product
+            if (!db.product.hasAlias('user') && !db.product.hasAlias('representative')) {
+
+                await db.product.hasOne(db.user, {
+                    sourceKey: 'product_rep',
+                    foreignKey: 'id',
+                    as: 'representative'
+                });
+            }
+
+
             // ### ASSOCIATION ENDS ### //
 
             // Find Triggered Product
@@ -421,6 +447,13 @@ module.exports = {
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
                     {
                         model: db.user, as: 'created_by', // Include User who created the product and his roles
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    },
+                    {
+                        model: db.user, as: 'representative', // 
                         include: {
                             model: db.role,
                             as: 'roles'
@@ -623,6 +656,13 @@ module.exports = {
                 is_featured,
                 is_sale,
                 prod_condition,
+                extended_warranty,
+                extended_warranty_value,
+                location,
+                hs_code,
+                product_rank,
+                mfg_build_part_number,
+                product_rep,
                 prod_outofstock_status,
                 related_product,
                 dimensions,
@@ -837,6 +877,13 @@ module.exports = {
                 is_featured,
                 is_sale,
                 prod_condition,
+                extended_warranty,
+                extended_warranty_value,
+                location,
+                hs_code,
+                product_rank,
+                mfg_build_part_number,
+                product_rep,
                 prod_outofstock_status,
                 dimension_id,
                 added_by: user.id

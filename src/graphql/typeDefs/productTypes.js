@@ -81,7 +81,7 @@ type Product {
     hs_code:String
     product_rank:String
     mfg_build_part_number:String
-    product_rep:Staff
+    representative:Staff
     dimensions:ProductDimension
     prod_weight:String
     prod_weight_class:String

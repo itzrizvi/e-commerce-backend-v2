@@ -419,7 +419,7 @@ module.exports = {
                 // IF SEND EMAIL IS TRUE
                 let codeHashed = crypt(email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
                 // SET PASSWORD URL
-                const setPasswordURL = config.get("ECOM_URL").concat(config.get("SET_PASSWORD"));
+                const setPasswordURL = config.get("ECOM_URL").concat(config.get("RESET_PASSWORD"));
 
                 // Setting Up Data for EMAIL SENDER
                 const mailSubject = "Reset Password Verification Code From Primer Server Parts"

@@ -108,7 +108,8 @@ module.exports = {
                 });
             }
 
-
+            // Condtionally Accociates
+            const conditionWhere = conditions && conditions.length ? { id: conditions } : {};
             // Filter and Paginate Products
             const filteredPaginatedProducts = await db.product.findAll({
                 include: [
@@ -124,9 +125,7 @@ module.exports = {
                     {
                         model: db.product_condition,
                         as: 'condition',
-                        where: {
-                            id: conditions
-                        }
+                        where: conditionWhere
                     }, // Include Product Condition
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group

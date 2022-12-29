@@ -108,7 +108,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: true
         },
         prod_condition: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         extended_warranty: {

@@ -1,4 +1,5 @@
-const { allProductConditionController, getSingleProductConditionController } = require("../../../controllers");
+const { allProductConditionController,
+    getSingleProductConditionController } = require("../../../controllers");
 
 module.exports = {
     // GET ALL ATTR

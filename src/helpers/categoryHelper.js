@@ -264,8 +264,19 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Find ALL Products By Category
             const getProductsByCategory = await db.product.findAll({
+                include: { model: db.product_condition, as: 'condition' }, // Include Product Condition
                 limit: 12,
                 where: {
                     [Op.and]: [{
@@ -276,6 +287,16 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await getProductsByCategory.forEach(async (item) => {
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success
@@ -625,6 +646,16 @@ module.exports = {
                 });
             }
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
 
             // Find ALL Products By Category
             const getCategoryWithProducts = await db.category.findOne({
@@ -636,7 +667,10 @@ module.exports = {
                     order: [
                         ['prod_slug', 'ASC']
                     ],
-                    include: { model: db.category, as: 'category' }
+                    include: [
+                        { model: db.category, as: 'category' },
+                        { model: db.product_condition, as: 'condition' }
+                    ]
                 }],
                 where: {
                     [Op.and]: [{
@@ -650,6 +684,16 @@ module.exports = {
             let getProductByCatSlug = [];
             getCategoryWithProducts.products.forEach(async (element) => {
                 await getProductByCatSlug.push(element);
+            });
+
+            // Condition Assign
+            await getProductByCatSlug.forEach(async (item) => {
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
+
             });
 
             // Return If Success

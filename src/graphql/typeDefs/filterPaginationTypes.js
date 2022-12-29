@@ -13,6 +13,7 @@ input FilterPaginationInput {
     pageNumber:Int!
     minPrice:Int
     maxPrice:Int!
+    conditions:JSON
     minRating:Float
     maxRating:Float
     brand_slug:String
@@ -26,6 +27,7 @@ type FilterPaginationOutput {
     pageNumber:Int
     totalPage:Int
     perPage:Int
+    breadCrumbs:BreadCrumbCategories
     hasPreviousPage:Boolean
     hasNextPage:Boolean
     status:Boolean

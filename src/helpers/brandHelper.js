@@ -249,8 +249,19 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'condition'
+                });
+            }
+
             // Find ALL Products By Brand
             const getProductsByBrand = await db.product.findAll({
+                include: { model: db.product_condition, as: 'condition' }, // Include Product Condition,
                 where: {
                     [Op.and]: [{
                         brand_id,
@@ -260,6 +271,15 @@ module.exports = {
                 order: [
                     ['prod_slug', 'ASC']
                 ],
+            });
+
+            // Condition Assign
+            await getProductsByBrand.forEach(async (item) => {
+                if (item.condition) {
+                    item.prod_condition = item.condition.name
+                } else {
+                    item.prod_condition = 'N/A'
+                }
             });
 
             // Return If Success

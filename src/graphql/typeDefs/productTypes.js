@@ -75,6 +75,13 @@ type Product {
     is_sale:Boolean
     is_serial:Boolean
     prod_condition:String
+    extended_warranty:Boolean
+    extended_warranty_value:Float
+    location:String
+    hs_code:String
+    product_rank:String
+    mfg_build_part_number:String
+    product_rep:Staff
     dimensions:ProductDimension
     prod_weight:String
     prod_weight_class:String
@@ -109,7 +116,14 @@ input AddProductInput {
     is_featured:Boolean
     is_sale:Boolean
     is_serial:Boolean
-    prod_condition:String
+    prod_condition:Int
+    extended_warranty:Boolean
+    extended_warranty_value:Float
+    location:String
+    hs_code:String
+    product_rank:String
+    mfg_build_part_number:String
+    product_rep:Int
     prod_outofstock_status:String!
     prod_thumbnail:Upload!
     prod_gallery:[Upload]
@@ -202,7 +216,14 @@ input UpdateProductInput {
     taxable:Boolean
     is_featured:Boolean
     is_sale:Boolean
-    prod_condition:String
+    prod_condition:Int
+    extended_warranty:Boolean
+    extended_warranty_value:Float
+    location:String
+    hs_code:String
+    product_rank:String
+    mfg_build_part_number:String
+    product_rep:Int
     prod_outofstock_status:String
     related_product:JSON
     dimensions:JSON # Dimensions Table Properties will come as an object

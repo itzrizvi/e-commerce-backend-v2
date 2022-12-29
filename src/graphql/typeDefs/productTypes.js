@@ -216,6 +216,7 @@ input UpdateProductInput {
     taxable:Boolean
     is_featured:Boolean
     is_sale:Boolean
+    is_serial:Boolean
     prod_condition:Int
     extended_warranty:Boolean
     extended_warranty_value:Float

@@ -59,9 +59,11 @@ module.exports = {
       // GET All State
       const allState = await db.state.findAll({
         where: {
-          tenant_id: TENANTID,
-          status: true,
-          country_code: code
+          [Op.and]: [{
+            tenant_id: TENANTID,
+            status: true,
+            country_code: code
+          }]
         },
       });
 

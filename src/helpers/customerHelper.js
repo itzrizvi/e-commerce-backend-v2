@@ -159,6 +159,15 @@ module.exports = {
                     });
             }
 
+            // 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
+
             // Data From Request
             const { customer_id } = req;
 
@@ -169,6 +178,7 @@ module.exports = {
                         model: db.address,
                         as: "addresses",
                         separate: true,
+                        include: { model: db.country, as: "countryCode" }
                     }
                 ],
                 where: {

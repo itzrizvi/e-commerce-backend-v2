@@ -375,6 +375,14 @@ module.exports = {
           as: 'billingAddresses'
         });
       }
+      // 
+      if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+        await db.address.hasOne(db.country, {
+          sourceKey: 'country',
+          foreignKey: 'code',
+          as: 'countryCode'
+        });
+      }
 
       const getCompanyInfo = await db.company_info.findOne({
         where: {
@@ -389,14 +397,16 @@ module.exports = {
             required: false,
             where: {
               type: "shipping",
-            }
+            },
+            include: { model: db.country, as: "countryCode" }
           },
           {
             model: db.address, as: 'billingAddresses',
             required: false,
             where: {
               type: "billing",
-            }
+            },
+            include: { model: db.country, as: "countryCode" }
           },
         ]
       });

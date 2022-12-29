@@ -1048,6 +1048,15 @@ module.exports = {
                     });
             }
 
+            // 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
+
             // GET Searched Customer
             const getsearchedcustomers = await db.user.findAll({
                 include: [
@@ -1055,6 +1064,7 @@ module.exports = {
                         model: db.address,
                         as: "addresses",
                         separate: true,
+                        include: { model: db.country, as: "countryCode" }
                     }
                 ],
                 where: {

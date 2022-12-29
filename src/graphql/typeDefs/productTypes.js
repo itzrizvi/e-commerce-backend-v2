@@ -66,6 +66,7 @@ type Product {
     prod_price:Float
     prod_regular_price:Float
     prod_sale_price:Float
+    cost:Float
     discount_type:[DiscountType]
     prod_partnum:String
     prod_sku:String
@@ -104,6 +105,7 @@ input AddProductInput {
     prod_tags:JSON
     prod_regular_price:Float!
     prod_sale_price:Float
+    cost:Float
     prod_partnum:String!
     prod_sku:String
     brand_id:Int!
@@ -141,6 +143,7 @@ type ProductForList {
     prod_price:Float
     prod_regular_price:Float
     prod_sale_price:Float
+    cost:Float
     prod_partnum:String
     prod_sku:String
     prod_status:Boolean
@@ -206,6 +209,7 @@ input UpdateProductInput {
     prod_tags:JSON
     prod_regular_price:Float
     prod_sale_price:Float
+    cost:Float
     prod_partnum:String
     prod_sku:String
     brand_id:Int

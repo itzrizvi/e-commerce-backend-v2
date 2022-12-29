@@ -344,12 +344,12 @@ module.exports = {
             }
 
             // Condition Table Association with Product
-            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('productCondition')) {
 
                 await db.product.hasOne(db.product_condition, {
                     sourceKey: 'prod_condition',
                     foreignKey: 'id',
-                    as: 'condition'
+                    as: 'productCondition'
                 });
             }
 
@@ -445,7 +445,7 @@ module.exports = {
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
                     { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
-                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
+                    { model: db.product_condition, as: 'productCondition' }, // Include Product Condition
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
                     {
                         model: db.user, as: 'created_by', // Include User who created the product and his roles
@@ -503,8 +503,8 @@ module.exports = {
             });
 
             // Condition Assign
-            if (findProduct.condition) {
-                findProduct.prod_condition = findProduct.condition.name
+            if (findProduct.productCondition) {
+                findProduct.prod_condition = findProduct.productCondition.name
             } else {
                 findProduct.prod_condition = 'N/A'
             }

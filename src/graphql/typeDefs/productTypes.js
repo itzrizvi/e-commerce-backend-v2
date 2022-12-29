@@ -76,6 +76,7 @@ type Product {
     is_sale:Boolean
     is_serial:Boolean
     prod_condition:String
+    productCondition:ProductCondition
     extended_warranty:Boolean
     extended_warranty_value:Float
     location:String

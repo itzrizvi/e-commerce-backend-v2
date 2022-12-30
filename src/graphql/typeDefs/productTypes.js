@@ -88,6 +88,7 @@ type Product {
     prod_weight:String
     prod_weight_class:String
     prod_outofstock_status:String
+    productavailablitystatus:ProductAvailabilityStatus
     prod_thumbnail:String
     gallery:[ProductGallery]
     created_by:Staff
@@ -127,7 +128,7 @@ input AddProductInput {
     product_rank:String
     mfg_build_part_number:String
     product_rep:Int
-    prod_outofstock_status:String!
+    prod_outofstock_status:Int!
     prod_thumbnail:Upload!
     prod_gallery:[Upload]
     dimensions:JSON # Dimensions Table Properties will come as an object
@@ -230,7 +231,7 @@ input UpdateProductInput {
     product_rank:String
     mfg_build_part_number:String
     product_rep:Int
-    prod_outofstock_status:String
+    prod_outofstock_status:Int
     related_product:JSON
     dimensions:JSON # Dimensions Table Properties will come as an object
     discount_type:JSON # Discount Type Table Properties will come as an object

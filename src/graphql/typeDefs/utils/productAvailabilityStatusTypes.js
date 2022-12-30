@@ -16,23 +16,23 @@ module.exports = gql`
     }
 
     type GetAllProductAvailabilityStatusOutput{
-        message:String!
-        status:Boolean!
+        message:String
+        status:Boolean
         data: [ProductAvailabilityStatus]
     }
 
     type GetSingleProductAvailabilityStatusOutput{
-        message:String!
-        status:Boolean!
+        message:String
+        status:Boolean
         data: ProductAvailabilityStatus
     }
     
     type ProductAvailabilityStatus{
-        id: Int!
-        name: String!
-        slug: String!
-        createdAt:String!
-        updatedAt:String!
+        id: Int
+        name: String
+        slug: String
+        createdAt:String
+        updatedAt:String
     }
 
     extend type Mutation {

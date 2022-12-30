@@ -160,7 +160,7 @@ input createOrderByAdminInput {
     taxexempt_file:[Upload]
     payment_id:Int!
     coupon_id:Int
-    order_status_id:Int!
+    order_status_id:Int
     billing_address_id:Int!
     shipping_address_id:Int!
     shipping_method_id:Int

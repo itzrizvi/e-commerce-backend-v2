@@ -100,7 +100,6 @@ type OrderAdmin {
     id:Int
     total:Float
     sub_total:Float
-    shipping_cost:Float
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
@@ -125,7 +124,6 @@ type OrderCustomer {
     id:Int
     total:Float
     sub_total:Float
-    shipping_cost:Float
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
@@ -175,7 +173,6 @@ type OrderList {
     po_id:Int
     po_number:String
     sub_total:Float
-    shipping_cost:Float
     discount_amount:Float
     tax_amount:Float
     orderStatus:OrderStatusPublic

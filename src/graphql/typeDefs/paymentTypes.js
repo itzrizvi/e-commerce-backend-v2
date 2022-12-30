@@ -9,7 +9,6 @@ module.exports = gql`
 type PaymentMethod {
     id:Int
     name:String
-    slug:String
     description:String
     status:Boolean
     tenant_id:String

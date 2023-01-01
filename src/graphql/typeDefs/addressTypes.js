@@ -4,8 +4,8 @@ module.exports = gql`
 type AddressOutput{
     id: Int
     address1: String!
-    address2: String!
-    phone: String!
+    address2: String
+    phone: String
     fax: String
     email: String
     city: String!
@@ -23,8 +23,8 @@ type AddressOutput{
 input Address{
     parent_id: Int!
     address1: String!
-    address2: String!
-    phone: String!
+    address2: String
+    phone: String
     fax: String
     email: String
     city: String!

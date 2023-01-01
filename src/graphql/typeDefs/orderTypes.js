@@ -100,7 +100,6 @@ type OrderAdmin {
     id:Int
     total:Float
     sub_total:Float
-    shipping_cost:Float
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
@@ -125,7 +124,6 @@ type OrderCustomer {
     id:Int
     total:Float
     sub_total:Float
-    shipping_cost:Float
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
@@ -160,7 +158,7 @@ input createOrderByAdminInput {
     taxexempt_file:[Upload]
     payment_id:Int!
     coupon_id:Int
-    order_status_id:Int!
+    order_status_id:Int
     billing_address_id:Int!
     shipping_address_id:Int!
     shipping_method_id:Int
@@ -175,7 +173,6 @@ type OrderList {
     po_id:Int
     po_number:String
     sub_total:Float
-    shipping_cost:Float
     discount_amount:Float
     tax_amount:Float
     orderStatus:OrderStatusPublic

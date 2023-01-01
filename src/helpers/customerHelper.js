@@ -159,6 +159,15 @@ module.exports = {
                     });
             }
 
+            // 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
+
             // Data From Request
             const { customer_id } = req;
 
@@ -169,6 +178,7 @@ module.exports = {
                         model: db.address,
                         as: "addresses",
                         separate: true,
+                        include: { model: db.country, as: "countryCode" }
                     }
                 ],
                 where: {
@@ -218,11 +228,11 @@ module.exports = {
                     await customerBillingAddress.push({
                         ref_id: user.has_role === '1' ? address.parent_id : user.id,
                         ref_model: "customer",
-                        phone: address.phone,
-                        fax: address.fax,
-                        email: address.email,
+                        phone: address?.phone,
+                        fax: address?.fax,
+                        email: address?.email,
                         address1: address.address1,
-                        address2: address.address2,
+                        address2: address?.address2,
                         city: address.city,
                         state: address.state,
                         zip_code: address.zip_code,
@@ -307,11 +317,11 @@ module.exports = {
                     await customerShippingAddress.push({
                         ref_id: user.has_role === '1' ? address.parent_id : user.id,
                         ref_model: "customer",
-                        phone: address.phone,
-                        fax: address.fax,
-                        email: address.email,
+                        phone: address?.phone,
+                        fax: address?.fax,
+                        email: address?.email,
                         address1: address.address1,
-                        address2: address.address2,
+                        address2: address?.address2,
                         city: address.city,
                         state: address.state,
                         zip_code: address.zip_code,

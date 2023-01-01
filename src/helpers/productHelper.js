@@ -353,6 +353,15 @@ module.exports = {
                 });
             }
 
+            // Availability Status Table Association with Product
+            if (!db.product.hasAlias('product_availability_status') && !db.product.hasAlias('productavailablitystatus')) {
+                await db.product.hasOne(db.product_availability_status, {
+                    sourceKey: 'prod_outofstock_status',
+                    foreignKey: 'id',
+                    as: 'productavailablitystatus'
+                });
+            }
+
             // Part of Product Table Association with Product
             if (!db.product.hasAlias('partof_product') && !db.product.hasAlias('part_of_products')) {
 
@@ -446,6 +455,7 @@ module.exports = {
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
                     { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
                     { model: db.product_condition, as: 'productCondition' }, // Include Product Condition
+                    { model: db.product_availability_status, as: 'productavailablitystatus' }, // Include Product Condition
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
                     {
                         model: db.user, as: 'created_by', // Include User who created the product and his roles
@@ -502,6 +512,7 @@ module.exports = {
                 },
             });
 
+
             // Condition Assign
             if (findProduct.productCondition) {
                 findProduct.prod_condition = findProduct.productCondition.name
@@ -509,6 +520,14 @@ module.exports = {
                 findProduct.prod_condition = 'N/A'
             }
 
+            // Availability Status Assign
+            if (findProduct.productavailablitystatus) {
+                findProduct.prod_outofstock_status = findProduct.productavailablitystatus.name
+            } else {
+                findProduct.prod_outofstock_status = 'N/A'
+            }
+
+            // console.log(findProduct)
             // Return Final Data
             return {
                 message: "Get Single Product Success!!!",

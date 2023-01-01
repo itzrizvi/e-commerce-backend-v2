@@ -83,9 +83,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         prod_outofstock_status: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: "Out Of Stock"
+            type: DataTypes.INTEGER,
+            allowNull: false
         },
         prod_status: {
             type: DataTypes.BOOLEAN,

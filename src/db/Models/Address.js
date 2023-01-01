@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         phone: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fax: {
             type: DataTypes.STRING,

@@ -172,6 +172,9 @@ module.exports = {
         // Try Catch Block
         try {
 
+            // Data From Request
+            const { id } = req;
+
             if (!db.vendor.hasAlias('addresses')) {
                 await db.vendor.hasMany(db.address,
                     {
@@ -182,9 +185,14 @@ module.exports = {
                         }
                     });
             }
-
-            // Data From Request
-            const { id } = req;
+            // 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
 
             // GET Single Vendor BY CODE
             const getsinglevendor = await db.vendor.findOne({
@@ -192,6 +200,7 @@ module.exports = {
                     {
                         model: db.address,
                         separate: true,
+                        include: { model: db.country, as: "countryCode" }
                     }
                 ],
                 where: {

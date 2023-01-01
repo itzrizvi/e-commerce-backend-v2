@@ -86,7 +86,8 @@ type GetAdressListByCustomerIDOutput{
 }
 
 type State {
-    state: String,
+    state: String
+    country_code:String
     abbreviation: String
 }
 

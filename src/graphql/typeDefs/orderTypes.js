@@ -102,6 +102,7 @@ type OrderAdmin {
     sub_total:Float
     discount_amount:Float
     tax_amount:Float
+    shipping_cost:Float
     tax_exempt:Boolean
     tenant_id:String
     po_id:Int

@@ -108,6 +108,7 @@ type OrderAdmin {
     po_id:Int
     po_number:String
     note:String
+    shippingAccount:ShippingAccount
     createdAt:String
     updatedAt:String
     orderitems:[OrderItem]
@@ -166,6 +167,7 @@ input createOrderByAdminInput {
     coupon_id:Int
     note:String
     po_number:String
+    shipping_account_id:Int
     order_status_id:Int
     billing_address_id:Int!
     shipping_address_id:Int!
@@ -229,6 +231,7 @@ input UpdateOrderInput {
     note:String
     po_number:String
     coupon_id:Int
+    shipping_account_id:Int
     tax_exempt:Boolean
     taxexempt_file:[Upload]
     order_status_id:Int

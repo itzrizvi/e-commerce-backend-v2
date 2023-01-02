@@ -673,6 +673,7 @@ module.exports = {
         coupon_id,
         note,
         po_number,
+        shipping_account_id,
         order_status_id,
         billing_address_id,
         shipping_address_id,
@@ -842,6 +843,7 @@ module.exports = {
         tax_amount,
         coupon_id,
         note,
+        shipping_account_id,
         po_number,
         order_status_id,
         shipping_address_id,
@@ -1156,6 +1158,15 @@ module.exports = {
         });
       }
 
+      // Order and Shipping Account
+      if (!db.order.hasAlias("shipping_account") && !db.order.hasAlias("shippingAccount")) {
+        await db.order.hasOne(db.shipping_account, {
+          sourceKey: "shipping_account_id",
+          foreignKey: "id",
+          as: "shippingAccount"
+        });
+      }
+
       // Single Order For Admin
       const singleOrder = await db.order.findOne({
         include: [
@@ -1184,6 +1195,7 @@ module.exports = {
           },
           { model: db.address, as: "shippingAddress" }, // Address
           { model: db.shipping_method, as: "shippingmethod" }, // Shipping Method
+          { model: db.shipping_account, as: "shippingAccount" }, // Shipping Account
           { model: db.tax_exempt, as: "taxExemptFiles" }, // Tax Exempt
           { model: db.coupon, as: "coupon" }, // Coupon
           {
@@ -1234,6 +1246,7 @@ module.exports = {
         note,
         po_number,
         order_status_id,
+        shipping_account_id,
         tax_exempt,
         taxexempt_file,
         orderItems } = req;
@@ -1484,6 +1497,7 @@ module.exports = {
         note,
         po_number,
         coupon_id,
+        shipping_account_id,
         tax_exempt,
         order_status_id,
         updated_by: user.id,

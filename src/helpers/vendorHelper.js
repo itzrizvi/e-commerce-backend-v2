@@ -10,13 +10,13 @@ module.exports = {
 
         try {
             // GET DATA
-            const { contact_person, company_name, email, description, phone_number, EIN_no, TAX_ID, FAX_no, status } = req;
+            const { contact_persons, company_name, description, EIN_no, TAX_ID, status } = req;
 
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {
                     [Op.and]: [{
-                        email,
+                        company_name,
                         tenant_id: TENANTID
                     }]
                 }
@@ -24,17 +24,28 @@ module.exports = {
 
             if (checkVendorExist) return { message: "Vendor already exists!", status: false }
             const createVendor = await db.vendor.create({
-                contact_person,
                 company_name,
-                email,
                 description,
-                phone_number,
                 EIN_no,
                 TAX_ID,
-                FAX_no,
                 status,
+                created_by: user.id,
                 tenant_id: TENANTID
             });
+            if (!createVendor) return { message: "Something Went Wrong", status: false }
+
+            if (contact_persons && contact_persons.length > 0) {
+                contact_persons.forEach(async (item) => {
+                    item.ref_id = createVendor.id;
+                    item.ref_model = "vendor";
+                    item.created_by = user.id;
+                    item.tenant_id = TENANTID;
+                });
+
+                const contactPersonBulkCreate = await db.contact_person.bulkCreate(contact_persons);
+                if (!contactPersonBulkCreate) return { message: "Contact Person Couldn't Created!!!" }
+            }
+
 
             return {
                 tenant_id: createVendor.tenant_id,
@@ -60,14 +71,52 @@ module.exports = {
         try {
 
             // Data From Request
-            const { id, contact_person, company_name, email, description, phone_number, EIN_no, TAX_ID, FAX_no, status } = req
+            const { id, contact_persons, company_name, description, EIN_no, TAX_ID, status } = req
 
+
+            // Extract New and Old Contact Persons
+            let newContactPerson = [];
+            let oldContactPerson = [];
+            let oldContactPersonIDS = [];
+            if (contact_persons && contact_persons.length > 0) {
+                contact_persons.forEach(async (item) => {
+                    if (item.isNew) {
+                        await newContactPerson.push({
+                            ref_id: id,
+                            ref_model: "vendor",
+                            name: item.name,
+                            email: item.email,
+                            phone: item.phone,
+                            fax: item.fax,
+                            status: item.status,
+                            isDefault: item.isDefault,
+                            created_by: user.id,
+                            tenant_id: TENANTID
+                        });
+                    } else {
+                        oldContactPersonIDS.push(item.id);
+                        await oldContactPerson.push({
+                            ref_id: id,
+                            ref_model: "vendor",
+                            id: item.id,
+                            name: item.name,
+                            email: item.email,
+                            phone: item.phone,
+                            fax: item.fax,
+                            status: item.status,
+                            isDefault: item.isDefault,
+                            updated_by: user.id,
+                            tenant_id: TENANTID
+                        });
+                    }
+                });
+            }
 
             // Check The Vendor Is Already Taken or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {
                     [Op.and]: [{
-                        email,
+                        company_name,
                         tenant_id: TENANTID
                     }],
                     [Op.not]: [{
@@ -81,15 +130,12 @@ module.exports = {
 
             // Update Doc
             const updateDoc = {
-                contact_person,
                 company_name,
-                email,
                 description,
-                phone_number,
                 EIN_no,
                 TAX_ID,
-                FAX_no,
                 status,
+                updated_by: user.id
             }
 
             // Update Vendor 
@@ -101,6 +147,54 @@ module.exports = {
                     }]
                 }
             });
+
+            // Delete Contact Persons Were Removed
+            if (oldContactPersonIDS && oldContactPersonIDS.length > 0) {
+                await db.contact_person.destroy({
+                    where: {
+                        [Op.and]: [{
+                            id: {
+                                [Op.notIn]: oldContactPersonIDS
+                            },
+                            ref_id: id,
+                            ref_model: "vendor",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
+
+            if (newContactPerson && newContactPerson.length > 0) {
+                const newContactPersonBulkCreate = await db.contact_person.bulkCreate(newContactPerson);
+                if (!newContactPersonBulkCreate) return { message: "New Contact Person Couldn't Created!!!" }
+            }
+
+            // Updating Old Contact Person
+            if (oldContactPerson && oldContactPerson.length > 0) {
+                oldContactPerson.forEach(async (item) => {
+                    await db.contact_person.update({
+                        ref_id: id,
+                        ref_model: "vendor",
+                        name: item.name,
+                        email: item.email,
+                        phone: item.phone,
+                        fax: item.fax,
+                        status: item.status,
+                        isDefault: item.isDefault,
+                        updated_by: user.id,
+                        tenant_id: TENANTID
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                id: item.id,
+                                ref_id: id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    })
+                });
+            }
+
 
             // IF NOT UPDATED THEN RETURN
             if (!updateVendor) return { message: "Update Gone Wrong!!!", status: false }
@@ -185,6 +279,17 @@ module.exports = {
                         }
                     });
             }
+            if (!db.vendor.hasAlias('contact_person') && !db.vendor.hasAlias('contactPersons')) {
+                await db.vendor.hasMany(db.contact_person,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        },
+                        as: "contactPersons"
+                    });
+            }
             // 
             if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
                 await db.address.hasOne(db.country, {
@@ -201,7 +306,8 @@ module.exports = {
                         model: db.address,
                         separate: true,
                         include: { model: db.country, as: "countryCode" }
-                    }
+                    },
+                    { model: db.contact_person, as: "contactPersons" }
                 ],
                 where: {
                     [Op.and]: [{

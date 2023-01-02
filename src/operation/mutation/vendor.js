@@ -1,4 +1,9 @@
-const { createVendorController, updateVendorController, updateVendorStatusController, addVendorBillingAddressController, addVendorShippingAddressController, updateVendorAddressController } = require("../../controllers");
+const { createVendorController,
+    updateVendorController,
+    updateVendorStatusController,
+    addVendorBillingAddressController,
+    addVendorShippingAddressController,
+    updateVendorAddressController } = require("../../controllers");
 
 // Role Mutation Start
 module.exports = {

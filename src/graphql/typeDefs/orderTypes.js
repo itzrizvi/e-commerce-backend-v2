@@ -278,6 +278,12 @@ type GetOrderHistoryOutput {
     data:[OrderHistory]
 }
 
+type OrderPlaceOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    id:Int
+}
 
 
 
@@ -287,8 +293,8 @@ type GetOrderHistoryOutput {
 extend type Mutation {
     addOrderStatus(data:addOrderStatusInput):CommonOutput!
     updateOrderStatus(data:UpdateOrderStatusInput):CommonOutput!
-    createOrderByCustomer(data:createOrderByCustomerInput):CommonOutput!
-    createOrderByAdmin(data:createOrderByAdminInput):CommonOutput!
+    createOrderByCustomer(data:createOrderByCustomerInput):OrderPlaceOutput!
+    createOrderByAdmin(data:createOrderByAdminInput):OrderPlaceOutput!
     updateOrder(data:UpdateOrderInput):CommonOutput!
     orderStatusChange(data:OrderStatusChangeInput):CommonOutput!
     orderCancelByCustomer(data:CancelOrderByCustomerInput):CommonOutput!

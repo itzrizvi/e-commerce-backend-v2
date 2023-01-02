@@ -651,6 +651,7 @@ module.exports = {
         message: "Successfully Placed The Order!!!",
         status: true,
         tenant_id: TENANTID,
+        id: insertOrder.id,
       };
     } catch (error) {
       if (error)
@@ -939,6 +940,7 @@ module.exports = {
         message: "Successfully Placed The Order!!!",
         status: true,
         tenant_id: TENANTID,
+        id: insertOrder.id,
       };
 
     } catch (error) {

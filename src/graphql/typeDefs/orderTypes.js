@@ -107,6 +107,7 @@ type OrderAdmin {
     tenant_id:String
     po_id:Int
     po_number:String
+    note:String
     createdAt:String
     updatedAt:String
     orderitems:[OrderItem]
@@ -128,6 +129,8 @@ type OrderCustomer {
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
+    note:String
+    po_number:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -147,6 +150,8 @@ input createOrderByCustomerInput {
     taxexempt_file:[Upload]
     payment_id:Int!
     shipping_method_id:Int!
+    note:String
+    po_number:String
     coupon_id:Int
     order_status_slug:String!
     billing_address_id:Int!
@@ -159,6 +164,8 @@ input createOrderByAdminInput {
     taxexempt_file:[Upload]
     payment_id:Int!
     coupon_id:Int
+    note:String
+    po_number:String
     order_status_id:Int
     billing_address_id:Int!
     shipping_address_id:Int!
@@ -219,6 +226,8 @@ input UpdateOrderInput {
     billing_address_id:Int
     shipping_method_id:Int
     payment_id:Int
+    note:String
+    po_number:String
     coupon_id:Int
     tax_exempt:Boolean
     taxexempt_file:[Upload]

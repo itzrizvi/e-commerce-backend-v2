@@ -32,4 +32,5 @@ module.exports = {
     ...require('./emailTemplate'),
     ...require('./dashboard'),
     ...require('./report'),
+    ...require('./stripe'),
 }

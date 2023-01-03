@@ -1,33 +1,21 @@
-// Product Dimension Model
+// Product Weigth Class Model
 
 module.exports = (sequelize, DataTypes) => {
 
-    const ProductDimension = sequelize.define("product_dimension", {
+    const WeightClass = sequelize.define("weight_class", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        product_id: {
-            type: DataTypes.BIGINT,
+        name: {
+            type: DataTypes.STRING,
             allowNull: false
         },
-        length: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        width: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        height: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        dimension_class_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true
+        status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false
         },
         tenant_id: {
             type: DataTypes.STRING,
@@ -45,8 +33,8 @@ module.exports = (sequelize, DataTypes) => {
     },
         {
             timestamps: true,
-            tableName: 'product_dimension',
+            tableName: 'weight_class',
         })
 
-    return ProductDimension
+    return WeightClass
 }

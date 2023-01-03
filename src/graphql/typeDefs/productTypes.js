@@ -6,12 +6,40 @@ module.exports = gql`
 # Product Based Input and Types #########################################
 #########################################################################
 
+type DimensionClass {
+    id:Int
+    name:String
+    status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
 type ProductDimension {
     id:Int
+    product_id:Int
     length:String
     width:String
     height:String
-    dimension_class:String
+    dimensionClass:DimensionClass
+}
+
+type WeightClass {
+    id:Int
+    name:String
+    status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type ProductWeight {
+    id:Int
+    product_id:Int
+    length:String
+    width:String
+    height:String
+    weightClass:WeightClass
 }
 
 type DiscountType {
@@ -85,8 +113,7 @@ type Product {
     mfg_build_part_number:String
     representative:Staff
     dimensions:ProductDimension
-    prod_weight:String
-    prod_weight_class:String
+    weight:ProductWeight
     prod_outofstock_status:String
     productavailablitystatus:ProductAvailabilityStatus
     prod_thumbnail:String
@@ -113,8 +140,6 @@ input AddProductInput {
     brand_id:Int!
     prod_category:Int!
     related_product:JSON
-    prod_weight:String
-    prod_weight_class:String
     prod_status:Boolean!
     taxable:Boolean
     is_featured:Boolean
@@ -132,6 +157,7 @@ input AddProductInput {
     prod_thumbnail:Upload!
     prod_gallery:[Upload]
     dimensions:JSON # Dimensions Table Properties will come as an object
+    weight:JSON # Weight Table Properties will come as an object
     discount_type:JSON # Discount Type Table Properties will come as an object
     product_attributes:JSON # Product Attributes Table Properties Will Come as an Object
     partof_product:JSON # Part of Product Table Properties Will Come as an Object
@@ -216,8 +242,6 @@ input UpdateProductInput {
     prod_sku:String
     brand_id:Int
     prod_category:Int
-    prod_weight:String
-    prod_weight_class:String
     prod_status:Boolean
     taxable:Boolean
     is_featured:Boolean
@@ -234,6 +258,7 @@ input UpdateProductInput {
     prod_outofstock_status:Int
     related_product:JSON
     dimensions:JSON # Dimensions Table Properties will come as an object
+    weight:JSON # Weight Table Properties will come as an object
     discount_type:JSON # Discount Type Table Properties will come as an object
     product_attributes:JSON # Product Attributes Table Properties Will Come as an Object
     partof_product:JSON # Part of Product Table Properties Will Come as an Object
@@ -296,8 +321,7 @@ type PublicProductView {
     is_sale:Boolean
     prod_condition:String
     dimensions:ProductDimension
-    prod_weight:String
-    prod_weight_class:String
+    weight:ProductWeight
     prod_outofstock_status:String
     prod_thumbnail:String
     gallery:[ProductGallery]

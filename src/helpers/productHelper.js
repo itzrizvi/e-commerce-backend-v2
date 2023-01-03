@@ -27,8 +27,6 @@ module.exports = {
                 prod_sku,
                 brand_id,
                 prod_category,
-                prod_weight,
-                prod_weight_class,
                 prod_outofstock_status,
                 prod_status,
                 taxable,
@@ -48,6 +46,7 @@ module.exports = {
                 prod_thumbnail,
                 prod_gallery,
                 dimensions,
+                weight,
                 discount_type,
                 product_attributes,
                 partof_product } = req;
@@ -100,19 +99,6 @@ module.exports = {
                 if (checkPNExists) return { message: "Already Have This Part Number In Product!!!", status: false };
             }
 
-
-            // Dimensions Table Data Insertion
-            let dimension_id;
-            if (dimensions) {
-                // Insert Data In Dimension Table
-                dimensions.tenant_id = TENANTID;
-                const insertDimension = await db.product_dimension.create(dimensions);
-                if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
-
-                // Discount Type UUID
-                dimension_id = insertDimension.id
-            }
-
             // Create Product Without Image First
             const createProduct = await db.product.create({
                 prod_name,
@@ -129,8 +115,6 @@ module.exports = {
                 prod_sku,
                 brand_id,
                 prod_category,
-                prod_weight,
-                prod_weight_class,
                 prod_outofstock_status,
                 prod_status,
                 taxable,
@@ -146,13 +130,32 @@ module.exports = {
                 product_rank,
                 mfg_build_part_number,
                 product_rep,
-                dimension_id,
                 prod_thumbnail: "demo.jpg",
                 added_by: user.id,
                 tenant_id: TENANTID
             });
             if (!createProduct) return { message: "Product Create Failed!!!", status: false }
 
+
+            // Dimensions Table Data Insertion
+            if (dimensions) {
+                // Insert Data In Dimension Table
+                dimensions.tenant_id = TENANTID;
+                dimensions.product_id = createProduct.id;
+                dimensions.created_by = user.id;
+                const insertDimension = await db.product_dimension.create(dimensions);
+                if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
+            }
+
+            // Weight Table Data Insertion
+            if (weight) {
+                // Insert Data In Dimension Table
+                weight.tenant_id = TENANTID;
+                weight.product_id = createProduct.id;
+                weight.created_by = user.id;
+                const insertWeight = await db.product_weight.create(weight);
+                if (!insertWeight) return { message: "Weight Data Insert Failed!!", status: false };
+            }
 
 
             // Upload Product Thumbnail
@@ -692,8 +695,6 @@ module.exports = {
                 prod_sku,
                 brand_id,
                 prod_category,
-                prod_weight,
-                prod_weight_class,
                 prod_status,
                 taxable,
                 is_featured,
@@ -711,6 +712,7 @@ module.exports = {
                 prod_outofstock_status,
                 related_product,
                 dimensions,
+                weight,
                 discount_type,
                 product_attributes,
                 partof_product } = req;
@@ -804,16 +806,27 @@ module.exports = {
                 if (checkPNExists) return { message: "Already Have This Part Number In Product!!!", status: false };
             }
             // If Dimension Updated 
-            let dimension_id;
             if (dimensions) {
                 dimensions.tenant_id = TENANTID;
+                dimensions.product_id = prod_id;
+                dimensions.updated_by = user.id;
+
+                // Find Existing Dimension
+                const existingDimension = await db.product_dimension.findOne({
+                    where: {
+                        [Op.and]: [{
+                            product_id: prod_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
                 // If Dimension Already Have Created
-                if (findProd.dimension_id) {
+                if (existingDimension) {
                     // Update Dimension
                     const updateDimension = await db.product_dimension.update(dimensions, {
                         where: {
                             [Op.and]: [{
-                                id: findProd.dimension_id,
+                                product_id: prod_id,
                                 tenant_id: TENANTID
                             }]
                         }
@@ -824,9 +837,41 @@ module.exports = {
 
                     const insertDimension = await db.product_dimension.create(dimensions);
                     if (!insertDimension) return { message: "Dimension Data Insert Failed!!", status: false };
+                }
 
-                    // Discount Type UUID
-                    dimension_id = insertDimension.id
+            }
+            // If Weight Updated 
+            if (weight) {
+                weight.tenant_id = TENANTID;
+                weight.product_id = prod_id;
+                weight.updated_by = user.id;
+
+                // Find Existing Dimension
+                const existingWeight = await db.product_weight.findOne({
+                    where: {
+                        [Op.and]: [{
+                            product_id: prod_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                // If Dimension Already Have Created
+                if (existingWeight) {
+                    // Update Dimension
+                    const updateWeight = await db.product_weight.update(weight, {
+                        where: {
+                            [Op.and]: [{
+                                product_id: prod_id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    if (!updateWeight) return { message: "Product Weight Couldnt Updated!!!", status: false }
+
+                } else { // If Not Have Dimensions
+
+                    const insertWeight = await db.product_weight.create(weight);
+                    if (!insertWeight) return { message: "Weight Data Insert Failed!!", status: false };
                 }
 
             }
@@ -928,8 +973,6 @@ module.exports = {
                 prod_sku,
                 brand_id,
                 prod_category,
-                prod_weight,
-                prod_weight_class,
                 prod_status,
                 taxable,
                 is_featured,
@@ -945,7 +988,6 @@ module.exports = {
                 mfg_build_part_number,
                 product_rep,
                 prod_outofstock_status,
-                dimension_id,
                 added_by: user.id
             }
 

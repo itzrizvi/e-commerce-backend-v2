@@ -49,7 +49,6 @@ type GetPaymentMethodListAdmin {
 type PaymentMethodPublic {
     id:Int!
     name:String!
-    slug:String!
     description:String!
     status:Boolean!
     isDefault: Boolean

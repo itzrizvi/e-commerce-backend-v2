@@ -106,7 +106,7 @@ async function getFileStream(req, res) {
     Bucket: bucketName,
   };
   // Using callbacks
-  if(objectExists(key, bucketName)) return s3.getObject(downloadParams).createReadStream().pipe(res);
+  if (objectExists(key, bucketName)) return s3.getObject(downloadParams).createReadStream().pipe(res);
   return res.send("Invalid file key, Please provide valid file key.");
 }
 exports.getFileStream = getFileStream;

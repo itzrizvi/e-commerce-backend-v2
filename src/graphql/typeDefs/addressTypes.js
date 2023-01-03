@@ -3,16 +3,16 @@ const { gql } = require("apollo-server-express");
 module.exports = gql`
 type AddressOutput{
     id: Int
-    address1: String!
+    address1: String
     address2: String
     phone: String
     fax: String
     email: String
-    city: String!
-    state: String!
-    zip_code: String!
+    city: String
+    state: String
+    zip_code: String
     country: String
-    type: String!
+    type: String
     status: Boolean
     isDefault: Boolean
     countryCode:Country

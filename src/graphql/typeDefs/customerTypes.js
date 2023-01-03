@@ -73,9 +73,9 @@ input UpdateCustomerAddressInput {
 input addCustomerSingleBillingInput {
     address1: String!
     address2: String
-    phone: String!
+    phone: String
     fax: String
-    email: String!
+    email: String
     city: String!
     state: String!
     zip_code: String!
@@ -87,9 +87,9 @@ input addCustomerSingleBillingInput {
 input addCustomerSingleShippingInput {
     address1: String!
     address2: String
-    phone: String!
+    phone: String
     fax: String
-    email: String!
+    email: String
     city: String!
     state: String!
     zip_code: String!

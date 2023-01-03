@@ -329,7 +329,7 @@ module.exports = {
         await db.cart_item.hasOne(db.product, {
           sourceKey: "product_id",
           foreignKey: "id",
-          as: "cartproduct"
+          as: "product"
         });
       }
       //
@@ -340,7 +340,7 @@ module.exports = {
             as: "cart_items",
             include: {
               model: db.product,
-              as: "cartproduct"
+              as: "product"
             },
           },
         ],
@@ -374,7 +374,7 @@ module.exports = {
 
           //
           await orderItems.push({
-            product_id: item.cartproduct.id,
+            product_id: item.product.id,
             price: item.prod_price,
             quantity: item.quantity,
             promo_type: item.promo_type,
@@ -386,29 +386,29 @@ module.exports = {
 
 
         } else {
-          if (item.cartproduct.prod_sale_price != 0) {
-            const calculateTotal = item.cartproduct.prod_sale_price * item.quantity;
+          if (item.product.prod_sale_price != 0) {
+            const calculateTotal = item.product.prod_sale_price * item.quantity;
             sub_total += calculateTotal;
             totalQuantity += item.quantity;
 
             //
             await orderItems.push({
-              product_id: item.cartproduct.id,
-              price: item.cartproduct.prod_sale_price,
+              product_id: item.product.id,
+              price: item.product.prod_sale_price,
               quantity: item.quantity,
               created_by: user.id,
               tenant_id: TENANTID,
             });
           } else {
             const calculateTotal =
-              item.cartproduct.prod_regular_price * item.quantity;
+              item.product.prod_regular_price * item.quantity;
             sub_total += calculateTotal;
             totalQuantity += item.quantity;
 
             //
             await orderItems.push({
-              product_id: item.cartproduct.id,
-              price: item.cartproduct.prod_regular_price,
+              product_id: item.product.id,
+              price: item.product.prod_regular_price,
               quantity: item.quantity,
               created_by: user.id,
               tenant_id: TENANTID,

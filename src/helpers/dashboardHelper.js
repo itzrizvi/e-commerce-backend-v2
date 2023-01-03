@@ -102,7 +102,7 @@ module.exports = {
             if (orders && orders.length > 0) {
                 await orders.forEach(async (item) => {
 
-                    if (item.orderStatus.slug === "delivered") {
+                    if (item?.orderStatus?.slug === "delivered") {
                         overAllOrderDeliveredIDS.push(item.id)
                         let updatedAt = new Date(item.updatedAt).toLocaleDateString();
                         let serverTime = new Date().toLocaleDateString();
@@ -112,7 +112,7 @@ module.exports = {
 
                     }
 
-                    if (item.orderStatus.slug === "pending") {
+                    if (item?.orderStatus?.slug === "pending") {
                         let updatedAt = new Date(item.updatedAt).toLocaleDateString();
                         let serverTime = new Date().toLocaleDateString();
                         if (updatedAt === serverTime) {
@@ -120,7 +120,7 @@ module.exports = {
                         }
                     }
 
-                    if (item.orderStatus.slug === "in-progress") {
+                    if (item?.orderStatus?.slug === "in-progress") {
                         await shippingInProgress.push(item.id)
                     }
                 });

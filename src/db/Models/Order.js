@@ -55,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        shipping_account_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         tax_exempt: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
@@ -65,6 +69,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         po_number: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        note: {
             type: DataTypes.STRING,
             allowNull: true
         },

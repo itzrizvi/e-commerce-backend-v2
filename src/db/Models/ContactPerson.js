@@ -1,32 +1,46 @@
-// Vendor model
+// Contact Person model
 module.exports = (sequelize, DataTypes) => {
 
-    const Vendor = sequelize.define("vendor", {
+    const ContactPerson = sequelize.define("contact_person", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        company_name: {
+        ref_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        ref_model: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        phone: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        EIN_no: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        TAX_ID: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        description: {
+        fax: {
             type: DataTypes.STRING,
             allowNull: true
         },
         status: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: false,
+            defaultValue: true
+        },
+        isDefault: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         },
         created_by: {
             type: DataTypes.INTEGER,
@@ -40,9 +54,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         }
+
     }, {
         timestamps: true
     })
 
-    return Vendor
+    return ContactPerson
 }

@@ -107,6 +107,8 @@ type OrderAdmin {
     tenant_id:String
     po_id:Int
     po_number:String
+    note:String
+    shippingAccount:ShippingAccount
     createdAt:String
     updatedAt:String
     orderitems:[OrderItem]
@@ -128,6 +130,8 @@ type OrderCustomer {
     discount_amount:Float
     tax_amount:Float
     tax_exempt:Boolean
+    note:String
+    po_number:String
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -147,6 +151,8 @@ input createOrderByCustomerInput {
     taxexempt_file:[Upload]
     payment_id:Int!
     shipping_method_id:Int!
+    note:String
+    po_number:String
     coupon_id:Int
     order_status_slug:String!
     billing_address_id:Int!
@@ -159,6 +165,9 @@ input createOrderByAdminInput {
     taxexempt_file:[Upload]
     payment_id:Int!
     coupon_id:Int
+    note:String
+    po_number:String
+    shipping_account_id:Int
     order_status_id:Int
     billing_address_id:Int!
     shipping_address_id:Int!
@@ -219,7 +228,10 @@ input UpdateOrderInput {
     billing_address_id:Int
     shipping_method_id:Int
     payment_id:Int
+    note:String
+    po_number:String
     coupon_id:Int
+    shipping_account_id:Int
     tax_exempt:Boolean
     taxexempt_file:[Upload]
     order_status_id:Int
@@ -266,6 +278,12 @@ type GetOrderHistoryOutput {
     data:[OrderHistory]
 }
 
+type OrderPlaceOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    id:Int
+}
 
 
 
@@ -275,8 +293,8 @@ type GetOrderHistoryOutput {
 extend type Mutation {
     addOrderStatus(data:addOrderStatusInput):CommonOutput!
     updateOrderStatus(data:UpdateOrderStatusInput):CommonOutput!
-    createOrderByCustomer(data:createOrderByCustomerInput):CommonOutput!
-    createOrderByAdmin(data:createOrderByAdminInput):CommonOutput!
+    createOrderByCustomer(data:createOrderByCustomerInput):OrderPlaceOutput!
+    createOrderByAdmin(data:createOrderByAdminInput):OrderPlaceOutput!
     updateOrder(data:UpdateOrderInput):CommonOutput!
     orderStatusChange(data:OrderStatusChangeInput):CommonOutput!
     orderCancelByCustomer(data:CancelOrderByCustomerInput):CommonOutput!

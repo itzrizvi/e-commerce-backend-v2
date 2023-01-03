@@ -7,45 +7,52 @@ module.exports = gql`
 ##############################################################################
 
 
-type Vendor{
+type ContactPerson {
+    id:Int
+    ref_id:Int
+    ref_model:String
+    name:String
+    email:String
+    phone:String
+    fax:String
+    status:Boolean
+    isDefault:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+
+type Vendor {
     id: Int!
-    contact_person: String!
+    contactPersons: [ContactPerson]
     company_name: String
-    email: String!
     description: String
-    phone_number: String
     EIN_no: String
     TAX_ID: String
-    FAX_no: String
-    status: Boolean!
+    status: Boolean
     addresses: [AddressOutput]
 }
 
 
 
-input CreateVendorInput{
-    contact_person: String!
+input CreateVendorInput {
+    contact_persons: JSON
     company_name: String
-    email: String!
     description: String
-    status: Boolean!
-    phone_number: String
+    status: Boolean
     EIN_no: String
     TAX_ID: String
-    FAX_no: String
 }
 
-input UpdateVendorInput{
+input UpdateVendorInput {
     id: Int!
-    contact_person: String!
+    contact_persons: JSON
     company_name: String
-    email: String!
     description: String
-    status: Boolean!
-    phone_number: String
+    status: Boolean
     EIN_no: String
     TAX_ID: String
-    FAX_no: String
 }
 
 input UpdateVendorStatusInput{
@@ -54,14 +61,14 @@ input UpdateVendorStatusInput{
 }
 
 type CreateVendorOutput{
-    message:String!
-    status:Boolean!
-    id: Int!
+    message:String
+    status:Boolean
+    id: Int
 }
 
 type UpdateVendorOutput{
-    message:String!
-    status:Boolean!
+    message:String
+    status:Boolean
 }
 
 type VendorOutput{

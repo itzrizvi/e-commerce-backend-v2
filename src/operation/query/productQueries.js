@@ -8,7 +8,9 @@ const { getSingleProductController,
     getProductsByIDsController,
     getOnSaleProductController,
     getSearchedProductsController,
-    getLatestProductsController
+    getLatestProductsController,
+    getWeightClassListController,
+    getDimensionClassListController
 } = require("../../controllers")
 
 
@@ -88,5 +90,25 @@ module.exports = {
 
         // Return To Controller
         return await getLatestProductsController(db, TENANTID);
+    },
+    // GET Dimension Class List
+    getDimensionClassList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getDimensionClassListController(db, TENANTID);
+    },
+    // GET Weight Class List
+    getWeightClassList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false } // Return if No TENANT ID
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getWeightClassListController(db, TENANTID);
     },
 }

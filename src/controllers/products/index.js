@@ -17,4 +17,6 @@ module.exports = {
     addRecentViewProductByArrayController: require('./addRecentViewProductByArrayController'),
     getLatestProductsController: require('./getLatestProductsController'),
     changeProductIsSerialController: require('./changeProductIsSerialController'),
+    getDimensionClassListController: require('./getDimensionClassListController'),
+    getWeightClassListController: require('./getWeightClassListController'),
 }

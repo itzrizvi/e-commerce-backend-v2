@@ -36,9 +36,7 @@ type WeightClass {
 type ProductWeight {
     id:Int
     product_id:Int
-    length:String
-    width:String
-    height:String
+    weight:String
     weightClass:WeightClass
 }
 
@@ -296,7 +294,6 @@ type GetRecentViewProductOutput {
 }
 
 
-
 type PublicProductView {
     id:Int
     prod_name:String
@@ -391,6 +388,19 @@ input ChangeProductIsSerialInput {
     is_serial:Boolean!
 }
 
+type DimensionClassList {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[DimensionClass]
+}
+
+type WeightClassList {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[WeightClass]
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -418,6 +428,8 @@ extend type Query {
     getOnSaleProducts: GetOnSaleProducts!
     getSearchedProducts(query:SearchProductInput): SearchProductOutput!
     getLatestProducts: GetLatestProducts!
+    getDimensionClassList:DimensionClassList!
+    getWeightClassList:WeightClassList!
 }
 
 

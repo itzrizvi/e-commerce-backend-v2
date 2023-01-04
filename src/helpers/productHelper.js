@@ -353,11 +353,41 @@ module.exports = {
             if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
 
                 await db.product.hasOne(db.product_dimension, {
-                    sourceKey: 'dimension_id',
-                    foreignKey: 'id',
+                    foreignKey: 'product_id',
                     as: 'dimensions'
                 });
             }
+
+            // 
+            if (!db.product_dimension.hasAlias('dimension_class') && !db.product_dimension.hasAlias('dimensionClass')) {
+
+                await db.product_dimension.hasOne(db.dimension_class, {
+                    sourceKey: 'dimension_class_id',
+                    foreignKey: 'id',
+                    as: 'dimensionClass'
+                });
+            }
+
+            // Weight Table Association with Product
+            if (!db.product.hasAlias('product_weight') && !db.product.hasAlias('weight')) {
+
+                await db.product.hasOne(db.product_weight, {
+                    foreignKey: 'product_id',
+                    as: 'weight'
+                });
+            }
+
+            // 
+            if (!db.product_weight.hasAlias('weight_class') && !db.product_weight.hasAlias('weightClass')) {
+
+                await db.product_weight.hasOne(db.weight_class, {
+                    sourceKey: 'weight_class_id',
+                    foreignKey: 'id',
+                    as: 'weightClass'
+                });
+            }
+
+
             // Brand Table Association with Product
             if (!db.product.hasAlias('brands') && !db.product.hasAlias('brand')) {
 
@@ -478,7 +508,20 @@ module.exports = {
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
-                    { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
+                    {
+                        model: db.product_dimension, as: 'dimensions',
+                        include: {
+                            model: db.dimension_class,
+                            as: 'dimensionClass'
+                        }
+                    }, // Include Product Dimensions
+                    {
+                        model: db.product_weight, as: 'weight',
+                        include: {
+                            model: db.weight_class,
+                            as: 'weightClass'
+                        }
+                    }, // Include Product Weight
                     { model: db.product_condition, as: 'productCondition' }, // Include Product Condition
                     { model: db.product_availability_status, as: 'productavailablitystatus' }, // Include Product Condition
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
@@ -1599,11 +1642,40 @@ module.exports = {
             if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
 
                 await db.product.hasOne(db.product_dimension, {
-                    sourceKey: 'dimension_id',
-                    foreignKey: 'id',
+                    foreignKey: 'product_id',
                     as: 'dimensions'
                 });
             }
+
+            // 
+            if (!db.product_dimension.hasAlias('dimension_class') && !db.product_dimension.hasAlias('dimensionClass')) {
+
+                await db.product_dimension.hasOne(db.dimension_class, {
+                    sourceKey: 'dimension_class_id',
+                    foreignKey: 'id',
+                    as: 'dimensionClass'
+                });
+            }
+
+            // Weight Table Association with Product
+            if (!db.product.hasAlias('product_weight') && !db.product.hasAlias('weight')) {
+
+                await db.product.hasOne(db.product_weight, {
+                    foreignKey: 'product_id',
+                    as: 'weight'
+                });
+            }
+
+            // 
+            if (!db.product_weight.hasAlias('weight_class') && !db.product_weight.hasAlias('weightClass')) {
+
+                await db.product_weight.hasOne(db.weight_class, {
+                    sourceKey: 'weight_class_id',
+                    foreignKey: 'id',
+                    as: 'weightClass'
+                });
+            }
+
             // Brand Table Association with Product
             if (!db.product.hasAlias('brands') && !db.product.hasAlias('brand')) {
 
@@ -1662,7 +1734,20 @@ module.exports = {
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
-                    { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
+                    {
+                        model: db.product_dimension, as: 'dimensions',
+                        include: {
+                            model: db.dimension_class,
+                            as: 'dimensionClass'
+                        }
+                    }, // Include Product Dimensions
+                    {
+                        model: db.product_weight, as: 'weight',
+                        include: {
+                            model: db.weight_class,
+                            as: 'weightClass'
+                        }
+                    }, // Include Product Weight
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
                     { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
@@ -1725,12 +1810,12 @@ module.exports = {
 
             // ### ASSOCIATION STARTS ### //
             // Condition Table Association with Product
-            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('condition')) {
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('productCondition')) {
 
                 await db.product.hasOne(db.product_condition, {
                     sourceKey: 'prod_condition',
                     foreignKey: 'id',
-                    as: 'condition'
+                    as: 'productCondition'
                 });
             }
 
@@ -1775,11 +1860,40 @@ module.exports = {
             if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
 
                 await db.product.hasOne(db.product_dimension, {
-                    sourceKey: 'dimension_id',
-                    foreignKey: 'id',
+                    foreignKey: 'product_id',
                     as: 'dimensions'
                 });
             }
+
+            // 
+            if (!db.product_dimension.hasAlias('dimension_class') && !db.product_dimension.hasAlias('dimensionClass')) {
+
+                await db.product_dimension.hasOne(db.dimension_class, {
+                    sourceKey: 'dimension_class_id',
+                    foreignKey: 'id',
+                    as: 'dimensionClass'
+                });
+            }
+
+            // Weight Table Association with Product
+            if (!db.product.hasAlias('product_weight') && !db.product.hasAlias('weight')) {
+
+                await db.product.hasOne(db.product_weight, {
+                    foreignKey: 'product_id',
+                    as: 'weight'
+                });
+            }
+
+            // 
+            if (!db.product_weight.hasAlias('weight_class') && !db.product_weight.hasAlias('weightClass')) {
+
+                await db.product_weight.hasOne(db.weight_class, {
+                    sourceKey: 'weight_class_id',
+                    foreignKey: 'id',
+                    as: 'weightClass'
+                });
+            }
+
             // Brand Table Association with Product
             if (!db.product.hasAlias('brands') && !db.product.hasAlias('brand')) {
 
@@ -1869,9 +1983,22 @@ module.exports = {
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_gallery, as: 'gallery' }, // Include Gallery Images from Product Gallery
-                    { model: db.product_dimension, as: 'dimensions' }, // Include Product Dimensions
+                    {
+                        model: db.product_dimension, as: 'dimensions',
+                        include: {
+                            model: db.dimension_class,
+                            as: 'dimensionClass'
+                        }
+                    }, // Include Product Dimensions
+                    {
+                        model: db.product_weight, as: 'weight',
+                        include: {
+                            model: db.weight_class,
+                            as: 'weightClass'
+                        }
+                    }, // Include Product Weight
                     { model: db.brand, as: 'brand' }, // Inlcude Brand
-                    { model: db.product_condition, as: 'condition' }, // Include Product Condition
+                    { model: db.product_condition, as: 'productCondition' }, // Include Product Condition
                     {
                         model: db.user, as: 'created_by', // Include User who created the product and his roles
                         include: {
@@ -1922,8 +2049,8 @@ module.exports = {
 
 
             // Condition Assign
-            if (findProduct.condition) {
-                findProduct.prod_condition = findProduct.condition.name
+            if (findProduct.productCondition) {
+                findProduct.prod_condition = findProduct.productCondition.name
             } else {
                 findProduct.prod_condition = 'N/A'
             }
@@ -2359,6 +2486,70 @@ module.exports = {
                 message: "Product Is Serial Status Changed Successfully!!!",
                 status: true,
                 tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET Dimension Class List
+    getDimensionClassList: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // List
+            const allDimensionClass = await db.dimension_class.findAll({
+                where: { tenant_id },
+                order: [
+                    ['name', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (allDimensionClass) {
+                return {
+                    message: "Get Deimension Class List Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allDimensionClass
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET Weight Class List
+    getWeightClassList: async (db, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // TENANT ID
+            const tenant_id = TENANTID;
+
+            // List
+            const allWeightClass = await db.weight_class.findAll({
+                where: { tenant_id },
+                order: [
+                    ['name', 'ASC']
+                ],
+            });
+
+            // Return If Success
+            if (allWeightClass) {
+                return {
+                    message: "Get Weight Class List Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: allWeightClass
+                }
             }
 
 

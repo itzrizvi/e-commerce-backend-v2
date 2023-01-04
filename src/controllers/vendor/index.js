@@ -7,4 +7,6 @@ module.exports = {
     addVendorBillingAddressController: require("./addVendorBillingAddressController"),
     addVendorShippingAddressController: require("./addVendorShippingAddressController"),
     updateVendorAddressController: require("./updateVendorAddressController"),
+    createContactPersonController: require("./createContactPersonController"),
+    updateContactPersonController: require("./updateContactPersonController"),
 }

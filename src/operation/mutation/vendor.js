@@ -3,7 +3,9 @@ const { createVendorController,
     updateVendorStatusController,
     addVendorBillingAddressController,
     addVendorShippingAddressController,
-    updateVendorAddressController } = require("../../controllers");
+    updateVendorAddressController,
+    createContactPersonController,
+    updateContactPersonController } = require("../../controllers");
 
 // Role Mutation Start
 module.exports = {
@@ -66,5 +68,29 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
         // Send to Controller
         return await updateVendorAddressController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Create Contact Person
+    createContactPerson: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.id != args.data.ref_id) {
+            if (user.has_role === '0') return { message: "Not Authorized", status: false };
+        }
+        // Send to Controller
+        return await createContactPersonController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Update Contact Person
+    updateContactPerson: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.id != args.data.ref_id) {
+            if (user.has_role === '0') return { message: "Not Authorized", status: false };
+        }
+        // Send to Controller
+        return await updateContactPersonController(args.data, db, user, isAuth, TENANTID);
     },
 }

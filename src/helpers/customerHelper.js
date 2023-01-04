@@ -158,6 +158,17 @@ module.exports = {
                         }
                     });
             }
+            if (!db.user.hasAlias('contact_person') && !db.user.hasAlias('contactPersons')) {
+                await db.user.hasMany(db.contact_person,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'customer'
+                        },
+                        as: "contactPersons"
+                    });
+            }
 
             // 
             if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
@@ -179,7 +190,8 @@ module.exports = {
                         as: "addresses",
                         separate: true,
                         include: { model: db.country, as: "countryCode" }
-                    }
+                    },
+                    { model: db.contact_person, as: "contactPersons" }
                 ],
                 where: {
                     [Op.and]: [{
@@ -1102,6 +1114,37 @@ module.exports = {
                 status: true,
                 tenant_id: TENANTID,
                 data: getsearchedcustomers
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET CUSTOMER Contact person List
+    getContactPersonListByCustomerID: async (req, db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { customer_id } = req;
+
+            // LIST
+            const getlist = await db.contact_person.findAll({
+                where: {
+                    [Op.and]: [{
+                        ref_id: customer_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return 
+            return {
+                message: "Get Customer Contact Person List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getlist
             }
 
 

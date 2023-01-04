@@ -37,7 +37,6 @@ type Vendor {
 
 
 input CreateVendorInput {
-    contact_persons: JSON
     company_name: String
     description: String
     status: Boolean
@@ -103,6 +102,18 @@ input UpdateVendorAddressInput {
     addresses:[UpdateAddress]
 }
 
+input CreateContactPersonInput {
+    ref_id:Int!
+    type:String!
+    contact_persons: JSON
+}
+
+input UpdateContactPersonInput {
+    ref_id:Int!
+    type:String!
+    contact_persons: JSON
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -113,6 +124,8 @@ extend type Mutation {
     addVendorShippingAddress(data: AddVendorShippingAddressInput): CommonOutput!
     updateVendorStatus(data: UpdateVendorStatusInput): CreateVendorOutput!
     updateVendorAddress(data: UpdateVendorAddressInput): CommonOutput!
+    createContactPerson(data:CreateContactPersonInput):CommonOutput!
+    updateContactPerson(data:UpdateContactPersonInput):CommonOutput!
 }
 
 extend type Query {

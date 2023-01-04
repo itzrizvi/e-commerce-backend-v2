@@ -136,6 +136,25 @@ module.exports = {
             });
             if (!createProduct) return { message: "Product Create Failed!!!", status: false }
 
+            if (product_attributes && product_attributes.length > 0) {
+                //
+                await product_attributes.forEach(async (element) => {
+                    element.tenant_id = TENANTID;
+                    element.prod_id = createProduct.id;
+                    if (element.attribute_type === "file" && element.attribute_value.file) {
+                        // Upload New ATTR File to AWS S3
+                        const fileName = `${Math.ceil(Date.now() + Math.random())}-${createProduct.id}`;
+                        const file = element.attribute_value.file;
+                        element.attribute_value = `${fileName}.${file.filename.split('.').slice(-1)[0]}`;
+                        const product_attribute_src = config.get("AWS.ATTRIBUTE_FILE_SRC").split("/")
+                        const product_attr_bucketName = product_attribute_src[0];
+                        const product_attr_folder = product_attribute_src.slice(1).join("/");
+
+                        const fileUrl = await singleFileUpload({ file: file, idf: createProduct.id, folder: product_attr_folder, fileName: fileName, bucketName: product_attr_bucketName });
+                        if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+                    }
+                });
+            }
 
             // Dimensions Table Data Insertion
             if (dimensions) {
@@ -211,33 +230,6 @@ module.exports = {
 
             // Product Attribuites Table Data Insertion
             if (product_attributes && product_attributes.length > 0) {
-                //
-                product_attributes.forEach(async (element) => {
-                    if (element.attribute_type === "file") {
-                        console.log(element.attribute_value)
-                        // Upload New Attribute File
-                        let attrName;
-                        // Upload New ATTR File to AWS S3
-                        const product_attribute_src = config.get("AWS.ATTRIBUTE_FILE_SRC").split("/");
-                        const product_attr_bucketName = product_attribute_src[0];
-                        const product_attr_folder = product_attribute_src.slice(1).join("/");
-                        const fileUrl = await singleFileUpload({ file: element.attribute_value, idf: prod_id, folder: product_attr_folder, fileName: prod_id, bucketName: product_attr_bucketName });
-                        if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
-
-                        // Update Product ATTR
-                        attrName = fileUrl.Key.split('/').slice(-1)[0];
-                        console.log(attrName)
-
-                        element.attribute_value = attrName;
-
-                    }
-                });
-
-                // Loop For Assign Other Values to Product Attribites Data
-                product_attributes.forEach(element => {
-                    element.tenant_id = TENANTID;
-                    element.prod_id = createProduct.id;
-                });
 
                 // Product Attributes Save Bulk
                 const prodAttributesDataSave = await db.product_attribute.bulkCreate(product_attributes);
@@ -760,24 +752,27 @@ module.exports = {
                 product_attributes,
                 partof_product } = req;
 
-            //
-            await product_attributes.forEach(async (element) => {
-                element.tenant_id = TENANTID;
-                element.prod_id = prod_id;
-                if (element.attribute_type === "file" && element.attribute_value.file) {
-                    // Upload New ATTR File to AWS S3
-                    const fileName = `${Math.ceil(Date.now() + Math.random())}-${prod_id}`;
-                    const file = element.attribute_value.file;
-                    element.attribute_value = fileName;
-                    const product_attribute_src = config.get("AWS.ATTRIBUTE_FILE_SRC").split("/")
-                    const product_attr_bucketName = product_attribute_src[0];
-                    const product_attr_folder = product_attribute_src.slice(1).join("/");
+            if (product_attributes && product_attributes.length > 0) {
+                //
+                await product_attributes.forEach(async (element) => {
+                    element.tenant_id = TENANTID;
+                    element.prod_id = prod_id;
+                    if (element.attribute_type === "file" && element.attribute_value.file) {
+                        // Upload New ATTR File to AWS S3
+                        const fileName = `${Math.ceil(Date.now() + Math.random())}-${prod_id}`;
+                        const file = element.attribute_value.file;
+                        element.attribute_value = `${fileName}.${file.filename.split('.').slice(-1)[0]}`;
+                        const product_attribute_src = config.get("AWS.ATTRIBUTE_FILE_SRC").split("/")
+                        const product_attr_bucketName = product_attribute_src[0];
+                        const product_attr_folder = product_attribute_src.slice(1).join("/");
 
-                    const fileUrl = await singleFileUpload({ file: file, idf: prod_id, folder: product_attr_folder, fileName: fileName, bucketName: product_attr_bucketName });
-                    if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+                        const fileUrl = await singleFileUpload({ file: file, idf: prod_id, folder: product_attr_folder, fileName: fileName, bucketName: product_attr_bucketName });
+                        if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
-                }
-            });
+                    }
+                });
+            }
+
 
             // FIND TARGETED PRODUCT
             const findProd = await db.product.findOne({

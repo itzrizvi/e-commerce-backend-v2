@@ -10,4 +10,5 @@ module.exports = {
     updateCustomerSingleAddressController: require("./updateCustomerSingleAddressController"),
     updateCustomerController: require("./updateCustomerController"),
     getSearchedCustomersController: require("./getSearchedCustomersController"),
+    getContactPersonListByCustomerIDController: require("./getContactPersonListByCustomerIDController"),
 }

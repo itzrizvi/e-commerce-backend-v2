@@ -10,7 +10,7 @@ module.exports = {
 
         try {
             // GET DATA
-            const { contact_persons, company_name, description, EIN_no, TAX_ID, status } = req;
+            const { company_name, description, EIN_no, TAX_ID, status } = req;
 
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
@@ -33,19 +33,6 @@ module.exports = {
                 tenant_id: TENANTID
             });
             if (!createVendor) return { message: "Something Went Wrong", status: false }
-
-            if (contact_persons && contact_persons.length > 0) {
-                contact_persons.forEach(async (item) => {
-                    item.ref_id = createVendor.id;
-                    item.ref_model = "vendor";
-                    item.created_by = user.id;
-                    item.tenant_id = TENANTID;
-                });
-
-                const contactPersonBulkCreate = await db.contact_person.bulkCreate(contact_persons);
-                if (!contactPersonBulkCreate) return { message: "Contact Person Couldn't Created!!!" }
-            }
-
 
             return {
                 tenant_id: createVendor.tenant_id,
@@ -71,46 +58,7 @@ module.exports = {
         try {
 
             // Data From Request
-            const { id, contact_persons, company_name, description, EIN_no, TAX_ID, status } = req
-
-
-            // Extract New and Old Contact Persons
-            let newContactPerson = [];
-            let oldContactPerson = [];
-            let oldContactPersonIDS = [];
-            if (contact_persons && contact_persons.length > 0) {
-                contact_persons.forEach(async (item) => {
-                    if (item.isNew) {
-                        await newContactPerson.push({
-                            ref_id: id,
-                            ref_model: "vendor",
-                            name: item.name,
-                            email: item.email,
-                            phone: item.phone,
-                            fax: item.fax,
-                            status: item.status,
-                            isDefault: item.isDefault,
-                            created_by: user.id,
-                            tenant_id: TENANTID
-                        });
-                    } else {
-                        oldContactPersonIDS.push(item.id);
-                        await oldContactPerson.push({
-                            ref_id: id,
-                            ref_model: "vendor",
-                            id: item.id,
-                            name: item.name,
-                            email: item.email,
-                            phone: item.phone,
-                            fax: item.fax,
-                            status: item.status,
-                            isDefault: item.isDefault,
-                            updated_by: user.id,
-                            tenant_id: TENANTID
-                        });
-                    }
-                });
-            }
+            const { id, company_name, description, EIN_no, TAX_ID, status } = req
 
             // Check The Vendor Is Already Taken or Not
             const checkVendorExist = await db.vendor.findOne({
@@ -147,53 +95,6 @@ module.exports = {
                     }]
                 }
             });
-
-            // Delete Contact Persons Were Removed
-            if (oldContactPersonIDS && oldContactPersonIDS.length > 0) {
-                await db.contact_person.destroy({
-                    where: {
-                        [Op.and]: [{
-                            id: {
-                                [Op.notIn]: oldContactPersonIDS
-                            },
-                            ref_id: id,
-                            ref_model: "vendor",
-                            tenant_id: TENANTID
-                        }]
-                    }
-                });
-            }
-
-            if (newContactPerson && newContactPerson.length > 0) {
-                const newContactPersonBulkCreate = await db.contact_person.bulkCreate(newContactPerson);
-                if (!newContactPersonBulkCreate) return { message: "New Contact Person Couldn't Created!!!" }
-            }
-
-            // Updating Old Contact Person
-            if (oldContactPerson && oldContactPerson.length > 0) {
-                oldContactPerson.forEach(async (item) => {
-                    await db.contact_person.update({
-                        ref_id: id,
-                        ref_model: "vendor",
-                        name: item.name,
-                        email: item.email,
-                        phone: item.phone,
-                        fax: item.fax,
-                        status: item.status,
-                        isDefault: item.isDefault,
-                        updated_by: user.id,
-                        tenant_id: TENANTID
-                    }, {
-                        where: {
-                            [Op.and]: [{
-                                id: item.id,
-                                ref_id: id,
-                                tenant_id: TENANTID
-                            }]
-                        }
-                    })
-                });
-            }
 
 
             // IF NOT UPDATED THEN RETURN
@@ -821,5 +722,269 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
+    },
+    // CREATE Contact Person API
+    createContactPerson: async (req, db, user, isAuth, TENANTID) => {
+
+        try {
+            // GET DATA
+            const { contact_persons, ref_id, type } = req;
+
+            if (type === "vendor") {
+
+                if (contact_persons && contact_persons.length > 0) {
+                    contact_persons.forEach(async (item) => {
+                        item.ref_id = ref_id;
+                        item.ref_model = "vendor";
+                        item.created_by = user.id;
+                        item.tenant_id = TENANTID;
+                    });
+
+                    const contactPersonBulkCreate = await db.contact_person.bulkCreate(contact_persons);
+                    if (!contactPersonBulkCreate) return { message: "Contact Person Couldn't Created!!!" }
+                }
+
+
+                return {
+                    tenant_id: TENANTID,
+                    message: "Successfully Added Vendor Contact Person.",
+                    status: true
+                }
+
+            } else if (type === "customer") {
+
+                if (contact_persons && contact_persons.length > 0) {
+                    contact_persons.forEach(async (item) => {
+                        item.ref_id = ref_id;
+                        item.ref_model = "customer";
+                        item.created_by = user.id;
+                        item.tenant_id = TENANTID;
+                    });
+
+                    const contactPersonBulkCreate = await db.contact_person.bulkCreate(contact_persons);
+                    if (!contactPersonBulkCreate) return { message: "Contact Person Couldn't Created!!!" }
+                }
+
+
+                return {
+                    tenant_id: TENANTID,
+                    message: "Successfully Added Customer Contact Person.",
+                    status: true
+                }
+
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+
+    },
+    // Update contact person
+    updateContactPerson: async (req, db, user, isAuth, TENANTID) => {
+
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { contact_persons, ref_id, type } = req
+
+            if (type === "vendor") {
+                // Extract New and Old Contact Persons
+                let newContactPerson = [];
+                let oldContactPerson = [];
+                let oldContactPersonIDS = [];
+                if (contact_persons && contact_persons.length > 0) {
+                    contact_persons.forEach(async (item) => {
+                        if (item.isNew) {
+                            await newContactPerson.push({
+                                ref_id: ref_id,
+                                ref_model: "vendor",
+                                name: item.name,
+                                email: item.email,
+                                phone: item.phone,
+                                fax: item.fax,
+                                status: item.status,
+                                isDefault: item.isDefault,
+                                created_by: user.id,
+                                tenant_id: TENANTID
+                            });
+                        } else {
+                            oldContactPersonIDS.push(item.id);
+                            await oldContactPerson.push({
+                                ref_id: ref_id,
+                                ref_model: "vendor",
+                                id: item.id,
+                                name: item.name,
+                                email: item.email,
+                                phone: item.phone,
+                                fax: item.fax,
+                                status: item.status,
+                                isDefault: item.isDefault,
+                                updated_by: user.id,
+                                tenant_id: TENANTID
+                            });
+                        }
+                    });
+                }
+
+                // Delete Contact Persons Were Removed
+                if (oldContactPersonIDS && oldContactPersonIDS.length > 0) {
+                    await db.contact_person.destroy({
+                        where: {
+                            [Op.and]: [{
+                                id: {
+                                    [Op.notIn]: oldContactPersonIDS
+                                },
+                                ref_id: ref_id,
+                                ref_model: "vendor",
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                }
+
+                if (newContactPerson && newContactPerson.length > 0) {
+                    const newContactPersonBulkCreate = await db.contact_person.bulkCreate(newContactPerson);
+                    if (!newContactPersonBulkCreate) return { message: "New Contact Person Couldn't Created!!!" }
+                }
+
+                // Updating Old Contact Person
+                if (oldContactPerson && oldContactPerson.length > 0) {
+                    oldContactPerson.forEach(async (item) => {
+                        await db.contact_person.update({
+                            ref_id: ref_id,
+                            ref_model: "vendor",
+                            name: item.name,
+                            email: item.email,
+                            phone: item.phone,
+                            fax: item.fax,
+                            status: item.status,
+                            isDefault: item.isDefault,
+                            updated_by: user.id,
+                            tenant_id: TENANTID
+                        }, {
+                            where: {
+                                [Op.and]: [{
+                                    id: item.id,
+                                    ref_id: ref_id,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        })
+                    });
+                }
+
+
+                // Return Data
+                return {
+                    message: "Vendor Contact Person Updated Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+
+            } else if (type === "customer") {
+
+                // Extract New and Old Contact Persons
+                let newContactPerson = [];
+                let oldContactPerson = [];
+                let oldContactPersonIDS = [];
+                if (contact_persons && contact_persons.length > 0) {
+                    contact_persons.forEach(async (item) => {
+                        if (item.isNew) {
+                            await newContactPerson.push({
+                                ref_id: ref_id,
+                                ref_model: "customer",
+                                name: item.name,
+                                email: item.email,
+                                phone: item.phone,
+                                fax: item.fax,
+                                status: item.status,
+                                isDefault: item.isDefault,
+                                created_by: user.id,
+                                tenant_id: TENANTID
+                            });
+                        } else {
+                            oldContactPersonIDS.push(item.id);
+                            await oldContactPerson.push({
+                                ref_id: ref_id,
+                                ref_model: "customer",
+                                id: item.id,
+                                name: item.name,
+                                email: item.email,
+                                phone: item.phone,
+                                fax: item.fax,
+                                status: item.status,
+                                isDefault: item.isDefault,
+                                updated_by: user.id,
+                                tenant_id: TENANTID
+                            });
+                        }
+                    });
+                }
+
+                // Delete Contact Persons Were Removed
+                if (oldContactPersonIDS && oldContactPersonIDS.length > 0) {
+                    await db.contact_person.destroy({
+                        where: {
+                            [Op.and]: [{
+                                id: {
+                                    [Op.notIn]: oldContactPersonIDS
+                                },
+                                ref_id: ref_id,
+                                ref_model: "customer",
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                }
+
+                if (newContactPerson && newContactPerson.length > 0) {
+                    const newContactPersonBulkCreate = await db.contact_person.bulkCreate(newContactPerson);
+                    if (!newContactPersonBulkCreate) return { message: "New Contact Person Couldn't Created!!!" }
+                }
+
+                // Updating Old Contact Person
+                if (oldContactPerson && oldContactPerson.length > 0) {
+                    oldContactPerson.forEach(async (item) => {
+                        await db.contact_person.update({
+                            ref_id: ref_id,
+                            ref_model: "customer",
+                            name: item.name,
+                            email: item.email,
+                            phone: item.phone,
+                            fax: item.fax,
+                            status: item.status,
+                            isDefault: item.isDefault,
+                            updated_by: user.id,
+                            tenant_id: TENANTID
+                        }, {
+                            where: {
+                                [Op.and]: [{
+                                    id: item.id,
+                                    ref_id: ref_id,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        })
+                    });
+                }
+
+
+                // Return Data
+                return {
+                    message: "Customer Contact Person Updated Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+
     },
 }

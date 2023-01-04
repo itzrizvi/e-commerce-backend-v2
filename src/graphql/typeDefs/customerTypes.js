@@ -23,6 +23,7 @@ type Customer {
     user_status: Boolean!
     image: String
     addresses: [AddressOutput]
+    contactPersons: [ContactPerson]
 }
 
 
@@ -142,6 +143,16 @@ type CustomerSearchOutput {
     data: [Customer]
 }
 
+input GetContactPersonListInput {
+    customer_id:Int!
+}
+
+type GetContactPersonListOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ContactPerson]
+}
 
 extend type Mutation {
     addCustomer(data: CustomerInput): AddCustomerOutput!
@@ -157,5 +168,6 @@ extend type Query {
     getAllCustomer: getAllCustomerOutput!
     getSingleCustomer(query: GetSingleCustomerInput): SingleCustomerOutput!
     getSearchedCustomers(query: CustomerSearchInput): CustomerSearchOutput!
+    getContactPersonListByCustomerID(query:GetContactPersonListInput):GetContactPersonListOutput!
 }
 `;

@@ -76,7 +76,7 @@ const Mail = async (mail_address, subject, data, alias, tenant_id) => {
         var template = handlebars.compile(emailTemplate);
         var htmlToSend = template(data);
         var mailOptions = {
-            from: process.env.NODEMAILER_FROM_EMAIL,
+            from: process.env.NODEMAILER_FROM_EMAIL + "<" + process.env.NODEMAILER_FROM_EMAIL + ">",
             to: mail_address,
             subject: subject,
             html: htmlToSend

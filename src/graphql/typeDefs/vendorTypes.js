@@ -16,7 +16,6 @@ type ContactPerson {
     phone:String
     fax:String
     status:Boolean
-    isDefault:Boolean
     tenant_id:String
     createdAt:String
     updatedAt:String
@@ -112,16 +111,34 @@ input UpdateVendorAddressInput {
     addresses:[UpdateAddress]
 }
 
+input ContactPersonInputType {
+    name:String!
+    email:String!
+    phone:String
+    fax:String
+    status:Boolean!
+}
+
 input CreateContactPersonInput {
     ref_id:Int!
     type:String!
-    contact_persons: JSON
+    contact_persons: [ContactPersonInputType]
+}
+
+input ContactPersonUpdateInputType {
+    id:Int
+    name:String!
+    email:String!
+    phone:String
+    fax:String
+    status:Boolean!
+    isNew:Boolean!
 }
 
 input UpdateContactPersonInput {
     ref_id:Int!
     type:String!
-    contact_persons: JSON
+    contact_persons: [ContactPersonUpdateInputType]
 }
 
 # Extended QUERIES AND MUTATIONS ######################################

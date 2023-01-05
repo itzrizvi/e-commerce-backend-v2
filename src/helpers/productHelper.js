@@ -668,6 +668,22 @@ module.exports = {
                 });
             }
             // ## ASSOCIATION ENDS ##
+            // Condtional Date Filters
+            const twoDateFilterWhere = productEntryStartDate && productEntryEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(productEntryStartDate),
+                    [Op.lte]: new Date(productEntryEndDate),
+                }]
+            } : {};
+
+            const startDateFilterWhere = (productEntryStartDate && !productEntryEndDate) ? {
+                [Op.gte]: new Date(productEntryStartDate)
+            } : {};
+
+            const endDateFilterWhere = (productEntryEndDate && !productEntryStartDate) ? {
+                [Op.lte]: new Date(productEntryEndDate)
+            } : {};
+
 
             // Find ALL Product
             const allProducts = await db.product.findAll({
@@ -708,16 +724,23 @@ module.exports = {
                             [Op.in]: condition
                         }
                     }),
-                    ...(productEntryStartDate && { // 
-                        createdAt: {
-                            [Op.gt]: new Date(productEntryStartDate)
+                    ...((minPrice || maxPrice) && { // 
+                        prod_regular_price: {
+                            [Op.and]: [{
+                                [Op.gte]: minPrice ?? 0,
+                                [Op.lte]: maxPrice ?? 50000
+                            }]
                         }
                     }),
-                    ...(productEntryEndDate && { // 
+                    ...((productEntryStartDate || productEntryEndDate) && {
                         createdAt: {
-                            [Op.lt]: new Date(productEntryEndDate)
+                            [Op.or]: [{
+                                ...(twoDateFilterWhere && twoDateFilterWhere),
+                                ...(startDateFilterWhere && startDateFilterWhere),
+                                ...(endDateFilterWhere && endDateFilterWhere),
+                            }],
                         }
-                    }),
+                    })
                 },
                 order: [
                     ['prod_slug', 'ASC']

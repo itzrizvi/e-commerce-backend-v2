@@ -88,17 +88,27 @@ module.exports = {
 
                 // IF SEND EMAIL IS TRUE
                 if (sendEmail) {
-                    let mailData
 
                     // Setting Up Data for EMAIL SENDER
-                    mailData = {
-                        email: findUser.email,
-                        subject: "Account Update on Prime Server Parts",
-                        message: `Your Prime Server Parts Account details has been updated. If this is not you please contact to Support!!!`
+                    const mailSubject = "Admin Profile Updated From Primer Server Parts"
+                    const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Your Profile Has Been Updated on Prime Server Parts',
+                        message: `Your Profile Has Been Updated From Prime Server Parts System. If Your Did not recognze it please contact with support team!!!`
                     }
 
                     // SENDING EMAIL
-                    await verifierEmail(mailData);
+                    Mail(findUser.email, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
                 }
 
 

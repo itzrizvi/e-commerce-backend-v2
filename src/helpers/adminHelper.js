@@ -322,7 +322,7 @@ module.exports = {
             if (!findUser) return { message: "User Not Found!!!", status: false };
 
             // Check Verification Code is Valid or Not
-            const { forgot_password_code, updatedAt } = findUser;
+            const { verification_code, updatedAt } = findUser;
             // Time Calculating
             const reqTime = new Date();
             const recordTime = new Date(updatedAt);
@@ -335,12 +335,12 @@ module.exports = {
             // IF Difference Less than or Equal to 20 minutes
             if (diffs <= 20) {
                 // Matching Codes
-                if (forgot_password_code === verificationCode) {
+                if (verification_code === verificationCode) {
                     // Updating Doc
                     const updateDoc = {
                         password: await bcrypt.hash(confirmPassword, 10),
                         email_verified: true,
-                        forgot_password_code: 0
+                        verification_code: 0
                     }
                     // Update User
                     const updateUser = await db.user.update(updateDoc, {
@@ -356,7 +356,7 @@ module.exports = {
                     if (updateUser) {
 
                         // Setting Up Data for EMAIL SENDER
-                        const mailSubject = "Admin Staff Password Change Prime Server Parts"
+                        const mailSubject = "Admin Password Set Prime Server Parts"
                         const mailData = {
                             companyInfo: {
                                 logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),

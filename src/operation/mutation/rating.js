@@ -6,12 +6,12 @@ const { createRatingController } = require("../../controllers");
 module.exports = {
     // Create Ratting Mutation
     createRating: async (root, args, { db, user, isAuth, TENANTID }, info) => {
-         // Return If Not Have TENANT ID
-         if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
-         // Return If No Auth
-         if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
 
-         // Send to Controller
+        // Send to Controller
         return await createRatingController(args.data, db, user, isAuth, TENANTID);
     }
 }

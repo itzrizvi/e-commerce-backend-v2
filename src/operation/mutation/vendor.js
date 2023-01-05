@@ -12,7 +12,7 @@ module.exports = {
     // Create Role Mutation
     createVendor: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -21,7 +21,7 @@ module.exports = {
     },
     updateVendor: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -31,7 +31,7 @@ module.exports = {
     },
     updateVendorStatus: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -42,7 +42,7 @@ module.exports = {
     // Create Vendor Billing Address Mutation
     addVendorBillingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -52,7 +52,7 @@ module.exports = {
     // Create Vendor Shipping Address Mutation
     addVendorShippingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -62,7 +62,7 @@ module.exports = {
     // Update Vendor Address Mutation
     updateVendorAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -72,7 +72,7 @@ module.exports = {
     // Create Contact Person
     createContactPerson: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.id != args.data.ref_id) {
@@ -84,7 +84,7 @@ module.exports = {
     // Update Contact Person
     updateContactPerson: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.id != args.data.ref_id) {

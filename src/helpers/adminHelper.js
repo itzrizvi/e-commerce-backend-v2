@@ -195,6 +195,7 @@ module.exports = {
 
                         // SENDING EMAIL
                         await Mail(email, mailSubject, mailData, 'admin-sign-up-verification', TENANTID);
+
                     }
 
 
@@ -258,7 +259,6 @@ module.exports = {
 
                     // IF SEND EMAIL IS TRUE
                     if (sendEmail) {
-
                         // Setting Up Data for EMAIL SENDER
                         const mailSubject = "Admin Profile Updated From Primer Server Parts"
                         const mailData = {
@@ -278,7 +278,7 @@ module.exports = {
                         }
 
                         // SENDING EMAIL
-                        await Mail(userEmail, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
+                        Mail(userEmail, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
                     }
 
                     // Return Final Data
@@ -509,7 +509,7 @@ module.exports = {
                         },
                         about: 'Reset Password From Prime Server Parts',
                         email: email,
-                        forgotPasswordCode: forgotPasswordCode,
+                        forgotPasswordCode: verificationCode,
                         resetPasswordLink: resetPasswordURL.concat(codeHashed),
                         message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
                     }

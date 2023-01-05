@@ -8,7 +8,7 @@ module.exports = {
     // GET SINGLE TAX CLASS QUERIES
     getSingleTaxClassAdmin: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -20,7 +20,7 @@ module.exports = {
     // GET SINGLE TAX CLASS PUBLIC QUERIES
     getSingleTaxClassPublic: async (root, args, { db, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return To Controller
         return await getSingleTaxClassPublicController(args.query, db, TENANTID);
@@ -28,7 +28,7 @@ module.exports = {
     // GET TAX CLASS LIST QUERIES
     getTaxClassList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };

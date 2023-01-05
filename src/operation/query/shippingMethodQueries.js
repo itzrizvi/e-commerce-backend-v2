@@ -9,7 +9,7 @@ module.exports = {
     // GET SINGLE Shipping METHOD
     getSingleShippingMethod: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -21,7 +21,7 @@ module.exports = {
     // GET Shipping METHOD LIST FOR ADMIN
     getShippingMethodListAdmin: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -33,7 +33,7 @@ module.exports = {
     // GET Shipping Account LIST FOR ADMIN
     getShippingAccountListAdmin: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         console.log(user, isAuth, user.has_role);
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -45,7 +45,7 @@ module.exports = {
     // GET SHIPPING METHOD LIST PUBLIC
     getShippingMethodListPublic: async (root, args, { db, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return To Controller
         return await getShippingMethodListPublicController(db, TENANTID);

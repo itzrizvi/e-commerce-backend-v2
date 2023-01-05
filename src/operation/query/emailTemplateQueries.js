@@ -12,7 +12,7 @@ module.exports = {
     // GET EMAIL TEMPLATE LIST QUERIES
     getAllEmailTemplateList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -24,7 +24,7 @@ module.exports = {
     // GET SINGLE EMAIL TEMPLATE LIST QUERIES
     getSingleEmailTemplateList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -36,7 +36,7 @@ module.exports = {
     // GET SINGLE EMAIL TEMPLATE HEADER FOOTER QUERIES
     getSingleEmailTempHeaderFooter: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -48,7 +48,7 @@ module.exports = {
     // GET EMAIL TEMPLATE HEADER FOOTER LIST QUERIES
     getEmailTempHeaderFooterList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -60,7 +60,7 @@ module.exports = {
     // GET SINGLE EMAIL TEMPLATE QUERIES
     getSingleEmailTemplate: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -72,7 +72,7 @@ module.exports = {
     // GET EMAIL TEMPLATE LIST QUERIES
     getEmailTemplateList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -84,7 +84,7 @@ module.exports = {
     // GET EMAIL TEMPLATE PREVIEW
     getEmailTemplatePreview: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };

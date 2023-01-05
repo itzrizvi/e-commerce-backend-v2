@@ -8,7 +8,7 @@ module.exports = {
     // Add Banner Muation
     addBanner: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -19,7 +19,7 @@ module.exports = {
     // Add banner Item Mutation
     addBannerItem: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -30,7 +30,7 @@ module.exports = {
     // Update Banner Mutation
     updateBanner: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -41,7 +41,7 @@ module.exports = {
     // Update Banner Item Mutation
     updateBannerItem: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -52,7 +52,7 @@ module.exports = {
     // Delete Banner Item Mutation
     deleteBannerItem: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };

@@ -13,7 +13,7 @@ module.exports = {
     // GET SINGLE ORDER STATUS
     getSingleOrderStatus: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -25,7 +25,7 @@ module.exports = {
     // GET ORDER STATUS LIST
     getOrderStatusList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -37,7 +37,7 @@ module.exports = {
     // GET ORDER STATUS LIST PUBLIC
     getPublicOrderStatusList: async (root, args, { db, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return To Controller
         return await getPublicOrderStatusListController(db, TENANTID);
@@ -45,7 +45,7 @@ module.exports = {
     // GET ORDER LIST FOR ADMIN
     getOrderlistAdmin: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -57,7 +57,7 @@ module.exports = {
     // GET SINGLE ORDER FOR ADMIN
     getSingleOrderAdmin: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -69,7 +69,7 @@ module.exports = {
     // GET ORDER LIST BY CUSTOMER ID
     getOrderListByCustomerID: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -80,7 +80,7 @@ module.exports = {
     // GET SINGLE ORDER CUSTOMER
     getSingleOrderCustomer: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
@@ -91,7 +91,7 @@ module.exports = {
     // GET ORDER Activity History LIST
     getOrderActivityHistory: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
 
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };

@@ -12,7 +12,7 @@ module.exports = {
     // Create Customer Mutation
     addCustomer: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -22,7 +22,7 @@ module.exports = {
     // Create Customer Billing Address Mutation
     addCustomerBillingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
@@ -31,7 +31,7 @@ module.exports = {
     // Create Customer Shipping Address Mutation
     addCustomerShippingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
@@ -40,7 +40,7 @@ module.exports = {
     // Update Customer Address Mutation
     updateCustomerAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
@@ -49,7 +49,7 @@ module.exports = {
     // Create Customer Single Billing Address Mutation
     addCustomerSingleBillingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
@@ -58,7 +58,7 @@ module.exports = {
     // Create Customer Single Shipping Address Mutation
     addCustomerSingleShippingAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
@@ -67,7 +67,7 @@ module.exports = {
     // Update Customer Single Address Mutation
     updateCustomerSingleAddress: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         // Send to Controller
@@ -76,7 +76,7 @@ module.exports = {
     // Update Customer Mutation
     updateCustomer: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };

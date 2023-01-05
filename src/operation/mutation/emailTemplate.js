@@ -12,7 +12,7 @@ module.exports = {
     // Add Email Template on List Mutation
     addEmailTemplateOnList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -23,7 +23,7 @@ module.exports = {
     // Update Email Template on List Mutation
     updateEmailTemplateOnList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -34,7 +34,7 @@ module.exports = {
     // Add Email Template Header Footer Mutation
     addEmailTempHeaderFooter: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -45,7 +45,7 @@ module.exports = {
     // Update Email Template Header Footer Mutation
     updateEmailTempHeaderFooter: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -56,7 +56,7 @@ module.exports = {
     // Add Email Template  Mutation
     createEmailTemplate: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
@@ -67,7 +67,7 @@ module.exports = {
     // Update Email Template  Mutation
     updateEmailTemplate: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID
-        if (!TENANTID) return { message: "TENANT ID IS MISSING!!!", status: false }
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return If No Auth
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };

@@ -40,7 +40,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await getProductListController(db, user, TENANTID);
+        return await getProductListController(args.query, db, user, TENANTID);
     },
     // GET Featured Products
     getFeaturedProducts: async (root, args, { db, TENANTID }, info) => {

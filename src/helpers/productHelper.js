@@ -604,11 +604,20 @@ module.exports = {
         }
     },
     // GET Product List Helper
-    getProductList: async (db, TENANTID) => {
+    getProductList: async (req, db, TENANTID) => {
 
         // Try Catch Block
         try {
 
+            const { searchQuery,
+                availability,
+                category,
+                productEntryStartDate,
+                productEntryEndDate,
+                condition,
+                attribute,
+                minPrice,
+                maxPrice } = req;
             // TENANT ID
             const tenant_id = TENANTID;
 
@@ -677,11 +686,44 @@ module.exports = {
                         }
                     },
                 ],
-                where: { tenant_id },
+                where: {
+                    tenant_id,
+                    ...(searchQuery && { // 
+                        prod_name: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
+                    }),
+                    ...(availability && { // 
+                        prod_outofstock_status: {
+                            [Op.in]: availability
+                        }
+                    }),
+                    ...(category && { // 
+                        prod_category: {
+                            [Op.in]: category
+                        }
+                    }),
+                    ...(condition && { // 
+                        prod_condition: {
+                            [Op.in]: condition
+                        }
+                    }),
+                    ...(productEntryStartDate && { // 
+                        createdAt: {
+                            [Op.gt]: new Date(productEntryStartDate)
+                        }
+                    }),
+                    ...(productEntryEndDate && { // 
+                        createdAt: {
+                            [Op.lt]: new Date(productEntryEndDate)
+                        }
+                    }),
+                },
                 order: [
                     ['prod_slug', 'ASC']
                 ],
             });
+            console.log(allProducts.length)
 
             // Condition Assign
             await allProducts.forEach(async (item) => {

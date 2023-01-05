@@ -5,18 +5,23 @@ module.exports = {
     // CREATE Vendor API
     createVendor: async (req, db, user, isAuth, TENANTID) => {
 
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         try {
             // GET DATA
-            const { company_name, description, EIN_no, TAX_ID, status } = req;
+            const { contact_person,
+                company_name,
+                email,
+                description,
+                phone_number,
+                EIN_no,
+                TAX_ID,
+                FAX_no,
+                status } = req;
 
             // Check The Vendor Is Already given or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {
                     [Op.and]: [{
-                        company_name,
+                        email,
                         tenant_id: TENANTID
                     }]
                 }
@@ -24,15 +29,18 @@ module.exports = {
 
             if (checkVendorExist) return { message: "Vendor already exists!", status: false }
             const createVendor = await db.vendor.create({
+                contact_person,
                 company_name,
+                email,
                 description,
+                phone_number,
                 EIN_no,
                 TAX_ID,
+                FAX_no,
                 status,
-                created_by: user.id,
-                tenant_id: TENANTID
+                tenant_id: TENANTID,
+                created_by: user.id
             });
-            if (!createVendor) return { message: "Something Went Wrong", status: false }
 
             return {
                 tenant_id: createVendor.tenant_id,
@@ -49,22 +57,27 @@ module.exports = {
     // Update Vendor API
     updateVendor: async (req, db, user, isAuth, TENANTID) => {
 
-        if (!user.has_role || user.has_role === '0') return { message: "Not Authorized", status: false };
-
-        // Auth Check
-        if (!isAuth) return { message: "Not Authorized", status: false };
-
         // Try Catch Block
         try {
 
             // Data From Request
-            const { id, company_name, description, EIN_no, TAX_ID, status } = req
+            const { id,
+                contact_person,
+                company_name,
+                email,
+                description,
+                phone_number,
+                EIN_no,
+                TAX_ID,
+                FAX_no,
+                status } = req
+
 
             // Check The Vendor Is Already Taken or Not
             const checkVendorExist = await db.vendor.findOne({
                 where: {
                     [Op.and]: [{
-                        company_name,
+                        email,
                         tenant_id: TENANTID
                     }],
                     [Op.not]: [{
@@ -78,10 +91,14 @@ module.exports = {
 
             // Update Doc
             const updateDoc = {
+                contact_person,
                 company_name,
+                email,
                 description,
+                phone_number,
                 EIN_no,
                 TAX_ID,
+                FAX_no,
                 status,
                 updated_by: user.id
             }
@@ -95,7 +112,6 @@ module.exports = {
                     }]
                 }
             });
-
 
             // IF NOT UPDATED THEN RETURN
             if (!updateVendor) return { message: "Update Gone Wrong!!!", status: false }

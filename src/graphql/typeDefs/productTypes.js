@@ -403,6 +403,7 @@ type WeightClassList {
 }
 
 input ProductListInput {
+    searchQuery:String
     availability:[Int]
     category:[Int]
     productEntryStartDate:String
@@ -429,7 +430,7 @@ extend type Mutation {
 extend type Query {
     getSingleProduct(query: GetSingleProductInput): GetSingleProductOutput!
     publicProductView(query: PublicProductViewInput): PublicProductViewOutput!
-    getProductList: GetAllProducts!
+    getProductList(query:ProductListInput): GetAllProducts!
     getFeaturedProducts: GetFeaturedProducts!
     getRecentViewProduct(query: GetRecentViewProductInput): GetRecentViewProductOutput!
     getSingleProductBySlug(query: GetSingleProductBySlugInput): GetSingleProductBySlugOutput!

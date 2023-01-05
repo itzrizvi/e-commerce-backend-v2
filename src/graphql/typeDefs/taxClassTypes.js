@@ -8,7 +8,7 @@ module.exports = gql`
 
 type TaxClass {
     id:Int!
-    zip_code:Int!
+    zip_code:String!
     tax_amount:Float!
     tenant_id:String!
     added_by:Staff!
@@ -16,13 +16,13 @@ type TaxClass {
 
 type TaxClassPublic {
     id:Int!
-    zip_code:Int!
+    zip_code:String!
     tax_amount:Float!
     tenant_id:String!
 }
 
 input addTaxClassInput {
-    zip_code:Int!
+    zip_code:String!
     tax_amount:Float!
 }
 

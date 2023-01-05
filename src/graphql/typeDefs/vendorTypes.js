@@ -26,6 +26,10 @@ type ContactPerson {
 type Vendor {
     id: Int!
     contactPersons: [ContactPerson]
+    contact_person: String
+    email: String
+    phone_number: String
+    FAX_no: String
     company_name: String
     description: String
     EIN_no: String
@@ -35,23 +39,29 @@ type Vendor {
 }
 
 
-
 input CreateVendorInput {
+    contact_person: String!
     company_name: String
+    email: String!
     description: String
-    status: Boolean
+    status: Boolean!
+    phone_number: String
     EIN_no: String
     TAX_ID: String
+    FAX_no: String
 }
 
 input UpdateVendorInput {
     id: Int!
-    contact_persons: JSON
+    contact_person: String!
     company_name: String
+    email: String!
     description: String
-    status: Boolean
+    status: Boolean!
+    phone_number: String
     EIN_no: String
     TAX_ID: String
+    FAX_no: String
 }
 
 input UpdateVendorStatusInput{

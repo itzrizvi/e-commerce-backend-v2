@@ -2,11 +2,10 @@
 const { Op } = require("sequelize");
 var nodemailer = require('nodemailer');
 var handlebars = require('handlebars');
-const db = require("../db")
-var fs = require('fs');
+const db = require("../db");
 const logger = require("../../logger");
 
-const Mail = async (mail_address, subject, data = {}, alias, tenant_id) => {
+const Mail = async (mail_address, subject, data, alias, tenant_id) => {
 
     try {
 
@@ -74,11 +73,10 @@ const Mail = async (mail_address, subject, data = {}, alias, tenant_id) => {
         const emailFooter = gettemplate.emailteamplate.templateFooter.content;
         const emailTemplate = emailHeader.concat(emailBody).concat(emailFooter);
 
-
         var template = handlebars.compile(emailTemplate);
         var htmlToSend = template(data);
         var mailOptions = {
-            from: process.env.MAIL_ADDRESS,
+            from: process.env.NODEMAILER_FROM_EMAIL,
             to: mail_address,
             subject: subject,
             html: htmlToSend
@@ -87,6 +85,8 @@ const Mail = async (mail_address, subject, data = {}, alias, tenant_id) => {
         await transport.sendMail(mailOptions, function (error, response) {
             if (error) {
                 console.log(error);
+            } else {
+                console.log(response)
             }
         });
 

@@ -22,8 +22,10 @@ module.exports = {
     }
   },
   stripePaymentIntentFinalized: async (req, db, user, isAuth, TENANTID) => {
-    const { user_id, order_id, provider_id, data } = req;
+
     try {
+
+      const { user_id, order_id, provider_id, data, card_holder } = req;
       // Add Transaction Method TO DB
       const transaction = await db.transaction.create({
         order_id,
@@ -35,6 +37,7 @@ module.exports = {
         amount: data.amount / 100,
         provider_id,
         status: data.status,
+        card_holder: card_holder,
         tenant_id: TENANTID,
         created_by: user_id,
       });
@@ -46,6 +49,7 @@ module.exports = {
           status: true,
         };
       }
+
     } catch (err) {
       if (err)
         return {

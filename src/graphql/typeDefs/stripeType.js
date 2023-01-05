@@ -21,6 +21,7 @@ input stripePaymentIntentFinalizedInput{
     user_id: Int!
     order_id: Int!
     provider_id: Int!
+    card_holder:String!
     data: JSONObject
 }
 

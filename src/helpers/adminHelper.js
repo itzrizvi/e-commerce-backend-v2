@@ -150,6 +150,8 @@ module.exports = {
                     created_by: user.id
                 });
 
+                if (!createStuff) return { message: "Admin Couldn't Created!!!", status: false }
+
 
                 // If Admin Created
                 if (createStuff) {
@@ -157,7 +159,7 @@ module.exports = {
                     // Insert Role and User Data
                     // Loop For Assign Other Values to Role Data
                     role_ids.forEach(element => {
-                        element.tenant_id = createStuff.tenant_id;
+                        element.tenant_id = TENANTID;
                         element.admin_id = createStuff.id;
                     });
 
@@ -167,7 +169,7 @@ module.exports = {
 
                     // IF SEND EMAIL IS TRUE
                     if (sendEmail) {
-                        let codeHashed = crypt(createStuff.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
+                        let codeHashed = crypt(email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
                         // SET PASSWORD URL
                         const setPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
 
@@ -186,19 +188,19 @@ module.exports = {
                                 insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
                             },
                             about: 'Admin Created Successfully for Primer Server Parts',
-                            email: createStuff.email,
-                            verificationCode: createStuff.verification_code,
+                            email: email,
+                            verificationCode: verificationCode,
                             setPasswordLink: setPasswordURL.concat(codeHashed)
                         }
 
                         // SENDING EMAIL
-                        await Mail(createStuff.email, mailSubject, mailData, 'admin-sign-up-verification', TENANTID);
+                        await Mail(email, mailSubject, mailData, 'admin-sign-up-verification', TENANTID);
                     }
 
 
                     return {
                         message: "Successfully Registered a Staff and Saved Role Data!!",
-                        tenant_id: createStuff.tenant_id,
+                        tenant_id: TENANTID,
                         status: true
                     }
                 } else {
@@ -233,7 +235,6 @@ module.exports = {
                 // If updated data 
                 if (updateUserToStuff) {
 
-
                     // Find Updated User
                     const updatedStuffData = await db.user.findOne({
                         where: {
@@ -246,7 +247,7 @@ module.exports = {
 
                     // Loop For Assign Other Values to Role Data
                     role_ids.forEach(element => {
-                        element.tenant_id = updatedStuffData.tenant_id;
+                        element.tenant_id = TENANTID;
                         element.admin_id = updatedStuffData.id;
                     });
 
@@ -255,22 +256,29 @@ module.exports = {
                     if (!adminRolesDataSave) return { message: "Admin Role Data Save Failed", status: false }
 
 
-                    const { email: updatedStuffEmail, verification_code: updatedStuffVerficationCode } = updatedStuffData;
-
                     // IF SEND EMAIL IS TRUE
                     if (sendEmail) {
-                        let codeHashed = crypt(createStuff.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
-                        // SET PASSWORD URL
-                        const setPasswordURL = config.get("ADMIN_URL").concat(config.get("SET_PASSWORD"));
+
                         // Setting Up Data for EMAIL SENDER
+                        const mailSubject = "Admin Profile Updated From Primer Server Parts"
                         const mailData = {
-                            email: updatedStuffEmail,
-                            subject: "Admin Updated Verification Code From Primer Server Parts",
-                            message: `Your 6 Digit Verification Code is ${updatedStuffVerficationCode}. This Code Will Be Valid Till 20 Minutes From You Got The Email. Your email : ${email} and Your SET NEW PASSWORD Link is: ${setPasswordURL.concat(codeHashed)}`
+                            companyInfo: {
+                                logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                                banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                                companyName: config.get("COMPANY_NAME"),
+                                companyUrl: config.get("ECOM_URL"),
+                                shopUrl: config.get("ECOM_URL"),
+                                fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                                tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                                li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                                insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                            },
+                            about: 'Your Profile Has Been Updated on Prime Server Parts',
+                            message: `Your Profile Has Been Updated From Prime Server Parts System. If Your Did not recognze it please contact with support team!!!`
                         }
 
                         // SENDING EMAIL
-                        await verifierEmail(mailData);
+                        await Mail(userEmail, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
                     }
 
                     // Return Final Data

@@ -402,7 +402,16 @@ type WeightClassList {
     data:[WeightClass]
 }
 
-
+input ProductListInput {
+    availability:[Int]
+    category:[Int]
+    productEntryStartDate:String
+    productEntryEndDate:String
+    condition:[Int]
+    attribute:[Int]
+    minPrice:Int
+    maxPrice:Int
+}
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 

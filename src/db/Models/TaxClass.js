@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         zip_code: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false
         },
         tax_amount: {

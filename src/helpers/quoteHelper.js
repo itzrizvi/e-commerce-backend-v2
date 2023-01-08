@@ -594,17 +594,38 @@ module.exports = {
             }
 
             const searchQueryWhere = searchQuery ? {
-                [Op.or]: [{
-                    email: {
-                        [Op.iLike]: `%${searchQuery}%`
+                [Op.or]: [
+                    {
+                        email: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
                     },
-                    first_name: {
-                        [Op.iLike]: `%${searchQuery}%`
+                    {
+                        first_name: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
                     },
-                    last_name: {
-                        [Op.iLike]: `%${searchQuery}%`
+                    {
+                        last_name: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
                     }
+                ]
+            } : {};
+
+            const twoDateFilterWhere = quoteEntryStartDate && quoteEntryEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(quoteEntryStartDate),
+                    [Op.lte]: new Date(quoteEntryEndDate),
                 }]
+            } : {};
+
+            const startDateFilterWhere = (quoteEntryStartDate && !quoteEntryEndDate) ? {
+                [Op.gte]: new Date(quoteEntryStartDate)
+            } : {};
+
+            const endDateFilterWhere = (quoteEntryEndDate && !quoteEntryStartDate) ? {
+                [Op.lte]: new Date(quoteEntryEndDate)
             } : {};
 
             // GET SUBMITTED QUOTE LIST
@@ -620,7 +641,8 @@ module.exports = {
                         }
                     },
                     {
-                        model: db.user, as: 'quotedby', // Include User 
+                        model: db.user,
+                        as: 'quotedby', // Include User
                         ...(searchQuery && { where: searchQueryWhere }),
                         include: {
                             model: db.role,
@@ -630,6 +652,26 @@ module.exports = {
                 ],
                 where: {
                     tenant_id: TENANTID,
+                    ...((quoteEntryStartDate || quoteEntryEndDate) && {
+                        createdAt: {
+                            [Op.or]: [{
+                                ...(twoDateFilterWhere && twoDateFilterWhere),
+                                ...(startDateFilterWhere && startDateFilterWhere),
+                                ...(endDateFilterWhere && endDateFilterWhere),
+                            }],
+                        }
+                    }),
+                    ...(status && { // 
+                        status: status
+                    }),
+                    ...((minAmount || maxAmount) && { // 
+                        grand_total: {
+                            [Op.and]: [{
+                                [Op.gte]: minAmount ?? 0,
+                                [Op.lte]: maxAmount ?? 99999999999999
+                            }]
+                        }
+                    }),
                 }
             })
 

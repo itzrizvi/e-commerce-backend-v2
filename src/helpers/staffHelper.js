@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt');
 const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
 const { verifierEmail } = require("../utils/verifyEmailSender");
+const { Mail } = require("../utils/email");
+
+
 
 // STUFF HELPER
 module.exports = {

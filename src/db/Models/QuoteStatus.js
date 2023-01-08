@@ -1,34 +1,34 @@
-// Submitted Quote model
+// Quote Status model
 module.exports = (sequelize, DataTypes) => {
 
-    const SubmittedQuote = sequelize.define("submitted_quote", {
+    const QuoteStatus = sequelize.define("quote_status", {
         id: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        user_id: {
-            type: DataTypes.INTEGER,
+        name: {
+            type: DataTypes.STRING,
             allowNull: false
+        },
+        slug: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         status: {
-            type: DataTypes.ENUM("new", "in-progress", "save", "submitted"),
+            type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        grand_total: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-        note: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
-        createdBy: {
+        created_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        updatedBy: {
+        updated_by: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
@@ -41,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     })
 
-    return SubmittedQuote
+    return QuoteStatus
 }

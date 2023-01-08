@@ -31,6 +31,18 @@ module.exports = gql`
         quotedby:Staff
     }
 
+    type QuoteStatus {
+        id:Int
+        name:String
+        slug:String
+        description:String
+        status:Boolean
+        tenant_id:String
+        createdAt:String
+        updatedAt:String
+        added_by:Staff
+    }
+
 
     type SubmittedQuoteItem {
         id:Int
@@ -127,6 +139,28 @@ module.exports = gql`
         data:SubmittedQuote
     }
 
+    input SubmittedQuoteListInput {
+        searchQuery:String
+        status:[Int]
+        quoteEntryStartDate:String
+        quoteEntryEndDate:String
+        minAmount:Int
+        maxAmount:Int
+    }
+
+    input createQuoteStatusInput {
+        name:String!
+        description:String!
+        status:Boolean!
+    }
+
+    type GetQuoteStatusListOutput {
+        message:String
+        tenant_id:String
+        status:Boolean
+        data:[QuoteStatus]
+    }
+
     # Extended QUERIES AND MUTATIONS ######################################
     #######################################################################
 
@@ -136,13 +170,15 @@ module.exports = gql`
         quoteSync(data:QuoteSyncInput):AddToQuoteOutput!
         quoteItemDelete(data:QuoteItemDeleteInput):CommonOutput!
         updateSubmittedQuote(data:SubmittedQuoteUpdateInput):CommonOutput!
+        createQuoteStatus(data:createQuoteStatusInput):CommonOutput!
     }
 
     extend type Query {
         getQuoteList:GetQuoteListOutput!
-        getSubmittedQuoteList:GetSibmittedQuoteList!
+        getSubmittedQuoteList(query:SubmittedQuoteListInput):GetSibmittedQuoteList!
         getSingleSubmittedQuote(query:GetSingleSubmittedQuoteInput):GetSingleSubmittedQuoteOutput!
         getReviewedQuote(query:GetReviewedQuoteInput):GetReviewedQuoteOutput!
+        getQuoteStatusList:GetQuoteStatusListOutput!
     }
 
 

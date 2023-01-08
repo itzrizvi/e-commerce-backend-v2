@@ -5,7 +5,7 @@ const { singleResponse } = require("../../utils/response");
 
 
 // CONTROLLER
-module.exports = async (db, user, isAuth, TENANTID) => {
+module.exports = async (req, db, user, isAuth, TENANTID) => {
 
     // Permission Name of this API
     const permissionName = "quote";
@@ -17,7 +17,7 @@ module.exports = async (db, user, isAuth, TENANTID) => {
 
 
     // Sending Request to Helper
-    const data = await getSubmittedQuoteList(db, user, isAuth, TENANTID);
+    const data = await getSubmittedQuoteList(req, db, user, isAuth, TENANTID);
 
     // Final Response
     return singleResponse(data);

@@ -8,4 +8,6 @@ module.exports = {
     quoteItemDeleteController: require('./quoteItemDeleteController'),
     updateSubmittedQuoteController: require('./updateSubmittedQuoteController'),
     getReviewedQuoteController: require('./getReviewedQuoteController'),
+    createQuoteStatusController: require('./createQuoteStatusController'),
+    getQuoteStatusListController: require('./getQuoteStatusListController'),
 }

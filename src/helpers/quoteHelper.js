@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const { Mail } = require("../utils/email");
 const config = require('config');
 const { crypt, decrypt } = require("../utils/hashes");
+const { default: slugify } = require("slugify");
 
 
 // Quote HELPER
@@ -549,9 +550,16 @@ module.exports = {
         }
     },
     // GET Submitted Quote List API
-    getSubmittedQuoteList: async (db, user, isAuth, TENANTID) => {
+    getSubmittedQuoteList: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
+
+            const { searchQuery,
+                status,
+                quoteEntryStartDate,
+                quoteEntryEndDate,
+                minAmount,
+                maxAmount } = req;
 
             // Associations
             // Inlcude Submitted Quote Items
@@ -585,6 +593,19 @@ module.exports = {
                 });
             }
 
+            const searchQueryWhere = searchQuery ? {
+                [Op.or]: [{
+                    email: {
+                        [Op.iLike]: `%${searchQuery}%`
+                    },
+                    first_name: {
+                        [Op.iLike]: `%${searchQuery}%`
+                    },
+                    last_name: {
+                        [Op.iLike]: `%${searchQuery}%`
+                    }
+                }]
+            } : {};
 
             // GET SUBMITTED QUOTE LIST
             const submittedquotelist = await db.submitted_quote.findAll({
@@ -600,6 +621,7 @@ module.exports = {
                     },
                     {
                         model: db.user, as: 'quotedby', // Include User 
+                        ...(searchQuery && { where: searchQueryWhere }),
                         include: {
                             model: db.role,
                             as: 'roles'
@@ -607,7 +629,7 @@ module.exports = {
                     }
                 ],
                 where: {
-                    tenant_id: TENANTID
+                    tenant_id: TENANTID,
                 }
             })
 
@@ -818,7 +840,7 @@ module.exports = {
 
                 // Update Submitted Quote Grand Total
                 await db.submitted_quote.update({
-                    status: "in_progress"
+                    status: "in-progress"
                 }, {
                     where: {
                         [Op.and]: [{
@@ -974,6 +996,120 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Add Quote Status API
+    createQuoteStatus: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+            // DATA FROM REQUEST
+            const { name, description, status } = req;
+
+            // Order Status Slug
+            const slug = slugify(`${name}`, {
+                replacement: "-",
+                remove: /[*+~.()'"!:@]/g,
+                lower: true,
+                strict: true,
+                trim: true,
+            });
+
+            // Check Existence
+            const findQuoteStatus = await db.quote_status.findOne({
+                where: {
+                    [Op.and]: [{
+                        slug,
+                        tenant_id: TENANTID,
+                    }],
+                },
+            });
+            if (findQuoteStatus)
+                return { message: "Already Have This Quote Status!!!!", status: false };
+
+            // Add Quote Status
+            const insertQuoteStatus = await db.quote_status.create({
+                name,
+                slug,
+                description,
+                status,
+                tenant_id: TENANTID,
+                created_by: user.id,
+            });
+
+            // Return Formation
+            if (insertQuoteStatus) {
+                return {
+                    message: "Quote Status Added Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                };
+            }
+        } catch (error) {
+            if (error)
+                return {
+                    message: `Something Went Wrong!!! Error: ${error}`,
+                    status: false,
+                };
+        }
+    },
+    // GET Quote Status List Admin
+    getQuoteStatusList: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+            // Created By Associations
+            db.user.belongsToMany(db.role, {
+                through: db.admin_role,
+                foreignKey: "admin_id",
+            });
+            db.role.belongsToMany(db.user, {
+                through: db.admin_role,
+                foreignKey: "role_id",
+            });
+
+            // Check If Has Alias with Users and Roles
+            if (
+                !db.quote_status.hasAlias("user") &&
+                !db.quote_status.hasAlias("added_by")
+            ) {
+                await db.quote_status.hasOne(db.user, {
+                    sourceKey: "created_by",
+                    foreignKey: "id",
+                    as: "added_by",
+                });
+            }
+
+            // GET ORDER STATUS List
+            const getquotestatuslist = await db.quote_status.findAll({
+                include: [
+                    {
+                        model: db.user,
+                        as: "added_by", // Include User who created this Order Status
+                        include: {
+                            model: db.role,
+                            as: "roles",
+                        },
+                    },
+                ],
+                where: {
+                    tenant_id: TENANTID,
+                },
+                order: [
+                    ['slug', 'ASC']
+                ]
+            });
+
+            return {
+                message: "GET Quote Status List For Admin Success!!!",
+                tenant_id: TENANTID,
+                status: true,
+                data: getquotestatuslist,
+            };
+        } catch (error) {
+            if (error)
+                return {
+                    message: `Something Went Wrong!!! Error: ${error}`,
+                    status: false,
+                };
         }
     },
 

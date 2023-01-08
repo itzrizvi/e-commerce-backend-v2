@@ -684,6 +684,9 @@ module.exports = {
                 [Op.lte]: new Date(productEntryEndDate)
             } : {};
 
+            const attributeWhere = (attribute && attribute.length) ? {
+                attribute_id: attribute
+            } : {};
 
             // Find ALL Product
             const allProducts = await db.product.findAll({
@@ -691,7 +694,9 @@ module.exports = {
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_condition, as: 'condition' }, // Include Product Condition
                     {
-                        model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
+                        model: db.product_attribute,
+                        as: 'prod_attributes',
+                        ...(attribute && { where: attributeWhere }), // Include Product Attributes along with Attributes and Attributes Group
                         include: {
                             model: db.attribute,
                             as: 'attribute_data',
@@ -728,7 +733,7 @@ module.exports = {
                         prod_regular_price: {
                             [Op.and]: [{
                                 [Op.gte]: minPrice ?? 0,
-                                [Op.lte]: maxPrice ?? 50000
+                                [Op.lte]: maxPrice ?? 100000
                             }]
                         }
                     }),
@@ -746,7 +751,6 @@ module.exports = {
                     ['prod_slug', 'ASC']
                 ],
             });
-            console.log(allProducts.length)
 
             // Condition Assign
             await allProducts.forEach(async (item) => {
@@ -756,7 +760,6 @@ module.exports = {
                 } else {
                     item.prod_condition = 'N/A'
                 }
-
             });
 
             // Return If Success

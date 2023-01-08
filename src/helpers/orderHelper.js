@@ -1256,6 +1256,7 @@ module.exports = {
       // Data From Request
       const { order_id,
         shipping_address_id,
+        person_id,
         billing_address_id,
         shipping_method_id,
         payment_id,
@@ -1505,6 +1506,7 @@ module.exports = {
       // Update Order
       const updateDoc = {
         total,
+        person_id,
         sub_total,
         tax_amount,
         shipping_address_id,

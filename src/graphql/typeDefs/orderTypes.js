@@ -228,6 +228,7 @@ type GetSingleOrderCustomerOutput {
 
 input UpdateOrderInput {
     order_id:Int!
+    person_id:Int
     shipping_address_id:Int
     billing_address_id:Int
     shipping_method_id:Int

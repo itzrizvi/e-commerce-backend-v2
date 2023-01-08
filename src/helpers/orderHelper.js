@@ -304,6 +304,7 @@ module.exports = {
       const {
         cart_id,
         tax_exempt,
+        person_id,
         payment_id,
         shipping_method_id,
         coupon_id,
@@ -527,6 +528,7 @@ module.exports = {
         payment_id,
         shipping_method_id,
         total,
+        person_id,
         sub_total,
         shipping_cost,
         discount_amount,
@@ -670,6 +672,7 @@ module.exports = {
       // Data From Request
       const {
         customer_id,
+        person_id,
         tax_exempt,
         taxexempt_file,
         payment_id,
@@ -838,6 +841,7 @@ module.exports = {
       // Insert Order
       const insertOrder = await db.order.create({
         customer_id,
+        person_id,
         payment_id,
         total,
         sub_total,
@@ -1132,6 +1136,14 @@ module.exports = {
           foreignKey: "id",
         });
       }
+      // Order and Contact Person
+      if (!db.order.hasAlias("contact_person")) {
+        await db.order.hasOne(db.contact_person, {
+          sourceKey: "person_id",
+          foreignKey: "id",
+          as: "contactperson"
+        });
+      }
 
       // User and Roles Through Admin Roles Associations
       db.user.belongsToMany(db.role, {
@@ -1181,6 +1193,7 @@ module.exports = {
           }, // User as customer
           { model: db.payment_method, as: "paymentmethod" }, // Payment method
           { model: db.order_status, as: "orderstatus" }, // Order Status
+          { model: db.contact_person, as: "contactperson" }, // Contact Person
           {
             model: db.order_item, // Order Items and Products
             as: "orderitems",
@@ -1827,12 +1840,22 @@ module.exports = {
         });
       }
 
+      // Order and Contact Person
+      if (!db.order.hasAlias("contact_person")) {
+        await db.order.hasOne(db.contact_person, {
+          sourceKey: "person_id",
+          foreignKey: "id",
+          as: "contactperson"
+        });
+      }
+
       // Single Order For Admin
       const singleOrder = await db.order.findOne({
         include: [
           { model: db.user, as: "customer" }, // User as customer
           { model: db.payment_method, as: "paymentmethod" }, // Payment method
           { model: db.order_status, as: "orderstatus" }, // Order Status
+          { model: db.contact_person, as: "contactperson" }, // Contact Person
           {
             model: db.order_item, // Order Items and Products
             as: "orderitems",

@@ -116,6 +116,7 @@ type OrderAdmin {
     payment:OrderPayment
     orderstatus:OrderStatusPublic
     customer:Customer
+    contactperson:ContactPerson
     shippingAddress:AddressList
     shippingmethod:ShippingMethod
     taxExemptFiles:[TaxExemptFiles]
@@ -135,6 +136,7 @@ type OrderCustomer {
     tenant_id:String
     createdAt:String
     updatedAt:String
+    contactperson:ContactPerson
     orderitems:[OrderItem]
     paymentmethod:PaymentMethod
     payment:OrderPayment
@@ -147,6 +149,7 @@ type OrderCustomer {
 
 input createOrderByCustomerInput {
     cart_id:Int!
+    person_id:Int
     tax_exempt:Boolean!
     taxexempt_file:[Upload]
     payment_id:Int!
@@ -161,6 +164,7 @@ input createOrderByCustomerInput {
 
 input createOrderByAdminInput {
     customer_id:Int!
+    person_id:Int
     tax_exempt:Boolean
     taxexempt_file:[Upload]
     payment_id:Int!

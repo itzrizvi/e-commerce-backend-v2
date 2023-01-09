@@ -555,7 +555,7 @@ module.exports = {
         try {
 
             const { searchQuery,
-                status,
+                statuses,
                 quoteEntryStartDate,
                 quoteEntryEndDate,
                 minAmount,
@@ -661,8 +661,10 @@ module.exports = {
                             }],
                         }
                     }),
-                    ...(status && { // 
-                        status: status
+                    ...(statuses && statuses.length && { // 
+                        status: {
+                            [Op.in]: statuses
+                        }
                     }),
                     ...((minAmount || maxAmount) && { // 
                         grand_total: {

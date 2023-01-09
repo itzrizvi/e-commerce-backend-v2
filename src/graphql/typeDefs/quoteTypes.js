@@ -141,7 +141,7 @@ module.exports = gql`
 
     input SubmittedQuoteListInput {
         searchQuery:String
-        status:String
+        statuses:[String]
         quoteEntryStartDate:String
         quoteEntryEndDate:String
         minAmount:Int

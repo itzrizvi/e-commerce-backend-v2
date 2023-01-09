@@ -1137,7 +1137,7 @@ module.exports = {
         });
       }
       // Order and Contact Person
-      if (!db.order.hasAlias("contact_person")) {
+      if (!db.order.hasAlias("contact_person") && !db.order.hasAlias("contactperson")) {
         await db.order.hasOne(db.contact_person, {
           sourceKey: "person_id",
           foreignKey: "id",
@@ -1843,7 +1843,7 @@ module.exports = {
       }
 
       // Order and Contact Person
-      if (!db.order.hasAlias("contact_person")) {
+      if (!db.order.hasAlias("contact_person") && !db.order.hasAlias("contactperson")) {
         await db.order.hasOne(db.contact_person, {
           sourceKey: "person_id",
           foreignKey: "id",

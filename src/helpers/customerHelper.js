@@ -1079,6 +1079,18 @@ module.exports = {
                 });
             }
 
+            if (!db.user.hasAlias('contact_person') && !db.user.hasAlias('contactPersons')) {
+                await db.user.hasMany(db.contact_person,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'customer'
+                        },
+                        as: "contactPersons"
+                    });
+            }
+
             // GET Searched Customer
             const getsearchedcustomers = await db.user.findAll({
                 include: [
@@ -1087,7 +1099,8 @@ module.exports = {
                         as: "addresses",
                         separate: true,
                         include: { model: db.country, as: "countryCode" }
-                    }
+                    },
+                    { model: db.contact_person, as: "contactPersons" }
                 ],
                 where: {
                     [Op.and]: [{
@@ -1095,15 +1108,23 @@ module.exports = {
                         has_role: '0',
                         user_status: true,
                     }],
-                    // first_name: {
-                    //     [Op.iLike]: `%${searchQuery}%`
-                    // },
-                    // last_name: {
-                    //     [Op.iLike]: `%${searchQuery}%`
-                    // }
-                    email: {
-                        [Op.iLike]: `%${searchQuery}%`
-                    }
+                    [Op.or]: [
+                        {
+                            email: {
+                                [Op.iLike]: `%${searchQuery}%`
+                            }
+                        },
+                        {
+                            first_name: {
+                                [Op.iLike]: `%${searchQuery}%`
+                            }
+                        },
+                        {
+                            last_name: {
+                                [Op.iLike]: `%${searchQuery}%`
+                            }
+                        }
+                    ]
 
                 }
             });

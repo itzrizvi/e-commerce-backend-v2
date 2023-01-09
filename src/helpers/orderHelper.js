@@ -1037,6 +1037,18 @@ module.exports = {
         });
       }
 
+      if (!db.user.hasAlias('contact_person') && !db.user.hasAlias('contactPersons')) {
+        await db.user.hasMany(db.contact_person,
+          {
+            foreignKey: 'ref_id',
+            constraints: false,
+            scope: {
+              ref_model: 'customer'
+            },
+            as: "contactPersons"
+          });
+      }
+
       // Check If Has Alias with Users and Order
       if (!db.user.hasAlias("address") && !db.user.hasAlias("addresses")) {
         await db.user.hasMany(db.address, {
@@ -1189,7 +1201,10 @@ module.exports = {
           {
             model: db.user,
             as: "customer",
-            include: { model: db.address, as: "addresses" }
+            include: [
+              { model: db.address, as: "addresses" },
+              { model: db.contact_person, as: "contactPersons" }
+            ]
           }, // User as customer
           { model: db.payment_method, as: "paymentmethod" }, // Payment method
           { model: db.order_status, as: "orderstatus" }, // Order Status

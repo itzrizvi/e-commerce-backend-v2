@@ -75,7 +75,7 @@ module.exports = {
                     }
 
                     // SENDING EMAIL
-                    await Mail(user.email, mailSubject, mailData, 'customer-sign-up-from-admin', TENANTID);
+                    await Mail(email, mailSubject, mailData, 'customer-sign-up-from-admin', TENANTID);
                 }
 
                 return {
@@ -91,12 +91,19 @@ module.exports = {
         }
 
     },
-    getAllCustomer: async (db, user, isAuth, TENANTID) => {
+    getAllCustomer: async (req, db, user, isAuth, TENANTID) => {
         // Return if No Auth
         if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
         // Try Catch Block
         try {
+
+            const { searchQuery,
+                customerStatus,
+                emailVerified,
+                customerEntryStartDate,
+                customerEntryEndDate } = req;
+
             if (!db.user.hasAlias('addresses')) {
                 await db.user.hasMany(db.address,
                     {
@@ -109,6 +116,21 @@ module.exports = {
                     });
             }
 
+
+            const twoDateFilterWhere = customerEntryStartDate && customerEntryEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(customerEntryStartDate),
+                    [Op.lte]: new Date(customerEntryEndDate),
+                }]
+            } : {};
+
+            const startDateFilterWhere = (customerEntryStartDate && !customerEntryEndDate) ? {
+                [Op.gte]: new Date(customerEntryStartDate)
+            } : {};
+
+            const endDateFilterWhere = (customerEntryEndDate && !customerEntryStartDate) ? {
+                [Op.lte]: new Date(customerEntryEndDate)
+            } : {};
 
             // GET ALL User
             const getallusers = await db.user.findAll({
@@ -123,7 +145,38 @@ module.exports = {
                     [Op.and]: [{
                         tenant_id: TENANTID,
                         has_role: '0'
-                    }]
+                    }],
+                    ...(searchQuery && {
+                        [Op.or]: [
+                            {
+                                email: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                first_name: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                last_name: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            }
+                        ]
+                    }),
+                    ...(customerStatus && { user_status: JSON.parse(customerStatus) }),
+                    ...(emailVerified && { email_verified: JSON.parse(emailVerified) }),
+                    ...((customerEntryStartDate || customerEntryEndDate) && {
+                        createdAt: {
+                            [Op.or]: [{
+                                ...(twoDateFilterWhere && twoDateFilterWhere),
+                                ...(startDateFilterWhere && startDateFilterWhere),
+                                ...(endDateFilterWhere && endDateFilterWhere),
+                            }],
+                        }
+                    }),
+
                 }
             });
 
@@ -143,7 +196,6 @@ module.exports = {
     getSingleCustomer: async (req, db, user, isAuth, TENANTID) => {
         // Return if No Auth
         if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated", status: false };
-        if (user.has_role === '0') return { message: "Not Authorized", isAuth: false, data: [], status: false };
         // Try Catch Block
         try {
 

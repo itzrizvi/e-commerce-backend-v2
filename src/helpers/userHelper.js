@@ -401,7 +401,7 @@ module.exports = {
 
             // Updating Doc
             const updateDoc = {
-                forgot_password_code: forgotPasswordCode
+                verification_code: forgotPasswordCode
             }
             // Update User
             const updateUser = await db.user.update(updateDoc, {

@@ -22,6 +22,8 @@ type Customer {
     email_verified: Boolean!
     user_status: Boolean!
     image: String
+    createdAt:String
+    updatedAt:String
     addresses: [AddressOutput]
     contactPersons: [ContactPerson]
 }
@@ -154,6 +156,14 @@ type GetContactPersonListOutput {
     data:[ContactPerson]
 }
 
+input CustomerListInput {
+    searchQuery:String
+    customerStatus:String
+    emailVerified:String
+    customerEntryStartDate:String
+    customerEntryEndDate:String
+}
+
 extend type Mutation {
     addCustomer(data: CustomerInput): AddCustomerOutput!
     addCustomerBillingAddress(data: AddCustomerBillingAddressInput): CommonOutput!
@@ -165,7 +175,7 @@ extend type Mutation {
     updateCustomer(data:UpdateCustomerInput):CommonOutput!
 }
 extend type Query {
-    getAllCustomer: getAllCustomerOutput!
+    getAllCustomer(query:CustomerListInput): getAllCustomerOutput!
     getSingleCustomer(query: GetSingleCustomerInput): SingleCustomerOutput!
     getSearchedCustomers(query: CustomerSearchInput): CustomerSearchOutput!
     getContactPersonListByCustomerID(query:GetContactPersonListInput):GetContactPersonListOutput!

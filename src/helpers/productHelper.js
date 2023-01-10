@@ -614,6 +614,8 @@ module.exports = {
                 category,
                 productEntryStartDate,
                 productEntryEndDate,
+                updatedStartDate,
+                updatedEndDate,
                 condition,
                 attribute,
                 minPrice,
@@ -685,6 +687,21 @@ module.exports = {
                 [Op.lte]: new Date(productEntryEndDate)
             } : {};
 
+            const twoUpdatedDateFilterWhere = updatedStartDate && updatedEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(updatedStartDate),
+                    [Op.lte]: new Date(updatedEndDate),
+                }]
+            } : {};
+
+            const updatedStartDateFilterWhere = (updatedStartDate && !updatedEndDate) ? {
+                [Op.gte]: new Date(updatedStartDate)
+            } : {};
+
+            const updatedEndDateFilterWhere = (updatedEndDate && !updatedStartDate) ? {
+                [Op.lte]: new Date(updatedEndDate)
+            } : {};
+
             const attributeWhere = (attribute && attribute.length) ? {
                 attribute_id: attribute
             } : {};
@@ -749,6 +766,15 @@ module.exports = {
                                 ...(twoDateFilterWhere && twoDateFilterWhere),
                                 ...(startDateFilterWhere && startDateFilterWhere),
                                 ...(endDateFilterWhere && endDateFilterWhere),
+                            }],
+                        }
+                    }),
+                    ...((updatedStartDate || updatedEndDate) && {
+                        updatedAt: {
+                            [Op.or]: [{
+                                ...(twoUpdatedDateFilterWhere && twoUpdatedDateFilterWhere),
+                                ...(updatedStartDateFilterWhere && updatedStartDateFilterWhere),
+                                ...(updatedEndDateFilterWhere && updatedEndDateFilterWhere),
                             }],
                         }
                     })

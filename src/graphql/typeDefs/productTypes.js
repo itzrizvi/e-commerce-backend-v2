@@ -408,6 +408,8 @@ input ProductListInput {
     category:[Int]
     productEntryStartDate:String
     productEntryEndDate:String
+    updatedStartDate:String
+    updatedEndDate:String
     condition:[Int]
     attribute:[Int]
     minPrice:Int

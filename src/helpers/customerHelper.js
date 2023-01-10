@@ -51,7 +51,7 @@ module.exports = {
                 if (send_mail) {
                     let codeHashed = crypt(createUser.email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
                     // SET PASSWORD URL
-                    const setPasswordURL = config.get("ECOM_URL").concat(config.get("SET_PASSWORD"));
+                    const setPasswordURL = config.get("ECOM_URL").concat(config.get("RESET_PASSWORD"));
 
                     // Setting Up Data for EMAIL SENDER
                     const mailSubject = "Customer Registration From Prime Server Parts"

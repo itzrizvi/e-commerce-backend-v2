@@ -356,7 +356,7 @@ module.exports = {
                     if (updateUser) {
 
                         // Setting Up Data for EMAIL SENDER
-                        const mailSubject = "Admin Password Set Prime Server Parts"
+                        const mailSubject = "Password Set Confirmation From Prime Server Parts"
                         const mailData = {
                             companyInfo: {
                                 logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),

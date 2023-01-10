@@ -412,6 +412,7 @@ input ProductListInput {
     attribute:[Int]
     minPrice:Int
     maxPrice:Int
+    productRep:[Int]
 }
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################

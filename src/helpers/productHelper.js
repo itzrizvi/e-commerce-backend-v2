@@ -617,7 +617,8 @@ module.exports = {
                 condition,
                 attribute,
                 minPrice,
-                maxPrice } = req;
+                maxPrice,
+                productRep } = req;
             // TENANT ID
             const tenant_id = TENANTID;
 
@@ -717,6 +718,11 @@ module.exports = {
                     ...(availability && { // 
                         prod_outofstock_status: {
                             [Op.in]: availability
+                        }
+                    }),
+                    ...(productRep && { // 
+                        product_rep: {
+                            [Op.in]: productRep
                         }
                     }),
                     ...(category && { // 

@@ -145,6 +145,7 @@ module.exports = {
                     email: email,
                     has_role,
                     verification_code: verificationCode,
+                    forgot_password_code: verificationCode,
                     user_status,
                     tenant_id: TENANTID,
                     created_by: user.id
@@ -221,6 +222,7 @@ module.exports = {
                     email_verified: false,
                     user_status,
                     verification_code: verificationCode,
+                    forgot_password_code: verificationCode,
                     updated_by: user.id
                 }
 

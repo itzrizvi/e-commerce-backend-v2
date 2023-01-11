@@ -52,7 +52,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await getOrderlistAdminController(db, user, isAuth, TENANTID);
+        return await getOrderlistAdminController(args.query, db, user, isAuth, TENANTID);
     },
     // GET SINGLE ORDER FOR ADMIN
     getSingleOrderAdmin: async (root, args, { db, user, isAuth, TENANTID }, info) => {

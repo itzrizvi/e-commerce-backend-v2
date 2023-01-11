@@ -4,10 +4,10 @@ const { singleResponse } = require("../../utils/response");
 
 
 // GET ORDER LIST CONTROLLER
-module.exports = async (db, user, isAuth, TENANTID) => {
+module.exports = async (req, db, user, isAuth, TENANTID) => {
 
     // Sending Request to Helper
-    const data = await getOrderlistAdmin(db, user, isAuth, TENANTID);
+    const data = await getOrderlistAdmin(req, db, user, isAuth, TENANTID);
 
     // Final Response
     return singleResponse(data);

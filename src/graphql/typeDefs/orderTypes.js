@@ -190,6 +190,7 @@ type OrderList {
     discount_amount:Float
     tax_amount:Float
     orderStatus:OrderStatusPublic
+    orderitems:[OrderItem]
     productCount:Int
     tax_exempt:Boolean
     createdAt:String
@@ -290,6 +291,16 @@ type OrderPlaceOutput {
     id:Int
 }
 
+input orderListInput {
+    searchQuery:String
+    paymentmethods:[Int]
+    statuses:[String]
+    updatedby:[Int]
+    orderEntryStartDate:String
+    orderEntryEndDate:String
+    orderUpdatedStartDate:String
+    orderUpdatedEndDate:String
+}
 
 
 # Extended QUERIES AND MUTATIONS ######################################
@@ -309,7 +320,7 @@ extend type Query {
     getSingleOrderStatus(query:GetSingleOrderStatusInput):GetSingleOrderStatusOutput!
     getOrderStatusList:GetOrderStatusListOutput!
     getPublicOrderStatusList:GetPublicOrderStatusListOutput!
-    getOrderlistAdmin:GetOrderListForAdmin!
+    getOrderlistAdmin(query:orderListInput):GetOrderListForAdmin!
     getSingleOrderAdmin(query:GetSingleOrderAdminInput):GetSingleOrderAdminOutput!
     getSingleOrderCustomer(query:GetSingleOrderCustomerInput):GetSingleOrderCustomerOutput!
     getOrderListByCustomerID(query:GetOrderListByCustomerIDInput):GetOrderListByCustomerIDOutput!

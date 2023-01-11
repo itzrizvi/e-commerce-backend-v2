@@ -958,9 +958,19 @@ module.exports = {
     }
   },
   // GET Order List Admin
-  getOrderlistAdmin: async (db, user, isAuth, TENANTID) => {
+  getOrderlistAdmin: async (req, db, user, isAuth, TENANTID) => {
     // Try Catch Block
     try {
+
+      // const { searchQuery,
+      //   paymentmethods,
+      //   statuses,
+      //   updatedby,
+      //   orderEntryStartDate,
+      //   orderEntryEndDate,
+      //   orderUpdatedStartDate,
+      //   orderUpdatedEndDate } = req;
+
       // Check If Has Alias with Users and Order
       if (!db.order.hasAlias("user") && !db.order.hasAlias("customer")) {
         await db.order.hasOne(db.user, {
@@ -994,12 +1004,90 @@ module.exports = {
         });
       }
 
+      // Order and Order Items
+      if (
+        !db.order.hasAlias("order_item") &&
+        !db.order.hasAlias("orderitems")
+      ) {
+        await db.order.hasMany(db.order_item, {
+          foreignKey: "order_id",
+          as: "orderitems",
+        });
+      }
+      // Order Items and Product
+      if (!db.order_item.hasAlias("product")) {
+        await db.order_item.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: "id"
+        });
+      }
+
+
+      // const searchQueryCustomerWhere = searchQuery ? {
+      //   [Op.or]: [
+      //     {
+      //       email: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     },
+      //     {
+      //       first_name: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     },
+      //     {
+      //       last_name: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     }
+      //   ]
+      // } : {};
+
+      // const searchQueryProductWhere = searchQuery ? {
+      //   [Op.or]: [
+      //     {
+      //       prod_name: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     },
+      //     {
+      //       prod_sku: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     },
+      //     {
+      //       prod_partnum: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     },
+      //     {
+      //       mfg_build_part_number: {
+      //         [Op.iLike]: `%${searchQuery}%`
+      //       }
+      //     }
+      //   ]
+      // } : {};
+
+
       // Order List For Admin
       const orderlist = await db.order.findAll({
         include: [
-          { model: db.user, as: "customer" },
+          {
+            model: db.user,
+            as: "customer",
+            // ...(searchQuery && { where: searchQueryCustomerWhere }),
+          },
           { model: db.payment_method, as: "paymentmethod" },
           { model: db.order_status, as: "orderStatus" },
+          {
+            model: db.order_item, // Order Items and Products
+            as: "orderitems",
+            include: [{
+              model: db.product,
+              // where: searchQueryProductWhere,
+              required: false,
+            }],
+          },
         ],
         where: {
           tenant_id: TENANTID,

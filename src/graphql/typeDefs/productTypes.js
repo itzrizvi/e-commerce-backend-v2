@@ -178,6 +178,7 @@ type ProductForList {
     is_sale:Boolean
     is_serial:Boolean
     prod_condition:String
+    mfg_build_part_number:String
     prod_outofstock_status:String
     prod_thumbnail:String
     category:Category

@@ -12,6 +12,8 @@ type AdminAuthPayload {
     first_name:String
     last_name:String
     email:String
+    phone:String
+    fax:String
     message:String
     emailVerified:Boolean
     user_status:Boolean
@@ -27,6 +29,8 @@ input AdminSignUpInput {
     role_ids:JSON!
     userStatus:Boolean!
     sendEmail:Boolean!
+    phone:String
+    fax:String
 }
 
 type AdminSignUpOutput {
@@ -41,6 +45,8 @@ type Staff {
     first_name:String
     last_name:String
     email:String
+    phone:String
+    fax:String
     image:String
     roles:[Role]
     user_status:Boolean
@@ -61,6 +67,8 @@ input UpdateAdminInput {
     role_ids:JSON
     user_status:Boolean
     sendEmail:Boolean!
+    phone:String
+    fax:String
 }
 
 input GetSingleAdminInput {

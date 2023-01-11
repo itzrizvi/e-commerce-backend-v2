@@ -18,7 +18,10 @@ module.exports = {
                 last_name,
                 email,
                 status,
-                send_mail
+                send_mail,
+                phone,
+                fax,
+                company_name
             } = req;
 
             // Check The User Is Already given or Not
@@ -40,6 +43,9 @@ module.exports = {
                 first_name,
                 last_name,
                 email,
+                phone,
+                fax,
+                company_name,
                 user_status: status,
                 verification_code: verificationCode,
                 tenant_id: TENANTID,
@@ -1031,14 +1037,20 @@ module.exports = {
                 first_name,
                 last_name,
                 user_status,
-                send_mail
+                send_mail,
+                phone,
+                fax,
+                company_name
             } = req;
 
             // Update Doc
             const updateDoc = {
                 first_name,
                 last_name,
-                user_status
+                user_status,
+                phone,
+                fax,
+                company_name
             }
             const updatecustomer = await db.user.update(updateDoc, {
                 where: {

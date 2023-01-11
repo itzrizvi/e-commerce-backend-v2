@@ -25,6 +25,18 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        phone: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        fax: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        company_name: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         email_verified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,

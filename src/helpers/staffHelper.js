@@ -56,13 +56,15 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request
-            const { id, first_name, last_name, role_ids, user_status, image, sendEmail } = req;
+            const { id, first_name, last_name, role_ids, user_status, image, sendEmail, phone, fax } = req;
 
             // Update User Table Doc
             const updateUserDoc = {
                 first_name,
                 last_name,
                 user_status,
+                phone,
+                fax,
                 image: null,
                 updated_by: user.id
             }

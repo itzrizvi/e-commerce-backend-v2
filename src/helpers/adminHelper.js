@@ -93,6 +93,8 @@ module.exports = {
                 message: "Sign In succesfull",
                 emailVerified: user.email_verified,
                 first_name: user.first_name,
+                phone: user.phone,
+                fax: user.fax,
                 last_name: user.last_name,
                 user_status: user.user_status,
                 status: true
@@ -118,6 +120,7 @@ module.exports = {
             const has_role = 1;
             const user_status = req.userStatus;
             const role_ids = req.role_ids;
+            const { phone, fax } = req;
             // SEND EMAIL REQUEST
             const { sendEmail } = req;
 
@@ -144,6 +147,8 @@ module.exports = {
                     last_name: last_name,
                     email: email,
                     has_role,
+                    phone,
+                    fax,
                     verification_code: verificationCode,
                     forgot_password_code: verificationCode,
                     user_status,
@@ -221,6 +226,8 @@ module.exports = {
                     has_role,
                     email_verified: false,
                     user_status,
+                    phone,
+                    fax,
                     verification_code: verificationCode,
                     forgot_password_code: verificationCode,
                     updated_by: user.id

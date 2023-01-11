@@ -12,6 +12,8 @@ type User {
     first_name:String
     last_name:String
     email:String
+    phone:String
+    fax:String
     email_verified:Boolean
     user_status:Boolean
     image:String
@@ -30,6 +32,8 @@ type AuthPayload {
     user_status:Boolean
     updatedAt:String
     createdAt:String
+    phone:String
+    fax:String
     image:String
     status:Boolean
 }
@@ -39,6 +43,8 @@ input UserInput {
     last_name:String
     email:String!
     password:String!
+    phone:String
+    fax:String
 }
 
 input UserProfileUpdateInput {
@@ -46,6 +52,8 @@ input UserProfileUpdateInput {
     last_name:String
     oldPassword:String
     newPassword:String
+    phone:String
+    fax:String
     image:Upload
 }
 

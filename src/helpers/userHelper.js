@@ -15,7 +15,7 @@ module.exports = {
 
         try {
 
-            const { first_name, last_name, email, password } = req;
+            const { first_name, last_name, email, password, phone, fax } = req;
             const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
             if (!email || !first_name || !password) return { message: "Account Valid Credentials Is Missing!!!", status: false }
@@ -24,6 +24,8 @@ module.exports = {
                 first_name,
                 last_name,
                 email,
+                phone,
+                fax,
                 password: await bcrypt.hash(password, 10),
                 verification_code: verificationCode,
                 user_status: true,
@@ -77,6 +79,8 @@ module.exports = {
                 id: user.id,
                 first_name: user.first_name,
                 last_name: user.last_name,
+                phone: user.phone,
+                fax: user.fax,
                 email: user.email,
                 emailVerified: user.email_verified,
                 message: "Sign Up succesfull",
@@ -169,6 +173,8 @@ module.exports = {
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
+                phone: user.phone,
+                fax: user.fax,
                 message: "Sign In succesfull",
                 emailVerified: user.email_verified,
                 verificationCode: user.verification_code,
@@ -642,7 +648,7 @@ module.exports = {
         // Try Catch Block
         try {
             // Data From Request 
-            const { first_name, last_name, oldPassword, newPassword, image } = req;
+            const { first_name, last_name, oldPassword, newPassword, image, phone, fax } = req;
 
             // FIND User FIRST
             const findUser = await db.user.findOne({
@@ -709,6 +715,8 @@ module.exports = {
                 const updateDoc = {
                     first_name,
                     last_name,
+                    phone,
+                    fax,
                     updated_by: user.id,
                     password: await bcrypt.hash(newPassword, 10)
                 }
@@ -773,6 +781,8 @@ module.exports = {
                 const updateUserDoc = {
                     first_name,
                     last_name,
+                    phone,
+                    fax,
                     updated_by: user.id
                 }
 

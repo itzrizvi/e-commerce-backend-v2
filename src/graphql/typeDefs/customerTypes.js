@@ -12,6 +12,9 @@ input CustomerInput {
     email:String!
     status: Boolean!
     send_mail: Boolean!
+    phone:String
+    fax:String
+    company_name:String
 }
 
 type Customer {
@@ -22,6 +25,9 @@ type Customer {
     email_verified: Boolean!
     user_status: Boolean!
     image: String
+    phone:String
+    fax:String
+    company_name:String
     createdAt:String
     updatedAt:String
     addresses: [AddressOutput]
@@ -131,6 +137,9 @@ input UpdateCustomerInput {
     last_name:String
     user_status:Boolean
     send_mail:Boolean
+    phone:String
+    fax:String
+    company_name:String
 }
 
 

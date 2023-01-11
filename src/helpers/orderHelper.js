@@ -2309,4 +2309,111 @@ module.exports = {
         };
     }
   },
+  // GET Order BY Search
+  getOrderBySearch: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      const { searchQuery } = req;
+
+      // Check If Has Alias with Users and Order
+      if (!db.order.hasAlias("user") && !db.order.hasAlias("customer")) {
+        await db.order.hasOne(db.user, {
+          sourceKey: "customer_id",
+          foreignKey: "id",
+          as: "customer",
+        });
+      }
+
+      // Check If Has Alias with Order and Payment Method
+      if (
+        !db.order.hasAlias("payment_method") &&
+        !db.order.hasAlias("paymentmethod")
+      ) {
+        await db.order.hasOne(db.payment_method, {
+          sourceKey: "payment_id",
+          foreignKey: "id",
+          as: "paymentmethod",
+        });
+      }
+
+      // Check If Has Alias with Order and Order Status
+      if (
+        !db.order.hasAlias("order_status") &&
+        !db.order.hasAlias("orderStatus")
+      ) {
+        await db.order.hasOne(db.order_status, {
+          sourceKey: "order_status_id",
+          foreignKey: "id",
+          as: "orderStatus",
+        });
+      }
+
+      // Order and Order Items
+      if (
+        !db.order.hasAlias("order_item") &&
+        !db.order.hasAlias("orderitems")
+      ) {
+        await db.order.hasMany(db.order_item, {
+          foreignKey: "order_id",
+          as: "orderitems",
+        });
+      }
+      // Order Items and Product
+      if (!db.order_item.hasAlias("product")) {
+        await db.order_item.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: "id",
+          as: "product"
+        });
+      }
+
+      // Order List For Admin
+      const orderlist = await db.order.findAll({
+        include: [
+          {
+            model: db.order_item, // Order Items and Products
+            as: "orderitems",
+            include: [{
+              model: db.product,
+              as: "product"
+            }]
+          },
+          {
+            model: db.user,
+            as: "customer"
+          },
+          {
+            model: db.payment_method,
+            as: "paymentmethod"
+          },
+          {
+            model: db.order_status,
+            as: "orderStatus"
+          }
+        ],
+        where: {
+          tenant_id: TENANTID,
+          ...(searchQuery && {
+            id: searchQuery
+          })
+        },
+      });
+
+
+      // Return Formation
+      return {
+        message: "GET Order List Success",
+        status: true,
+        tenant_id: TENANTID,
+        data: orderlist,
+      };
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+    }
+  },
 };

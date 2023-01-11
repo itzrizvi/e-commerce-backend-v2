@@ -310,6 +310,10 @@ type GetOrderUpdateAdmins {
     data:[Staff]
 }
 
+input searchOrderInput {
+    searchQuery:Int
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -333,6 +337,7 @@ extend type Query {
     getOrderListByCustomerID(query:GetOrderListByCustomerIDInput):GetOrderListByCustomerIDOutput!
     getOrderActivityHistory(query:GetOrderHistoryInput):GetOrderHistoryOutput!
     getOrderUpdateAdminList:GetOrderUpdateAdmins!
+    getOrderBySearch(query:searchOrderInput):GetOrderListForAdmin!
 }
 
 

@@ -294,14 +294,21 @@ type OrderPlaceOutput {
 input orderListInput {
     searchQuery:String
     paymentmethods:[Int]
-    statuses:[String]
+    statuses:[Int]
     updatedby:[Int]
+    productIds:[Int]
     orderEntryStartDate:String
     orderEntryEndDate:String
     orderUpdatedStartDate:String
     orderUpdatedEndDate:String
 }
 
+type GetOrderUpdateAdmins {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[Staff]
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -325,6 +332,7 @@ extend type Query {
     getSingleOrderCustomer(query:GetSingleOrderCustomerInput):GetSingleOrderCustomerOutput!
     getOrderListByCustomerID(query:GetOrderListByCustomerIDInput):GetOrderListByCustomerIDOutput!
     getOrderActivityHistory(query:GetOrderHistoryInput):GetOrderHistoryOutput!
+    getOrderUpdateAdminList:GetOrderUpdateAdmins!
 }
 
 

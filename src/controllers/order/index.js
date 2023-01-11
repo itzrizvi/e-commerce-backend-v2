@@ -15,4 +15,5 @@ module.exports = {
     getSingleOrderCustomerController: require('./getSingleOrderCustomerController'),
     orderCancelByCustomerController: require('./orderCancelByCustomerController'),
     getOrderActivityHistoryController: require('./getOrderActivityHistoryController'),
+    getOrderUpdateAdminListController: require('./getOrderUpdateAdminListController'),
 }

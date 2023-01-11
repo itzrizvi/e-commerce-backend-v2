@@ -2358,15 +2358,41 @@ module.exports = {
                 ],
                 limit: 10,
                 where: {
-                    [Op.and]: [{
-                        ...(category_id && { prod_category: category_id }),
-                        tenant_id,
-                        prod_status: true
-                    }],
-                    prod_slug: {
-                        [Op.iLike]: `%${searchQuery}%`
-                    },
-
+                    ...(searchQuery && {
+                        [Op.and]: [{
+                            ...(category_id && { prod_category: category_id }),
+                            tenant_id,
+                            prod_status: true
+                        }],
+                        [Op.or]: [
+                            {
+                                prod_slug: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                },
+                            },
+                            {
+                                prod_name: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                prod_sku: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                prod_partnum: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                mfg_build_part_number: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            }
+                        ]
+                    }),
+                    tenant_id: TENANTID
                 },
                 order: [
                     ['prod_slug', 'ASC']

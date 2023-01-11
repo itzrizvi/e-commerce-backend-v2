@@ -962,14 +962,15 @@ module.exports = {
     // Try Catch Block
     try {
 
-      // const { searchQuery,
-      //   paymentmethods,
-      //   statuses,
-      //   updatedby,
-      //   orderEntryStartDate,
-      //   orderEntryEndDate,
-      //   orderUpdatedStartDate,
-      //   orderUpdatedEndDate } = req;
+      const { searchQuery,
+        productIds,
+        paymentmethods,
+        statuses,
+        updatedby,
+        orderEntryStartDate,
+        orderEntryEndDate,
+        orderUpdatedStartDate,
+        orderUpdatedEndDate } = req;
 
       // Check If Has Alias with Users and Order
       if (!db.order.hasAlias("user") && !db.order.hasAlias("customer")) {
@@ -1018,81 +1019,137 @@ module.exports = {
       if (!db.order_item.hasAlias("product")) {
         await db.order_item.hasOne(db.product, {
           sourceKey: "product_id",
-          foreignKey: "id"
+          foreignKey: "id",
+          as: "product"
         });
       }
 
+      // Condtional Date Filters
+      const twoDateFilterWhere = orderEntryStartDate && orderEntryEndDate ? {
+        [Op.and]: [{
+          [Op.gte]: new Date(orderEntryStartDate),
+          [Op.lte]: new Date(orderEntryEndDate),
+        }]
+      } : {};
 
-      // const searchQueryCustomerWhere = searchQuery ? {
-      //   [Op.or]: [
-      //     {
-      //       email: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     },
-      //     {
-      //       first_name: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     },
-      //     {
-      //       last_name: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     }
-      //   ]
-      // } : {};
+      const startDateFilterWhere = (orderEntryStartDate && !orderEntryEndDate) ? {
+        [Op.gte]: new Date(orderEntryStartDate)
+      } : {};
 
-      // const searchQueryProductWhere = searchQuery ? {
-      //   [Op.or]: [
-      //     {
-      //       prod_name: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     },
-      //     {
-      //       prod_sku: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     },
-      //     {
-      //       prod_partnum: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     },
-      //     {
-      //       mfg_build_part_number: {
-      //         [Op.iLike]: `%${searchQuery}%`
-      //       }
-      //     }
-      //   ]
-      // } : {};
+      const endDateFilterWhere = (orderEntryEndDate && !orderEntryStartDate) ? {
+        [Op.lte]: new Date(orderEntryEndDate)
+      } : {};
+
+      const twoUpdatedDateFilterWhere = orderUpdatedStartDate && orderUpdatedEndDate ? {
+        [Op.and]: [{
+          [Op.gte]: new Date(orderUpdatedStartDate),
+          [Op.lte]: new Date(orderUpdatedEndDate),
+        }]
+      } : {};
+
+      const updatedStartDateFilterWhere = (orderUpdatedStartDate && !orderUpdatedEndDate) ? {
+        [Op.gte]: new Date(orderUpdatedStartDate)
+      } : {};
+
+      const updatedEndDateFilterWhere = (orderUpdatedEndDate && !orderUpdatedStartDate) ? {
+        [Op.lte]: new Date(orderUpdatedEndDate)
+      } : {};
+
+      const searchQueryCustomerWhere = searchQuery ? {
+        [Op.or]: [
+          {
+            email: {
+              [Op.iLike]: `%${searchQuery}%`
+            }
+          },
+          {
+            first_name: {
+              [Op.iLike]: `%${searchQuery}%`
+            }
+          },
+          {
+            last_name: {
+              [Op.iLike]: `%${searchQuery}%`
+            }
+          }
+        ]
+      } : {};
 
 
       // Order List For Admin
       const orderlist = await db.order.findAll({
         include: [
           {
-            model: db.user,
-            as: "customer",
-            // ...(searchQuery && { where: searchQueryCustomerWhere }),
-          },
-          { model: db.payment_method, as: "paymentmethod" },
-          { model: db.order_status, as: "orderStatus" },
-          {
             model: db.order_item, // Order Items and Products
             as: "orderitems",
+            ...(productIds && productIds.length && {
+              where: {
+                product_id: {
+                  [Op.in]: productIds
+                }
+              }
+            }),
             include: [{
               model: db.product,
-              // where: searchQueryProductWhere,
-              required: false,
-            }],
+              as: "product"
+            }]
           },
+          {
+            model: db.user,
+            as: "customer",
+            ...(searchQuery && { where: searchQueryCustomerWhere }),
+          },
+          {
+            model: db.payment_method,
+            as: "paymentmethod",
+            ...(paymentmethods && paymentmethods.length && {
+              where: {
+                id: {
+                  [Op.in]: paymentmethods
+                }
+              }
+            })
+          },
+          {
+            model: db.order_status,
+            as: "orderStatus",
+            ...(statuses && statuses.length && {
+              where: {
+                id: {
+                  [Op.in]: statuses
+                }
+              }
+            }),
+          }
         ],
         where: {
           tenant_id: TENANTID,
+          ...(updatedby && updatedby.length && {
+            updated_by: {
+              [Op.in]: updatedby
+            }
+          }),
+          ...((orderEntryStartDate || orderEntryEndDate) && {
+            createdAt: {
+              [Op.or]: [{
+                ...(twoDateFilterWhere && twoDateFilterWhere),
+                ...(startDateFilterWhere && startDateFilterWhere),
+                ...(endDateFilterWhere && endDateFilterWhere),
+              }],
+            }
+          }),
+          ...((orderUpdatedStartDate || orderUpdatedEndDate) && {
+            updatedAt: {
+              [Op.or]: [{
+                ...(twoUpdatedDateFilterWhere && twoUpdatedDateFilterWhere),
+                ...(updatedStartDateFilterWhere && updatedStartDateFilterWhere),
+                ...(updatedEndDateFilterWhere && updatedEndDateFilterWhere),
+              }],
+            }
+          })
         },
       });
+
 
       // Return Formation
       return {
@@ -2165,6 +2222,85 @@ module.exports = {
         tenant_id: TENANTID,
         data: orderhistoryList,
       };
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+    }
+  },
+  // GET Order Update Admin List
+  getOrderUpdateAdminList: async (db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      // User and Roles Through Admin Roles Associations
+      db.user.belongsToMany(db.role, {
+        through: db.admin_role,
+        foreignKey: "admin_id",
+      });
+      db.role.belongsToMany(db.user, {
+        through: db.admin_role,
+        foreignKey: "role_id",
+      });
+
+      // Order and User
+      if (
+        !db.order.hasAlias("user") &&
+        !db.order.hasAlias("admin")
+      ) {
+        await db.order.hasOne(db.user, {
+          sourceKey: "updated_by",
+          foreignKey: "id",
+          as: "admin",
+        });
+      }
+
+      // Admin List
+      const orderUpdateAdminList = await db.order.findAll({
+        include: [
+          {
+            model: db.user,
+            as: "admin", // User and Roles
+            include: {
+              model: db.role,
+              as: "roles",
+            },
+          },
+        ],
+        where: {
+          tenant_id: TENANTID,
+          updated_by: {
+            [Op.ne]: null
+          }
+        },
+      });
+
+      //
+      let adminArray = [];
+      await orderUpdateAdminList.forEach(async (item) => {
+        await adminArray.push(item.admin);
+      });
+
+
+      if (adminArray.length) {
+        let finalArray = [...new Map(adminArray.map((admin) => [admin.id, admin])).values()];
+        // Return Formation
+        return {
+          message: "GET Order Update Admin List Success!!!",
+          status: true,
+          tenant_id: TENANTID,
+          data: finalArray
+        };
+
+      } else {
+        return {
+          message: `Something Went Wrong!!!`,
+          status: false,
+        };
+      }
+
     } catch (error) {
       if (error)
         return {

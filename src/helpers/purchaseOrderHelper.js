@@ -467,7 +467,7 @@ module.exports = {
 
             // DATA FROM REQUEST
             const { id,
-                po_id,
+                po_number,
                 contact_person_id,
                 reason,
                 vendor_id,
@@ -490,7 +490,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id,
-                        po_number: po_id,
+                        po_number,
                         tenant_id: TENANTID
                     }]
                 }
@@ -569,7 +569,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id,
-                        po_number: po_id,
+                        po_number,
                         tenant_id: TENANTID
                     }]
                 }

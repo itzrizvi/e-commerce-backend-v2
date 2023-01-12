@@ -99,7 +99,7 @@ type GetSinglePurchaseOrderOutput {
 
 input UpdatePurchaseOrderInput {
     id:Int!
-    po_id:String!
+    po_number:String!
     vendor_id:Int
     vendor_billing_id:Int
     vendor_shipping_id:Int

@@ -1,24 +1,19 @@
+const CryptoJS = require("crypto-js");
 const crypt = (text) => {
-    const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
-    const byteHex = (n) => ("0" + Number(n).toString(16)).substr(-2);
-    const applySaltToChar = (code) => textToChars(process.env.secretKey).reduce((a, b) => a ^ b, code);
-    return text
-        .split("")
-        .map(textToChars)
-        .map(applySaltToChar)
-        .map(byteHex)
-        .join("");
+
+    let ciphertext = CryptoJS.AES.encrypt(text, process.env.secretKey).toString();
+    let encodeURI = encodeURIComponent(ciphertext);
+
+    return encodeURI
 };
 
 const decrypt = (encoded) => {
-    const textToChars = (text) => text.split("").map((c) => c.charCodeAt(0));
-    const applySaltToChar = (code) => textToChars(process.env.secretKey).reduce((a, b) => a ^ b, code);
-    return encoded
-        .match(/.{1,2}/g)
-        .map((hex) => parseInt(hex, 16))
-        .map(applySaltToChar)
-        .map((charCode) => String.fromCharCode(charCode))
-        .join("");
+
+    let decodeURI = decodeURIComponent(encoded);
+    let bytes = CryptoJS.AES.decrypt(decodeURI, process.env.secretKey);
+    let decodedValue = bytes.toString(CryptoJS.enc.Utf8);
+
+    return decodedValue
 }
 
 

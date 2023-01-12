@@ -47,5 +47,6 @@
   "ADMIN_URL": "https://main.d1obfpyzuclg77.amplifyapp.com/",
   "RESET_PASSWORD": "reset-password/",
   "SET_PASSWORD": "set-password/",
-  "QUOTE_APPROVE": "shop/quote-approve/"
+  "QUOTE_APPROVE": "shop/quote-approve/",
+  "PO_VIEW": "view-po/"
 }

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             autoIncrement: true
         },
-        po_id: {
+        po_number: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -49,9 +49,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+        contact_person_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         type: {
             type: DataTypes.ENUM("default", "drop_shipping"),
             allowNull: false
+        },
+        status: {
+            type: DataTypes.ENUM("created", "approved", "declined"),
+            allowNull: false,
+            defaultValue: "created"
+        },
+        reason: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         order_id: {
             type: DataTypes.INTEGER,

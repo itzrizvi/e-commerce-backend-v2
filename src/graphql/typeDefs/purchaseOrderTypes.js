@@ -20,14 +20,15 @@ input CreatePurchaseOrderInput {
     payment_method_id:Int!
     tax_amount:Float!
     order_id:Int
-    type:String
+    type:String!
     comment:String
     products:JSON!
+    contact_person_id:Int
 }
 
 type PurchaseOrderList {
     id:Int
-    po_id:String
+    po_number:String
     rec_id:Int
     grandTotal_price:Float
     comment:String
@@ -60,7 +61,7 @@ type POProductList {
 
 type PurchaseOrder {
     id: Int
-    po_id: String
+    po_number: String
     rec_id:Int
     grandTotal_price: Float
     tax_amount: Float
@@ -105,6 +106,8 @@ input UpdatePurchaseOrderInput {
     shipping_method_id:Int
     shipping_account_id:Int
     payment_method_id:Int
+    contact_person_id:Int
+    reason:String
     order_placed_via:String
     order_id:Int
     type:String

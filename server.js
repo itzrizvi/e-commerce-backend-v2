@@ -58,14 +58,15 @@ async function startApolloServer() {
         introspection: true,
         tracing: true,
         context: ({ req }) => {
-            let { isAuth, user, TENANTID, ip } = req;
+            let { isAuth, user, TENANTID, ip, headers } = req;
             return {
                 req,
                 isAuth,
                 user,
                 db,
                 TENANTID,
-                ip
+                ip,
+                headers
             }
         },
         cache: 'bounded',

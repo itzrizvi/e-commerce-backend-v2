@@ -1,6 +1,8 @@
 // All Requires
 const { Op } = require("sequelize");
-
+const { crypt } = require("../utils/hashes");
+const config = require('config');
+const { Mail } = require("../utils/email");
 
 // PO HELPER
 module.exports = {
@@ -51,7 +53,8 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { vendor_id,
+            const { contact_person_id,
+                vendor_id,
                 vendor_billing_id,
                 vendor_shipping_id,
                 shipping_method_id,
@@ -80,7 +83,7 @@ module.exports = {
                     tenant_id: TENANTID
                 },
                 order: [
-                    ["po_id", "ASC"]
+                    ["po_number", "ASC"]
                 ]
             });
 
@@ -90,7 +93,7 @@ module.exports = {
             if (findPOEntries) {
 
                 await findPOEntries.forEach(async (entry) => {
-                    await poIDNumbers.push(parseInt(entry.po_id.split('-').slice(-1)[0]));
+                    await poIDNumbers.push(parseInt(entry.po_number.split('-').slice(-1)[0]));
                 });
 
                 if (poIDNumbers && poIDNumbers.length > 0) {
@@ -99,25 +102,24 @@ module.exports = {
             }
 
             // GENERATE PO ID
-            let po_id;
+            let po_number;
             if ((new Date().getDate() % 2) === 0) {
 
                 if (lastEntryNumber != 0) { // Check if the last entry is available
-                    po_id = `${po_prefix}-${lastEntryNumber + 2}`
+                    po_number = `${po_prefix}-${lastEntryNumber + 2}`
                 } else {
-                    po_id = `${po_prefix}-${po_startfrom + 2}`
+                    po_number = `${po_prefix}-${po_startfrom + 2}`
                 }
 
             } else {
 
                 if (lastEntryNumber != 0) { // Check if the last entry is available
-                    po_id = `${po_prefix}-${lastEntryNumber + 3}`
+                    po_number = `${po_prefix}-${lastEntryNumber + 3}`
                 } else {
-                    po_id = `${po_prefix}-${po_startfrom + 3}`
+                    po_number = `${po_prefix}-${po_startfrom + 3}`
                 }
 
             }
-
 
             let grandTotal_price = 0; // Grand Total Price
             // PO Product List Array
@@ -138,14 +140,14 @@ module.exports = {
                 });
 
             });
-
             // Create Purchase Order 
             const insertPO = await db.purchase_order.create({
-                po_id,
+                po_number,
                 vendor_id,
                 payment_method_id,
                 grandTotal_price: grandTotal_price.toFixed(2),
                 tax_amount,
+                contact_person_id,
                 vendor_billing_id,
                 vendor_shipping_id,
                 shipping_method_id,
@@ -166,6 +168,64 @@ module.exports = {
             // Insert Product List
             const insertProductList = await db.po_productlist.bulkCreate(poProductList);
             if (!insertProductList) return { message: "PO Product List Failed!!!", status: false }
+
+            //
+            let email;
+            if (contact_person_id) {
+                const findContactPerson = await db.contact_person.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id: contact_person_id, /////
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                email = findContactPerson.email;
+            } else {
+                const findVendor = await db.vendor.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id: vendor_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                email = findVendor.email;
+            }
+
+            let purchaseOrderIDhashed = crypt(`${insertPO.id}`);
+            let ponumberhashed = crypt(`${po_number}`);
+            // SET PASSWORD URL
+            const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
+            // Setting Up Data for EMAIL SENDER
+            const mailSubject = "Purchase Order From Prime Server Parts"
+            const mailData = {
+                companyInfo: {
+                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                    companyName: config.get("COMPANY_NAME"),
+                    companyUrl: config.get("ECOM_URL"),
+                    shopUrl: config.get("ECOM_URL"),
+                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                },
+                about: 'A Purchase Order Has Been Created On Primer Server Parts',
+                email: email,
+                viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
+            }
+
+            // SENDING EMAIL
+            await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
+
+            // Record Create
+            await db.poview_record.create({
+                po_id: insertPO.id,
+                po_number,
+                created_by: user.id,
+                tenant_id: TENANTID
+            });
 
 
             // Return Formation
@@ -408,6 +468,8 @@ module.exports = {
             // DATA FROM REQUEST
             const { id,
                 po_id,
+                contact_person_id,
+                reason,
                 vendor_id,
                 shipping_method_id,
                 shipping_account_id,
@@ -428,7 +490,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id,
-                        po_id,
+                        po_number: po_id,
                         tenant_id: TENANTID
                     }]
                 }
@@ -485,6 +547,8 @@ module.exports = {
             // Update Doc For Purchase Order
             const poUpdateDoc = {
                 shipping_method_id,
+                contact_person_id,
+                reason,
                 shipping_account_id,
                 payment_method_id,
                 order_placed_via,
@@ -505,7 +569,7 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id,
-                        po_id,
+                        po_number: po_id,
                         tenant_id: TENANTID
                     }]
                 }

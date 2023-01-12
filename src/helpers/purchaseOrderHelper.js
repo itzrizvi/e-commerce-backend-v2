@@ -1,6 +1,6 @@
 // All Requires
 const { Op } = require("sequelize");
-const { crypt } = require("../utils/hashes");
+const { crypt, decrypt } = require("../utils/hashes");
 const config = require('config');
 const { Mail } = require("../utils/email");
 
@@ -742,6 +742,166 @@ module.exports = {
                     status: false,
                     tenant_id: TENANTID
                 }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // VIEW PUBLIC PO 
+    viewPurchaseOrderPublic: async (req, db, TENANTID, ip, headers) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { param1, param2 } = req;
+            // ASSOCIATION STARTS
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorBillingAddress')) {
+
+                await db.purchase_order.hasOne(db.address, {
+                    sourceKey: 'vendor_billing_id',
+                    foreignKey: 'id',
+                    as: 'vendorBillingAddress'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorShippingAddress')) {
+
+                await db.purchase_order.hasOne(db.address, {
+                    sourceKey: 'vendor_shipping_id',
+                    foreignKey: 'id',
+                    as: 'vendorShippingAddress'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
+
+                await db.purchase_order.hasMany(db.po_productlist, {
+                    foreignKey: 'purchase_order_id',
+                    as: 'poProductlist'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('shipping_method') && !db.purchase_order.hasAlias('shippingMethod')) {
+
+                await db.purchase_order.hasOne(db.shipping_method, {
+                    sourceKey: 'shipping_method_id',
+                    foreignKey: 'id',
+                    as: 'shippingMethod'
+                });
+            }
+
+            // 
+            if (!db.po_productlist.hasAlias('product')) {
+
+                await db.po_productlist.hasOne(db.product, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'id',
+                    as: 'product'
+                });
+            }
+
+            // Check If Has Alias with Categories
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            // Brand Table Association with Product
+            if (!db.product.hasAlias('brand')) {
+
+                await db.product.hasOne(db.brand, {
+                    sourceKey: 'brand_id',
+                    foreignKey: 'id',
+                    as: 'brand'
+                });
+            }
+            // ASSOCIATION ENDS
+
+            // DECODE
+            const id = decrypt(param1);
+            const po_number = decrypt(param2)
+
+            // Single PO 
+            const singlePO = await db.purchase_order.findOne({
+                include: [
+                    { model: db.vendor, as: 'vendor' },
+                    { model: db.payment_method, as: 'paymentmethod' },
+                    { model: db.shipping_method, as: 'shippingMethod' },
+                    { model: db.address, as: 'vendorBillingAddress' },
+                    { model: db.address, as: 'vendorShippingAddress' },
+                    {
+                        model: db.po_productlist, as: 'poProductlist', // 
+                        include: {
+                            model: db.product,
+                            as: 'product',
+                            include: [
+                                { model: db.category, as: 'category' },
+                                { model: db.brand, as: 'brand' }
+                            ]
+                        }
+                    },
+                ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_number,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            if (singlePO) {
+                await db.poview_record.update({
+                    status: 'viewed',
+                    client_info: JSON.stringify(headers),
+                    last_viewed_at: Date.now(),
+                    client_ip: ip
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            po_id: id,
+                            po_number,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                })
+            }
+
+            // Return Formation
+            return {
+                message: "GET Purchase Order Public View Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: singlePO
             }
 
 

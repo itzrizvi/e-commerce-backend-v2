@@ -74,6 +74,7 @@ type PurchaseOrder {
     vendorBillingAddress: AddressList
     vendorShippingAddress: AddressList
     paymentmethod: PaymentMethod
+    shippingMethod:ShippingMethodPublic
     poProductlist:[POProductList]
     POCreated_by: Staff
 }
@@ -134,6 +135,11 @@ type createReceivingOutput {
     id:Int
 }
 
+input ViewPOPublicInput {
+    param1:String!
+    param2:String!
+}
+
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -148,7 +154,8 @@ extend type Mutation {
 
 extend type Query {
     getPurchaseOrderList:GetPurchaseOrderList!
-    getSinglePurchaseOrder(query:GetSinglePurchaseOrderInput):GetSinglePurchaseOrderOutput
+    getSinglePurchaseOrder(query:GetSinglePurchaseOrderInput):GetSinglePurchaseOrderOutput!
+    viewPurchaseOrderPublic(query:ViewPOPublicInput):GetSinglePurchaseOrderOutput!
 }
 
 

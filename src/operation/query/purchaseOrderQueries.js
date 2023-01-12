@@ -1,5 +1,6 @@
 const { getPurchaseOrderListController,
-    getSinglePurchaseOrderController } = require("../../controllers");
+    getSinglePurchaseOrderController,
+    viewPurchaseOrderPublicController } = require("../../controllers");
 
 
 // PO BASED QUERY
@@ -27,6 +28,14 @@ module.exports = {
 
         // Return To Controller
         return await getSinglePurchaseOrderController(args.query, db, user, isAuth, TENANTID);
+    },
+    // View PO Public
+    viewPurchaseOrderPublic: async (root, args, { db, TENANTID, ip, headers }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await viewPurchaseOrderPublicController(args.query, db, TENANTID, ip, headers);
     },
 
 }

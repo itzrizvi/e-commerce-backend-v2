@@ -383,6 +383,36 @@ module.exports = {
             }
 
             // 
+            if (!db.purchase_order.hasAlias('shipping_account') && !db.purchase_order.hasAlias('shippingAccount')) {
+
+                await db.purchase_order.hasOne(db.shipping_account, {
+                    sourceKey: 'shipping_account_id',
+                    foreignKey: 'id',
+                    as: 'shippingAccount'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('contact_person') && !db.purchase_order.hasAlias('contactPerson')) {
+
+                await db.purchase_order.hasOne(db.contact_person, {
+                    sourceKey: 'contact_person_id',
+                    foreignKey: 'id',
+                    as: 'contactPerson'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('shipping_method') && !db.purchase_order.hasAlias('shippingMethod')) {
+
+                await db.purchase_order.hasOne(db.shipping_method, {
+                    sourceKey: 'shipping_method_id',
+                    foreignKey: 'id',
+                    as: 'shippingMethod'
+                });
+            }
+
+            // 
             if (!db.po_productlist.hasAlias('product')) {
 
                 await db.po_productlist.hasOne(db.product, {
@@ -418,6 +448,9 @@ module.exports = {
                 include: [
                     { model: db.vendor, as: 'vendor' },
                     { model: db.payment_method, as: 'paymentmethod' },
+                    { model: db.shipping_account, as: 'shippingAccount' },
+                    { model: db.contact_person, as: 'contactPerson' },
+                    { model: db.shipping_method, as: 'shippingMethod' },
                     { model: db.address, as: 'vendorBillingAddress' },
                     { model: db.address, as: 'vendorShippingAddress' },
                     {

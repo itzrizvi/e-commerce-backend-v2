@@ -2011,11 +2011,33 @@ module.exports = {
         });
       }
 
+      // 
+      if (!db.order.hasAlias('shipping_account') && !db.order.hasAlias('shippingAccount')) {
+
+        await db.order.hasOne(db.shipping_account, {
+          sourceKey: 'shipping_account_id',
+          foreignKey: 'id',
+          as: 'shippingAccount'
+        });
+      }
+
+      // 
+      if (!db.order.hasAlias('shipping_method') && !db.order.hasAlias('shippingMethod')) {
+
+        await db.order.hasOne(db.shipping_method, {
+          sourceKey: 'shipping_method_id',
+          foreignKey: 'id',
+          as: 'shippingMethod'
+        });
+      }
+
       // Single Order For Admin
       const singleOrder = await db.order.findOne({
         include: [
           { model: db.user, as: "customer" }, // User as customer
           { model: db.payment_method, as: "paymentmethod" }, // Payment method
+          { model: db.shipping_account, as: "shippingAccount" }, // 
+          { model: db.shipping_method, as: "shippingMethod" }, // 
           { model: db.order_status, as: "orderstatus" }, // Order Status
           { model: db.contact_person, as: "contactperson" }, // Contact Person
           {

@@ -122,6 +122,7 @@ type OrderAdmin {
     taxExemptFiles:[TaxExemptFiles]
     coupon:Coupon
     added_by:Staff
+    shippingMethod:ShippingMethodPublic
 }
 
 type OrderCustomer {
@@ -145,6 +146,8 @@ type OrderCustomer {
     shippingAddress:AddressList
     taxExemptFiles:[TaxExemptFiles]
     coupon:Coupon
+    shippingMethod:ShippingMethodPublic
+    shippingAccount:ShippingAccount
 }
 
 input createOrderByCustomerInput {

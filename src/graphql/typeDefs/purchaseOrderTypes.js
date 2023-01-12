@@ -76,6 +76,8 @@ type PurchaseOrder {
     paymentmethod: PaymentMethod
     shippingMethod:ShippingMethodPublic
     poProductlist:[POProductList]
+    contactPerson:ContactPerson
+    shippingAccount:ShippingAccount
     POCreated_by: Staff
 }
 

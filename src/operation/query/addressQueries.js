@@ -1,4 +1,4 @@
-const { getAddressListByCustomerIDController, getStateListController, getCountryListController } = require("../../controllers");
+const { getAddressListByCustomerIDController, getStateListController, getCountryListController, getAddressListByVendorIDController } = require("../../controllers");
 
 
 // Address BASED QUERY
@@ -13,6 +13,17 @@ module.exports = {
 
         // Return To Controller
         return await getAddressListByCustomerIDController(args.query, db, user, TENANTID);
+    },
+    // GET ADDRESS LIST BY Vendor ID
+    getAddressListByVendorID: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getAddressListByVendorIDController(args.query, db, user, TENANTID);
     },
     getStateList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         // Return If Not Have TENANT ID

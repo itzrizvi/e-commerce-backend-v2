@@ -75,8 +75,19 @@ type AddressList {
 input GetAdressListByCustomerIDInput{
     customer_id:Int!
 }
+input GetAddressListByVendorIDInput{
+    vendor_id:Int!
+}
 
 type GetAdressListByCustomerIDOutput{
+    message:String
+    tenant_id:String
+    status:Boolean
+    shippingDefaultID:Int
+    billingDefaultID:Int
+    data:[AddressList]
+}
+type GetAddressListByVendorIDOutput{
     message:String
     tenant_id:String
     status:Boolean
@@ -121,6 +132,7 @@ input CountryCode{
 
 extend type Query {
     getAddressListByCustomerID(query:GetAdressListByCustomerIDInput):GetAdressListByCustomerIDOutput!
+    getAddressListByVendorID(query:GetAddressListByVendorIDInput):GetAddressListByVendorIDOutput!
     getStateList(query: CountryCode):StateListOutput!
     getCountryList:CountryListOutput!
 }

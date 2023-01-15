@@ -102,7 +102,7 @@ module.exports = {
 
         } catch (error) {
             logger.crit("crit", error, { service: 'adminSignIn.js' });
-            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            if (error) return { message: `Something Went Wrong, Please Contact To Support!!!`, status: false }
         }
 
 

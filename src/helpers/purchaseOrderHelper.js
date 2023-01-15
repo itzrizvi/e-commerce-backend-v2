@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 const { crypt, decrypt } = require("../utils/hashes");
 const config = require('config');
 const { Mail } = require("../utils/email");
+const logger = require("../../logger");
 
 // PO HELPER
 module.exports = {
@@ -61,6 +62,9 @@ module.exports = {
                 shipping_account_id,
                 payment_method_id,
                 tax_amount,
+                shipping_cost,
+                is_insurance,
+                receiving_instruction,
                 comment,
                 order_id,
                 type,
@@ -153,6 +157,9 @@ module.exports = {
                 shipping_method_id,
                 shipping_account_id,
                 comment,
+                shipping_cost,
+                is_insurance,
+                receiving_instruction,
                 created_by: user.id,
                 tenant_id: TENANTID,
                 order_id,
@@ -511,6 +518,9 @@ module.exports = {
                 status,
                 vendor_billing_id,
                 vendor_shipping_id,
+                shipping_cost,
+                is_insurance,
+                receiving_instruction,
                 tax_amount,
                 order_id,
                 type,
@@ -590,6 +600,9 @@ module.exports = {
                 vendor_shipping_id,
                 tax_amount,
                 comment,
+                shipping_cost,
+                is_insurance,
+                receiving_instruction,
                 order_id,
                 type,
                 vendor_id,
@@ -940,6 +953,112 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // Create PO TRK
+    createPOTRKDetails: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { po_id, tracking_no } = req;
+
+            // Create PO TRK Details
+            const createPOTRKDetails = await db.po_trk_details.create({
+                po_id,
+                tracking_no,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
+
+            if (createPOTRKDetails) {
+                // Return Formation
+                return {
+                    message: "PO Tracking Inserted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOTRKDetails" });
+        }
+    },
+    // GET PO LIST
+    getPOTRKList: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            const { po_id } = req;
+            // ASSOCIATION STARTS
+
+
+            // PO TRK TO PO
+            if (!db.po_trk_details.hasAlias('purchase_order') && !db.po_trk_details.hasAlias('purchaseOrder')) {
+
+                await db.po_trk_details.hasOne(db.purchase_order, {
+                    sourceKey: 'po_id',
+                    foreignKey: 'id',
+                    as: 'purchaseOrder'
+                });
+            }
+
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+            // ASSOCIATION ENDS
+
+            // PO TRK List
+            const poTRKList = await db.po_trk_details.findAll({
+                include: [
+                    {
+                        model: db.purchase_order,
+                        as: "purchaseOrder",
+                        include: [
+                            { model: db.vendor, as: 'vendor' },
+                            { model: db.payment_method, as: 'paymentmethod' }
+                        ]
+                    }
+
+                ],
+                where: {
+                    [Op.and]: [{
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO TRK List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poTRKList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOTRKList" });
         }
     },
 }

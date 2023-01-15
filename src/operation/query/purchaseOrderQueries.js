@@ -1,6 +1,7 @@
 const { getPurchaseOrderListController,
     getSinglePurchaseOrderController,
-    viewPurchaseOrderPublicController } = require("../../controllers");
+    viewPurchaseOrderPublicController,
+    getPOTRKListController } = require("../../controllers");
 
 
 // PO BASED QUERY
@@ -36,6 +37,18 @@ module.exports = {
 
         // Return To Controller
         return await viewPurchaseOrderPublicController(args.query, db, TENANTID, ip, headers);
+    },
+    // PO TRK LIST
+    getPOTRKList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getPOTRKListController(args.query, db, user, isAuth, TENANTID);
     },
 
 }

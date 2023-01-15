@@ -1305,4 +1305,78 @@ module.exports = {
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createMFGDOC" });
         }
     },
+    // GET PO MFG DOC LIST
+    getPOMFGDOCList: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            const { po_id } = req;
+            // ASSOCIATION STARTS
+
+            // PO TRK TO PO
+            if (!db.po_mfg_doc.hasAlias('purchase_order') && !db.po_mfg_doc.hasAlias('purchaseOrder')) {
+
+                await db.po_mfg_doc.hasOne(db.purchase_order, {
+                    sourceKey: 'po_id',
+                    foreignKey: 'id',
+                    as: 'purchaseOrder'
+                });
+            }
+
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+            // ASSOCIATION ENDS
+
+            // PO MFG DOC List
+            const poMFGDOCList = await db.po_mfg_doc.findAll({
+                include: [
+                    {
+                        model: db.purchase_order,
+                        as: "purchaseOrder",
+                        include: [
+                            { model: db.vendor, as: 'vendor' },
+                            { model: db.payment_method, as: 'paymentmethod' }
+                        ]
+                    }
+
+                ],
+                where: {
+                    [Op.and]: [{
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO MFG DOC List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poMFGDOCList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOMFGDOCList" });
+        }
+    },
 }

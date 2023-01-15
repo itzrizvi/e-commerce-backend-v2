@@ -14,4 +14,5 @@ module.exports = {
     createPOInvoiceController: require('./createPOInvoiceController'),
     getPOInvoiceListController: require('./getPOInvoiceListController'),
     createMFGDOCController: require('./createMFGDOCController'),
+    getPOMFGDOCListController: require('./getPOMFGDOCListController'),
 }

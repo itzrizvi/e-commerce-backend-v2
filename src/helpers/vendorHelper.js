@@ -1003,4 +1003,90 @@ module.exports = {
         }
 
     },
+    // GET SEARCHED VENDOR
+    getSearchedVendors: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { searchQuery } = req;
+
+            if (!db.vendor.hasAlias('addresses')) {
+                await db.vendor.hasMany(db.address,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        }
+                    });
+            }
+            if (!db.vendor.hasAlias('contact_person') && !db.vendor.hasAlias('contactPersons')) {
+                await db.vendor.hasMany(db.contact_person,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        },
+                        as: "contactPersons"
+                    });
+            }
+            // 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
+
+            // GET Searched Customer
+            const getsearchedvendors = await db.vendor.findAll({
+                include: [
+                    {
+                        model: db.address,
+                        separate: true,
+                        include: { model: db.country, as: "countryCode" }
+                    },
+                    {
+                        model: db.contact_person,
+                        as: "contactPersons",
+                    }
+                ],
+                where: {
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        status: true,
+                    }],
+                    [Op.or]: [
+                        {
+                            company_name: {
+                                [Op.iLike]: `%${searchQuery}%`
+                            }
+                        },
+                        {
+                            email: {
+                                [Op.iLike]: `%${searchQuery}%`
+                            }
+                        }
+                    ]
+
+                }
+            });
+
+
+            // Return 
+            return {
+                message: "Get Searched Vendors!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getsearchedvendors
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
 }

@@ -1061,4 +1061,248 @@ module.exports = {
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOTRKList" });
         }
     },
+    // Create PO Activity
+    createPOActivity: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { po_id, comment } = req;
+
+            // Create PO TRK Details
+            const createPOTRKDetails = await db.po_activities.create({
+                po_id,
+                comment,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
+
+            if (createPOTRKDetails) {
+                // Return Formation
+                return {
+                    message: "PO Activity Inserted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOActivity" });
+        }
+    },
+    // GET PO ACTIVITY LIST
+    getPOActivityList: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            const { po_id } = req;
+            // ASSOCIATION STARTS
+
+
+            // PO TRK TO PO
+            if (!db.po_activities.hasAlias('purchase_order') && !db.po_activities.hasAlias('purchaseOrder')) {
+
+                await db.po_activities.hasOne(db.purchase_order, {
+                    sourceKey: 'po_id',
+                    foreignKey: 'id',
+                    as: 'purchaseOrder'
+                });
+            }
+
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+            // ASSOCIATION ENDS
+
+            // PO Activity List
+            const poActivityList = await db.po_activities.findAll({
+                include: [
+                    {
+                        model: db.purchase_order,
+                        as: "purchaseOrder",
+                        include: [
+                            { model: db.vendor, as: 'vendor' },
+                            { model: db.payment_method, as: 'paymentmethod' }
+                        ]
+                    }
+
+                ],
+                where: {
+                    [Op.and]: [{
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO Activity List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poActivityList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOActivityList" });
+        }
+    },
+    // Create PO Invoice
+    createPOInvoice: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { po_id, invoice_no, invoice_path } = req;
+
+            // Create PO Invoice
+            const createPOInvoice = await db.po_invoices.create({
+                po_id,
+                invoice_no,
+                invoice_date: Date.now(),
+                invoice_path,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
+
+            if (createPOInvoice) {
+                // Return Formation
+                return {
+                    message: "PO Invoice Inserted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOInvoice" });
+        }
+    },
+    // GET PO Invoice LIST
+    getPOInvoiceList: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            const { po_id } = req;
+            // ASSOCIATION STARTS
+
+            // PO TRK TO PO
+            if (!db.po_invoices.hasAlias('purchase_order') && !db.po_invoices.hasAlias('purchaseOrder')) {
+
+                await db.po_invoices.hasOne(db.purchase_order, {
+                    sourceKey: 'po_id',
+                    foreignKey: 'id',
+                    as: 'purchaseOrder'
+                });
+            }
+
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+            // ASSOCIATION ENDS
+
+            // PO Invoice List
+            const poInvoiceList = await db.po_invoices.findAll({
+                include: [
+                    {
+                        model: db.purchase_order,
+                        as: "purchaseOrder",
+                        include: [
+                            { model: db.vendor, as: 'vendor' },
+                            { model: db.payment_method, as: 'paymentmethod' }
+                        ]
+                    }
+
+                ],
+                where: {
+                    [Op.and]: [{
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO Invoice List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poInvoiceList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOInvoiceList" });
+        }
+    },
+    // Create MFG DOC
+    createMFGDOC: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { po_id, doc_path } = req;
+
+            // Create PO MFG DOC
+            const createPOMFGDOC = await db.po_mfg_doc.create({
+                po_id,
+                doc_path,
+                tenant_id: TENANTID,
+                created_by: user.id
+            });
+
+            if (createPOMFGDOC) {
+                // Return Formation
+                return {
+                    message: "PO MFG DOC Inserted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createMFGDOC" });
+        }
+    },
 }

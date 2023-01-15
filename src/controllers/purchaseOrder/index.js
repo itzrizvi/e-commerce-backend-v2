@@ -9,4 +9,9 @@ module.exports = {
     viewPurchaseOrderPublicController: require('./viewPurchaseOrderPublicController'),
     createPOTRKDetailsController: require('./createPOTRKDetailsController'),
     getPOTRKListController: require('./getPOTRKListController'),
+    createPOActivityController: require('./createPOActivityController'),
+    getPOActivityListController: require('./getPOActivityListController'),
+    createPOInvoiceController: require('./createPOInvoiceController'),
+    getPOInvoiceListController: require('./getPOInvoiceListController'),
+    createMFGDOCController: require('./createMFGDOCController'),
 }

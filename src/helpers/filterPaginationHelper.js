@@ -19,6 +19,7 @@ module.exports = {
                 minRating,
                 maxRating,
                 brand_slug,
+                brandIds,
                 category_slug,
                 searchQuery } = req;
 
@@ -107,14 +108,21 @@ module.exports = {
                     as: 'ratings'
                 });
             }
-
             // Condtionally Accociates
             const conditionWhere = conditions && conditions.length ? { id: conditions } : {};
             // Filter and Paginate Products
             const filteredPaginatedProducts = await db.product.findAll({
                 include: [
                     {
-                        model: db.brand, as: 'brand'
+                        model: db.brand, 
+                        as: 'brand',
+                        ...(brandIds && brandIds.length && {
+                            where: {
+                              id: {
+                                [Op.in]: brandIds
+                              }
+                            }
+                          })
                     },
                     {
                         model: db.category, as: 'category'

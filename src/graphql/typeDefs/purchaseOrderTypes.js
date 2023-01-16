@@ -212,7 +212,7 @@ type POInvoice {
 input POInvoiceInput {
     po_id:Int!
     invoice_no:String!
-    # invoice_date:String!
+    invoice_date:String!
     invoice_path:String!
 }
 

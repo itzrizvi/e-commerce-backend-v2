@@ -1173,13 +1173,13 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { po_id, invoice_no, invoice_path } = req;
+            const { po_id, invoice_no, invoice_path, invoice_date } = req;
 
             // Create PO Invoice
             const createPOInvoice = await db.po_invoices.create({
                 po_id,
                 invoice_no,
-                invoice_date: Date.now(),
+                invoice_date,
                 invoice_path,
                 tenant_id: TENANTID,
                 created_by: user.id

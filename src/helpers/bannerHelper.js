@@ -104,8 +104,6 @@ module.exports = {
         imageName = imageUrl.Key.split("/").slice(-1)[0];
       }
 
-      console.log(imageName);
-
       // Create Banner Item
       const createBannerItem = await db.banner_item.create({
         banner_id,

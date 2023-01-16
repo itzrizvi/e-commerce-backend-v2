@@ -76,6 +76,8 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         prod_slug,
+                        prod_partnum,
+                        prod_condition,
                         tenant_id: TENANTID
                     }]
                 }
@@ -883,22 +885,48 @@ module.exports = {
                 });
             }
 
+            let conditionSlug;
+            if (prod_condition) {
+                const findProductCondition = await db.product_condition.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id: prod_condition,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                conditionSlug = findProductCondition.slug;
+            }
+
+
 
             // FIND TARGETED PRODUCT
+            // Condition Table Association with Product
+            if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('productCondition')) {
+
+                await db.product.hasOne(db.product_condition, {
+                    sourceKey: 'prod_condition',
+                    foreignKey: 'id',
+                    as: 'productCondition'
+                });
+            }
             const findProd = await db.product.findOne({
+                include: [
+                    { model: db.product_condition, as: 'productCondition' }, // Include Product Condition
+                ],
                 where: {
                     [Op.and]: [{
                         id: prod_id,
                         tenant_id: TENANTID
                     }]
                 }
-            })
+            });
 
             // If Product Name is Also Updated
             let prod_slug;
             if (prod_name) {
                 // Product Slug
-                prod_slug = slugify(`${prod_name}`, {
+                prod_slug = slugify(`${prod_name}-${prod_partnum ?? findProd.prod_partnum}-${conditionSlug ?? findProd.productCondition.slug}`, {
                     replacement: '-',
                     remove: /[*+~.()'"!:@]/g,
                     lower: true,

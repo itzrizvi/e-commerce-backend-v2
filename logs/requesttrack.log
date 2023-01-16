@@ -945,3 +945,69 @@
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-12T16:01:28.770Z"}
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-12T16:06:26.051Z"}
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-12T17:09:54.446Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:05:47.040Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:07:37.703Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:09:51.039Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:10:37.593Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:11:03.344Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:16:59.622Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:17:12.835Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:18:26.001Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:18:32.751Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:19:19.315Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:19:33.335Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:22:05.266Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:23:21.428Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:23:37.695Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:24:42.884Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:25:21.429Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:26:49.219Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:27:17.513Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:27:50.655Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:29:58.428Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:30:21.867Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:30:33.664Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:30:58.482Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:31:14.344Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:31:29.318Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:32:07.520Z"}
+{"ip":"::1","level":"warning","line":"16","message":"Tenant ID Is Missing","service":"admin.js","timestamp":"2023-01-15T15:35:51.487Z"}
+{"ip":"::1","level":"warning","line":"16","message":"Tenant ID Is Missing","service":"admin.js","timestamp":"2023-01-15T15:35:53.704Z"}
+{"ip":"::1","level":"warning","line":"16","message":"Tenant ID Is Missing","service":"admin.js","timestamp":"2023-01-15T15:36:03.122Z"}
+{"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2023-01-15T15:36:57.633Z"}
+{"level":"warning","message":"User Not Found - Line:30","service":"adminSignIn.js","timestamp":"2023-01-15T15:36:58.997Z"}
+{"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2023-01-15T15:39:10.748Z"}
+{"level":"warning","message":"User Not Found - Line:30","service":"adminSignIn.js","timestamp":"2023-01-15T15:39:12.110Z"}
+{"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2023-01-15T15:40:20.251Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:41:33.666Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:43:35.455Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:43:50.449Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:44:06.603Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:44:26.028Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:46:14.501Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T15:46:42.284Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T16:01:35.505Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:13:10.780Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:31:23.269Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:31:34.091Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:31:37.827Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:31:52.111Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:35:44.023Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:35:48.686Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T17:36:13.720Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:23:31.736Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:23:38.707Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:24:23.261Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:25:30.469Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:25:44.746Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:26:17.914Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:26:48.556Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-15T21:26:59.797Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-16T11:52:10.071Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-16T12:06:31.882Z"}
+{"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2023-01-16T12:07:13.550Z"}
+{"level":"crit","message":"crit data and hash arguments required","stack":"Error: data and hash arguments required\n    at Object.compare (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/bcrypt.js:208:17)\n    at /home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/promises.js:29:12\n    at new Promise (<anonymous>)\n    at Object.module.exports.promise (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/promises.js:20:12)\n    at Object.compare (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/bcrypt.js:204:25)\n    at adminSignIn (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/src/helpers/adminHelper.js:39:42)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\n    at async module.exports (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/src/controllers/admins/adminSignInController.js:11:18)\n    at async Object.adminSignIn (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/src/operation/mutation/admin.js:25:16)","timestamp":"2023-01-16T12:07:13.821Z"}
+{"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2023-01-16T12:07:24.489Z"}
+{"level":"crit","message":"crit data and hash arguments required","stack":"Error: data and hash arguments required\n    at Object.compare (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/bcrypt.js:208:17)\n    at /home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/promises.js:29:12\n    at new Promise (<anonymous>)\n    at Object.module.exports.promise (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/promises.js:20:12)\n    at Object.compare (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/node_modules/bcrypt/bcrypt.js:204:25)\n    at adminSignIn (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/src/helpers/adminHelper.js:39:42)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\n    at async module.exports (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/src/controllers/admins/adminSignInController.js:11:18)\n    at async Object.adminSignIn (/home/sumon/Desktop/PrimeServerParts/PrimeServerPartsBackend/src/operation/mutation/admin.js:25:16)","timestamp":"2023-01-16T12:07:24.756Z"}
+{"ip":"::1","level":"http","message":"Admin Sign In Requested","service":"Mutation - admin.js","timestamp":"2023-01-16T12:09:31.733Z"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-01-16T12:41:10.651Z"}

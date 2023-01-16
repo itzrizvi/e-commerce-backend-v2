@@ -5,62 +5,26 @@ module.exports = gql`
 # Banner Slider Based Input and Queries ##############################################
 ######################################################################################
 
-
     input BannerInput{
         banner_name: String!
         banner_status: Boolean!
+        content: String
+        layout_type:String!
     }
 
     type BannerOutput {
         message: String!
         status: Boolean!
-        data: Banner
-    }
-
-    input BannerItemInput{
-        banner_id: Int!
-        title: String!
-        sub_title: String
-        link: String
-        price: String
-        sale_price: String
-        button_text: String
-        option_1: String
-        option_2: String
-        sort_order: Int
-        image: Upload!
-    }
-
-    type BannerItemOutput {
-        message: String!
-        status: Boolean!
-        data: BannerItem
+        id: Int
     }
 
     type Banner{
         id: Int!
         name: String
         slug: String
+        content: String
+        layout_type:String
         status: Boolean!
-        tenant_id: String
-        createdAt: String
-        updatedAt: String
-        banner_items:[BannerItem]
-    }
-
-    type BannerItem{
-        id: Int!
-        banner_id: Int!
-        title: String!
-        sub_title: String
-        link: String
-        price: String
-        sale_price: String
-        button_text: String
-        option_1: String
-        option_2: String
-        image: String
-        sort_order: Int
         tenant_id: String
         createdAt: String
         updatedAt: String
@@ -68,23 +32,10 @@ module.exports = gql`
 
     input UpdateBannerInput {
         banner_id: Int!
-        name: String
+        name: String!
+        content: String
+        layout_type:String!
         status: Boolean
-    }
-
-    input UpdateBannerItemInput {
-        id: Int!
-        banner_id: Int!
-        title: String!
-        sub_title: String
-        link: String
-        price: String
-        sale_price: String
-        button_text: String
-        option_1: String
-        option_2: String
-        sort_order: Int
-        image: Upload
     }
 
     input GetSingleBannerInput {
@@ -116,20 +67,13 @@ module.exports = gql`
         data:Banner
     }
 
-    input DeleteBannerItemInput {
-        banner_id: Int!
-    }
-
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
     extend type Mutation {
         addBanner(data: BannerInput): BannerOutput
-        addBannerItem(data: BannerItemInput!): BannerItemOutput
         updateBanner(data: UpdateBannerInput):CommonOutput!
-        updateBannerItem(data: UpdateBannerItemInput):CommonOutput!
-        deleteBannerItem(data: DeleteBannerItemInput):CommonOutput!
     }
 
     extend type Query {

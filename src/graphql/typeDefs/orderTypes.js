@@ -317,6 +317,32 @@ input searchOrderInput {
     searchQuery:Int
 }
 
+
+# ORDER RMA LOOKUP TYPES #############################################
+
+type OrderRMALookup {
+    category:String
+    code:String
+    name:String
+    status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    added_by:Staff
+}
+
+input GetOrderRMAListInput {
+    category:String!
+    code:String!
+}
+
+type GetOrderRMAListOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[OrderRMALookup]
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -341,6 +367,7 @@ extend type Query {
     getOrderActivityHistory(query:GetOrderHistoryInput):GetOrderHistoryOutput!
     getOrderUpdateAdminList:GetOrderUpdateAdmins!
     getOrderBySearch(query:searchOrderInput):GetOrderListForAdmin!
+    getOrderRMALookupList(query:GetOrderRMAListInput):GetOrderRMAListOutput!
 }
 
 

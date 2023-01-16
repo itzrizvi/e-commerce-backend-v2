@@ -2438,4 +2438,67 @@ module.exports = {
         };
     }
   },
+  // GET Order RMA LOOKUP LIST
+  getOrderRMALookupList: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      const { category, code } = req;
+
+      // User and Roles Through Admin Roles Associations
+      db.user.belongsToMany(db.role, {
+        through: db.admin_role,
+        foreignKey: "admin_id",
+      });
+      db.role.belongsToMany(db.user, {
+        through: db.admin_role,
+        foreignKey: "role_id",
+      });
+
+      // Order and User
+      if (!db.order_rma_lookup.hasAlias("user") && !db.order_rma_lookup.hasAlias("added_by")) {
+        await db.order_rma_lookup.hasOne(db.user, {
+          sourceKey: "created_by",
+          foreignKey: "id",
+          as: "added_by",
+        });
+      }
+
+      // Order RMA LOOKUP List For Admin
+      const orderRMALookupList = await db.order_rma_lookup.findAll({
+        include: [
+          {
+            model: db.user,
+            as: "added_by", // User and Roles
+            include: {
+              model: db.role,
+              as: "roles",
+            },
+          }
+        ],
+        where: {
+          [Op.and]: [{
+            tenant_id: TENANTID,
+            category,
+            code
+          }]
+
+        },
+      });
+
+      // Return Formation
+      return {
+        message: "GET Order RMA Lookup List Success",
+        status: true,
+        tenant_id: TENANTID,
+        data: orderRMALookupList,
+      };
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+    }
+  },
 };

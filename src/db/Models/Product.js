@@ -113,7 +113,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         prod_condition: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
         },
         extended_warranty: {
             type: DataTypes.BOOLEAN,

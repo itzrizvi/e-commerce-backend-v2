@@ -52,8 +52,18 @@ module.exports = {
                 partof_product } = req;
 
 
+            const findProductCondition = await db.product_condition.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: prod_condition,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const conditionSlug = findProductCondition.slug;
+
             // Product Slug
-            const prod_slug = slugify(`${prod_name}`, {
+            const prod_slug = slugify(`${prod_name}-${prod_partnum}-${conditionSlug}`, {
                 replacement: '-',
                 remove: /[*+~.()'"!:@]/g,
                 lower: true,
@@ -2337,6 +2347,19 @@ module.exports = {
                     as: 'attribute_group'
                 });
             }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+            // Check If Has Alias with Users and Product
+            if (!db.product.hasAlias('user') && !db.product.hasAlias('representative')) {
+
+                await db.product.hasOne(db.user, {
+                    sourceKey: 'product_rep',
+                    foreignKey: 'id',
+                    as: 'representative'
+                });
+            }
             // ## ASSOCIATION ENDS ##
 
             // Find ALL Product
@@ -2344,6 +2367,13 @@ module.exports = {
                 include: [
                     { model: db.category, as: 'category' }, // Include Product Category
                     { model: db.product_condition, as: 'condition' }, // Include Product Condition
+                    {
+                        model: db.user, as: 'representative', // 
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    },
                     {
                         model: db.product_attribute, as: 'prod_attributes', // Include Product Attributes along with Attributes and Attributes Group
                         include: {

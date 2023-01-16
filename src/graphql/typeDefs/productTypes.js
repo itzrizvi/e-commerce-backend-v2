@@ -143,7 +143,7 @@ input AddProductInput {
     is_featured:Boolean
     is_sale:Boolean
     is_serial:Boolean
-    prod_condition:Int
+    prod_condition:Int!
     extended_warranty:Boolean
     extended_warranty_value:Float
     location:String
@@ -183,6 +183,7 @@ type ProductForList {
     prod_thumbnail:String
     category:Category
     brand:Brand
+    representative:Staff
     prod_attributes:[ProductAttributes]
     ratings:[Rating]
     overallRating:Float

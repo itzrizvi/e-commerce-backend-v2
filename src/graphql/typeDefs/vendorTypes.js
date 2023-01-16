@@ -141,6 +141,18 @@ input UpdateContactPersonInput {
     contact_persons: [ContactPersonUpdateInputType]
 }
 
+input VendorSearchInput {
+    searchQuery:String
+}
+
+type VendorSearchOutput {
+    status: Boolean
+    message: String
+    tenant_id:String
+    data: [Vendor]
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -157,6 +169,7 @@ extend type Mutation {
 
 extend type Query {
     getAllVendor: VendorOutput!
+    getSearchedVendors(query: VendorSearchInput): VendorSearchOutput!
     getSingleVendor(query: GetSingleVendorInput): SingleVendorOutput!
 }
 `;

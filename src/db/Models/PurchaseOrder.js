@@ -28,6 +28,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
+        shipping_cost: {
+            type: DataTypes.FLOAT,
+            allowNull: false
+        },
+        is_insurance: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            defaultValue: false
+        },
+        receiving_instruction: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
         tax_amount: {
             type: DataTypes.FLOAT,
             allowNull: true,

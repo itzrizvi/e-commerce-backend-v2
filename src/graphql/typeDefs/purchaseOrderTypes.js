@@ -19,6 +19,9 @@ input CreatePurchaseOrderInput {
     shipping_account_id:Int
     payment_method_id:Int!
     tax_amount:Float!
+    shipping_cost:Float!
+    is_insurance:Boolean
+    receiving_instruction:String
     order_id:Int
     type:String!
     comment:String
@@ -30,6 +33,9 @@ type PurchaseOrderList {
     id:Int
     po_number:String
     rec_id:Int
+    shipping_cost:Float
+    is_insurance:Boolean
+    receiving_instruction:String
     grandTotal_price:Float
     comment:String
     vendor:Vendor
@@ -68,6 +74,9 @@ type PurchaseOrder {
     comment: String
     shipping_method_id: Int
     tenant_id: String
+    shipping_cost:Float
+    is_insurance:Boolean
+    receiving_instruction:String
     order_id:Int
     type:String
     vendor: Vendor
@@ -117,6 +126,9 @@ input UpdatePurchaseOrderInput {
     status:String
     tax_amount:Float
     comment:String
+    shipping_cost:Float
+    is_insurance:Boolean
+    receiving_instruction:String
     products:JSON
 }
 
@@ -142,6 +154,101 @@ input ViewPOPublicInput {
     param2:String!
 }
 
+type POTRKDetails {
+    purchaseOrder:PurchaseOrderList
+    tracking_no:String
+    createdAt:String
+    updatedAt:String
+}
+
+input POTRKInput {
+    po_id:Int!
+    tracking_no:String!
+}
+
+type GetPOTRKListOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[POTRKDetails]
+}
+
+input GetPOTRKListInput {
+    po_id:Int!
+}
+
+type POActivitites {
+    purchaseOrder:PurchaseOrderList
+    comment:String
+    createdAt:String
+    updatedAt:String
+}
+
+input POActivityInput {
+    po_id:Int!
+    comment:String!
+}
+
+input GetPOActivityListInput {
+    po_id:Int!
+}
+
+type GetPOActivityListOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[POActivitites]
+}
+
+type POInvoice {
+    purchaseOrder:PurchaseOrderList
+    invoice_no:String
+    invoice_date:String
+    invoice_path:String
+    createdAt:String
+    updatedAt:String
+}
+
+input POInvoiceInput {
+    po_id:Int!
+    invoice_no:String!
+    invoice_date:String!
+    invoice_path:String!
+}
+
+input GetPOInvoiceListInput {
+    po_id:Int!
+}
+
+type GetPOInvoiceListOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[POInvoice]
+}
+
+type POMFGDOC {
+    purchaseOrder:PurchaseOrderList
+    doc_path:String
+    createdAt:String
+    updatedAt:String
+}
+
+input POMFGDOCInput {
+    po_id:Int!
+    doc_path:String!
+}
+
+input GetPOMFGDOCListInput {
+    po_id:Int!
+}
+
+type GetPOMFGDOCListOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:[POMFGDOC]
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -152,10 +259,18 @@ extend type Mutation {
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
     createReceiving(data:createReceivingInput):createReceivingOutput!
+    createPOTRKDetails(data:POTRKInput):CommonOutput!
+    createPOActivity(data:POActivityInput):CommonOutput!
+    createPOInvoice(data:POInvoiceInput):CommonOutput!
+    createMFGDOC(data:POMFGDOCInput):CommonOutput!
 }
 
 extend type Query {
     getPurchaseOrderList:GetPurchaseOrderList!
+    getPOTRKList(query:GetPOTRKListInput):GetPOTRKListOutput!
+    getPOActivityList(query:GetPOActivityListInput):GetPOActivityListOutput!
+    getPOInvoiceList(query:GetPOInvoiceListInput):GetPOInvoiceListOutput!
+    getPOMFGDOCList(query:GetPOMFGDOCListInput):GetPOMFGDOCListOutput!
     getSinglePurchaseOrder(query:GetSinglePurchaseOrderInput):GetSinglePurchaseOrderOutput!
     viewPurchaseOrderPublic(query:ViewPOPublicInput):GetSinglePurchaseOrderOutput!
 }

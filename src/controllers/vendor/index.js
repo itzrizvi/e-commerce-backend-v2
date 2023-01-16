@@ -9,4 +9,5 @@ module.exports = {
     updateVendorAddressController: require("./updateVendorAddressController"),
     createContactPersonController: require("./createContactPersonController"),
     updateContactPersonController: require("./updateContactPersonController"),
+    getSearchedVendorsController: require("./getSearchedVendorsController"),
 }

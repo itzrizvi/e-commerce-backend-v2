@@ -64,6 +64,82 @@ module.exports = {
       if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
     }
   },
+<<<<<<< HEAD
+=======
+  // Create Banner Item Helper
+  createBannerItem: async (req, db, user, isAuth, TENANTID) => {
+    try {
+      const {
+        banner_id,
+        title,
+        sub_title,
+        price,
+        sale_price,
+        button_text,
+        option_1,
+        option_2,
+        link,
+        sort_order,
+        image,
+      } = req;
+      // If Image is Available
+      let imageName;
+      if (image) {
+        // Upload Image to AWS S3
+        const banner_image_src = config.get("AWS.BANNER_IMG_SRC").split("/");
+        const banner_image_bucketName = banner_image_src[0];
+        const banner_image_folder = banner_image_src.slice(1);
+        const imageUrl = await singleFileUpload({
+          file: image,
+          idf: banner_id,
+          folder: banner_image_folder,
+          bucketName: banner_image_bucketName,
+        });
+        if (!imageUrl)
+          return {
+            message: "Image Couldn't Uploaded Properly!!!",
+            status: false,
+          };
+        // Update Brand with Image Name
+        imageName = imageUrl.Key.split("/").slice(-1)[0];
+      }
+
+      // Create Banner Item
+      const createBannerItem = await db.banner_item.create({
+        banner_id,
+        title,
+        link,
+        sub_title,
+        price,
+        sale_price,
+        button_text,
+        option_1,
+        option_2,
+        image: imageName,
+        sort_order,
+        tenant_id: TENANTID,
+      });
+
+      if (createBannerItem) {
+        // Return Formation
+        // console.log([...createBannerItem]);
+        return {
+          message: "Successfully Created Banner Item!",
+          data: createBannerItem,
+          status: true,
+        };
+      } else {
+        // Return Formation
+        return {
+          message: "Banner Item Failed!!",
+          status: false,
+        };
+      }
+    } catch (error) {
+      if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
+    }
+  },
+>>>>>>> a98f41c006af6248e3cfcf7d7691af54d49de115
   // Update Banner Helper
   updateBanner: async (req, db, user, isAuth, TENANTID) => {
     // Try Catch Block

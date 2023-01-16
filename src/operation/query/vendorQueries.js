@@ -1,6 +1,8 @@
 // Vendor BASED QUERY
 
-const { getAllVendorController, getSingleVendorController } = require("../../controllers");
+const { getAllVendorController,
+    getSingleVendorController,
+    getSearchedVendorsController } = require("../../controllers");
 
 module.exports = {
     // GET ALL Vendor QUERY
@@ -15,5 +17,15 @@ module.exports = {
         if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Return To Controller
         return await getSingleVendorController(args.query, db, user, isAuth, TENANTID);
-    }
+    },
+    getSearchedVendors: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Return To Controller
+        return await getSearchedVendorsController(args.query, db, user, isAuth, TENANTID);
+    },
 }

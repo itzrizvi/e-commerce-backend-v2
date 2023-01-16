@@ -17,6 +17,7 @@ input FilterPaginationInput {
     minRating:Float
     maxRating:Float
     brand_slug:String
+    brandIds:[Int]
     category_slug:String
 }
 

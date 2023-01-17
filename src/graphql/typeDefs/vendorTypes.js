@@ -152,6 +152,18 @@ type VendorSearchOutput {
     data: [Vendor]
 }
 
+input GetContactPersonInput {
+    id:Int!
+    type:String!
+    status:Boolean!
+}
+
+type GetContactPersonOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[ContactPerson]
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -171,5 +183,6 @@ extend type Query {
     getAllVendor: VendorOutput!
     getSearchedVendors(query: VendorSearchInput): VendorSearchOutput!
     getSingleVendor(query: GetSingleVendorInput): SingleVendorOutput!
+    getContactPerson(query:GetContactPersonInput):GetContactPersonOutput!
 }
 `;

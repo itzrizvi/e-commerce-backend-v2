@@ -343,6 +343,117 @@ type GetOrderRMAListOutput {
     data:[OrderRMALookup]
 }
 
+# ORDER RMA TYPES #############################################
+
+type OrderRMA {
+    id:Int
+    order:OrderList
+    create_date:String
+    rma_type:String
+    handling_fee:Float
+    return_tax:Float
+    refund_shipping:Float
+    rma_status:String
+    email:String
+    comment:String
+}
+
+# type OrderRMADetail {
+#     line_id:Int
+#     rma_id:Int
+#     product_id:Int
+#     product:ProductForList
+#     order_id:Int
+#     order:OrderList
+# }
+
+input OrderRMADetailInput {
+    product_id:Int!
+    rma_quantity:Int!
+    rma_receive_qty:Int!
+    restock_percent:Float
+    restock_fee:Float
+    rma_reason_type:String
+    rma_receive_type:String
+    rma_comment:String
+}
+
+input UpdateOrderRMADetailInput {
+    line_id:Int!
+    product_id:Int
+    rma_quantity:Int
+    rma_receive_qty:Int
+    restock_percent:Float
+    restock_fee:Float
+    rma_reason_type:String
+    rma_receive_type:String
+    rma_comment:String
+}
+
+input OrderRMARDetailInput {
+    product_id:Int!
+    rma_replace_qty:Int!
+    rma_replace_cost:Float!
+    rma_replace_discount:Float
+    comment:String
+}
+
+input UpdateOrderRMARDetailInput {
+    line_id:Int!
+    product_id:Int
+    rma_replace_qty:Int
+    rma_replace_cost:Float
+    rma_replace_discount:Float
+    comment:String
+}
+
+input OrderRMASInput {
+    shipping_in_out:Boolean!
+    shipping_type:Int!
+    return_tracking_out:String
+    return_tracking_in:String
+}
+
+input UpdateOrderRMASInput {
+    line_id:Int!
+    shipping_in_out:Boolean
+    shipping_type:Int
+    return_tracking_out:String
+    return_tracking_in:String
+}
+
+input createOrderRMAInput {
+    order_id:Int!
+    create_date:String!
+    rma_type:String!
+    handling_fee:Float
+    return_tax:Float
+    refund_shipping:Float
+    rma_status:String
+    email:String
+    comment:String
+    orderrmadetail:OrderRMADetailInput!
+    orderrmardetail:OrderRMARDetailInput!
+    orderrmas:OrderRMASInput!
+}
+
+input updateOrderRMAInput {
+    id:Int!
+    order_id:Int
+    create_date:String
+    rma_type:String
+    handling_fee:Float
+    return_tax:Float
+    refund_shipping:Float
+    rma_status:String
+    email:String
+    comment:String
+    orderrmadetail:UpdateOrderRMADetailInput
+    orderrmardetail:UpdateOrderRMARDetailInput
+    orderrmas:UpdateOrderRMASInput
+}
+
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -354,6 +465,8 @@ extend type Mutation {
     updateOrder(data:UpdateOrderInput):CommonOutput!
     orderStatusChange(data:OrderStatusChangeInput):CommonOutput!
     orderCancelByCustomer(data:CancelOrderByCustomerInput):CommonOutput!
+    createOrderRMA(data:createOrderRMAInput):CommonOutput!
+    updateOrderRMA(data:updateOrderRMAInput):CommonOutput!
 }
 
 extend type Query {

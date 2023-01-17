@@ -262,6 +262,41 @@ module.exports = {
                     as: 'vendor'
                 });
             }
+            // PO TO PO TRK DETAILS
+            if (!db.purchase_order.hasAlias('po_trk_details') && !db.purchase_order.hasAlias('potrkdetails')) {
+
+                await db.purchase_order.hasMany(db.po_trk_details, {
+                    foreignKey: 'po_id',
+                    as: 'potrkdetails'
+                });
+            }
+
+            // PO TO PO Activities
+            if (!db.purchase_order.hasAlias('po_activities') && !db.purchase_order.hasAlias('poactivitites')) {
+
+                await db.purchase_order.hasMany(db.po_activities, {
+                    foreignKey: 'po_id',
+                    as: 'poactivitites'
+                });
+            }
+
+            // PO TO PO Invoices
+            if (!db.purchase_order.hasAlias('po_invoices') && !db.purchase_order.hasAlias('poinvoices')) {
+
+                await db.purchase_order.hasMany(db.po_invoices, {
+                    foreignKey: 'po_id',
+                    as: 'poinvoices'
+                });
+            }
+
+            // PO TO PO MFG DOC
+            if (!db.purchase_order.hasAlias('po_mfg_doc') && !db.purchase_order.hasAlias('pomfgdoc')) {
+
+                await db.purchase_order.hasMany(db.po_mfg_doc, {
+                    foreignKey: 'po_id',
+                    as: 'pomfgdoc'
+                });
+            }
 
             // PO TO payment_method
             if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
@@ -291,6 +326,10 @@ module.exports = {
             const poList = await db.purchase_order.findAll({
                 include: [
                     { model: db.vendor, as: 'vendor' },
+                    { model: db.po_trk_details, as: 'potrkdetails' },
+                    { model: db.po_activities, as: 'poactivitites' },
+                    { model: db.po_invoices, as: 'poinvoices' },
+                    { model: db.po_mfg_doc, as: 'pomfgdoc' },
                     { model: db.payment_method, as: 'paymentmethod' },
                     {
                         model: db.user, as: 'POCreated_by', // Include User who created the product and his roles
@@ -448,6 +487,42 @@ module.exports = {
                     as: 'brand'
                 });
             }
+
+            // PO TO PO TRK DETAILS
+            if (!db.purchase_order.hasAlias('po_trk_details') && !db.purchase_order.hasAlias('potrkdetails')) {
+
+                await db.purchase_order.hasMany(db.po_trk_details, {
+                    foreignKey: 'po_id',
+                    as: 'potrkdetails'
+                });
+            }
+
+            // PO TO PO Activities
+            if (!db.purchase_order.hasAlias('po_activities') && !db.purchase_order.hasAlias('poactivitites')) {
+
+                await db.purchase_order.hasMany(db.po_activities, {
+                    foreignKey: 'po_id',
+                    as: 'poactivitites'
+                });
+            }
+
+            // PO TO PO Invoices
+            if (!db.purchase_order.hasAlias('po_invoices') && !db.purchase_order.hasAlias('poinvoices')) {
+
+                await db.purchase_order.hasMany(db.po_invoices, {
+                    foreignKey: 'po_id',
+                    as: 'poinvoices'
+                });
+            }
+
+            // PO TO PO MFG DOC
+            if (!db.purchase_order.hasAlias('po_mfg_doc') && !db.purchase_order.hasAlias('pomfgdoc')) {
+
+                await db.purchase_order.hasMany(db.po_mfg_doc, {
+                    foreignKey: 'po_id',
+                    as: 'pomfgdoc'
+                });
+            }
             // ASSOCIATION ENDS
 
             // Single PO 
@@ -460,6 +535,10 @@ module.exports = {
                     { model: db.shipping_method, as: 'shippingMethod' },
                     { model: db.address, as: 'vendorBillingAddress' },
                     { model: db.address, as: 'vendorShippingAddress' },
+                    { model: db.po_trk_details, as: 'potrkdetails' },
+                    { model: db.po_activities, as: 'poactivitites' },
+                    { model: db.po_invoices, as: 'poinvoices' },
+                    { model: db.po_mfg_doc, as: 'pomfgdoc' },
                     {
                         model: db.user, as: 'POCreated_by', // Include User who created the product and his roles
                         include: {
@@ -891,6 +970,42 @@ module.exports = {
                     as: 'brand'
                 });
             }
+
+            // PO TO PO TRK DETAILS
+            if (!db.purchase_order.hasAlias('po_trk_details') && !db.purchase_order.hasAlias('potrkdetails')) {
+
+                await db.purchase_order.hasMany(db.po_trk_details, {
+                    foreignKey: 'po_id',
+                    as: 'potrkdetails'
+                });
+            }
+
+            // PO TO PO Activities
+            if (!db.purchase_order.hasAlias('po_activities') && !db.purchase_order.hasAlias('poactivitites')) {
+
+                await db.purchase_order.hasMany(db.po_activities, {
+                    foreignKey: 'po_id',
+                    as: 'poactivitites'
+                });
+            }
+
+            // PO TO PO Invoices
+            if (!db.purchase_order.hasAlias('po_invoices') && !db.purchase_order.hasAlias('poinvoices')) {
+
+                await db.purchase_order.hasMany(db.po_invoices, {
+                    foreignKey: 'po_id',
+                    as: 'poinvoices'
+                });
+            }
+
+            // PO TO PO MFG DOC
+            if (!db.purchase_order.hasAlias('po_mfg_doc') && !db.purchase_order.hasAlias('pomfgdoc')) {
+
+                await db.purchase_order.hasMany(db.po_mfg_doc, {
+                    foreignKey: 'po_id',
+                    as: 'pomfgdoc'
+                });
+            }
             // ASSOCIATION ENDS
 
             // DECODE
@@ -905,6 +1020,10 @@ module.exports = {
                     { model: db.shipping_method, as: 'shippingMethod' },
                     { model: db.address, as: 'vendorBillingAddress' },
                     { model: db.address, as: 'vendorShippingAddress' },
+                    { model: db.po_trk_details, as: 'potrkdetails' },
+                    { model: db.po_activities, as: 'poactivitites' },
+                    { model: db.po_invoices, as: 'poinvoices' },
+                    { model: db.po_mfg_doc, as: 'pomfgdoc' },
                     {
                         model: db.po_productlist, as: 'poProductlist', // 
                         include: {

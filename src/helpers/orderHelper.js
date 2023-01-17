@@ -5,6 +5,7 @@ const { multipleFileUpload } = require("../utils/fileUpload");
 const config = require("config");
 const { verifierEmail } = require("../utils/verifyEmailSender");
 const { decrypt } = require("../utils/hashes");
+const logger = require("../../logger");
 
 // Order HELPER
 module.exports = {
@@ -363,7 +364,7 @@ module.exports = {
       let sub_total = 0; // sub_total
       let totalQuantity = 0;
       //
-      const orderItems = [];
+      let orderItems = [];
       cartItems.forEach(async (item) => {
 
         if (item.promo_type) {
@@ -703,7 +704,7 @@ module.exports = {
         }
       });
 
-      const shipping_cost = 0; // TODO ->> IT WILL CHANGE
+      let shipping_cost = 0; // TODO ->> IT WILL CHANGE
 
       let sub_total = 0; // sub_total
       let totalQuantity = 0;
@@ -1075,6 +1076,8 @@ module.exports = {
         ]
       } : {};
 
+      // let orderID = parseInt(searchQuery);
+      // let notANumber = isNaN(orderID);
 
       // Order List For Admin
       const orderlist = await db.order.findAll({
@@ -1123,6 +1126,7 @@ module.exports = {
           }
         ],
         where: {
+          // ...(!notANumber && { id: orderID }),
           tenant_id: TENANTID,
           ...(updatedby && updatedby.length && {
             updated_by: {
@@ -1432,7 +1436,7 @@ module.exports = {
       const shipping_cost = 0;
 
       // Product ID Array
-      const productIds = [];
+      let productIds = [];
       orderItems.forEach(async (element) => {
         await productIds.push(element.product_id);
       });
@@ -1571,7 +1575,7 @@ module.exports = {
       // Calculate Total
       let total = sub_total + shipping_cost - discount_amount;
       // 
-      const tax_amount = 0;
+      let tax_amount = 0;
       if (!tax_exempt) {
         const getZipCode = await db.address.findOne({
           where: {
@@ -2499,6 +2503,267 @@ module.exports = {
           message: `Something Went Wrong!!! Error: ${error}`,
           status: false,
         };
+      logger.crit("crit", error, { service: 'orderHelper.js', query: "getOrderRMALookupList" });
+    }
+  },
+  // Create Order RMA
+  createOrderRMA: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+      // Data From Request
+      const { order_id,
+        create_date,
+        rma_type,
+        handling_fee,
+        return_tax,
+        refund_shipping,
+        rma_status,
+        email,
+        comment,
+        orderrmadetail,
+        orderrmardetail,
+        orderrmas } = req;
+
+      const createorderrma = await db.order_rma.create({ // Insert Order RMA
+        order_id,
+        create_date,
+        rma_type,
+        handling_fee,
+        return_tax,
+        refund_shipping,
+        rma_status,
+        email,
+        comment,
+        created_by: user.id,
+        tenant_id: TENANTID
+      });
+      if (!createorderrma) return { message: "Something Went Wrong!!!", status: false }
+
+      // Order RMA Details Creation
+      const { product_id,
+        rma_quantity,
+        rma_receive_qty,
+        restock_percent,
+        restock_fee,
+        rma_reason_type,
+        rma_receive_type,
+        rma_comment } = orderrmadetail;
+
+      const createOrderRMADetail = await db.order_rma_detail.create({
+        rma_id: createorderrma.id,
+        product_id,
+        order_id,
+        rma_quantity,
+        rma_receive_qty,
+        restock_percent,
+        restock_fee,
+        rma_reason_type,
+        rma_receive_type,
+        rma_comment,
+        created_by: user.id,
+        tenant_id: TENANTID
+      });
+      if (!createOrderRMADetail) return { message: "Something Went Wrong!!!", status: false }
+
+
+      // Order RMA R DETAILS Creation
+      const { product_id: orderrmardetailproductid,
+        rma_replace_qty,
+        rma_replace_cost,
+        rma_replace_discount,
+        comment: orderrmardetailcomment } = orderrmardetail;
+
+      const createOrderRMARDetails = await db.order_rma_r_detail.create({
+        rma_id: createorderrma.id,
+        product_id: orderrmardetailproductid,
+        order_id,
+        rma_replace_qty,
+        rma_replace_cost,
+        rma_replace_discount,
+        comment: orderrmardetailcomment,
+        created_by: user.id,
+        tenant_id: TENANTID
+      });
+      if (!createOrderRMARDetails) return { message: "Something Went Wrong!!!", status: false }
+
+
+      // Order RMA S Creation
+      const { shipping_in_out,
+        shipping_type,
+        return_tracking_out,
+        return_tracking_in } = orderrmas;
+
+      const createOrderRMAS = await db.order_rma_s.create({
+        rma_id: createorderrma.id,
+        shipping_in_out,
+        shipping_type,
+        return_tracking_out,
+        return_tracking_in,
+        created_by: user.id,
+        tenant_id: TENANTID
+      });
+      if (!createOrderRMAS) return { message: "Something Went Wrong!!!", status: false }
+
+
+
+
+      // Return Formation
+      return {
+        message: "Order RMA Created Successfully!!!",
+        tenant_id: TENANTID,
+        status: true,
+      };
+
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+      logger.crit("crit", error, { service: 'orderHelper.js', query: "createOrderRMA" });
+    }
+  },
+  // Update Order RMA
+  updateOrderRMA: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+      // Data From Request
+      const { id,
+        order_id,
+        create_date,
+        rma_type,
+        handling_fee,
+        return_tax,
+        refund_shipping,
+        rma_status,
+        email,
+        comment,
+        orderrmadetail,
+        orderrmardetail,
+        orderrmas } = req;
+
+      const updateorderrma = await db.order_rma.update({ // Insert Order RMA
+        order_id,
+        create_date,
+        rma_type,
+        handling_fee,
+        return_tax,
+        refund_shipping,
+        rma_status,
+        email,
+        comment,
+        updated_by: user.id
+      }, {
+        where: {
+          [Op.and]: [{
+            id,
+            tenant_id: TENANTID
+          }]
+        }
+      });
+      if (!updateorderrma) return { message: "Something Went Wrong!!!", status: false }
+
+      // Order RMA Detail Update
+      const { line_id: orderrmadetaillineID,
+        product_id,
+        rma_quantity,
+        rma_receive_qty,
+        restock_percent,
+        restock_fee,
+        rma_reason_type,
+        rma_receive_type,
+        rma_comment } = orderrmadetail;
+
+      const updateOrderRMADetail = await db.order_rma_detail.update({
+        product_id,
+        order_id,
+        rma_quantity,
+        rma_receive_qty,
+        restock_percent,
+        restock_fee,
+        rma_reason_type,
+        rma_receive_type,
+        rma_comment,
+        updated_by: user.id
+      }, {
+        where: {
+          [Op.and]: [{
+            rma_id: id,
+            line_id: orderrmadetaillineID,
+            tenant_id: TENANTID
+          }]
+        }
+      });
+      if (!updateOrderRMADetail) return { message: "Something Went Wrong!!!", status: false }
+
+
+      // Order RMA R DETAILS Update
+      const { line_id: orderrmardetailID,
+        product_id: orderrmardetailproduct,
+        rma_replace_qty,
+        rma_replace_cost,
+        rma_replace_discount,
+        comment: orderrmardetailcomment } = orderrmardetail;
+
+      const updateOrderRMARDetails = await db.order_rma_r_detail.update({
+        product_id: orderrmardetailproduct,
+        order_id,
+        rma_replace_qty,
+        rma_replace_cost,
+        rma_replace_discount,
+        comment: orderrmardetailcomment,
+        updated_by: user.id
+      }, {
+        where: {
+          [Op.and]: [{
+            rma_id: id,
+            line_id: orderrmardetailID,
+            tenant_id: TENANTID
+          }]
+        }
+      });
+      if (!updateOrderRMARDetails) return { message: "Something Went Wrong!!!", status: false }
+
+
+      // Order RMA S Update
+      const { line_id: orderrmaslineID,
+        shipping_in_out,
+        shipping_type,
+        return_tracking_out,
+        return_tracking_in } = orderrmas;
+
+      const updateOrderRMAS = await db.order_rma_s.update({
+        shipping_in_out,
+        shipping_type,
+        return_tracking_out,
+        return_tracking_in,
+        updated_by: user.id
+      }, {
+        where: {
+          [Op.and]: [{
+            rma_id: id,
+            line_id: orderrmaslineID,
+            tenant_id: TENANTID
+          }]
+        }
+      });
+      if (!updateOrderRMAS) return { message: "Something Went Wrong!!!", status: false }
+
+
+      // Return Formation
+      return {
+        message: "Order RMA Updated Successfully!!!",
+        tenant_id: TENANTID,
+        status: true,
+      };
+
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+      logger.crit("crit", error, { service: 'orderHelper.js', query: "updateOrderRMA" });
     }
   },
 };

@@ -42,6 +42,10 @@ type PurchaseOrderList {
     paymentmethod:PaymentMethod
     order_id:Int
     type:String
+    potrkdetails:[POTRKDetails]
+    poactivitites:[POActivitites]
+    poinvoices:[POInvoice]
+    pomfgdoc:[POMFGDOC]
     POCreated_by:Staff
 }
 
@@ -86,6 +90,10 @@ type PurchaseOrder {
     shippingMethod:ShippingMethodPublic
     poProductlist:[POProductList]
     contactPerson:ContactPerson
+    potrkdetails:[POTRKDetails]
+    poactivitites:[POActivitites]
+    poinvoices:[POInvoice]
+    pomfgdoc:[POMFGDOC]
     shippingAccount:ShippingAccount
     POCreated_by: Staff
 }
@@ -155,6 +163,7 @@ input ViewPOPublicInput {
 }
 
 type POTRKDetails {
+    po_id:Int
     purchaseOrder:PurchaseOrderList
     tracking_no:String
     createdAt:String
@@ -178,6 +187,7 @@ input GetPOTRKListInput {
 }
 
 type POActivitites {
+    po_id:Int
     purchaseOrder:PurchaseOrderList
     comment:String
     createdAt:String
@@ -201,6 +211,7 @@ type GetPOActivityListOutput {
 }
 
 type POInvoice {
+    po_id:Int
     purchaseOrder:PurchaseOrderList
     invoice_no:String
     invoice_date:String
@@ -228,6 +239,7 @@ type GetPOInvoiceListOutput {
 }
 
 type POMFGDOC {
+    po_id:Int
     purchaseOrder:PurchaseOrderList
     doc_path:String
     createdAt:String

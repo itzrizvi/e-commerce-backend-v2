@@ -1040,6 +1040,8 @@ module.exports = {
                     as: 'countryCode'
                 });
             }
+            let vendorID = parseInt(searchQuery);
+            let notANumber = isNaN(vendorID);
 
             // GET Searched Customer
             const getsearchedvendors = await db.vendor.findAll({
@@ -1069,9 +1071,11 @@ module.exports = {
                             email: {
                                 [Op.iLike]: `%${searchQuery}%`
                             }
+                        },
+                        {
+                            ...(!notANumber && { id: vendorID })
                         }
-                    ]
-
+                    ],
                 }
             });
 
@@ -1082,6 +1086,40 @@ module.exports = {
                 status: true,
                 tenant_id: TENANTID,
                 data: getsearchedvendors
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+        }
+    },
+    // GET CONTACT PERSON
+    getContactPerson: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // Data From Request
+            const { id, type, status } = req;
+
+            // GET Contact Person
+            const getcontactperson = await db.contact_person.findAll({
+                where: {
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        status,
+                        ref_id: id,
+                        ref_model: type
+                    }]
+                }
+            });
+
+
+            // Return 
+            return {
+                message: "Get Contact Person!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: getcontactperson
             }
 
 

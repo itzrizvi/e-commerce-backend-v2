@@ -18,4 +18,6 @@ module.exports = {
     getOrderUpdateAdminListController: require('./getOrderUpdateAdminListController'),
     getOrderBySearchController: require('./getOrderBySearchController'),
     getOrderRMALookupListController: require('./getOrderRMALookupListController'),
+    createOrderRMAController: require('./createOrderRMAController'),
+    updateOrderRMAController: require('./updateOrderRMAController'),
 }

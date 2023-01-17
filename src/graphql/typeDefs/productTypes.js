@@ -184,6 +184,9 @@ type ProductForList {
     category:Category
     brand:Brand
     representative:Staff
+    dimensions:ProductDimension
+    productCondition:ProductCondition
+    weight:ProductWeight
     prod_attributes:[ProductAttributes]
     ratings:[Rating]
     overallRating:Float

@@ -1076,8 +1076,12 @@ module.exports = {
         ]
       } : {};
 
-      // let orderID = parseInt(searchQuery);
-      // let notANumber = isNaN(orderID);
+      let oID = parseInt(searchQuery);
+      let orderID;
+      let notANumber = isNaN(oID);
+      if (!notANumber) {
+        orderID = oID
+      }
 
       // Order List For Admin
       const orderlist = await db.order.findAll({
@@ -1126,7 +1130,11 @@ module.exports = {
           }
         ],
         where: {
-          // ...(!notANumber && { id: orderID }),
+          // ...(orderID && {
+          //   id: {
+          //     [Op.contains]: orderID
+          //   },
+          // }),
           tenant_id: TENANTID,
           ...(updatedby && updatedby.length && {
             updated_by: {
@@ -2589,14 +2597,14 @@ module.exports = {
 
       // Order RMA S Creation
       const { shipping_in_out,
-        shipping_type,
+        shipping_method,
         return_tracking_out,
         return_tracking_in } = orderrmas;
 
       const createOrderRMAS = await db.order_rma_s.create({
         rma_id: createorderrma.id,
         shipping_in_out,
-        shipping_type,
+        shipping_method,
         return_tracking_out,
         return_tracking_in,
         created_by: user.id,
@@ -2728,13 +2736,13 @@ module.exports = {
       // Order RMA S Update
       const { line_id: orderrmaslineID,
         shipping_in_out,
-        shipping_type,
+        shipping_method,
         return_tracking_out,
         return_tracking_in } = orderrmas;
 
       const updateOrderRMAS = await db.order_rma_s.update({
         shipping_in_out,
-        shipping_type,
+        shipping_method,
         return_tracking_out,
         return_tracking_in,
         updated_by: user.id
@@ -2764,6 +2772,525 @@ module.exports = {
           status: false,
         };
       logger.crit("crit", error, { service: 'orderHelper.js', query: "updateOrderRMA" });
+    }
+  },
+  // GET Order RMA LIST
+  getOrderRMAList: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      const { id, order_id } = req;
+
+      // User and Roles Through Admin Roles Associations
+      db.user.belongsToMany(db.role, {
+        through: db.admin_role,
+        foreignKey: "admin_id",
+      });
+      db.role.belongsToMany(db.user, {
+        through: db.admin_role,
+        foreignKey: "role_id",
+      });
+
+      // Order RMA and User
+      if (!db.order_rma.hasAlias("user") && !db.order_rma.hasAlias("added_by")) {
+        await db.order_rma.hasOne(db.user, {
+          sourceKey: "created_by",
+          foreignKey: "id",
+          as: "added_by",
+        });
+      }
+
+
+      // Order RMA and User
+      if (!db.order_rma.hasAlias("order")) {
+        await db.order_rma.hasOne(db.order, {
+          sourceKey: "order_id",
+          foreignKey: "id",
+          as: "order",
+        });
+      }
+
+      // Check If Has Alias with Order and Payment Method
+      if (
+        !db.order.hasAlias("payment_method") &&
+        !db.order.hasAlias("paymentmethod")
+      ) {
+        await db.order.hasOne(db.payment_method, {
+          sourceKey: "payment_id",
+          foreignKey: "id",
+          as: "paymentmethod",
+        });
+      }
+
+      // Check If Has Alias with Order and Order Status
+      if (
+        !db.order.hasAlias("order_status") &&
+        !db.order.hasAlias("orderStatus")
+      ) {
+        await db.order.hasOne(db.order_status, {
+          sourceKey: "order_status_id",
+          foreignKey: "id",
+          as: "orderStatus",
+        });
+      }
+
+      // Order and Order Items
+      if (
+        !db.order.hasAlias("order_item") &&
+        !db.order.hasAlias("orderitems")
+      ) {
+        await db.order.hasMany(db.order_item, {
+          foreignKey: "order_id",
+          as: "orderitems",
+        });
+      }
+      // Order Items and Product
+      if (!db.order_item.hasAlias("product")) {
+        await db.order_item.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: "id",
+          as: "product"
+        });
+      }
+
+      // Dimension Table Association with Product
+      if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
+
+        await db.product.hasOne(db.product_dimension, {
+          foreignKey: 'product_id',
+          as: 'dimensions'
+        });
+      }
+
+      // 
+      if (!db.product_dimension.hasAlias('dimension_class') && !db.product_dimension.hasAlias('dimensionClass')) {
+
+        await db.product_dimension.hasOne(db.dimension_class, {
+          sourceKey: 'dimension_class_id',
+          foreignKey: 'id',
+          as: 'dimensionClass'
+        });
+      }
+
+      // Weight Table Association with Product
+      if (!db.product.hasAlias('product_weight') && !db.product.hasAlias('weight')) {
+
+        await db.product.hasOne(db.product_weight, {
+          foreignKey: 'product_id',
+          as: 'weight'
+        });
+      }
+
+      // 
+      if (!db.product_weight.hasAlias('weight_class') && !db.product_weight.hasAlias('weightClass')) {
+
+        await db.product_weight.hasOne(db.weight_class, {
+          sourceKey: 'weight_class_id',
+          foreignKey: 'id',
+          as: 'weightClass'
+        });
+      }
+
+      // Condition Table Association with Product
+      if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('productCondition')) {
+
+        await db.product.hasOne(db.product_condition, {
+          sourceKey: 'prod_condition',
+          foreignKey: 'id',
+          as: 'productCondition'
+        });
+      }
+
+      // Order RMA List For Admin
+      const orderRMAList = await db.order_rma.findAll({
+        include: [
+          {
+            model: db.user,
+            as: "added_by", // User and Roles
+            include: {
+              model: db.role,
+              as: "roles",
+            },
+          },
+          {
+            model: db.order,
+            as: "order",
+            ...(order_id && {
+              where: {
+                id: order_id
+              }
+            }),
+            include: [
+              {
+                model: db.order_item, // Order Items and Products
+                as: "orderitems",
+                include: [{
+                  model: db.product,
+                  as: "product",
+                  include: [
+                    {
+                      model: db.product_dimension, as: 'dimensions',
+                      include: {
+                        model: db.dimension_class,
+                        as: 'dimensionClass'
+                      }
+                    }, // Include Product Dimensions
+                    {
+                      model: db.product_weight, as: 'weight',
+                      include: {
+                        model: db.weight_class,
+                        as: 'weightClass'
+                      }
+                    },
+                    { model: db.product_condition, as: 'productCondition' },
+                  ]
+                }]
+              },
+              {
+                model: db.payment_method,
+                as: "paymentmethod"
+              },
+            ]
+          }
+        ],
+        where: {
+          tenant_id: TENANTID,
+          ...(id && {
+            id: id
+          }),
+        },
+      });
+
+      // Return Formation
+      return {
+        message: "GET Order RMA List Success",
+        status: true,
+        tenant_id: TENANTID,
+        data: orderRMAList,
+      };
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+      logger.crit("crit", error, { service: 'orderHelper.js', query: "getOrderRMAList" });
+    }
+  },
+  // GET Order RMA LIST
+  getSingleOrderRMA: async (req, db, user, isAuth, TENANTID) => {
+    // Try Catch Block
+    try {
+
+      const { id } = req;
+
+      // User and Roles Through Admin Roles Associations
+      db.user.belongsToMany(db.role, {
+        through: db.admin_role,
+        foreignKey: "admin_id",
+      });
+      db.role.belongsToMany(db.user, {
+        through: db.admin_role,
+        foreignKey: "role_id",
+      });
+
+      // Order RMA and User
+      if (!db.order_rma.hasAlias("user") && !db.order_rma.hasAlias("added_by")) {
+        await db.order_rma.hasOne(db.user, {
+          sourceKey: "created_by",
+          foreignKey: "id",
+          as: "added_by",
+        });
+      }
+
+
+      // Order RMA and User
+      if (!db.order_rma.hasAlias("order")) {
+        await db.order_rma.hasOne(db.order, {
+          sourceKey: "order_id",
+          foreignKey: "id",
+          as: "order",
+        });
+      }
+
+      // Check If Has Alias with Order and Payment Method
+      if (
+        !db.order.hasAlias("payment_method") &&
+        !db.order.hasAlias("paymentmethod")
+      ) {
+        await db.order.hasOne(db.payment_method, {
+          sourceKey: "payment_id",
+          foreignKey: "id",
+          as: "paymentmethod",
+        });
+      }
+
+      // Check If Has Alias with Order and Order Status
+      if (
+        !db.order.hasAlias("order_status") &&
+        !db.order.hasAlias("orderStatus")
+      ) {
+        await db.order.hasOne(db.order_status, {
+          sourceKey: "order_status_id",
+          foreignKey: "id",
+          as: "orderStatus",
+        });
+      }
+
+      // Order and Order Items
+      if (
+        !db.order.hasAlias("order_item") &&
+        !db.order.hasAlias("orderitems")
+      ) {
+        await db.order.hasMany(db.order_item, {
+          foreignKey: "order_id",
+          as: "orderitems",
+        });
+      }
+      // Order Items and Product
+      if (!db.order_item.hasAlias("product")) {
+        await db.order_item.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: "id",
+          as: "product"
+        });
+      }
+
+      // Dimension Table Association with Product
+      if (!db.product.hasAlias('product_dimension') && !db.product.hasAlias('dimensions')) {
+
+        await db.product.hasOne(db.product_dimension, {
+          foreignKey: 'product_id',
+          as: 'dimensions'
+        });
+      }
+
+      // 
+      if (!db.product_dimension.hasAlias('dimension_class') && !db.product_dimension.hasAlias('dimensionClass')) {
+
+        await db.product_dimension.hasOne(db.dimension_class, {
+          sourceKey: 'dimension_class_id',
+          foreignKey: 'id',
+          as: 'dimensionClass'
+        });
+      }
+
+      // Weight Table Association with Product
+      if (!db.product.hasAlias('product_weight') && !db.product.hasAlias('weight')) {
+
+        await db.product.hasOne(db.product_weight, {
+          foreignKey: 'product_id',
+          as: 'weight'
+        });
+      }
+
+      // 
+      if (!db.product_weight.hasAlias('weight_class') && !db.product_weight.hasAlias('weightClass')) {
+
+        await db.product_weight.hasOne(db.weight_class, {
+          sourceKey: 'weight_class_id',
+          foreignKey: 'id',
+          as: 'weightClass'
+        });
+      }
+
+      // Condition Table Association with Product
+      if (!db.product.hasAlias('product_condition') && !db.product.hasAlias('productCondition')) {
+
+        await db.product.hasOne(db.product_condition, {
+          sourceKey: 'prod_condition',
+          foreignKey: 'id',
+          as: 'productCondition'
+        });
+      }
+
+      // 
+      if (!db.order_rma.hasAlias('order_rma_detail') && !db.order_rma.hasAlias('orderrmadetails')) {
+
+        await db.order_rma.hasMany(db.order_rma_detail, {
+          foreignKey: 'rma_id',
+          as: 'orderrmadetails'
+        });
+      }
+
+      // 
+      if (!db.order_rma.hasAlias('order_rma_r_detail') && !db.order_rma.hasAlias('orderrmardetails')) {
+
+        await db.order_rma.hasMany(db.order_rma_r_detail, {
+          foreignKey: 'rma_id',
+          as: 'orderrmardetails'
+        });
+      }
+
+      // 
+      if (!db.order_rma.hasAlias('order_rma_s') && !db.order_rma.hasAlias('orderrmas')) {
+
+        await db.order_rma.hasMany(db.order_rma_s, {
+          foreignKey: 'rma_id',
+          as: 'orderrmas'
+        });
+      }
+
+      // 
+      if (!db.order_rma_s.hasAlias('shipping_method') && !db.order_rma_s.hasAlias('shippingmethod')) {
+
+        await db.order_rma_s.hasOne(db.shipping_method, {
+          sourceKey: 'shipping_method',
+          foreignKey: 'id',
+          as: 'shippingmethod'
+        });
+      }
+
+      // 
+      if (!db.order_rma_detail.hasAlias('product')) {
+        await db.order_rma_detail.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: 'id',
+          as: 'product'
+        });
+      }
+      // 
+      if (!db.order_rma_r_detail.hasAlias('product')) {
+        await db.order_rma_r_detail.hasOne(db.product, {
+          sourceKey: "product_id",
+          foreignKey: 'id',
+          as: 'product'
+        });
+      }
+
+      // Single Order RMA Admin
+      const singleorderRMA = await db.order_rma.findOne({
+        include: [
+          {
+            model: db.user,
+            as: "added_by", // User and Roles
+            include: {
+              model: db.role,
+              as: "roles",
+            },
+          },
+          {
+            model: db.order,
+            as: "order",
+            include: [
+              {
+                model: db.order_item, // Order Items and Products
+                as: "orderitems",
+                include: [{
+                  model: db.product,
+                  as: "product",
+                  include: [
+                    {
+                      model: db.product_dimension, as: 'dimensions',
+                      include: {
+                        model: db.dimension_class,
+                        as: 'dimensionClass'
+                      }
+                    }, // Include Product Dimensions
+                    {
+                      model: db.product_weight, as: 'weight',
+                      include: {
+                        model: db.weight_class,
+                        as: 'weightClass'
+                      }
+                    },
+                    { model: db.product_condition, as: 'productCondition' },
+                  ]
+                }]
+              },
+              {
+                model: db.payment_method,
+                as: "paymentmethod"
+              },
+            ]
+          },
+          {
+            model: db.order_rma_detail,
+            as: "orderrmadetails",
+            include: [
+              {
+                model: db.product,
+                as: "product",
+                include: [
+                  {
+                    model: db.product_dimension, as: 'dimensions',
+                    include: {
+                      model: db.dimension_class,
+                      as: 'dimensionClass'
+                    }
+                  }, // Include Product Dimensions
+                  {
+                    model: db.product_weight, as: 'weight',
+                    include: {
+                      model: db.weight_class,
+                      as: 'weightClass'
+                    }
+                  },
+                  { model: db.product_condition, as: 'productCondition' },
+                ]
+              }
+            ]
+          },
+          {
+            model: db.order_rma_r_detail,
+            as: "orderrmardetails",
+            include: [
+              {
+                model: db.product,
+                as: "product",
+                include: [
+                  {
+                    model: db.product_dimension, as: 'dimensions',
+                    include: {
+                      model: db.dimension_class,
+                      as: 'dimensionClass'
+                    }
+                  }, // Include Product Dimensions
+                  {
+                    model: db.product_weight, as: 'weight',
+                    include: {
+                      model: db.weight_class,
+                      as: 'weightClass'
+                    }
+                  },
+                  { model: db.product_condition, as: 'productCondition' },
+                ]
+              }
+            ]
+          },
+          {
+            model: db.order_rma_s,
+            as: "orderrmas",
+            include: [
+              {
+                model: db.shipping_method,
+                as: "shippingmethod"
+              }
+            ]
+          },
+        ],
+        where: {
+          [Op.and]: [{
+            id,
+            tenant_id: TENANTID
+          }]
+        },
+      });
+
+      // Return Formation
+      return {
+        message: "GET Single Order RMA Success",
+        status: true,
+        tenant_id: TENANTID,
+        data: singleorderRMA,
+      };
+    } catch (error) {
+      if (error)
+        return {
+          message: `Something Went Wrong!!! Error: ${error}`,
+          status: false,
+        };
+      logger.crit("crit", error, { service: 'orderHelper.js', query: "getOrderRMAList" });
     }
   },
 };

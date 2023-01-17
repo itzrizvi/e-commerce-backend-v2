@@ -331,12 +331,12 @@ type OrderRMALookup {
     added_by:Staff
 }
 
-input GetOrderRMAListInput {
+input GetOrderRMALookupListInput {
     category:String!
     code:String!
 }
 
-type GetOrderRMAListOutput {
+type GetOrderRMAListLookupOutput {
     message:String
     tenant_id:String
     status:Boolean
@@ -344,6 +344,17 @@ type GetOrderRMAListOutput {
 }
 
 # ORDER RMA TYPES #############################################
+
+type ProductForRMA {
+    id:Int
+    prod_name:String
+    cost:Float
+    prod_partnum:String
+    prod_sku:String
+    productCondition:ProductCondition
+    dimensions:ProductDimension
+    weight:ProductWeight
+}
 
 type OrderRMA {
     id:Int
@@ -356,16 +367,75 @@ type OrderRMA {
     rma_status:String
     email:String
     comment:String
+    added_by:Staff
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+    orderrmadetails:[OrderRMADetail]
+    orderrmardetails:[OrderRMARDetail]
+    orderrmas:[OrderRMAS]
 }
 
-# type OrderRMADetail {
-#     line_id:Int
-#     rma_id:Int
-#     product_id:Int
-#     product:ProductForList
-#     order_id:Int
-#     order:OrderList
-# }
+type OrderRMAList {
+    id:Int
+    order:OrderList
+    create_date:String
+    rma_type:String
+    handling_fee:Float
+    return_tax:Float
+    refund_shipping:Float
+    rma_status:String
+    email:String
+    comment:String
+    added_by:Staff
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type OrderRMADetail {
+    line_id:Int
+    rma_id:Int
+    product:ProductForRMA
+    order_id:Int
+    rma_quantity:Int
+    rma_receive_qty:Int
+    restock_percent:Float
+    restock_fee:Float
+    rma_reason_type:String
+    rma_receive_type:String
+    rma_comment:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type OrderRMARDetail {
+    line_id:Int
+    rma_id:Int
+    product:ProductForRMA
+    order_id:Int
+    rma_replace_qty:Int
+    rma_replace_cost:Float
+    rma_replace_discount:Float
+    comment:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+type OrderRMAS {
+    line_id:Int
+    rma_id:Int
+    shipping_in_out:Boolean
+    shippingmethod:ShippingMethod
+    return_tracking_out:String
+    return_tracking_in:String
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
 
 input OrderRMADetailInput {
     product_id:Int!
@@ -409,7 +479,7 @@ input UpdateOrderRMARDetailInput {
 
 input OrderRMASInput {
     shipping_in_out:Boolean!
-    shipping_type:Int!
+    shipping_method:Int!
     return_tracking_out:String
     return_tracking_in:String
 }
@@ -417,7 +487,7 @@ input OrderRMASInput {
 input UpdateOrderRMASInput {
     line_id:Int!
     shipping_in_out:Boolean
-    shipping_type:Int
+    shipping_method:Int
     return_tracking_out:String
     return_tracking_in:String
 }
@@ -453,6 +523,28 @@ input updateOrderRMAInput {
     orderrmas:UpdateOrderRMASInput
 }
 
+input GetOrderRMAListInput {
+    id:Int
+    order_id:Int
+}
+
+type GetOrderRMAListOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[OrderRMAList]
+}
+
+input GetSingleOrderRMAInput {
+    id:Int!
+}
+
+type GetSingleOrderRMAOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:OrderRMA
+}
 
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
@@ -480,7 +572,9 @@ extend type Query {
     getOrderActivityHistory(query:GetOrderHistoryInput):GetOrderHistoryOutput!
     getOrderUpdateAdminList:GetOrderUpdateAdmins!
     getOrderBySearch(query:searchOrderInput):GetOrderListForAdmin!
-    getOrderRMALookupList(query:GetOrderRMAListInput):GetOrderRMAListOutput!
+    getOrderRMALookupList(query:GetOrderRMALookupListInput):GetOrderRMAListLookupOutput!
+    getOrderRMAList(query:GetOrderRMAListInput):GetOrderRMAListOutput!
+    getSingleOrderRMA(query:GetSingleOrderRMAInput):GetSingleOrderRMAOutput!
 }
 
 

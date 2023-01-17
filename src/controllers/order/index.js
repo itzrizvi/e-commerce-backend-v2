@@ -20,4 +20,6 @@ module.exports = {
     getOrderRMALookupListController: require('./getOrderRMALookupListController'),
     createOrderRMAController: require('./createOrderRMAController'),
     updateOrderRMAController: require('./updateOrderRMAController'),
+    getOrderRMAListController: require('./getOrderRMAListController'),
+    getSingleOrderRMAController: require('./getSingleOrderRMAController'),
 }

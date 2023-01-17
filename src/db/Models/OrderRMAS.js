@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        shipping_type: {
+        shipping_method: {
             type: DataTypes.INTEGER,
             allowNull: false
         },

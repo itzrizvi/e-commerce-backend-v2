@@ -352,9 +352,21 @@ module.exports = {
         }
     },
     // GET PO LIST
-    getPurchaseOrderList: async (db, user, isAuth, TENANTID) => {
+    getPurchaseOrderList: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
+
+            // Data From Request
+            const { searchQuery,
+                ponumbers,
+                productIDS,
+                has_order,
+                types,
+                statuses,
+                poEntryStartDate,
+                poEntryEndDate,
+                poUpdatedStartDate,
+                poUpdatedEndDate } = req;
 
             // ASSOCIATION STARTS
             // PO TO vendor
@@ -364,6 +376,15 @@ module.exports = {
                     sourceKey: 'vendor_id',
                     foreignKey: 'id',
                     as: 'vendor'
+                });
+            }
+            // PO TO PO Status
+            if (!db.purchase_order.hasAlias('po_status') && !db.purchase_order.hasAlias('postatus')) {
+
+                await db.purchase_order.hasOne(db.po_status, {
+                    sourceKey: 'status',
+                    foreignKey: 'id',
+                    as: 'postatus'
                 });
             }
             // PO TO PO TRK DETAILS
@@ -412,6 +433,16 @@ module.exports = {
                 });
             }
 
+            // 
+            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
+
+                await db.purchase_order.hasMany(db.po_productlist, {
+                    foreignKey: 'purchase_order_id',
+                    as: 'poProductlist'
+                });
+            }
+
+
             // Created By Associations
             db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
             db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
@@ -426,15 +457,68 @@ module.exports = {
             }
             // ASSOCIATION ENDS
 
+            // Custom Search Query
+            const searchQueryVendorWhere = searchQuery ? {
+                [Op.or]: [
+                    {
+                        email: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
+                    },
+                    {
+                        company_name: {
+                            [Op.iLike]: `%${searchQuery}%`
+                        }
+                    }
+                ]
+            } : {};
+
+            // Condtional Date Filters
+            const twoDateFilterWhere = poEntryStartDate && poEntryEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(poEntryStartDate),
+                    [Op.lte]: new Date(poEntryEndDate),
+                }]
+            } : {};
+
+            const startDateFilterWhere = (poEntryStartDate && !poEntryEndDate) ? {
+                [Op.gte]: new Date(poEntryStartDate)
+            } : {};
+
+            const endDateFilterWhere = (poEntryEndDate && !poEntryStartDate) ? {
+                [Op.lte]: new Date(poEntryEndDate)
+            } : {};
+
+
+            const twoUpdatedDateFilterWhere = poUpdatedStartDate && poUpdatedEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(poUpdatedStartDate),
+                    [Op.lte]: new Date(poUpdatedEndDate),
+                }]
+            } : {};
+
+            const updatedStartDateFilterWhere = (poUpdatedStartDate && !poUpdatedEndDate) ? {
+                [Op.gte]: new Date(poUpdatedStartDate)
+            } : {};
+
+            const updatedEndDateFilterWhere = (poUpdatedEndDate && !poUpdatedStartDate) ? {
+                [Op.lte]: new Date(poUpdatedEndDate)
+            } : {};
+
             // PO List
             const poList = await db.purchase_order.findAll({
                 include: [
-                    { model: db.vendor, as: 'vendor' },
+                    {
+                        model: db.vendor,
+                        as: 'vendor',
+                        ...(searchQuery && { where: searchQueryVendorWhere }),
+                    },
                     { model: db.po_trk_details, as: 'potrkdetails' },
                     { model: db.po_activities, as: 'poactivitites' },
                     { model: db.po_invoices, as: 'poinvoices' },
                     { model: db.po_mfg_doc, as: 'pomfgdoc' },
                     { model: db.payment_method, as: 'paymentmethod' },
+                    { model: db.po_status, as: 'postatus' },
                     {
                         model: db.user, as: 'POCreated_by', // Include User who created the product and his roles
                         include: {
@@ -442,10 +526,64 @@ module.exports = {
                             as: 'roles'
                         }
                     },
+                    {
+                        model: db.po_productlist,
+                        as: 'poProductlist', //
+                        ...(productIDS && productIDS.length && {
+                            where: {
+                                product_id: {
+                                    [Op.in]: productIDS
+                                }
+                            }
+                        }),
+                    },
                 ],
                 where: {
-                    tenant_id: TENANTID
-                }
+                    tenant_id: TENANTID,
+                    ...(ponumbers && {
+                        po_number: {
+                            [Op.in]: ponumbers
+                        }
+                    }),
+                    ...(has_order && has_order === true && {
+                        order_id: {
+                            [Op.ne]: null
+                        }
+                    }),
+                    ...(has_order === false && {
+                        order_id: {
+                            [Op.eq]: null
+                        }
+                    }),
+                    ...(types && types.length && {
+                        type: {
+                            [Op.in]: types
+                        }
+                    }),
+                    ...(statuses && statuses.length && {
+                        status: {
+                            [Op.in]: statuses
+                        }
+                    }),
+                    ...((poEntryStartDate || poEntryEndDate) && {
+                        createdAt: {
+                            [Op.or]: [{
+                                ...(twoDateFilterWhere && twoDateFilterWhere),
+                                ...(startDateFilterWhere && startDateFilterWhere),
+                                ...(endDateFilterWhere && endDateFilterWhere),
+                            }],
+                        }
+                    }),
+                    ...((poUpdatedStartDate || poUpdatedEndDate) && {
+                        updatedAt: {
+                            [Op.or]: [{
+                                ...(twoUpdatedDateFilterWhere && twoUpdatedDateFilterWhere),
+                                ...(updatedStartDateFilterWhere && updatedStartDateFilterWhere),
+                                ...(updatedEndDateFilterWhere && updatedEndDateFilterWhere),
+                            }]
+                        }
+                    })
+                },
             });
 
             // Return Formation

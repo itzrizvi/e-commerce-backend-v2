@@ -20,7 +20,7 @@ module.exports = {
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
         // Return To Controller
-        return await getPurchaseOrderListController(db, user, isAuth, TENANTID);
+        return await getPurchaseOrderListController(args.query, db, user, isAuth, TENANTID);
     },
     // SINGLE PO QUERIY
     getSinglePurchaseOrder: async (root, args, { db, user, isAuth, TENANTID }, info) => {

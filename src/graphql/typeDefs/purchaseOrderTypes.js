@@ -60,6 +60,7 @@ type PurchaseOrderList {
     paymentmethod:PaymentMethod
     order_id:Int
     type:String
+    postatus:POStatus
     potrkdetails:[POTRKDetails]
     poactivitites:[POActivitites]
     poinvoices:[POInvoice]
@@ -322,7 +323,8 @@ type GetAllPOStatus {
 
 
 input POListFilters {
-    searchQuery:String # PO_NUMBER, VENDOR -> name, email
+    searchQuery:String
+    ponumbers:[String]
     productIDS:[Int]
     has_order:Boolean
     types:[String]
@@ -350,7 +352,7 @@ extend type Mutation {
 }
 
 extend type Query {
-    getPurchaseOrderList:GetPurchaseOrderList!
+    getPurchaseOrderList(query:POListFilters):GetPurchaseOrderList!
     getPOTRKList(query:GetPOTRKListInput):GetPOTRKListOutput!
     getPOActivityList(query:GetPOActivityListInput):GetPOActivityListOutput!
     getPOInvoiceList(query:GetPOInvoiceListInput):GetPOInvoiceListOutput!

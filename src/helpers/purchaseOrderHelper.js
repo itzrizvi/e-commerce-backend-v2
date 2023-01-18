@@ -550,11 +550,11 @@ module.exports = {
                             [Op.ne]: null
                         }
                     }),
-                    ...(has_order === false && {
-                        order_id: {
-                            [Op.eq]: null
-                        }
-                    }),
+                    // ...(has_order === false && {
+                    //     order_id: {
+                    //         [Op.eq]: null
+                    //     }
+                    // }),
                     ...(types && types.length && {
                         type: {
                             [Op.in]: types

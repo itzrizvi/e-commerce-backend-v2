@@ -17,4 +17,5 @@ module.exports = {
     getPOMFGDOCListController: require('./getPOMFGDOCListController'),
     createPOStatusController: require('./createPOStatusController'),
     getPOStatusListController: require('./getPOStatusListController'),
+    getPONumbersController: require('./getPONumbersController'),
 }

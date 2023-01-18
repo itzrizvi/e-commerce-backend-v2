@@ -337,6 +337,17 @@ input POListFilters {
     poUpdatedEndDate:String
 }
 
+type PONUMBERS {
+    po_number:String
+}
+
+type GetPONumberList {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[PONUMBERS]
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -362,6 +373,7 @@ extend type Query {
     getSinglePurchaseOrder(query:GetSinglePurchaseOrderInput):GetSinglePurchaseOrderOutput!
     viewPurchaseOrderPublic(query:ViewPOPublicInput):GetSinglePurchaseOrderOutput!
     getPOStatusList:GetAllPOStatus!
+    getPONumbers:GetPONumberList!
 }
 
 

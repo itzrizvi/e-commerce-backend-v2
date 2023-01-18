@@ -1816,4 +1816,32 @@ module.exports = {
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOStatusList" });
         }
     },
+    // GET PO NUMBER LIST
+    getPONumbers: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+
+            // PO Number List
+            const poNumberList = await db.purchase_order.findAll({
+                attributes: ["po_number"],
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO Status List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poNumberList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPONumbers" });
+        }
+    },
 }

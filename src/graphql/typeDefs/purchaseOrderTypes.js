@@ -60,6 +60,8 @@ type PurchaseOrderList {
     paymentmethod:PaymentMethod
     order_id:Int
     type:String
+    createdAt:String
+    updatedAt:String
     postatus:POStatus
     potrkdetails:[POTRKDetails]
     poactivitites:[POActivitites]

@@ -46,6 +46,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "poSetting" });
         }
     },
     // Create PO
@@ -68,7 +69,10 @@ module.exports = {
                 comment,
                 order_id,
                 type,
-                products } = req;
+                products,
+                poTRKdetails,
+                poInvoice,
+                poMFGDoc } = req;
 
 
             // GET Prefix and Start From Value
@@ -176,6 +180,48 @@ module.exports = {
             const insertProductList = await db.po_productlist.bulkCreate(poProductList);
             if (!insertProductList) return { message: "PO Product List Failed!!!", status: false }
 
+            if (poTRKdetails) {
+                const { tracking_no } = poTRKdetails;
+                // Create PO TRK Details
+                const createPOTRKDetails = await db.po_trk_details.create({
+                    po_id: insertPO.id,
+                    tracking_no,
+                    tenant_id: TENANTID,
+                    created_by: user.id
+                });
+
+                if (!createPOTRKDetails) return { message: "PO TRK Details are Unable To Insert!!!", status: false }
+            }
+
+            if (poInvoice) {
+                const { invoice_no, invoice_date, invoice_path } = poInvoice;
+                // Create PO Invoice
+                const createPOInvoice = await db.po_invoices.create({
+                    po_id: insertPO.id,
+                    invoice_no,
+                    invoice_date,
+                    invoice_path,
+                    tenant_id: TENANTID,
+                    created_by: user.id
+                });
+
+                if (!createPOInvoice) return { message: "PO Invoice are Unable To Insert!!!", status: false }
+            }
+
+            if (poMFGDoc) {
+                const { doc_path } = poMFGDoc;
+
+                // Create PO MFG DOC
+                const createPOMFGDOC = await db.po_mfg_doc.create({
+                    po_id: insertPO.id,
+                    doc_path,
+                    tenant_id: TENANTID,
+                    created_by: user.id
+                });
+                if (!createPOMFGDOC) return { message: "PO MFG DOC are Unable To Insert!!!", status: false }
+            }
+
+
             //
             let email;
             if (contact_person_id) {
@@ -245,6 +291,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "createPurchaseOrder" });
         }
     },
     // GET PO LIST
@@ -577,6 +624,8 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getSinglePurchaseOrder" });
+
         }
     },
     // Update PO
@@ -604,7 +653,10 @@ module.exports = {
                 order_id,
                 type,
                 comment,
-                products } = req;
+                products,
+                poTRKdetails,
+                poInvoice,
+                poMFGDoc } = req;
 
 
             // Find PO
@@ -725,6 +777,45 @@ module.exports = {
                 if (!insertNewProductList) return { message: "New Product List Insert Failed!!!", status: false }
             }
 
+            if (poTRKdetails) {
+                poTRKdetails.updated_by = user.id;
+                const potrkUpdate = await db.po_trk_details.update(poTRKdetails, {
+                    where: {
+                        [Op.and]: [{
+                            po_id: id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!potrkUpdate) return { message: "PO TRK Detail Unable To Update!!!" }
+            }
+
+            if (poInvoice) {
+                poInvoice.updated_by = user.id;
+                const poInvoiceUpdate = await db.po_invoices.update(poInvoice, {
+                    where: {
+                        [Op.and]: [{
+                            po_id: id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!poInvoiceUpdate) return { message: "PO Invoice Unable To Update!!!" }
+            }
+
+            if (poMFGDoc) {
+                poMFGDoc.updated_by = user.id;
+                const poMFGDOCUpdate = await db.po_mfg_doc.update(poMFGDoc, {
+                    where: {
+                        [Op.and]: [{
+                            po_id: id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+                if (!poInvoiceUpdate) return { message: "PO Invoice Unable To Update!!!" }
+            }
+
 
             // Return Formation
             return {
@@ -736,6 +827,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePurchaseOrder" });
         }
     },
     // Update PO STATUS
@@ -771,6 +863,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePOStatus" });
         }
     },
     // Create Receiving
@@ -872,6 +965,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "createReceiving" });
         }
     },
     // VIEW PUBLIC PO 
@@ -1072,6 +1166,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "viewPurchaseOrderPublic" });
         }
     },
     // Create PO TRK

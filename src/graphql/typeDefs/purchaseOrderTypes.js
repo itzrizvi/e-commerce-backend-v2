@@ -11,6 +11,20 @@ input POSettingInput {
     po_startfrom:Int
 }
 
+input POTRKDetailsInputForPO {
+    tracking_no:String!
+}
+
+input POInvoiceInputForPO {
+    invoice_no:String!
+    invoice_date:String!
+    invoice_path:String!
+}
+
+input POMFGDOCInputForPO {
+    doc_path:String!
+}
+
 input CreatePurchaseOrderInput {
     vendor_id:Int!
     vendor_billing_id:Int!
@@ -27,6 +41,9 @@ input CreatePurchaseOrderInput {
     comment:String
     products:JSON!
     contact_person_id:Int
+    poTRKdetails:POTRKDetailsInputForPO
+    poInvoice:POInvoiceInputForPO
+    poMFGDoc:POMFGDOCInputForPO
 }
 
 type PurchaseOrderList {
@@ -117,6 +134,20 @@ type GetSinglePurchaseOrderOutput {
     data:PurchaseOrder
 }
 
+input UpdatePOTRKDetailsInputForPO {
+    tracking_no:String
+}
+
+input UpdatePOInvoiceInputForPO {
+    invoice_no:String
+    invoice_date:String
+    invoice_path:String
+}
+
+input UpdatePOMFGDOCInputForPO {
+    doc_path:String
+}
+
 input UpdatePurchaseOrderInput {
     id:Int!
     po_number:String!
@@ -138,6 +169,9 @@ input UpdatePurchaseOrderInput {
     is_insurance:Boolean
     receiving_instruction:String
     products:JSON
+    poTRKdetails:UpdatePOTRKDetailsInputForPO
+    poInvoice:UpdatePOInvoiceInputForPO
+    poMFGDoc:UpdatePOMFGDOCInputForPO
 }
 
 input POStatusChangeInput{
@@ -161,6 +195,7 @@ input ViewPOPublicInput {
     param1:String!
     param2:String!
 }
+
 
 type POTRKDetails {
     po_id:Int

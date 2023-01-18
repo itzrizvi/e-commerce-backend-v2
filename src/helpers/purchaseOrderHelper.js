@@ -4,6 +4,7 @@ const { crypt, decrypt } = require("../utils/hashes");
 const config = require('config');
 const { Mail } = require("../utils/email");
 const logger = require("../../logger");
+const { default: slugify } = require("slugify");
 
 // PO HELPER
 module.exports = {
@@ -49,6 +50,59 @@ module.exports = {
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "poSetting" });
         }
     },
+    // PO Status Create
+    createPOStatus: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+            // DATA FROM REQUEST
+            const { name, status } = req;
+
+            // Order Status Slug
+            const slug = slugify(`${name}`, {
+                replacement: "-",
+                remove: /[*+~.()'"!:@]/g,
+                lower: true,
+                strict: true,
+                trim: true,
+            });
+
+            // Check Existence
+            const findStatus = await db.po_status.findOne({
+                where: {
+                    [Op.and]: [{
+                        slug,
+                        tenant_id: TENANTID,
+                    }],
+                },
+            });
+            if (findStatus) return { message: "Already Have This PO Status!!!!", status: false };
+
+            // Insert Status
+            const insertPOStatus = await db.po_status.create({
+                name,
+                slug,
+                status,
+                tenant_id: TENANTID,
+                created_by: user.id,
+            });
+
+            // Return Formation
+            if (insertPOStatus) {
+                return {
+                    message: "PO Status Added Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                };
+            }
+        } catch (error) {
+            if (error)
+                return {
+                    message: `Something Went Wrong!!! Error: ${error}`,
+                    status: false,
+                };
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "createPOStatus" });
+        }
+    },
     // Create PO
     createPurchaseOrder: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
@@ -56,6 +110,7 @@ module.exports = {
 
             // DATA FROM REQUEST
             const { contact_person_id,
+                status,
                 vendor_id,
                 vendor_billing_id,
                 vendor_shipping_id,
@@ -148,6 +203,7 @@ module.exports = {
                 });
 
             });
+
             // Create Purchase Order 
             const insertPO = await db.purchase_order.create({
                 po_number,
@@ -161,6 +217,7 @@ module.exports = {
                 shipping_method_id,
                 shipping_account_id,
                 comment,
+                status,
                 shipping_cost,
                 is_insurance,
                 receiving_instruction,
@@ -840,7 +897,8 @@ module.exports = {
 
             // Update Purchase Order Status
             const updatePOStatus = await db.purchase_order.update({
-                status
+                status,
+                updated_by: user.id
             }, {
                 where: {
                     [Op.and]: [{
@@ -1591,6 +1649,33 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOMFGDOCList" });
+        }
+    },
+    // GET PO STATUS LIST
+    getPOStatusList: async (db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+
+            // PO Status List
+            const poStatusList = await db.po_status.findAll({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO Status List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poStatusList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPOStatusList" });
         }
     },
 }

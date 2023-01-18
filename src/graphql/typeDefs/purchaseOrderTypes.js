@@ -41,6 +41,7 @@ input CreatePurchaseOrderInput {
     comment:String
     products:JSON!
     contact_person_id:Int
+    status:Int!
     poTRKdetails:POTRKDetailsInputForPO
     poInvoice:POInvoiceInputForPO
     poMFGDoc:POMFGDOCInputForPO
@@ -176,7 +177,7 @@ input UpdatePurchaseOrderInput {
 
 input POStatusChangeInput{
     id:Int
-    status:String
+    status:Int
 }
 
 input createReceivingInput {
@@ -297,6 +298,41 @@ type GetPOMFGDOCListOutput {
     data:[POMFGDOC]
 }
 
+type POStatus {
+    id:Int
+    name:String
+    slug:String
+    status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+input POStatusInput {
+    name:String
+    status:Boolean
+}
+
+type GetAllPOStatus {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[POStatus]
+}
+
+
+input POListFilters {
+    searchQuery:String # PO_NUMBER, VENDOR -> name, email
+    productIDS:[Int]
+    has_order:Boolean
+    types:[String]
+    statuses:[Int]
+    poEntryStartDate:String
+    poEntryEndDate:String
+    poUpdatedStartDate:String
+    poUpdatedEndDate:String
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -310,6 +346,7 @@ extend type Mutation {
     createPOActivity(data:POActivityInput):CommonOutput!
     createPOInvoice(data:POInvoiceInput):CommonOutput!
     createMFGDOC(data:POMFGDOCInput):CommonOutput!
+    createPOStatus(data:POStatusInput):CommonOutput!
 }
 
 extend type Query {
@@ -320,6 +357,7 @@ extend type Query {
     getPOMFGDOCList(query:GetPOMFGDOCListInput):GetPOMFGDOCListOutput!
     getSinglePurchaseOrder(query:GetSinglePurchaseOrderInput):GetSinglePurchaseOrderOutput!
     viewPurchaseOrderPublic(query:ViewPOPublicInput):GetSinglePurchaseOrderOutput!
+    getPOStatusList:GetAllPOStatus!
 }
 
 

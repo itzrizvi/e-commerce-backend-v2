@@ -71,9 +71,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         status: {
-            type: DataTypes.ENUM("created", "approved", "declined"),
-            allowNull: false,
-            defaultValue: "created"
+            type: DataTypes.INTEGER,
+            allowNull: false
         },
         reason: {
             type: DataTypes.STRING,

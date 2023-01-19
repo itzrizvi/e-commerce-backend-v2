@@ -278,32 +278,6 @@ module.exports = {
                 email = findVendor.email;
             }
 
-            let purchaseOrderIDhashed = crypt(`${insertPO.id}`);
-            let ponumberhashed = crypt(`${po_number}`);
-            // SET PASSWORD URL
-            const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
-            // Setting Up Data for EMAIL SENDER
-            const mailSubject = "Purchase Order From Prime Server Parts"
-            const mailData = {
-                companyInfo: {
-                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
-                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
-                    companyName: config.get("COMPANY_NAME"),
-                    companyUrl: config.get("ECOM_URL"),
-                    shopUrl: config.get("ECOM_URL"),
-                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
-                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
-                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
-                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
-                },
-                about: 'A Purchase Order Has Been Created On Primer Server Parts',
-                email: email,
-                viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
-            }
-
-            // SENDING EMAIL
-            await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
-
             // Record Create
             await db.poview_record.create({
                 po_id: insertPO.id,
@@ -1044,7 +1018,7 @@ module.exports = {
                 }
             });
 
-            const { name } = getPOStatus;
+            const { name, slug } = getPOStatus;
 
             // Create PO TRK Details
             await db.po_activities.create({
@@ -1052,7 +1026,66 @@ module.exports = {
                 comment: `PO ${name} By ${user.first_name}`,
                 tenant_id: TENANTID,
                 created_by: user.id
+            });
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
             })
+
+            const { po_number, vendor_id } = findPO;
+
+            const findVendorEmail = await db.vendor.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: vendor_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { email } = findVendorEmail
+
+            if (slug === "submitted") {
+                // Create PO TRK Details
+                await db.po_activities.create({
+                    po_id: id,
+                    comment: `PO Sent To Vendor By ${user.first_name}`,
+                    tenant_id: TENANTID,
+                    created_by: user.id
+                });
+
+
+                let purchaseOrderIDhashed = crypt(`${id}`);
+                let ponumberhashed = crypt(`${po_number}`);
+                // SET PASSWORD URL
+                const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
+                // Setting Up Data for EMAIL SENDER
+                const mailSubject = "Purchase Order From Prime Server Parts"
+                const mailData = {
+                    companyInfo: {
+                        logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                        banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                        companyName: config.get("COMPANY_NAME"),
+                        companyUrl: config.get("ECOM_URL"),
+                        shopUrl: config.get("ECOM_URL"),
+                        fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                        tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                        li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                        insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                    },
+                    about: 'A Purchase Order Has Been Created On Primer Server Parts',
+                    email: email,
+                    viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
+                }
+
+                // SENDING EMAIL
+                await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
+            }
 
 
             // Return Formation

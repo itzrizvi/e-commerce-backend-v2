@@ -35,6 +35,8 @@ type Vendor {
     TAX_ID: String
     status: Boolean
     addresses: [AddressOutput]
+    createdAt:String
+    updatedAt:String
 }
 
 
@@ -79,9 +81,10 @@ type UpdateVendorOutput{
     status:Boolean
 }
 
-type VendorOutput{
-    message:String!
-    status:Boolean!
+type VendorOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
     data: [Vendor]
 }
 
@@ -165,6 +168,15 @@ type GetContactPersonOutput {
     data:[ContactPerson]
 }
 
+input VendorFilterInput {
+    searchQuery:String # company_name, email, phone
+    status:String
+    vendorEntryStartDate:String
+    vendorEntryEndDate:String
+    vendorUpdatedStartDate:String
+    vendorUpdatedEndDate:String
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -180,7 +192,7 @@ extend type Mutation {
 }
 
 extend type Query {
-    getAllVendor: VendorOutput!
+    getAllVendor(query:VendorFilterInput): VendorOutput!
     getSearchedVendors(query: VendorSearchInput): VendorSearchOutput!
     getSingleVendor(query: GetSingleVendorInput): SingleVendorOutput!
     getContactPerson(query:GetContactPersonInput):GetContactPersonOutput!

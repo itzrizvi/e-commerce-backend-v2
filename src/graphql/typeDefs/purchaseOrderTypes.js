@@ -27,8 +27,6 @@ input POMFGDOCInputForPO {
 
 input CreatePurchaseOrderInput {
     vendor_id:Int!
-    vendor_billing_id:Int!
-    vendor_shipping_id:Int!
     shipping_method_id:Int!
     shipping_account_id:Int
     payment_method_id:Int!
@@ -42,9 +40,9 @@ input CreatePurchaseOrderInput {
     products:JSON!
     contact_person_id:Int
     status:Int!
-    poTRKdetails:POTRKDetailsInputForPO
-    poInvoice:POInvoiceInputForPO
-    poMFGDoc:POMFGDOCInputForPO
+    # poTRKdetails:POTRKDetailsInputForPO
+    # poInvoice:POInvoiceInputForPO
+    # poMFGDoc:POMFGDOCInputForPO
 }
 
 type PurchaseOrderList {

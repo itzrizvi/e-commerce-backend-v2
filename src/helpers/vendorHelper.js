@@ -248,7 +248,7 @@ module.exports = {
         }
     },
     // GET ALL Vendor
-    getAllVendor: async (db, user, isAuth, TENANTID) => {
+    getAllVendor: async (req, db, user, isAuth, TENANTID) => {
 
         // Return if No Auth
         if (!user || !isAuth) return { data: [], isAuth: false, message: "Not Authenticated", status: false };
@@ -256,6 +256,15 @@ module.exports = {
 
         // Try Catch Block
         try {
+
+            //
+            const { searchQuery,
+                status,
+                vendorEntryStartDate,
+                vendorEntryEndDate,
+                vendorUpdatedStartDate,
+                vendorUpdatedEndDate } = req;
+
             if (!db.vendor.hasAlias('addresses')) {
                 await db.vendor.hasMany(db.address,
                     {
@@ -267,6 +276,50 @@ module.exports = {
                     });
             }
 
+            let vID = parseInt(searchQuery);
+            let vendorID;
+            let notANumber = isNaN(vID);
+            if (!notANumber) {
+                vendorID = vID
+            }
+
+            let parsedStatus;
+            if (status) {
+                parsedStatus = JSON.parse(status)
+            }
+
+            // Condtional Date Filters
+            const twoDateFilterWhere = vendorEntryStartDate && vendorEntryEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(vendorEntryStartDate),
+                    [Op.lte]: new Date(vendorEntryEndDate),
+                }]
+            } : {};
+
+            const startDateFilterWhere = (vendorEntryStartDate && !vendorEntryEndDate) ? {
+                [Op.gte]: new Date(vendorEntryStartDate)
+            } : {};
+
+            const endDateFilterWhere = (vendorEntryEndDate && !vendorEntryStartDate) ? {
+                [Op.lte]: new Date(vendorEntryEndDate)
+            } : {};
+
+
+            const twoUpdatedDateFilterWhere = vendorUpdatedStartDate && vendorUpdatedEndDate ? {
+                [Op.and]: [{
+                    [Op.gte]: new Date(vendorUpdatedStartDate),
+                    [Op.lte]: new Date(vendorUpdatedEndDate),
+                }]
+            } : {};
+
+            const updatedStartDateFilterWhere = (vendorUpdatedStartDate && !vendorUpdatedEndDate) ? {
+                [Op.gte]: new Date(vendorUpdatedStartDate)
+            } : {};
+
+            const updatedEndDateFilterWhere = (vendorUpdatedEndDate && !vendorUpdatedStartDate) ? {
+                [Op.lte]: new Date(vendorUpdatedEndDate)
+            } : {};
+
             // GET ALL Vendor
             const getallvendor = await db.vendor.findAll({
                 include: [
@@ -276,7 +329,53 @@ module.exports = {
                     }
                 ],
                 where: {
-                    tenant_id: TENANTID
+                    tenant_id: TENANTID,
+                    ...((searchQuery && !vendorID) && {
+                        [Op.or]: [
+                            {
+                                company_name: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                email: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                phone_number: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            }
+                        ]
+                    }),
+                    ...(vendorID && {
+                        id: vendorID
+                    }),
+                    ...(status && parsedStatus === true && {
+                        status: true
+                    }),
+                    ...(status && parsedStatus === false && {
+                        status: false
+                    }),
+                    ...((vendorEntryStartDate || vendorEntryEndDate) && {
+                        createdAt: {
+                            [Op.or]: [{
+                                ...(twoDateFilterWhere && twoDateFilterWhere),
+                                ...(startDateFilterWhere && startDateFilterWhere),
+                                ...(endDateFilterWhere && endDateFilterWhere),
+                            }],
+                        }
+                    }),
+                    ...((vendorUpdatedStartDate || vendorUpdatedEndDate) && {
+                        updatedAt: {
+                            [Op.or]: [{
+                                ...(twoUpdatedDateFilterWhere && twoUpdatedDateFilterWhere),
+                                ...(updatedStartDateFilterWhere && updatedStartDateFilterWhere),
+                                ...(updatedEndDateFilterWhere && updatedEndDateFilterWhere),
+                            }]
+                        }
+                    })
                 }
             });
 

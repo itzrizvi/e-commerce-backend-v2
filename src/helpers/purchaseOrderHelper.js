@@ -112,8 +112,6 @@ module.exports = {
             const { contact_person_id,
                 status,
                 vendor_id,
-                vendor_billing_id,
-                vendor_shipping_id,
                 shipping_method_id,
                 shipping_account_id,
                 payment_method_id,
@@ -125,9 +123,10 @@ module.exports = {
                 order_id,
                 type,
                 products,
-                poTRKdetails,
-                poInvoice,
-                poMFGDoc } = req;
+                // poTRKdetails,
+                // poInvoice,
+                // poMFGDoc 
+            } = req;
 
 
             // GET Prefix and Start From Value
@@ -204,6 +203,49 @@ module.exports = {
 
             });
 
+            //
+            let vendor_billing_id;
+            let vendor_shipping_id;
+            if (type === 'drop_shipping') {
+                const customerShippingAddress = await db.order.findOne({
+                    where: {
+                        [Op.and]: [{
+                            id: order_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                vendor_shipping_id = customerShippingAddress.shipping_address_id;
+
+            } else {
+                const getCompanyShippingAddress = await db.address.findOne({
+                    where: {
+                        [Op.and]: [{
+                            isDefault: true,
+                            type: "shipping",
+                            ref_model: "company_info",
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                vendor_shipping_id = getCompanyShippingAddress.id;
+            }
+
+            const getVendorBillingAddress = await db.address.findOne({
+                where: {
+                    [Op.and]: [{
+                        isDefault: true,
+                        type: "billing",
+                        ref_model: "vendor",
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            vendor_billing_id = getVendorBillingAddress.id;
+
             // Create Purchase Order 
             const insertPO = await db.purchase_order.create({
                 po_number,
@@ -237,46 +279,46 @@ module.exports = {
             const insertProductList = await db.po_productlist.bulkCreate(poProductList);
             if (!insertProductList) return { message: "PO Product List Failed!!!", status: false }
 
-            if (poTRKdetails) {
-                const { tracking_no } = poTRKdetails;
-                // Create PO TRK Details
-                const createPOTRKDetails = await db.po_trk_details.create({
-                    po_id: insertPO.id,
-                    tracking_no,
-                    tenant_id: TENANTID,
-                    created_by: user.id
-                });
+            // if (poTRKdetails) {
+            //     const { tracking_no } = poTRKdetails;
+            //     // Create PO TRK Details
+            //     const createPOTRKDetails = await db.po_trk_details.create({
+            //         po_id: insertPO.id,
+            //         tracking_no,
+            //         tenant_id: TENANTID,
+            //         created_by: user.id
+            //     });
 
-                if (!createPOTRKDetails) return { message: "PO TRK Details are Unable To Insert!!!", status: false }
-            }
+            //     if (!createPOTRKDetails) return { message: "PO TRK Details are Unable To Insert!!!", status: false }
+            // }
 
-            if (poInvoice) {
-                const { invoice_no, invoice_date, invoice_path } = poInvoice;
-                // Create PO Invoice
-                const createPOInvoice = await db.po_invoices.create({
-                    po_id: insertPO.id,
-                    invoice_no,
-                    invoice_date,
-                    invoice_path,
-                    tenant_id: TENANTID,
-                    created_by: user.id
-                });
+            // if (poInvoice) {
+            //     const { invoice_no, invoice_date, invoice_path } = poInvoice;
+            //     // Create PO Invoice
+            //     const createPOInvoice = await db.po_invoices.create({
+            //         po_id: insertPO.id,
+            //         invoice_no,
+            //         invoice_date,
+            //         invoice_path,
+            //         tenant_id: TENANTID,
+            //         created_by: user.id
+            //     });
 
-                if (!createPOInvoice) return { message: "PO Invoice are Unable To Insert!!!", status: false }
-            }
+            //     if (!createPOInvoice) return { message: "PO Invoice are Unable To Insert!!!", status: false }
+            // }
 
-            if (poMFGDoc) {
-                const { doc_path } = poMFGDoc;
+            // if (poMFGDoc) {
+            //     const { doc_path } = poMFGDoc;
 
-                // Create PO MFG DOC
-                const createPOMFGDOC = await db.po_mfg_doc.create({
-                    po_id: insertPO.id,
-                    doc_path,
-                    tenant_id: TENANTID,
-                    created_by: user.id
-                });
-                if (!createPOMFGDOC) return { message: "PO MFG DOC are Unable To Insert!!!", status: false }
-            }
+            //     // Create PO MFG DOC
+            //     const createPOMFGDOC = await db.po_mfg_doc.create({
+            //         po_id: insertPO.id,
+            //         doc_path,
+            //         tenant_id: TENANTID,
+            //         created_by: user.id
+            //     });
+            //     if (!createPOMFGDOC) return { message: "PO MFG DOC are Unable To Insert!!!", status: false }
+            // }
 
 
             //

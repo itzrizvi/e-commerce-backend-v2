@@ -112,6 +112,7 @@ module.exports = {
             const { contact_person_id,
                 // status,
                 vendor_id,
+                vendor_billing_address_id,
                 shipping_method_id,
                 shipping_account_id,
                 payment_method_id,
@@ -203,8 +204,6 @@ module.exports = {
 
             });
 
-            //
-            let vendor_billing_id;
             let vendor_shipping_id;
             if (type === 'drop_shipping') {
                 const customerShippingAddress = await db.order.findOne({
@@ -233,19 +232,6 @@ module.exports = {
                 vendor_shipping_id = getCompanyShippingAddress.id;
             }
 
-            const getVendorBillingAddress = await db.address.findOne({
-                where: {
-                    [Op.and]: [{
-                        isDefault: true,
-                        type: "billing",
-                        ref_model: "vendor",
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-            vendor_billing_id = getVendorBillingAddress.id;
-
             const findNewStatus = await db.po_status.findOne({
                 where: {
                     [Op.and]: [{
@@ -268,7 +254,7 @@ module.exports = {
                 grandTotal_price: grandTotal_price.toFixed(2),
                 tax_amount,
                 contact_person_id,
-                vendor_billing_id,
+                vendor_billing_id: vendor_billing_address_id,
                 vendor_shipping_id,
                 shipping_method_id,
                 shipping_account_id,
@@ -392,6 +378,14 @@ module.exports = {
                 created_by: user.id,
                 tenant_id: TENANTID
             });
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id: insertPO.id,
+                comment: `PO Created By ${user.first_name}`,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
 
 
             // Return Formation

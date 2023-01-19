@@ -30,6 +30,7 @@ input CreatePurchaseOrderInput {
     shipping_method_id:Int!
     shipping_account_id:Int
     payment_method_id:Int!
+    vendor_billing_address_id:Int!
     tax_amount:Float
     shipping_cost:Float
     is_insurance:Boolean

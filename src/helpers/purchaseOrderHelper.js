@@ -110,7 +110,7 @@ module.exports = {
 
             // DATA FROM REQUEST
             const { contact_person_id,
-                status,
+                // status,
                 vendor_id,
                 shipping_method_id,
                 shipping_account_id,
@@ -245,6 +245,20 @@ module.exports = {
             });
 
             vendor_billing_id = getVendorBillingAddress.id;
+
+            const findNewStatus = await db.po_status.findOne({
+                where: {
+                    [Op.and]: [{
+                        slug: "new",
+                        name: "New",
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!findNewStatus) return { message: "PO Status Not Found!!!", status: false }
+
+            let status = findNewStatus.id;
 
             // Create Purchase Order 
             const insertPO = await db.purchase_order.create({

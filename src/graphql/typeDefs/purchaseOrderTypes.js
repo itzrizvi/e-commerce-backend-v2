@@ -178,8 +178,8 @@ input UpdatePurchaseOrderInput {
 }
 
 input POStatusChangeInput{
-    id:Int
-    status:Int
+    id:Int!
+    status:Int!
 }
 
 input createReceivingInput {

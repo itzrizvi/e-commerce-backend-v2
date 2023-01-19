@@ -110,7 +110,6 @@ module.exports = {
 
             // DATA FROM REQUEST
             const { contact_person_id,
-                status: statusFromReq,
                 vendor_id,
                 vendor_billing_address_id,
                 shipping_method_id,
@@ -211,7 +210,7 @@ module.exports = {
             const findNewStatus = await db.po_status.findOne({
                 where: {
                     [Op.and]: [{
-                        slug: statusFromReq.toLowerCase(),
+                        slug: "new",
                         name: "New",
                         tenant_id: TENANTID
                     }]
@@ -1035,6 +1034,25 @@ module.exports = {
             });
 
             if (!updatePOStatus) return { message: "PO Satus Change Failed!!!", status: false }
+
+            const getPOStatus = await db.po_status.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: status,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { name } = getPOStatus;
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id: id,
+                comment: `PO ${name} By ${user.first_name}`,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
 
 
             // Return Formation

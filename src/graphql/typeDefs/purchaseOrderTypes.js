@@ -40,7 +40,7 @@ input CreatePurchaseOrderInput {
     comment:String
     products:JSON!
     contact_person_id:Int
-    # status:Int!
+    status:String
     # poTRKdetails:POTRKDetailsInputForPO
     # poInvoice:POInvoiceInputForPO
     # poMFGDoc:POMFGDOCInputForPO

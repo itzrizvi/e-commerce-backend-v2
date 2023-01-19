@@ -32,8 +32,8 @@ input CreatePurchaseOrderInput {
     shipping_method_id:Int!
     shipping_account_id:Int
     payment_method_id:Int!
-    tax_amount:Float!
-    shipping_cost:Float!
+    tax_amount:Float
+    shipping_cost:Float
     is_insurance:Boolean
     receiving_instruction:String
     order_id:Int

@@ -1056,7 +1056,15 @@ module.exports = {
         [Op.lte]: new Date(orderUpdatedEndDate)
       } : {};
 
-      const searchQueryCustomerWhere = searchQuery ? {
+
+      let oID = parseInt(searchQuery);
+      let orderID;
+      let notANumber = isNaN(oID);
+      if (!notANumber) {
+        orderID = oID
+      }
+
+      const searchQueryCustomerWhere = (searchQuery && !orderID) ? {
         [Op.or]: [
           {
             email: {
@@ -1076,12 +1084,7 @@ module.exports = {
         ]
       } : {};
 
-      let oID = parseInt(searchQuery);
-      let orderID;
-      let notANumber = isNaN(oID);
-      if (!notANumber) {
-        orderID = oID
-      }
+
 
       // Order List For Admin
       const orderlist = await db.order.findAll({
@@ -1104,7 +1107,7 @@ module.exports = {
           {
             model: db.user,
             as: "customer",
-            ...(searchQuery && { where: searchQueryCustomerWhere }),
+            ...((searchQuery && !orderID) && { where: searchQueryCustomerWhere }),
           },
           {
             model: db.payment_method,
@@ -1130,11 +1133,9 @@ module.exports = {
           }
         ],
         where: {
-          // ...(orderID && {
-          //   id: {
-          //     [Op.contains]: orderID
-          //   },
-          // }),
+          ...(orderID && {
+            id: orderID
+          }),
           tenant_id: TENANTID,
           ...(updatedby && updatedby.length && {
             updated_by: {
@@ -1159,7 +1160,7 @@ module.exports = {
               }],
             }
           })
-        },
+        }
       });
 
 

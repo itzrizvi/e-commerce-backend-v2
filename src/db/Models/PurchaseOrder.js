@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         shipping_cost: {
             type: DataTypes.FLOAT,
-            allowNull: false
+            allowNull: true,
+            defaultValue: 0
         },
         is_insurance: {
             type: DataTypes.BOOLEAN,

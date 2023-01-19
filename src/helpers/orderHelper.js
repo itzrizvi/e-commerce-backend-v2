@@ -1162,7 +1162,7 @@ module.exports = {
           })
         },
         order: [
-          ['createdAt', 'DESC']
+          ['updatedAt', 'DESC']
         ]
       });
 

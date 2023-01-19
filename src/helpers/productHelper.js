@@ -792,8 +792,8 @@ module.exports = {
                     })
                 },
                 order: [
-                    ['prod_slug', 'ASC']
-                ],
+                    ['createdAt', 'DESC']
+                ]
             });
 
             // Condition Assign

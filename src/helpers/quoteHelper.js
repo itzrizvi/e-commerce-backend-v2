@@ -674,7 +674,10 @@ module.exports = {
                             }]
                         }
                     }),
-                }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             })
 
             // Return Formation

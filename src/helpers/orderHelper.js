@@ -1160,7 +1160,10 @@ module.exports = {
               }],
             }
           })
-        }
+        },
+        order: [
+          ['createdAt', 'DESC']
+        ]
       });
 
 

@@ -129,7 +129,6 @@ module.exports = {
                 // poMFGDoc 
             } = req;
 
-
             // GET Prefix and Start From Value
             const poSettings = await db.po_setting.findOne({
                 where: {
@@ -139,45 +138,22 @@ module.exports = {
             if (!poSettings) return { message: "No Settings Found!!!", status: false }
             const { po_prefix, po_startfrom } = poSettings;
 
-
-            // Find Last Entry 
-            const findPOEntries = await db.purchase_order.findAll({
-                where: {
-                    tenant_id: TENANTID
-                },
-                order: [
-                    ["po_number", "ASC"]
-                ]
-            });
-
-            // Get The Last Entry Number
-            let poIDNumbers = [];
-            let lastEntryNumber = 0;
-            if (findPOEntries) {
-
-                await findPOEntries.forEach(async (entry) => {
-                    await poIDNumbers.push(parseInt(entry.po_number.split('-').slice(-1)[0]));
-                });
-
-                if (poIDNumbers && poIDNumbers.length > 0) {
-                    lastEntryNumber = Math.max(...poIDNumbers);
-                }
-            }
+            const findMaxPONumber = await db.purchase_order.max('po_number'); // Find Max Po Number
 
             // GENERATE PO ID
             let po_number;
             if ((new Date().getDate() % 2) === 0) {
 
-                if (lastEntryNumber != 0) { // Check if the last entry is available
-                    po_number = `${po_prefix}-${lastEntryNumber + 2}`
+                if (findMaxPONumber.split('-').slice(-1)[0] != 0) { // Check if the last entry is available
+                    po_number = `${po_prefix}-${parseInt(findMaxPONumber.split('-').slice(-1)[0]) + 2}`
                 } else {
                     po_number = `${po_prefix}-${po_startfrom + 2}`
                 }
 
             } else {
 
-                if (lastEntryNumber != 0) { // Check if the last entry is available
-                    po_number = `${po_prefix}-${lastEntryNumber + 3}`
+                if (findMaxPONumber.split('-').slice(-1)[0] != 0) { // Check if the last entry is available
+                    po_number = `${po_prefix}-${parseInt(findMaxPONumber.split('-').slice(-1)[0]) + 3}`
                 } else {
                     po_number = `${po_prefix}-${po_startfrom + 3}`
                 }
@@ -279,48 +255,6 @@ module.exports = {
             const insertProductList = await db.po_productlist.bulkCreate(poProductList);
             if (!insertProductList) return { message: "PO Product List Failed!!!", status: false }
 
-            // if (poTRKdetails) {
-            //     const { tracking_no } = poTRKdetails;
-            //     // Create PO TRK Details
-            //     const createPOTRKDetails = await db.po_trk_details.create({
-            //         po_id: insertPO.id,
-            //         tracking_no,
-            //         tenant_id: TENANTID,
-            //         created_by: user.id
-            //     });
-
-            //     if (!createPOTRKDetails) return { message: "PO TRK Details are Unable To Insert!!!", status: false }
-            // }
-
-            // if (poInvoice) {
-            //     const { invoice_no, invoice_date, invoice_path } = poInvoice;
-            //     // Create PO Invoice
-            //     const createPOInvoice = await db.po_invoices.create({
-            //         po_id: insertPO.id,
-            //         invoice_no,
-            //         invoice_date,
-            //         invoice_path,
-            //         tenant_id: TENANTID,
-            //         created_by: user.id
-            //     });
-
-            //     if (!createPOInvoice) return { message: "PO Invoice are Unable To Insert!!!", status: false }
-            // }
-
-            // if (poMFGDoc) {
-            //     const { doc_path } = poMFGDoc;
-
-            //     // Create PO MFG DOC
-            //     const createPOMFGDOC = await db.po_mfg_doc.create({
-            //         po_id: insertPO.id,
-            //         doc_path,
-            //         tenant_id: TENANTID,
-            //         created_by: user.id
-            //     });
-            //     if (!createPOMFGDOC) return { message: "PO MFG DOC are Unable To Insert!!!", status: false }
-            // }
-
-
             //
             let email;
             if (contact_person_id) {
@@ -392,7 +326,8 @@ module.exports = {
             return {
                 message: "Purchase Order Created Successfully!!!",
                 status: true,
-                tenant_id: TENANTID
+                tenant_id: TENANTID,
+                po_number: insertPO.po_number
             }
 
 
@@ -1895,3 +1830,55 @@ module.exports = {
         }
     },
 }
+
+
+
+
+
+
+
+
+
+// CHEAT SHEET
+
+            // if (poTRKdetails) {
+            //     const { tracking_no } = poTRKdetails;
+            //     // Create PO TRK Details
+            //     const createPOTRKDetails = await db.po_trk_details.create({
+            //         po_id: insertPO.id,
+            //         tracking_no,
+            //         tenant_id: TENANTID,
+            //         created_by: user.id
+            //     });
+
+            //     if (!createPOTRKDetails) return { message: "PO TRK Details are Unable To Insert!!!", status: false }
+            // }
+
+            // if (poInvoice) {
+            //     const { invoice_no, invoice_date, invoice_path } = poInvoice;
+            //     // Create PO Invoice
+            //     const createPOInvoice = await db.po_invoices.create({
+            //         po_id: insertPO.id,
+            //         invoice_no,
+            //         invoice_date,
+            //         invoice_path,
+            //         tenant_id: TENANTID,
+            //         created_by: user.id
+            //     });
+
+            //     if (!createPOInvoice) return { message: "PO Invoice are Unable To Insert!!!", status: false }
+            // }
+
+            // if (poMFGDoc) {
+            //     const { doc_path } = poMFGDoc;
+
+            //     // Create PO MFG DOC
+            //     const createPOMFGDOC = await db.po_mfg_doc.create({
+            //         po_id: insertPO.id,
+            //         doc_path,
+            //         tenant_id: TENANTID,
+            //         created_by: user.id
+            //     });
+            //     if (!createPOMFGDOC) return { message: "PO MFG DOC are Unable To Insert!!!", status: false }
+            // }
+

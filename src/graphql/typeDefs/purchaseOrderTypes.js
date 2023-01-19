@@ -347,12 +347,19 @@ type GetPONumberList {
     data:[PONUMBERS]
 }
 
+type CreatePOOutput {
+    message:String
+    status:Boolean
+    tenant_id:String
+    po_number:String
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
-    createPurchaseOrder(data:CreatePurchaseOrderInput):CommonOutput!
+    createPurchaseOrder(data:CreatePurchaseOrderInput):CreatePOOutput!
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
     createReceiving(data:createReceivingInput):createReceivingOutput!

@@ -4,10 +4,10 @@ const { singleResponse } = require("../../utils/response");
 
 
 // CONTROLLER
-module.exports = async (db, user, isAuth, TENANTID) => {
+module.exports = async (db, TENANTID) => {
 
     // Sending Request to Helper
-    const data = await getPOStatusList(db, user, isAuth, TENANTID);
+    const data = await getPOStatusList(db, TENANTID);
 
     // Final Response
     return singleResponse(data);

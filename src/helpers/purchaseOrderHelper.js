@@ -1343,6 +1343,19 @@ module.exports = {
                     as: 'pomfgdoc'
                 });
             }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.purchase_order.hasAlias('user') && !db.purchase_order.hasAlias('POCreated_by')) {
+                await db.purchase_order.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'POCreated_by'
+                });
+            }
             // ASSOCIATION ENDS
 
             // DECODE
@@ -1370,6 +1383,13 @@ module.exports = {
                                 { model: db.category, as: 'category' },
                                 { model: db.brand, as: 'brand' }
                             ]
+                        }
+                    },
+                    {
+                        model: db.user, as: 'POCreated_by',
+                        include: {
+                            model: db.role,
+                            as: 'roles'
                         }
                     },
                 ],
@@ -1837,7 +1857,7 @@ module.exports = {
         }
     },
     // GET PO STATUS LIST
-    getPOStatusList: async (db, user, isAuth, TENANTID) => {
+    getPOStatusList: async (db, TENANTID) => {
         // Try Catch Block
         try {
 

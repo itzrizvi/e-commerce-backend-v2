@@ -116,6 +116,8 @@ type PurchaseOrder {
     pomfgdoc:[POMFGDOC]
     shippingAccount:ShippingAccount
     POCreated_by: Staff
+    createdAt: String
+    updatedAt: String
 }
 
 type GetPurchaseOrderList {

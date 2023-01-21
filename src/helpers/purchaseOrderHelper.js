@@ -1251,6 +1251,14 @@ module.exports = {
                 });
             }
 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
+
             // 
             if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
 

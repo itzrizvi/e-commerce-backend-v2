@@ -260,6 +260,7 @@ type GetPOActivityListOutput {
 }
 
 type POInvoice {
+    id:Int
     po_id:Int
     purchaseOrder:PurchaseOrderList
     invoice_no:String
@@ -365,6 +366,27 @@ type CreatePOOutput {
     po_number:String
 }
 
+type PORejectReasons {
+    id:Int
+    reason:String
+    status:Boolean
+    tenant_id:String
+    createdAt:String
+    updatedAt:String
+}
+
+input CreatePORejectReasonInput {
+    reason:String!
+    status:Boolean!
+} 
+
+type GetPORejectReasonList {
+    message:String
+    status:Boolean
+    tenant_id:String
+    data:[PORejectReasons]
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -381,6 +403,7 @@ extend type Mutation {
     createPOInvoice(data:POInvoiceInput):CommonOutput!
     createMFGDOC(data:POMFGDOCInput):CommonOutput!
     createPOStatus(data:POStatusInput):CommonOutput!
+    createPORejectReason(data:CreatePORejectReasonInput):CommonOutput!
 }
 
 extend type Query {
@@ -393,6 +416,7 @@ extend type Query {
     viewPurchaseOrderPublic(query:ViewPOPublicInput):GetSinglePurchaseOrderOutput!
     getPOStatusList:GetAllPOStatus!
     getPONumbers:GetPONumberList!
+    getPORejectReasonList:GetPORejectReasonList!
 }
 
 

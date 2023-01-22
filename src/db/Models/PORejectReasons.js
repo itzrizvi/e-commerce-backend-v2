@@ -1,28 +1,20 @@
-// PO Invoices model
+// PO Reject Reasons model
 module.exports = (sequelize, DataTypes) => {
 
-    const POInvoices = sequelize.define("po_invoices", {
+    const PORejectReasons = sequelize.define("po_reject_reasons", {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,
             autoIncrement: true
         },
-        po_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        invoice_no: {
+        reason: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        invoice_date: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        invoice_path: {
-            type: DataTypes.STRING,
-            allowNull: false
+        status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true
         },
         created_by: {
             type: DataTypes.INTEGER,
@@ -40,7 +32,6 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
     });
-    // POInvoices.removeAttribute('id');
 
-    return POInvoices
+    return PORejectReasons
 }

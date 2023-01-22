@@ -2026,6 +2026,77 @@ module.exports = {
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPONumbers" });
         }
     },
+    // Create PO REJECT REASONS
+    createPORejectReason: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { reason, status } = req;
+
+            const checkExist = await db.po_reject_reasons.findOne({
+                where: {
+                    [Op.and]: [{
+                        reason,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (checkExist) return { message: "This Reason Is Already Exists!!!", status: false }
+
+            // Insert
+            const createPORejectReasons = await db.po_reject_reasons.create({
+                reason,
+                status,
+                tenant_id: TENANTID,
+                created_by: user.id
+            });
+
+            if (createPORejectReasons) {
+                // Return Formation
+                return {
+                    message: "PO Reject Reason Inserted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPORejectReason" });
+        }
+    },
+    // GET PO STATUS LIST
+    getPORejectReasonList: async (db, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // List
+            const poRejectReasonList = await db.po_reject_reasons.findAll({
+                where: {
+                    [Op.and]: [{
+                        status: true,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Return Formation
+            return {
+                message: "GET PO Reject Reason List Success!!!",
+                status: true,
+                tenant_id: TENANTID,
+                data: poRejectReasonList
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPORejectReasonList" });
+        }
+    },
 }
 
 

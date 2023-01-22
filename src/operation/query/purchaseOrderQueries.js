@@ -6,7 +6,8 @@ const { getPurchaseOrderListController,
     getPOInvoiceListController,
     getPOMFGDOCListController,
     getPOStatusListController,
-    getPONumbersController } = require("../../controllers");
+    getPONumbersController,
+    getPORejectReasonListController } = require("../../controllers");
 
 
 // PO BASED QUERY
@@ -110,6 +111,14 @@ module.exports = {
 
         // Return To Controller
         return await getPONumbersController(db, user, isAuth, TENANTID);
+    },
+    // PO REJECT REASON LIST
+    getPORejectReasonList: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+
+        // Return To Controller
+        return await getPORejectReasonListController(db, TENANTID);
     },
 
 }

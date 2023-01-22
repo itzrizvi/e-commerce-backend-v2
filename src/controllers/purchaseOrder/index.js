@@ -20,4 +20,6 @@ module.exports = {
     createPOStatusController: require('./createPOStatusController'),
     getPOStatusListController: require('./getPOStatusListController'),
     getPONumbersController: require('./getPONumbersController'),
+    createPORejectReasonController: require('./createPORejectReasonController'),
+    getPORejectReasonListController: require('./getPORejectReasonListController'),
 }

@@ -106,8 +106,8 @@ module.exports = {
     // Create PO
     createPurchaseOrder: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
+        const poTransaction = await db.sequelize.transaction();
         try {
-
             // DATA FROM REQUEST
             const { contact_person_id,
                 vendor_id,
@@ -294,7 +294,7 @@ module.exports = {
                 created_by: user.id
             })
 
-
+            await poTransaction.commit();
             // Return Formation
             return {
                 message: "Purchase Order Created Successfully!!!",
@@ -305,6 +305,7 @@ module.exports = {
 
 
         } catch (error) {
+            await poTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "createPurchaseOrder" });
         }
@@ -990,7 +991,6 @@ module.exports = {
     updatePOStatus: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
         try {
-
             // DATA FROM REQUEST
             const { id, status } = req;
 
@@ -1008,6 +1008,62 @@ module.exports = {
             });
 
             if (!updatePOStatus) return { message: "PO Satus Change Failed!!!", status: false }
+
+            const getPOStatus = await db.po_status.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: status,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { name } = getPOStatus;
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id: id,
+                comment: `PO ${name} By ${user.first_name}`,
+                tenant_id: TENANTID,
+                created_by: user?.id
+            });
+
+
+            // Return Formation
+            return {
+                message: "Purchase Order Status Changed Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePOStatus" });
+        }
+    },
+    // Po Send to Vendor Helper
+    poSendToVendor: async (req, db, user, isAuth, TENANTID) => {
+        const poSendTransaction = await db.sequelize.transaction();
+        // Try Catch Block
+        try {
+            // DATA FROM REQUEST
+            const { id, status } = req;
+
+            // Update Purchase Order Status
+            const updatePOStatus = await db.purchase_order.update({
+                status,
+                updated_by: user.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (!updatePOStatus) return { message: "PO Status Change Failed!!!", status: false }
 
             const getPOStatus = await db.po_status.findOne({
                 where: {
@@ -1086,17 +1142,17 @@ module.exports = {
                 // SENDING EMAIL
                 await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
             }
-
-
+            // Commit The query
+            await poSendTransaction.commit();
             // Return Formation
             return {
-                message: "Purchase Order Status Changed Successfully!!!",
+                message: "Purchase Order Send Successfully!!!",
                 status: true,
                 tenant_id: TENANTID
             }
 
-
         } catch (error) {
+            await poSendTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePOStatus" });
         }

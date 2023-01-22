@@ -372,6 +372,7 @@ extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
     createPurchaseOrder(data:CreatePurchaseOrderInput):CreatePOOutput!
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
+    poSendToVendor(data:POStatusChangeInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
     updatePOStatusPublic(data:POStatusChangePublicInput):CommonOutput!
     createReceiving(data:createReceivingInput):createReceivingOutput!

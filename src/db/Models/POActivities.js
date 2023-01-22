@@ -6,9 +6,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        comment: {
+        action_type: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        comment: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         created_by: {
             type: DataTypes.INTEGER,

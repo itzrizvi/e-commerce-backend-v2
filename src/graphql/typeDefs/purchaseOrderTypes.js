@@ -184,6 +184,15 @@ input POStatusChangeInput{
     status:Int!
 }
 
+input POStatusChangePublicInput{
+    param1:String!
+    param2:String!
+    status:Int!
+    reason: String
+}
+
+
+
 input createReceivingInput {
     purchaseOrder_id:Int
     status:String
@@ -364,6 +373,7 @@ extend type Mutation {
     createPurchaseOrder(data:CreatePurchaseOrderInput):CreatePOOutput!
     updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
+    updatePOStatusPublic(data:POStatusChangePublicInput):CommonOutput!
     createReceiving(data:createReceivingInput):createReceivingOutput!
     createPOTRKDetails(data:POTRKInput):CommonOutput!
     createPOActivity(data:POActivityInput):CommonOutput!

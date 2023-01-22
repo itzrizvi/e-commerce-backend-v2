@@ -8,7 +8,9 @@ const { poSettingController,
     createPOActivityController,
     createPOInvoiceController,
     createMFGDOCController,
-    createPOStatusController } = require("../../controllers");
+    createPOStatusController,
+    updatePOStatusPublicController
+} = require("../../controllers");
 
 
 // PO Mutation Start
@@ -67,6 +69,13 @@ module.exports = {
 
         // Send to Controller
         return await updatePOStatusController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Update PO Status Mutation
+    updatePOStatusPublic: async (root, args, { db, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Send to Controller
+        return await updatePOStatusPublicController(args.data, db, TENANTID);
     },
     // Create Receiving Mutation
     createReceiving: async (root, args, { db, user, isAuth, TENANTID }, info) => {

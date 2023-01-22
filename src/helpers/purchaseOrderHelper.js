@@ -278,11 +278,14 @@ module.exports = {
                 email = findVendor.email;
             }
 
+            const vendorPOViewExpire = config.get("VENDOR_PO_VIEW_DAY_EXPIRE");
+            let poViewExpireDate = new Date();
             // Record Create
-            await db.poview_record.create({
+            await db.po_vendor_view_links.create({
                 po_id: insertPO.id,
-                po_number,
-                created_by: user.id,
+                vendor_id,
+                status: true,
+                expire_date: poViewExpireDate.setDate(poViewExpireDate.getDate() + vendorPOViewExpire),
                 tenant_id: TENANTID
             });
 
@@ -1065,25 +1068,6 @@ module.exports = {
 
             if (!updatePOStatus) return { message: "PO Status Change Failed!!!", status: false }
 
-            const getPOStatus = await db.po_status.findOne({
-                where: {
-                    [Op.and]: [{
-                        id: status,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-
-            const { name, slug } = getPOStatus;
-
-            // Create PO TRK Details
-            await db.po_activities.create({
-                po_id: id,
-                comment: `PO ${name} By ${user.first_name}`,
-                tenant_id: TENANTID,
-                created_by: user?.id
-            });
-
             const findPO = await db.purchase_order.findOne({
                 where: {
                     [Op.and]: [{
@@ -1106,42 +1090,34 @@ module.exports = {
 
             const { email } = findVendorEmail
 
-            if (slug === "submitted") {
-                // Create PO TRK Details
-                await db.po_activities.create({
-                    po_id: id,
-                    comment: `PO Sent To Vendor By ${user.first_name}`,
-                    tenant_id: TENANTID,
-                    created_by: user.id
-                });
 
 
-                let purchaseOrderIDhashed = crypt(`${id}`);
-                let ponumberhashed = crypt(`${po_number}`);
-                // SET PASSWORD URL
-                const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
-                // Setting Up Data for EMAIL SENDER
-                const mailSubject = "Purchase Order From Prime Server Parts"
-                const mailData = {
-                    companyInfo: {
-                        logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
-                        banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
-                        companyName: config.get("COMPANY_NAME"),
-                        companyUrl: config.get("ECOM_URL"),
-                        shopUrl: config.get("ECOM_URL"),
-                        fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
-                        tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
-                        li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
-                        insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
-                    },
-                    about: 'A Purchase Order Has Been Created On Primer Server Parts',
-                    email: email,
-                    viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
-                }
-
-                // SENDING EMAIL
-                await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
+            let purchaseOrderIDhashed = crypt(`${id}`);
+            let ponumberhashed = crypt(`${po_number}`);
+            // SET PASSWORD URL
+            const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
+            // Setting Up Data for EMAIL SENDER
+            const mailSubject = "Purchase Order From Prime Server Parts"
+            const mailData = {
+                companyInfo: {
+                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                    companyName: config.get("COMPANY_NAME"),
+                    companyUrl: config.get("ECOM_URL"),
+                    shopUrl: config.get("ECOM_URL"),
+                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                },
+                about: 'A Purchase Order Has Been Created On Primer Server Parts',
+                email: email,
+                viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
             }
+
+            // SENDING EMAIL
+            await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
+
             // Commit The query
             await poSendTransaction.commit();
             // Return Formation
@@ -1158,7 +1134,7 @@ module.exports = {
         }
     },
     // Update PO STATUS Public
-    updatePOStatusPublic: async (req, db, TENANTID) => {
+    updatePOStatusPublic: async (req, db, TENANTID, ip, headers) => {
         // Try Catch Block
         try {
             // DATA FROM REQUEST
@@ -1201,6 +1177,19 @@ module.exports = {
                 tenant_id: TENANTID,
                 created_by: 10001
             });
+
+            if (slug === "vendor_accepted" || slug === "vendor_rejected") {
+                await db.po_vendor_view_links.update({
+                    viewer_info: `${{ ip: ip, viewer_info: headers }}`
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+            }
 
 
             // Return Formation
@@ -1475,72 +1464,89 @@ module.exports = {
 
             // DECODE
             const id = decrypt(param1);
-            const po_number = decrypt(param2)
+            const po_number = decrypt(param2);
 
-            // Single PO 
-            const singlePO = await db.purchase_order.findOne({
-                include: [
-                    { model: db.vendor, as: 'vendor' },
-                    { model: db.payment_method, as: 'paymentmethod' },
-                    { model: db.shipping_method, as: 'shippingMethod' },
-                    { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
-                    { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
-                    { model: db.po_trk_details, as: 'potrkdetails' },
-                    { model: db.po_activities, as: 'poactivitites' },
-                    { model: db.po_invoices, as: 'poinvoices' },
-                    { model: db.po_mfg_doc, as: 'pomfgdoc' },
-                    {
-                        model: db.po_productlist, as: 'poProductlist', // 
-                        include: {
-                            model: db.product,
-                            as: 'product',
-                            include: [
-                                { model: db.category, as: 'category' },
-                                { model: db.brand, as: 'brand' }
-                            ]
-                        }
-                    },
-                    {
-                        model: db.user, as: 'POCreated_by',
-                        include: {
-                            model: db.role,
-                            as: 'roles'
-                        }
-                    },
-                ],
+            const findPOVendorViewRecord = await db.po_vendor_view_links.findOne({
                 where: {
                     [Op.and]: [{
-                        id,
-                        po_number,
+                        po_id: id,
                         tenant_id: TENANTID
                     }]
                 }
             });
-            if (singlePO) {
-                await db.poview_record.update({
-                    status: 'viewed',
-                    client_info: JSON.stringify(headers),
-                    last_viewed_at: Date.now(),
-                    client_ip: ip
-                }, {
+
+            const { expire_date, status } = findPOVendorViewRecord;
+
+            // Time Calculating
+            const reqTime = new Date();
+            const recordTime = new Date(expire_date);
+            // Calculating Minutes
+            let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
+            // Difference
+            const diffs = Math.abs(Math.round(minutes));
+
+            // IF Difference Less than or Equal to CONFIG minutes
+            if (diffs < 0 || !status) {
+
+                return { message: "This PO has been expired!!!", status: false }
+
+            } else {
+                // Single PO 
+                const singlePO = await db.purchase_order.findOne({
+                    include: [
+                        { model: db.vendor, as: 'vendor' },
+                        { model: db.payment_method, as: 'paymentmethod' },
+                        { model: db.shipping_method, as: 'shippingMethod' },
+                        { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
+                        { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
+                        { model: db.po_trk_details, as: 'potrkdetails' },
+                        { model: db.po_activities, as: 'poactivitites' },
+                        { model: db.po_invoices, as: 'poinvoices' },
+                        { model: db.po_mfg_doc, as: 'pomfgdoc' },
+                        {
+                            model: db.po_productlist, as: 'poProductlist', // 
+                            include: {
+                                model: db.product,
+                                as: 'product',
+                                include: [
+                                    { model: db.category, as: 'category' },
+                                    { model: db.brand, as: 'brand' }
+                                ]
+                            }
+                        },
+                        {
+                            model: db.user, as: 'POCreated_by',
+                            include: {
+                                model: db.role,
+                                as: 'roles'
+                            }
+                        },
+                    ],
                     where: {
                         [Op.and]: [{
-                            po_id: id,
+                            id,
                             po_number,
                             tenant_id: TENANTID
                         }]
                     }
+                });
+
+                // Create PO TRK Details
+                await db.po_activities.create({
+                    po_id: id,
+                    comment: `PO Viewed By : ${{ viewer_info: headers, ip: ip }}`,
+                    tenant_id: TENANTID
                 })
-            }
 
-            // Return Formation
-            return {
-                message: "GET Purchase Order Public View Success!!!",
-                status: true,
-                tenant_id: TENANTID,
-                data: singlePO
-            }
+                // Return Formation
+                return {
+                    message: "GET Purchase Order Public View Success!!!",
+                    status: true,
+                    tenant_id: TENANTID,
+                    data: singlePO
+                }
 
+            }
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }

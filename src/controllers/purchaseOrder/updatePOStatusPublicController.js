@@ -4,10 +4,10 @@ const { singleResponse } = require("../../utils/response");
 
 
 // CONTROLLER
-module.exports = async (req, db, TENANTID) => {
+module.exports = async (req, db, TENANTID, ip, headers) => {
 
     // HELPER
-    const data = await updatePOStatusPublic(req, db, TENANTID);
+    const data = await updatePOStatusPublic(req, db, TENANTID, ip, headers);
 
     return singleResponse(data);
 

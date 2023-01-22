@@ -2,6 +2,12 @@
 module.exports = (sequelize, DataTypes) => {
 
     const POMFGDOC = sequelize.define("po_mfg_doc", {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            allowNull: false,
+            autoIncrement: true
+        },
         po_id: {
             type: DataTypes.INTEGER,
             allowNull: false

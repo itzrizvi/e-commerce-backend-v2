@@ -289,6 +289,7 @@ type GetPOInvoiceListOutput {
 }
 
 type POMFGDOC {
+    id:Int
     po_id:Int
     purchaseOrder:PurchaseOrderList
     doc_path:String

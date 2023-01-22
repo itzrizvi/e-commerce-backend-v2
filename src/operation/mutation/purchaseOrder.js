@@ -84,11 +84,11 @@ module.exports = {
         return await poSendToVendorController(args.data, db, user, isAuth, TENANTID);
     },
     // Update PO Status Mutation
-    updatePOStatusPublic: async (root, args, { db, TENANTID }, info) => {
+    updatePOStatusPublic: async (root, args, { db, TENANTID, ip, headers }, info) => {
         // Return If Not Have TENANT ID
         if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
         // Send to Controller
-        return await updatePOStatusPublicController(args.data, db, TENANTID);
+        return await updatePOStatusPublicController(args.data, db, TENANTID, ip, headers);
     },
     // Create Receiving Mutation
     createReceiving: async (root, args, { db, user, isAuth, TENANTID }, info) => {

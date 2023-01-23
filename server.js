@@ -17,6 +17,7 @@ const {
 const { graphqlUploadExpress } = require("graphql-upload-minimal");
 const { getFileStream } = require("./src/utils/fileUpload");
 const path = require("path");
+const rateLimit = require('express-rate-limit')
 
 // CREATE SERVER APP
 const app = express();
@@ -35,8 +36,16 @@ const middlewares = [
   cors(),
   cookieParser(),
 ];
+const apiLimiter = rateLimit({
+	windowMs: 1000 * 60 * 1, // 1 minute
+	max: 60, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
 
 app.use(middlewares); // Middlewares Using
+// Apply the rate limiting middleware to API calls only
+app.use('/graphql', apiLimiter)
 app.use(onReqTokenGenerate);
 app.use(onReqTenantCheck);
 app.set("trust proxy", true);

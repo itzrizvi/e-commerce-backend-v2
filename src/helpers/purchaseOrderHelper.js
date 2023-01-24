@@ -1847,7 +1847,7 @@ module.exports = {
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
                 const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: invoicefile.name, bucketName: psp_admin_doc_src_bucketName });
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: psp_admin_doc_src_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update
@@ -1938,7 +1938,7 @@ module.exports = {
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
                 const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: invoicefile.name, bucketName: psp_admin_doc_src_bucketName });
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: psp_admin_doc_src_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update

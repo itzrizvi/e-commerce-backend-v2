@@ -297,7 +297,8 @@ module.exports = {
                 comment: `PO Created By ${user.first_name}`,
                 action_type: po_activity_type.CREATE_PO,
                 tenant_id: TENANTID,
-                created_by: user.id
+                created_by: user.id,
+                updated_by: user.id
             })
 
             await poTransaction.commit();
@@ -1883,7 +1884,8 @@ module.exports = {
                 invoice_date: Date.now(),
                 invoice_file: null,
                 tenant_id: TENANTID,
-                created_by: user.id
+                created_by: user.id,
+                updated_by: user.id
             });
 
             // If Image is Available
@@ -2183,7 +2185,8 @@ module.exports = {
                     comment: `PO MFG DOC Created By ${user.first_name}`,
                     action_type: po_activity_type.PO_MFG_CREATION,
                     tenant_id: TENANTID,
-                    created_by: user.id
+                    created_by: user.id,
+                    updated_by: user.id
                 })
 
                 if (updatePOMFG) {

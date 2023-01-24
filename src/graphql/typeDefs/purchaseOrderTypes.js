@@ -291,7 +291,6 @@ input updatePOInvoiceInput {
     id:Int!
     po_id:Int
     invoice_no:String
-    invoice_date:String
     invoicefile:Upload
 }
 

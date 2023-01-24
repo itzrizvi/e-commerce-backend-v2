@@ -5,7 +5,7 @@ const config = require('config');
 const { Mail } = require("../utils/email");
 const logger = require("../../logger");
 const { default: slugify } = require("slugify");
-const { singleFileUpload } = require("../utils/fileUpload");
+const { singleFileUpload, deleteFile } = require("../utils/fileUpload");
 
 // PO HELPER
 module.exports = {
@@ -1832,7 +1832,7 @@ module.exports = {
                 po_id,
                 invoice_no,
                 invoice_date: Date.now(),
-                invoice_file: "Not Uploaded",
+                invoice_file: null,
                 tenant_id: TENANTID,
                 created_by: user.id
             });
@@ -1862,6 +1862,96 @@ module.exports = {
                         [Op.and]: [{
                             id: createPOInvoice.id,
                             po_id,
+                            tenant_id: TENANTID,
+                        }]
+                    }
+                })
+
+
+                if (updatePOInvoice) {
+                    // Return Formation
+                    return {
+                        message: "PO Invoice Inserted Successfully!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOInvoice" });
+        }
+    },
+    // Update PO Invoice
+    updatePOInvoice: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id, po_id, invoice_no, invoicefile } = req;
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_number } = findPO;
+
+            // Update PO Invoice
+            await db.po_invoices.update({
+                po_id,
+                invoice_no,
+                invoice_date: Date.now(),
+                tenant_id: TENANTID,
+                updated_by: user.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // If Image is Available
+            let invoice_file = `${po_number}_${new Date().getTime()}`;
+            let invoiceFileName;
+            if (invoicefile) {
+
+                // IF Image Also Updated
+                if (findPO.invoice_file) {
+                    // Delete Previous S3 File 
+                    const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_DEST").split("/");
+                    const psp_admin_doc_src_bucketName = psp_admin_doc_src[0];
+                    const psp_admin_doc_folder = psp_admin_doc_src.slice(1);
+                    await deleteFile({ idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: findPO.invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                }
+
+                // Upload New File to AWS S3
+                const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
+                const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
+                const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+
+                // Update
+                invoiceFileName = fileUrl.Key.split('/').slice(-1)[0];
+            }
+
+            if (invoiceFileName) {
+
+                // Update PO Invoice
+                const updatePOInvoice = await db.po_invoices.update({
+                    invoice_file: invoiceFileName
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id,
                             tenant_id: TENANTID,
                         }]
                     }

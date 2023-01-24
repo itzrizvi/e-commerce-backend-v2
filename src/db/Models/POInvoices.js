@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: true,
     });
-    // POInvoices.removeAttribute('id');
 
     return POInvoices
 }

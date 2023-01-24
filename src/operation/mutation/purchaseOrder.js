@@ -12,7 +12,8 @@ const { poSettingController,
     updatePOStatusPublicController,
     poSendToVendorController,
     createPORejectReasonController,
-    deletePOInvoiceController
+    deletePOInvoiceController,
+    updatePOInvoiceController
 } = require("../../controllers");
 
 
@@ -134,6 +135,17 @@ module.exports = {
 
         // Send to Controller
         return await createPOInvoiceController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Update PO Invoice 
+    updatePOInvoice: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Send to Controller
+        return await updatePOInvoiceController(args.data, db, user, isAuth, TENANTID);
     },
     // Create PO MFG DOC
     createMFGDOC: async (root, args, { db, user, isAuth, TENANTID }, info) => {

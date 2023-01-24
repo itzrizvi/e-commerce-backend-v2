@@ -40,8 +40,10 @@
     "CONTACTUS_IMG_IDF": "id",
     "ORDER_TAX_EXEMPT_FILE_SRC": "psp-image-storage-resize/order",
     "ATTRIBUTE_FILE_SRC": "psp-image-storage-resize/attribute-files",
-    "PSP_ADMIN_DOC_SRC": "psp-admin-doc/PO",
-    "PSP_ADMIN_DOC_DEST": "psp-admin-doc/PO"
+    "PSP_ADMIN_DOC_PO_SRC": "psp-admin-doc/PO",
+    "PSP_ADMIN_DOC_PO_DEST": "psp-admin-doc/PO",
+    "PSP_ADMIN_DOC_MFG_SRC": "psp-admin-doc/mfg",
+    "PSP_ADMIN_DOC_MFG_DEST": "psp-admin-doc/mfg"
   },
   "SERVER_URL": "http://api.primeserverparts.com/",
   "COMPANY_NAME": "Prime Server Parts",

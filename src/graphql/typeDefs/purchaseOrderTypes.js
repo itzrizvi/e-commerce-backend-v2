@@ -22,7 +22,7 @@ input POInvoiceInputForPO {
 }
 
 input POMFGDOCInputForPO {
-    doc_path:String!
+    pomfg_file:String!
 }
 
 input CreatePurchaseOrderInput {
@@ -152,7 +152,7 @@ input UpdatePOInvoiceInputForPO {
 }
 
 input UpdatePOMFGDOCInputForPO {
-    doc_path:String
+    pomfg_file:String
 }
 
 input UpdatePurchaseOrderInput {
@@ -316,17 +316,18 @@ type POMFGDOC {
     id:Int
     po_id:Int
     purchaseOrder:PurchaseOrderList
-    doc_path:String
+    pomfg_file:String
     createdAt:String
     updatedAt:String
 }
 
 input POMFGDOCInput {
     po_id:Int!
-    doc_path:String!
+    pomfgfile:Upload!
 }
 
 input GetPOMFGDOCListInput {
+    id:Int!
     po_id:Int!
 }
 

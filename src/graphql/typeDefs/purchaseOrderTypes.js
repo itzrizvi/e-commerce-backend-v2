@@ -327,7 +327,6 @@ input POMFGDOCInput {
 }
 
 input GetPOMFGDOCListInput {
-    id:Int!
     po_id:Int!
 }
 

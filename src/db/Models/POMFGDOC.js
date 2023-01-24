@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        doc_path: {
+        pomfg_file: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -34,7 +34,6 @@ module.exports = (sequelize, DataTypes) => {
         freezeTableName: true,
         tableName: 'po_mfg_doc'
     });
-    POMFGDOC.removeAttribute('id');
 
     return POMFGDOC
 }

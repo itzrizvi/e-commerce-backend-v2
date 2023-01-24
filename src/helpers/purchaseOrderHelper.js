@@ -1843,10 +1843,10 @@ module.exports = {
             let invoiceFileName;
             if (invoicefile) {
                 // Upload Image to AWS S3
-                const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
-                const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
-                const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: psp_admin_doc_src_bucketName });
+                const PSP_ADMIN_DOC_PO_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
+                const PSP_ADMIN_DOC_PO_SRC_bucketName = PSP_ADMIN_DOC_PO_SRC[0]
+                const psp_admin_doc_folder = PSP_ADMIN_DOC_PO_SRC.slice(1)
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update
@@ -1937,17 +1937,17 @@ module.exports = {
                 // IF Image Also Updated
                 if (findPOInvoice.invoice_file) {
                     // Delete Previous S3 File 
-                    const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_DEST").split("/");
-                    const psp_admin_doc_src_bucketName = psp_admin_doc_src[0];
-                    const psp_admin_doc_folder = psp_admin_doc_src.slice(1);
-                    await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPOInvoice.invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                    const PSP_ADMIN_DOC_PO_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_DEST").split("/");
+                    const PSP_ADMIN_DOC_PO_SRC_bucketName = PSP_ADMIN_DOC_PO_SRC[0];
+                    const psp_admin_doc_folder = PSP_ADMIN_DOC_PO_SRC.slice(1);
+                    await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPOInvoice.invoice_file, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
                 }
 
                 // Upload New File to AWS S3
-                const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
-                const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
-                const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: psp_admin_doc_src_bucketName });
+                const PSP_ADMIN_DOC_PO_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
+                const PSP_ADMIN_DOC_PO_SRC_bucketName = PSP_ADMIN_DOC_PO_SRC[0]
+                const psp_admin_doc_folder = PSP_ADMIN_DOC_PO_SRC.slice(1)
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update
@@ -2062,23 +2062,63 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { po_id, doc_path } = req;
+            const { po_id, pomfgfile } = req;
 
             // Create PO MFG DOC
             const createPOMFGDOC = await db.po_mfg_doc.create({
                 po_id,
-                doc_path,
+                pomfg_file: "Not Uploaded Yet",
                 tenant_id: TENANTID,
                 created_by: user.id
             });
 
-            if (createPOMFGDOC) {
-                // Return Formation
-                return {
-                    message: "PO MFG DOC Inserted Successfully!!!",
-                    status: true,
-                    tenant_id: TENANTID
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
                 }
+            });
+            const { po_number } = findPO;
+
+            let mfgFileName;
+            if (pomfgfile) {
+                // Upload File to AWS S3
+                const PSP_ADMIN_DOC_MFG_SRC = config.get("AWS.PSP_ADMIN_DOC_MFG_SRC").split("/")
+                const PSP_ADMIN_DOC_MFG_SRC_bucketName = PSP_ADMIN_DOC_MFG_SRC[0]
+                const psp_admin_doc_folder = PSP_ADMIN_DOC_MFG_SRC.slice(1)
+                const fileUrl = await singleFileUpload({ file: pomfgfile, idf: `${po_number}/mfg/${createPOMFGDOC.id}`, folder: psp_admin_doc_folder, fileName: pomfgfile.filename, bucketName: PSP_ADMIN_DOC_MFG_SRC_bucketName });
+                if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+
+                // Update
+                mfgFileName = fileUrl.Key.split('/').slice(-1)[0];
+            }
+
+            if (mfgFileName) {
+
+                // Update PO Invoice
+                const updatePOMFG = await db.po_mfg_doc.update({
+                    pomfg_file: mfgFileName
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id: createPOMFGDOC.id,
+                            po_id,
+                            tenant_id: TENANTID,
+                        }]
+                    }
+                });
+
+                if (updatePOMFG) {
+                    // Return Formation
+                    return {
+                        message: "PO MFG DOC Inserted Successfully!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
+                }
+
             }
 
 
@@ -2318,10 +2358,10 @@ module.exports = {
             // IF Image Also Updated
 
             // Delete Previous S3 File 
-            const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_DEST").split("/");
-            const psp_admin_doc_src_bucketName = psp_admin_doc_src[0];
-            const psp_admin_doc_folder = psp_admin_doc_src.slice(1);
-            await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPOInvoice.invoice_file, bucketName: psp_admin_doc_src_bucketName });
+            const PSP_ADMIN_DOC_PO_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_DEST").split("/");
+            const PSP_ADMIN_DOC_PO_SRC_bucketName = PSP_ADMIN_DOC_PO_SRC[0];
+            const psp_admin_doc_folder = PSP_ADMIN_DOC_PO_SRC.slice(1);
+            await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPOInvoice.invoice_file, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
 
 
             // Delete
@@ -2392,12 +2432,12 @@ module.exports = {
             // }
 
             // if (poMFGDoc) {
-            //     const { doc_path } = poMFGDoc;
+            //     const { pomfg_file } = poMFGDoc;
 
             //     // Create PO MFG DOC
             //     const createPOMFGDOC = await db.po_mfg_doc.create({
             //         po_id: insertPO.id,
-            //         doc_path,
+            //         pomfg_file,
             //         tenant_id: TENANTID,
             //         created_by: user.id
             //     });

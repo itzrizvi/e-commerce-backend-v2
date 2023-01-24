@@ -132,9 +132,6 @@ module.exports = {
         if (!user || !isAuth) return { message: "Not Authorized", status: false };
         if (user.has_role === '0') return { message: "Not Authorized", status: false };
 
-        // Merging File To Args Data
-        args.data.invoicefile = args.file;
-
         // Send to Controller
         return await createPOInvoiceController(args.data, db, user, isAuth, TENANTID);
     },

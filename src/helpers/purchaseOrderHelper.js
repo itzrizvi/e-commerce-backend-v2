@@ -1815,7 +1815,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { po_id, invoice_no, invoice_date, invoicefile } = req;
+            const { po_id, invoice_no, invoicefile } = req;
 
             const findPO = await db.purchase_order.findOne({
                 where: {
@@ -1831,24 +1831,26 @@ module.exports = {
             const createPOInvoice = await db.po_invoices.create({
                 po_id,
                 invoice_no,
-                invoice_date,
+                invoice_date: Date.now(),
                 invoice_file: "Not Uploaded",
                 tenant_id: TENANTID,
                 created_by: user.id
-            })
-
+            });
 
             // If Image is Available
             let invoice_file = `${po_number}_${new Date().getTime()}`;
-            // Upload Image to AWS S3
-            const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
-            const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
-            const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-            const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: invoice_file, bucketName: psp_admin_doc_src_bucketName });
-            if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+            let invoiceFileName;
+            if (invoicefile) {
+                // Upload Image to AWS S3
+                const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
+                const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
+                const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
-            // Update
-            let invoiceFileName = fileUrl.Key.split('/').slice(-1)[0];
+                // Update
+                invoiceFileName = fileUrl.Key.split('/').slice(-1)[0];
+            }
 
             if (invoiceFileName) {
 

@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         invoice_file: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         created_by: {
             type: DataTypes.INTEGER,

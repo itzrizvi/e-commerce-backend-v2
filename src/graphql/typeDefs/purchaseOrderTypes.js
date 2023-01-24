@@ -241,6 +241,7 @@ type POActivitites {
     po_id:Int
     purchaseOrder:PurchaseOrderList
     comment:String
+    action_type:String
     createdAt:String
     updatedAt:String
 }
@@ -275,8 +276,7 @@ type POInvoice {
 input POInvoiceInput {
     po_id:Int!
     invoice_no:String!
-    invoice_date:String!
-    invoicefile:Upload!
+    invoicefile:Upload
 }
 
 input GetPOInvoiceListInput {

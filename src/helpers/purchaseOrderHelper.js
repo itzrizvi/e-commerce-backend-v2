@@ -1073,7 +1073,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id: id,
-                action_type: po_activity_type.UPDATE_PO_STATUS,
+                action_type: po_activity_type.UPDATE_PO_STATUS_ADMIN,
                 comment: `PO ${name} By ${user.first_name}`,
                 tenant_id: TENANTID,
                 created_by: user?.id,
@@ -1556,6 +1556,7 @@ module.exports = {
             });
 
             const { expire_date, status } = findPOVendorViewRecord;
+            if (!expire_date) return { message: "This PO has been expired!!!", status: false }
 
             // Time Calculating
             const reqTime = new Date();

@@ -6,6 +6,7 @@ const { Mail } = require("../utils/email");
 const logger = require("../../logger");
 const { default: slugify } = require("slugify");
 const { singleFileUpload, deleteFile, getFileName } = require("../utils/fileUpload");
+const { po_activity_type } = require("../../enums/po_enum");
 
 // PO HELPER
 module.exports = {
@@ -294,6 +295,7 @@ module.exports = {
             await db.po_activities.create({
                 po_id: insertPO.id,
                 comment: `PO Created By ${user.first_name}`,
+                action_type: po_activity_type.CREATE_PO,
                 tenant_id: TENANTID,
                 created_by: user.id
             })
@@ -1070,6 +1072,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id: id,
+                action_type: po_activity_type.UPDATE_PO_STATUS,
                 comment: `PO ${name} By ${user.first_name}`,
                 tenant_id: TENANTID,
                 created_by: user?.id
@@ -1218,6 +1221,7 @@ module.exports = {
             await db.po_activities.create({
                 po_id: id,
                 comment: reason,
+                action_type: po_activity_type.UPDATE_PO_STATUS_VENDOR,
                 tenant_id: TENANTID,
                 created_by: 10001
             });
@@ -1578,6 +1582,7 @@ module.exports = {
                 // Create PO TRK Details
                 await db.po_activities.create({
                     po_id: id,
+                    action_type: po_activity_type.PO_VIEWED_BY_VENDOR,
                     comment: `PO Viewed By : ${{ viewer_info: headers, ip: ip }}`,
                     tenant_id: TENANTID
                 })
@@ -1709,12 +1714,13 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { po_id, comment } = req;
+            const { po_id, comment, action_type } = req;
 
             // Create PO TRK Details
             const createPOTRKDetails = await db.po_activities.create({
                 po_id,
                 comment,
+                action_type,
                 tenant_id: TENANTID,
                 created_by: user.id
             })
@@ -1844,7 +1850,7 @@ module.exports = {
             if (invoicefile) {
                 const rawFileName = await getFileName(invoicefile, false)
                 // Upload Image to AWS S3
-                const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
+                const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
                 const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
                 const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: rawFileName, bucketName: psp_admin_doc_src_bucketName });
@@ -1856,7 +1862,7 @@ module.exports = {
             if (invoiceFileName) {
 
                 // Update PO Invoice
-                const updatePOInvoice = await db.po_invoices.update({
+                await db.po_invoices.update({
                     invoice_file: invoiceFileName
                 }, {
                     where: {
@@ -1867,16 +1873,24 @@ module.exports = {
                         }]
                     }
                 })
+            }
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id,
+                comment: `PO Created By ${user.first_name}`,
+                action_type: po_activity_type.PO_INVOICE_CREATION,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
 
 
-                if (updatePOInvoice) {
-                    // Return Formation
-                    return {
-                        message: "PO Invoice Inserted Successfully!!!",
-                        status: true,
-                        tenant_id: TENANTID
-                    }
-                }
+
+            // Return Formation
+            return {
+                message: "PO Invoice Inserted Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
             }
 
 
@@ -1969,6 +1983,15 @@ module.exports = {
                     }
                 });
             }
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id,
+                comment: `PO Invoice Updated By ${user.first_name}`,
+                action_type: po_activity_type.PO_INVOICE_UPDATE,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
 
             // Return Formation
             return {
@@ -2087,7 +2110,7 @@ module.exports = {
             if (pomfgfile) {
                 // Upload File to AWS S3
                 const rawFileName = await getFileName(pomfgfile, false)
-                const PSP_ADMIN_DOC_MFG_SRC = config.get("AWS.PSP_ADMIN_DOC_MFG_SRC").split("/")
+                const PSP_ADMIN_DOC_MFG_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
                 const PSP_ADMIN_DOC_MFG_SRC_bucketName = PSP_ADMIN_DOC_MFG_SRC[0]
                 const psp_admin_doc_folder = PSP_ADMIN_DOC_MFG_SRC.slice(1)
                 const fileUrl = await singleFileUpload({ file: pomfgfile, idf: `${po_number}/mfg/${createPOMFGDOC.id}`, folder: psp_admin_doc_folder, fileName: rawFileName, bucketName: PSP_ADMIN_DOC_MFG_SRC_bucketName });
@@ -2111,6 +2134,15 @@ module.exports = {
                         }]
                     }
                 });
+
+                // Create PO TRK Details
+                await db.po_activities.create({
+                    po_id,
+                    comment: `PO MFG DOC Created By ${user.first_name}`,
+                    action_type: po_activity_type.PO_MFG_CREATION,
+                    tenant_id: TENANTID,
+                    created_by: user.id
+                })
 
                 if (updatePOMFG) {
                     // Return Formation
@@ -2376,6 +2408,15 @@ module.exports = {
                 }
             });
 
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id,
+                comment: `PO Invoice Deleted By ${user.first_name}`,
+                action_type: po_activity_type.PO_INVOICE_DELETE,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
+
 
 
             if (deletePOInvoice) {
@@ -2391,6 +2432,110 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "deletePOInvoice" });
+        }
+    },
+    // Update PO MFG DOC
+    updatePOMFGDOC: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id,
+                po_id,
+                pomfgfile } = req;
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_number } = findPO;
+
+            const findMFGDOC = await db.po_mfg_doc.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Update PO Invoice
+            await db.po_mfg_doc.update({
+                updated_by: user.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // If FILE is Available
+            let mfgDocFileName;
+            if (pomfgfile) {
+
+                // IF Image Also Updated
+                if (findMFGDOC.pomfg_file) {
+                    // Delete Previous S3 File 
+                    const PSP_ADMIN_DOC_MFG_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_DEST").split("/");
+                    const PSP_ADMIN_DOC_MFG_SRC_bucketName = PSP_ADMIN_DOC_MFG_SRC[0];
+                    const psp_admin_doc_folder = PSP_ADMIN_DOC_MFG_SRC.slice(1);
+                    await deleteFile({ idf: `${po_number}/mfg/${id}`, folder: psp_admin_doc_folder, fileName: findMFGDOC.pomfg_file, bucketName: PSP_ADMIN_DOC_MFG_SRC_bucketName });
+                }
+
+                // Upload New File to AWS S3
+                const rawFileName = await getFileName(pomfgfile, false)
+                const PSP_ADMIN_DOC_MFG_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
+                const PSP_ADMIN_DOC_MFG_SRC_bucketName = PSP_ADMIN_DOC_MFG_SRC[0]
+                const psp_admin_doc_folder = PSP_ADMIN_DOC_MFG_SRC.slice(1)
+                const fileUrl = await singleFileUpload({ file: pomfgfile, idf: `${po_number}/mfg/${id}`, folder: psp_admin_doc_folder, fileName: rawFileName, bucketName: PSP_ADMIN_DOC_MFG_SRC_bucketName });
+                if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+
+                // Update
+                mfgDocFileName = fileUrl.Key.split('/').slice(-1)[0];
+            }
+
+            if (mfgDocFileName) {
+
+                // Update PO Invoice
+                await db.po_mfg_doc.update({
+                    pomfg_file: mfgDocFileName
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id,
+                            tenant_id: TENANTID,
+                        }]
+                    }
+                });
+            }
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id,
+                comment: `PO MFG DOC Updated By ${user.first_name}`,
+                action_type: po_activity_type.PO_MFG_UPDATE,
+                tenant_id: TENANTID,
+                created_by: user.id
+            });
+
+            // Return Formation
+            return {
+                message: "PO MFG DOC Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOInvoice" });
         }
     },
 }

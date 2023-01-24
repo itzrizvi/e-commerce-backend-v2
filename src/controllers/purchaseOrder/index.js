@@ -24,4 +24,5 @@ module.exports = {
     getPORejectReasonListController: require('./getPORejectReasonListController'),
     deletePOInvoiceController: require('./deletePOInvoiceController'),
     updatePOInvoiceController: require('./updatePOInvoiceController'),
+    updatePOMFGDOCController: require('./updatePOMFGDOCController'),
 }

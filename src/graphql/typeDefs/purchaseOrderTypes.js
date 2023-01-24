@@ -249,6 +249,7 @@ type POActivitites {
 input POActivityInput {
     po_id:Int!
     comment:String!
+    action_type:String!
 }
 
 input GetPOActivityListInput {
@@ -335,6 +336,12 @@ type GetPOMFGDOCListOutput {
     tenant_id:String
     status:Boolean
     data:[POMFGDOC]
+}
+
+input updatePOMFGDOCInput {
+    id:Int!
+    po_id:Int!
+    pomfgfile:Upload
 }
 
 type POStatus {
@@ -431,6 +438,7 @@ extend type Mutation {
     createPORejectReason(data:CreatePORejectReasonInput):CommonOutput!
     deletePOInvoice(data:deletePOInvoiceInput):CommonOutput!
     updatePOInvoice(data:updatePOInvoiceInput):CommonOutput!
+    updatePOMFGDOC(data:updatePOMFGDOCInput):CommonOutput!
 }
 
 extend type Query {

@@ -1922,7 +1922,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id,
-                comment: `PO Created By ${user.first_name}`,
+                comment: `PO Created By ${user.first_name}, Invoice No: ${invoice_no}, File Name: ${invoiceFileName}`,
                 action_type: po_activity_type.PO_INVOICE_CREATION,
                 tenant_id: TENANTID,
                 created_by: user.id
@@ -2031,7 +2031,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id,
-                comment: `PO Invoice Updated By ${user.first_name}`,
+                comment: `PO Invoice Updated By ${user.first_name}, Invoice No: ${invoice_no}, File Name: ${invoiceFileName}`,
                 action_type: po_activity_type.PO_INVOICE_UPDATE,
                 tenant_id: TENANTID,
                 updated_by: user.id
@@ -2182,7 +2182,7 @@ module.exports = {
                 // Create PO TRK Details
                 await db.po_activities.create({
                     po_id,
-                    comment: `PO MFG DOC Created By ${user.first_name}`,
+                    comment: `PO MFG DOC Created By ${user.first_name}, File Name: ${mfgFileName}`,
                     action_type: po_activity_type.PO_MFG_CREATION,
                     tenant_id: TENANTID,
                     created_by: user.id,
@@ -2421,7 +2421,7 @@ module.exports = {
                     }]
                 }
             });
-            const { po_id } = findPOInvoice;
+            const { po_id, invoice_no } = findPOInvoice;
 
             const findPO = await db.purchase_order.findOne({
                 where: {
@@ -2455,7 +2455,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id,
-                comment: `PO Invoice Deleted By ${user.first_name}`,
+                comment: `PO Invoice Deleted By ${user.first_name}, Invoice No: ${invoice_no}, File Name: ${findPOInvoice.invoice_file}`,
                 action_type: po_activity_type.PO_INVOICE_DELETE,
                 tenant_id: TENANTID,
                 updated_by: user.id
@@ -2563,7 +2563,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id,
-                comment: `PO MFG DOC Updated By ${user.first_name}`,
+                comment: `PO MFG DOC Updated By ${user.first_name}, File Name: ${mfgDocFileName}`,
                 action_type: po_activity_type.PO_MFG_UPDATE,
                 tenant_id: TENANTID,
                 updated_by: user.id
@@ -2632,7 +2632,7 @@ module.exports = {
             // Create PO TRK Details
             await db.po_activities.create({
                 po_id,
-                comment: `PO MFG DOC Deleted By ${user.first_name}`,
+                comment: `PO MFG DOC Deleted By ${user.first_name}, File Name: ${findPOMFGDOC.pomfg_file}`,
                 action_type: po_activity_type.PO_MFG_DELETED,
                 tenant_id: TENANTID,
                 updated_by: user.id

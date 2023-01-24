@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false
         },
-        invoice_path: {
+        invoice_file: {
             type: DataTypes.STRING,
             allowNull: false
         },

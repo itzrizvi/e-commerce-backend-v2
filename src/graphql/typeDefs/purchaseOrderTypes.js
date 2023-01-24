@@ -115,6 +115,8 @@ type PurchaseOrder {
     poinvoices:[POInvoice]
     pomfgdoc:[POMFGDOC]
     shippingAccount:ShippingAccount
+    postatus:POStatus
+    customer:Customer
     POCreated_by: Staff
     createdAt: String
     updatedAt: String
@@ -265,7 +267,7 @@ type POInvoice {
     purchaseOrder:PurchaseOrderList
     invoice_no:String
     invoice_date:String
-    invoice_path:String
+    invoice_file:String
     createdAt:String
     updatedAt:String
 }
@@ -274,11 +276,34 @@ input POInvoiceInput {
     po_id:Int!
     invoice_no:String!
     invoice_date:String!
-    invoice_path:String!
+    invoicefile:Upload!
 }
 
 input GetPOInvoiceListInput {
     po_id:Int!
+}
+
+input deletePOInvoiceInput {
+    id:Int!
+}
+
+input updatePOInvoiceInput {
+    id:Int!
+    po_id:Int
+    invoice_no:String
+    invoice_date:String
+    invoicefile:Upload
+}
+
+input getPOInvoiceSingleInput {
+    id:Int!
+}
+
+type GetPOInvoiceSingleOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:POInvoice
 }
 
 type GetPOInvoiceListOutput {
@@ -405,6 +430,8 @@ extend type Mutation {
     createMFGDOC(data:POMFGDOCInput):CommonOutput!
     createPOStatus(data:POStatusInput):CommonOutput!
     createPORejectReason(data:CreatePORejectReasonInput):CommonOutput!
+    deletePOInvoice(data:deletePOInvoiceInput):CommonOutput!
+    updatePOInvoice(data:updatePOInvoiceInput):CommonOutput!
 }
 
 extend type Query {
@@ -418,6 +445,7 @@ extend type Query {
     getPOStatusList:GetAllPOStatus!
     getPONumbers:GetPONumberList!
     getPORejectReasonList:GetPORejectReasonList!
+    getSinglePOInvoice(query:getPOInvoiceSingleInput):GetPOInvoiceSingleOutput!
 }
 
 

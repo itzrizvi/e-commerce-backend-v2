@@ -5,6 +5,7 @@ const config = require('config');
 const { Mail } = require("../utils/email");
 const logger = require("../../logger");
 const { default: slugify } = require("slugify");
+const { singleFileUpload } = require("../utils/fileUpload");
 
 // PO HELPER
 module.exports = {
@@ -730,6 +731,16 @@ module.exports = {
                     as: 'pomfgdoc'
                 });
             }
+
+            // PO TO PO STATUS
+            if (!db.purchase_order.hasAlias('po_status') && !db.purchase_order.hasAlias('postatus')) {
+
+                await db.purchase_order.hasOne(db.po_status, {
+                    sourceKey: 'status',
+                    foreignKey: 'id',
+                    as: 'postatus'
+                });
+            }
             // ASSOCIATION ENDS
 
             // Single PO 
@@ -745,6 +756,7 @@ module.exports = {
                     { model: db.po_trk_details, as: 'potrkdetails' },
                     { model: db.po_activities, as: 'poactivitites' },
                     { model: db.po_invoices, as: 'poinvoices' },
+                    { model: db.po_status, as: 'postatus' },
                     { model: db.po_mfg_doc, as: 'pomfgdoc' },
                     {
                         model: db.user, as: 'POCreated_by', // Include User who created the product and his roles
@@ -772,6 +784,38 @@ module.exports = {
                     }]
                 }
             });
+
+            const { type, order_id } = singlePO;
+
+            if (type === "drop_shipping") {
+
+                // Check If Has Alias with Users and Order
+                if (!db.order.hasAlias("user") && !db.order.hasAlias("customer")) {
+                    await db.order.hasOne(db.user, {
+                        sourceKey: "customer_id",
+                        foreignKey: "id",
+                        as: "customer",
+                    });
+                }
+                // Single Order For Admin
+                const singleOrder = await db.order.findOne({
+                    include: [
+                        {
+                            model: db.user,
+                            as: "customer"
+                        }, // User as customer
+                    ],
+                    where: {
+                        [Op.and]: [{
+                            id: order_id,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                singlePO.customer = singleOrder.customer;
+
+            }
 
             // Return Formation
             return {
@@ -1771,24 +1815,64 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { po_id, invoice_no, invoice_path, invoice_date } = req;
+            const { po_id, invoice_no, invoice_date, invoicefile } = req;
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_number } = findPO;
 
             // Create PO Invoice
             const createPOInvoice = await db.po_invoices.create({
                 po_id,
                 invoice_no,
                 invoice_date,
-                invoice_path,
+                invoice_file: "Not Uploaded",
                 tenant_id: TENANTID,
                 created_by: user.id
             })
 
-            if (createPOInvoice) {
-                // Return Formation
-                return {
-                    message: "PO Invoice Inserted Successfully!!!",
-                    status: true,
-                    tenant_id: TENANTID
+
+            // If Image is Available
+            let invoice_file = `${po_number}_${new Date().getTime()}`;
+            // Upload Image to AWS S3
+            const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
+            const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
+            const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
+            const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: invoice_file, bucketName: psp_admin_doc_src_bucketName });
+            if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
+
+            // Update
+            let invoiceFileName = fileUrl.Key.split('/').slice(-1)[0];
+
+            if (invoiceFileName) {
+
+                // Update PO Invoice
+                const updatePOInvoice = await db.po_invoices.update({
+                    invoice_file: invoiceFileName
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            id: createPOInvoice.id,
+                            po_id,
+                            tenant_id: TENANTID,
+                        }]
+                    }
+                })
+
+
+                if (updatePOInvoice) {
+                    // Return Formation
+                    return {
+                        message: "PO Invoice Inserted Successfully!!!",
+                        status: true,
+                        tenant_id: TENANTID
+                    }
                 }
             }
 
@@ -2101,6 +2185,39 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', query: "getPORejectReasonList" });
+        }
+    },
+    // DELETE PO Invoice
+    deletePOInvoice: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id } = req;
+
+            // Delete
+            const createPORejectReasons = await db.po_reject_reasons.destroy({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (createPORejectReasons) {
+                // Return Formation
+                return {
+                    message: "PO Invoice Has Been Deleted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "deletePOInvoice" });
         }
     },
 }

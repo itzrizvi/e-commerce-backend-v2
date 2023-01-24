@@ -1555,6 +1555,8 @@ module.exports = {
                 }
             });
 
+            if (!findPOVendorViewRecord) return { message: "This PO has been expired!!!", status: false };
+
             const { expire_date, status } = findPOVendorViewRecord;
             if (!expire_date) return { message: "This PO has been expired!!!", status: false }
 

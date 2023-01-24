@@ -1944,10 +1944,11 @@ module.exports = {
                 }
 
                 // Upload New File to AWS S3
+                const rawFileName = await getFileName(invoicefile, false)
                 const PSP_ADMIN_DOC_PO_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
                 const PSP_ADMIN_DOC_PO_SRC_bucketName = PSP_ADMIN_DOC_PO_SRC[0]
                 const psp_admin_doc_folder = PSP_ADMIN_DOC_PO_SRC.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: rawFileName, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update
@@ -2085,10 +2086,11 @@ module.exports = {
             let mfgFileName;
             if (pomfgfile) {
                 // Upload File to AWS S3
+                const rawFileName = await getFileName(pomfgfile, false)
                 const PSP_ADMIN_DOC_MFG_SRC = config.get("AWS.PSP_ADMIN_DOC_MFG_SRC").split("/")
                 const PSP_ADMIN_DOC_MFG_SRC_bucketName = PSP_ADMIN_DOC_MFG_SRC[0]
                 const psp_admin_doc_folder = PSP_ADMIN_DOC_MFG_SRC.slice(1)
-                const fileUrl = await singleFileUpload({ file: pomfgfile, idf: `${po_number}/mfg/${createPOMFGDOC.id}`, folder: psp_admin_doc_folder, fileName: pomfgfile.filename, bucketName: PSP_ADMIN_DOC_MFG_SRC_bucketName });
+                const fileUrl = await singleFileUpload({ file: pomfgfile, idf: `${po_number}/mfg/${createPOMFGDOC.id}`, folder: psp_admin_doc_folder, fileName: rawFileName, bucketName: PSP_ADMIN_DOC_MFG_SRC_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update

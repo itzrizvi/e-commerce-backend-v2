@@ -289,7 +289,7 @@ input deletePOInvoiceInput {
 
 input updatePOInvoiceInput {
     id:Int!
-    po_id:Int
+    po_id:Int!
     invoice_no:String
     invoicefile:Upload
 }

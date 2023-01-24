@@ -1827,6 +1827,7 @@ module.exports = {
             });
             const { po_number } = findPO;
 
+            // ->>> Invoice No Unique Check
             // Create PO Invoice
             const createPOInvoice = await db.po_invoices.create({
                 po_id,
@@ -1838,14 +1839,14 @@ module.exports = {
             });
 
             // If Image is Available
-            let invoice_file = `${po_number}_${new Date().getTime()}`;
+            // let invoice_file = `${po_number}_${new Date().getTime()}`;
             let invoiceFileName;
             if (invoicefile) {
                 // Upload Image to AWS S3
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
                 const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: invoicefile.name, bucketName: psp_admin_doc_src_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update
@@ -1919,7 +1920,7 @@ module.exports = {
             });
 
             // If Image is Available
-            let invoice_file = `${po_number}_${new Date().getTime()}`;
+            // let invoice_file = `${po_number}_${new Date().getTime()}`;
             let invoiceFileName;
             if (invoicefile) {
 
@@ -1929,14 +1930,14 @@ module.exports = {
                     const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_DEST").split("/");
                     const psp_admin_doc_src_bucketName = psp_admin_doc_src[0];
                     const psp_admin_doc_folder = psp_admin_doc_src.slice(1);
-                    await deleteFile({ idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: findPO.invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                    await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPO.invoice_file, bucketName: psp_admin_doc_src_bucketName });
                 }
 
                 // Upload New File to AWS S3
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
                 const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice`, folder: psp_admin_doc_folder, fileName: invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: invoicefile.name, bucketName: psp_admin_doc_src_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
 
                 // Update

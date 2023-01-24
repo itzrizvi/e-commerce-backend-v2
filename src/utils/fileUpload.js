@@ -27,7 +27,7 @@ module.exports.singleFileUpload = async ({
   const { createReadStream, filename } = await file;
   const stream = createReadStream();
   var { ext } = parse(filename);
-  if (fileName == "") imageName = `${Math.floor(Math.random() * 10000 + 1)}`;
+  if (!fileName) imageName = `${Math.floor(Math.random() * 10000 + 1)}`;
   else imageName = fileName;
   const fileNameExt = imageName + ext;
   let url = join(__dirname, `../../tmp/${fileNameExt}`);
@@ -217,3 +217,10 @@ module.exports.deleteFiles = ({ filesName, folder, idf, bucketName }) => {
 
   return;
 };
+
+module.exports.getFileName = async (file, withExt) => {
+  const { filename } = await file;
+  if(withExt) return filename
+  else return parse(filename).name
+  return false;
+}

@@ -5,7 +5,7 @@ const config = require('config');
 const { Mail } = require("../utils/email");
 const logger = require("../../logger");
 const { default: slugify } = require("slugify");
-const { singleFileUpload, deleteFile } = require("../utils/fileUpload");
+const { singleFileUpload, deleteFile, getFileName } = require("../utils/fileUpload");
 
 // PO HELPER
 module.exports = {
@@ -1842,13 +1842,13 @@ module.exports = {
             // let invoice_file = `${po_number}_${new Date().getTime()}`;
             let invoiceFileName;
             if (invoicefile) {
+                const rawFileName = await getFileName(invoicefile, false)
                 // Upload Image to AWS S3
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
                 const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: invoicefile.filename, bucketName: psp_admin_doc_src_bucketName });
+                const fileUrl = await singleFileUpload({ file: invoicefile, idf: `${po_number}/invoice/${createPOInvoice.id}`, folder: psp_admin_doc_folder, fileName: rawFileName, bucketName: psp_admin_doc_src_bucketName });
                 if (!fileUrl) return { message: "File Couldnt Uploaded Properly!!!", status: false };
-
                 // Update
                 invoiceFileName = fileUrl.Key.split('/').slice(-1)[0];
             }

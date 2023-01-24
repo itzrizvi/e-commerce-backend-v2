@@ -1946,7 +1946,7 @@ module.exports = {
             if (invoiceFileName) {
 
                 // Update PO Invoice
-                const updatePOInvoice = await db.po_invoices.update({
+                await db.po_invoices.update({
                     invoice_file: invoiceFileName
                 }, {
                     where: {
@@ -1955,17 +1955,14 @@ module.exports = {
                             tenant_id: TENANTID,
                         }]
                     }
-                })
+                });
+            }
 
-
-                if (updatePOInvoice) {
-                    // Return Formation
-                    return {
-                        message: "PO Invoice Inserted Successfully!!!",
-                        status: true,
-                        tenant_id: TENANTID
-                    }
-                }
+            // Return Formation
+            return {
+                message: "PO Invoice Updated Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
             }
 
 

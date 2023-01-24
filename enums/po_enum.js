@@ -9,6 +9,9 @@ const po_activity_type = {
   PO_MFG_CREATION: "PO MFG DOC Created",
   PO_MFG_UPDATE: "PO MFG DOC Updated",
   PO_MFG_DELETED: "PO MFG DOC Deleted",
+  PO_REJECTED: "PO Rejected By Vendor",
+  PO_ACCEPTED: "PO Accepted By Vendor",
+  PO_SEND_TO_VENDOR: "PO Send To Vendor",
 };
 
 module.exports = {

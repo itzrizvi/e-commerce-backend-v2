@@ -344,6 +344,11 @@ input updatePOMFGDOCInput {
     pomfgfile:Upload
 }
 
+input deletePOMFGDOCInput {
+    id:Int!
+}
+
+
 type POStatus {
     id:Int
     name:String
@@ -437,6 +442,7 @@ extend type Mutation {
     createPOStatus(data:POStatusInput):CommonOutput!
     createPORejectReason(data:CreatePORejectReasonInput):CommonOutput!
     deletePOInvoice(data:deletePOInvoiceInput):CommonOutput!
+    deletePOMFGDOC(data:deletePOMFGDOCInput):CommonOutput!
     updatePOInvoice(data:updatePOInvoiceInput):CommonOutput!
     updatePOMFGDOC(data:updatePOMFGDOCInput):CommonOutput!
 }

@@ -1137,8 +1137,6 @@ module.exports = {
 
             const { email } = findVendorEmail
 
-
-
             let purchaseOrderIDhashed = crypt(`${id}`);
             let ponumberhashed = crypt(`${po_number}`);
             // SET PASSWORD URL
@@ -1164,6 +1162,16 @@ module.exports = {
 
             // SENDING EMAIL
             await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
+
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id: id,
+                comment: `PO Send To Vendor By ${user.first_name}`,
+                action_type: po_activity_type.PO_SEND_TO_VENDOR,
+                tenant_id: TENANTID,
+                created_by: 10001
+            });
 
             // Commit The query
             await poSendTransaction.commit();
@@ -1237,8 +1245,28 @@ module.exports = {
                         }]
                     }
                 });
-            }
 
+                if (slug === "vendor_accepted") {
+                    // Create PO TRK Details
+                    await db.po_activities.create({
+                        po_id: id,
+                        comment: reason,
+                        action_type: po_activity_type.PO_ACCEPTED,
+                        tenant_id: TENANTID,
+                        created_by: 10001
+                    });
+
+                } else if (slug === "vendor_rejected") {
+                    // Create PO TRK Details
+                    await db.po_activities.create({
+                        po_id: id,
+                        comment: reason,
+                        action_type: po_activity_type.PO_REJECTED,
+                        tenant_id: TENANTID,
+                        created_by: 10001
+                    });
+                }
+            }
 
             // Return Formation
             return {
@@ -2003,7 +2031,7 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOInvoice" });
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "updatePOInvoice" });
         }
     },
     // GET PO Invoice LIST
@@ -2211,7 +2239,6 @@ module.exports = {
                             { model: db.payment_method, as: 'paymentmethod' }
                         ]
                     }
-
                 ],
                 where: {
                     [Op.and]: [{
@@ -2535,7 +2562,80 @@ module.exports = {
 
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOInvoice" });
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "updatePOMFGDOC" });
+        }
+    },
+    // DELETE PO Invoice
+    deletePOMFGDOC: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { id } = req;
+
+            const findPOMFGDOC = await db.po_mfg_doc.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_id } = findPOMFGDOC;
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_number } = findPO;
+
+            // IF Image Also Updated
+
+            // Delete Previous S3 File 
+            const PSP_ADMIN_DOC_PO_SRC = config.get("AWS.PSP_ADMIN_DOC_PO_DEST").split("/");
+            const PSP_ADMIN_DOC_PO_SRC_bucketName = PSP_ADMIN_DOC_PO_SRC[0];
+            const psp_admin_doc_folder = PSP_ADMIN_DOC_PO_SRC.slice(1);
+            await deleteFile({ idf: `${po_number}/mfg/${id}`, folder: psp_admin_doc_folder, fileName: findPOMFGDOC.pomfg_file, bucketName: PSP_ADMIN_DOC_PO_SRC_bucketName });
+
+
+            // Delete
+            const deletePOMFGDOC = await db.po_mfg_doc.destroy({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id,
+                comment: `PO MFG DOC Deleted By ${user.first_name}`,
+                action_type: po_activity_type.PO_MFG_DELETED,
+                tenant_id: TENANTID,
+                created_by: user.id
+            })
+
+
+
+            if (deletePOMFGDOC) {
+                // Return Formation
+                return {
+                    message: "PO MFG DOC Has Been Deleted Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
+            }
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "deletePOMFGDOC" });
         }
     },
 }

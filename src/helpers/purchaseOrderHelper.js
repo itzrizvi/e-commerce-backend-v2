@@ -2299,7 +2299,6 @@ module.exports = {
                 where: {
                     [Op.and]: [{
                         id,
-                        po_id,
                         tenant_id: TENANTID
                     }]
                 }

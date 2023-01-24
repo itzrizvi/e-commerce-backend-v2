@@ -1842,6 +1842,7 @@ module.exports = {
             // let invoice_file = `${po_number}_${new Date().getTime()}`;
             let invoiceFileName;
             if (invoicefile) {
+                console.log(invoicefile)
                 // Upload Image to AWS S3
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]

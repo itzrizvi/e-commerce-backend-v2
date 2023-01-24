@@ -1842,7 +1842,6 @@ module.exports = {
             // let invoice_file = `${po_number}_${new Date().getTime()}`;
             let invoiceFileName;
             if (invoicefile) {
-                console.log(invoicefile)
                 // Upload Image to AWS S3
                 const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_SRC").split("/")
                 const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
@@ -1904,6 +1903,16 @@ module.exports = {
             });
             const { po_number } = findPO;
 
+            const findPOInvoice = await db.po_invoices.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             // Update PO Invoice
             await db.po_invoices.update({
                 po_id,
@@ -1926,12 +1935,12 @@ module.exports = {
             if (invoicefile) {
 
                 // IF Image Also Updated
-                if (findPO.invoice_file) {
+                if (findPOInvoice.invoice_file) {
                     // Delete Previous S3 File 
                     const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_DEST").split("/");
                     const psp_admin_doc_src_bucketName = psp_admin_doc_src[0];
                     const psp_admin_doc_folder = psp_admin_doc_src.slice(1);
-                    await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPO.invoice_file, bucketName: psp_admin_doc_src_bucketName });
+                    await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPOInvoice.invoice_file, bucketName: psp_admin_doc_src_bucketName });
                 }
 
                 // Upload New File to AWS S3
@@ -2286,8 +2295,38 @@ module.exports = {
             // DATA FROM REQUEST
             const { id } = req;
 
+            const findPOInvoice = await db.po_invoices.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_id } = findPOInvoice;
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_number } = findPO;
+
+            // IF Image Also Updated
+
+            // Delete Previous S3 File 
+            const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_DEST").split("/");
+            const psp_admin_doc_src_bucketName = psp_admin_doc_src[0];
+            const psp_admin_doc_folder = psp_admin_doc_src.slice(1);
+            await deleteFile({ idf: `${po_number}/invoice/${id}`, folder: psp_admin_doc_folder, fileName: findPOInvoice.invoice_file, bucketName: psp_admin_doc_src_bucketName });
+
+
             // Delete
-            const createPORejectReasons = await db.po_reject_reasons.destroy({
+            const deletePOInvoice = await db.po_invoices.destroy({
                 where: {
                     [Op.and]: [{
                         id,
@@ -2296,7 +2335,9 @@ module.exports = {
                 }
             });
 
-            if (createPORejectReasons) {
+
+
+            if (deletePOInvoice) {
                 // Return Formation
                 return {
                     message: "PO Invoice Has Been Deleted Successfully!!!",

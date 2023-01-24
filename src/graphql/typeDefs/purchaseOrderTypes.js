@@ -244,6 +244,7 @@ type POActivitites {
     action_type:String
     createdAt:String
     updatedAt:String
+    activity_by:Staff
 }
 
 input POActivityInput {

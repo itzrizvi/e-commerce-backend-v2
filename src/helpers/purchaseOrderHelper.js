@@ -1075,7 +1075,8 @@ module.exports = {
                 action_type: po_activity_type.UPDATE_PO_STATUS,
                 comment: `PO ${name} By ${user.first_name}`,
                 tenant_id: TENANTID,
-                created_by: user?.id
+                created_by: user?.id,
+                updated_by: user?.id
             });
 
 
@@ -1170,7 +1171,8 @@ module.exports = {
                 comment: `PO Send To Vendor By ${user.first_name}`,
                 action_type: po_activity_type.PO_SEND_TO_VENDOR,
                 tenant_id: TENANTID,
-                created_by: 10001
+                created_by: user.id,
+                updated_by: user.id
             });
 
             // Commit The query
@@ -1231,7 +1233,8 @@ module.exports = {
                 comment: reason,
                 action_type: po_activity_type.UPDATE_PO_STATUS_VENDOR,
                 tenant_id: TENANTID,
-                created_by: 10001
+                created_by: 10001,
+                updated_by: 10001
             });
 
             if (slug === "vendor_accepted" || slug === "vendor_rejected") {
@@ -1806,6 +1809,17 @@ module.exports = {
                     as: 'paymentmethod'
                 });
             }
+
+
+            // PO TO STAFF
+            if (!db.po_activities.hasAlias('user') && !db.po_activities.hasAlias('activity_by')) {
+
+                await db.po_activities.hasOne(db.user, {
+                    sourceKey: 'updated_by',
+                    foreignKey: 'id',
+                    as: 'activity_by'
+                });
+            }
             // ASSOCIATION ENDS
 
             // PO Activity List
@@ -1818,8 +1832,8 @@ module.exports = {
                             { model: db.vendor, as: 'vendor' },
                             { model: db.payment_method, as: 'paymentmethod' }
                         ]
-                    }
-
+                    },
+                    { model: db.user, as: "activity_by" }
                 ],
                 where: {
                     [Op.and]: [{
@@ -2018,7 +2032,7 @@ module.exports = {
                 comment: `PO Invoice Updated By ${user.first_name}`,
                 action_type: po_activity_type.PO_INVOICE_UPDATE,
                 tenant_id: TENANTID,
-                created_by: user.id
+                updated_by: user.id
             })
 
             // Return Formation
@@ -2441,7 +2455,7 @@ module.exports = {
                 comment: `PO Invoice Deleted By ${user.first_name}`,
                 action_type: po_activity_type.PO_INVOICE_DELETE,
                 tenant_id: TENANTID,
-                created_by: user.id
+                updated_by: user.id
             })
 
 
@@ -2549,7 +2563,7 @@ module.exports = {
                 comment: `PO MFG DOC Updated By ${user.first_name}`,
                 action_type: po_activity_type.PO_MFG_UPDATE,
                 tenant_id: TENANTID,
-                created_by: user.id
+                updated_by: user.id
             });
 
             // Return Formation
@@ -2618,7 +2632,7 @@ module.exports = {
                 comment: `PO MFG DOC Deleted By ${user.first_name}`,
                 action_type: po_activity_type.PO_MFG_DELETED,
                 tenant_id: TENANTID,
-                created_by: user.id
+                updated_by: user.id
             })
 
 

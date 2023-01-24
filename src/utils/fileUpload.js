@@ -106,32 +106,47 @@ async function getFileStream(req, res) {
     Bucket: bucketName,
   };
   // Using callbacks
-  if (objectExists(key, bucketName)) return s3.getObject(downloadParams).createReadStream().pipe(res);
+  if (objectExists(key, bucketName))
+    return s3.getObject(downloadParams).createReadStream().pipe(res);
   return res.send("Invalid file key, Please provide valid file key.");
 }
 exports.getFileStream = getFileStream;
+// downloads a file from s3
+async function getCustomFileStream(req, res) {
+  const params = req.params[0];
+  const bucketName = params.split("/").shift();
+  let split_string = params.split("/");
+  split_string.shift();
+  let key = split_string.join("/");
 
+  const downloadParams = {
+    Key: key,
+    Bucket: bucketName,
+  };
+  // Using callbacks
+  if (objectExists(key, bucketName))
+    return s3.getObject(downloadParams).createReadStream().pipe(res);
+  return res.send("Invalid file key, Please provide valid file key.");
+}
+exports.getCustomFileStream = getCustomFileStream;
 
 // downloads a file from s3
 async function getMediaStream(key) {
-
   let bucketName = config.get("AWS.READ_BUCKET");
 
   const downloadParams = {
     Key: key,
-    Bucket: bucketName
-  }
+    Bucket: bucketName,
+  };
   // Using callbacks
   s3.headObject(downloadParams, function (err) {
     if (err && err.name) {
-      return 'Inavalid file key, Please provide valid file key.'
+      return "Inavalid file key, Please provide valid file key.";
     }
-    return s3.getObject(downloadParams).createReadStream().pipe()
+    return s3.getObject(downloadParams).createReadStream().pipe();
   });
 }
-exports.getMediaStream = getMediaStream
-
-
+exports.getMediaStream = getMediaStream;
 
 // Delete Single file from aws
 module.exports.deleteFile = ({ fileName, folder, idf, bucketName }) => {
@@ -220,7 +235,7 @@ module.exports.deleteFiles = ({ filesName, folder, idf, bucketName }) => {
 
 module.exports.getFileName = async (file, withExt) => {
   const { filename } = await file;
-  if(withExt) return filename
-  else return parse(filename).name
+  if (withExt) return filename;
+  else return parse(filename).name;
   return false;
-}
+};

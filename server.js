@@ -16,6 +16,7 @@ const {
 } = require("apollo-server-core"); // FOR DISABLING APOLLO STUDIO ONLY
 const { graphqlUploadExpress } = require("graphql-upload-minimal");
 const { getFileStream } = require("./src/utils/fileUpload");
+const { getCustomFileStream } = require("./src/utils/fileUpload");
 const path = require("path");
 const rateLimit = require('express-rate-limit')
 
@@ -52,6 +53,7 @@ app.set("trust proxy", true);
 
 // Get file from aws
 app.get("/images/*", getFileStream);
+app.get("/files/*", getCustomFileStream);
 app.use("/media", express.static(path.join(__dirname, "media")));
 
 // APOLLO SERVER STARTS

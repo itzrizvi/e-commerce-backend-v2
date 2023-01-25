@@ -7,6 +7,7 @@ const logger = require("../../logger");
 const { default: slugify } = require("slugify");
 const { singleFileUpload, deleteFile, getFileName } = require("../utils/fileUpload");
 const { po_activity_type } = require("../../enums/po_enum");
+const { checkPermission } = require("../utils/permissionChecker");
 
 // PO HELPER
 module.exports = {
@@ -1044,6 +1045,50 @@ module.exports = {
             // DATA FROM REQUEST
             const { id, status } = req;
 
+            const getPOStatus = await db.po_status.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: status,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { name, slug } = getPOStatus;
+
+            if (slug === "submitted") { // Check Permission For Submit PO
+
+                // Permission Name of this API
+                const permissionName = "submit-po";
+                // Check Permission
+                const checkPermissions = await checkPermission(db, user, TENANTID, permissionName);
+                if (!checkPermissions.success) {
+                    return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
+                }
+
+            } else if (slug === "canceled") { // Check Permission For Cancel PO
+
+                // Permission Name of this API
+                const permissionName = "cancel-po";
+                // Check Permission
+                const checkPermissions = await checkPermission(db, user, TENANTID, permissionName);
+                if (!checkPermissions.success) {
+                    return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
+                }
+
+            } else if (slug === "hold") { // Check Permission For Hold PO
+
+                // Permission Name of this API
+                const permissionName = "hold-po";
+                // Check Permission
+                const checkPermissions = await checkPermission(db, user, TENANTID, permissionName);
+                if (!checkPermissions.success) {
+                    return { message: "You dont have access to this route, please contact support to have you give this route permission!!!", status: false };
+                }
+
+            }
+
+
             // Update Purchase Order Status
             const updatePOStatus = await db.purchase_order.update({
                 status,
@@ -1059,16 +1104,7 @@ module.exports = {
 
             if (!updatePOStatus) return { message: "PO Satus Change Failed!!!", status: false }
 
-            const getPOStatus = await db.po_status.findOne({
-                where: {
-                    [Op.and]: [{
-                        id: status,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
 
-            const { name } = getPOStatus;
 
             // Create PO TRK Details
             await db.po_activities.create({
@@ -1259,6 +1295,12 @@ module.exports = {
                         tenant_id: TENANTID,
                         created_by: 10001
                     });
+
+
+
+
+
+
 
                 } else if (slug === "vendor_rejected") {
                     // Create PO TRK Details

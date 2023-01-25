@@ -6,6 +6,7 @@ const { singleResponse } = require("../../utils/response");
 
 // CONTROLLER
 module.exports = async (req, db, user, isAuth, TENANTID) => {
+
     const permissionArray = ["create-po", "purchase-order"];
     for (const item of permissionArray) {
         const checkPermissions = await checkPermission(db, user, TENANTID, item);

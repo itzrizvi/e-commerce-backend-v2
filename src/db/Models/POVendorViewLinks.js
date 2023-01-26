@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         viewer_info: {
-            type: DataTypes.JSON,
+            type: DataTypes.TEXT,
             allowNull: true
         },
         tenant_id: {

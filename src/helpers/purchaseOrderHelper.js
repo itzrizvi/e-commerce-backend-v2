@@ -1237,6 +1237,7 @@ module.exports = {
             const id = decrypt(param1);
             const po_number = decrypt(param2)
 
+
             // Update Purchase Order Status
             const updatePOStatus = await db.purchase_order.update({
                 status,
@@ -1244,7 +1245,7 @@ module.exports = {
             }, {
                 where: {
                     [Op.and]: [{
-                        id,
+                        id: id,
                         po_number,
                         tenant_id: TENANTID
                     }]
@@ -1252,7 +1253,6 @@ module.exports = {
             });
 
             if (!updatePOStatus) return { message: "PO Status Change Failed!!!", status: false }
-
             const getPOStatus = await db.po_status.findOne({
                 where: {
                     [Op.and]: [{
@@ -1276,7 +1276,7 @@ module.exports = {
 
             if (slug === "vendor_accepted" || slug === "vendor_rejected") {
                 await db.po_vendor_view_links.update({
-                    viewer_info: `${{ ip: ip, viewer_info: headers }}`
+                    viewer_info: `ip: ${ip},  viewer_info: ${JSON.stringify(headers)} `
                 }, {
                     where: {
                         [Op.and]: [{

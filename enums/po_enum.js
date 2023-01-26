@@ -12,6 +12,7 @@ const po_activity_type = {
   PO_REJECTED: "PO Rejected By Vendor",
   PO_ACCEPTED: "PO Accepted By Vendor",
   PO_SEND_TO_VENDOR: "PO Send To Vendor",
+  PO_RESEND_TO_VENDOR: "PO Resend To Vendor",
 };
 
 module.exports = {

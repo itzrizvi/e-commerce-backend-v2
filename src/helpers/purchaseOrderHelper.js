@@ -288,7 +288,7 @@ module.exports = {
                 po_id: insertPO.id,
                 vendor_id,
                 status: true,
-                expire_date: poViewExpireDate.setDate(poViewExpireDate.getDate() + vendorPOViewExpire),
+                expire_date: poViewExpireDate.setDate(poViewExpireDate.getDate() + parseInt(vendorPOViewExpire)),
                 tenant_id: TENANTID
             });
 
@@ -1276,6 +1276,7 @@ module.exports = {
 
             if (slug === "vendor_accepted" || slug === "vendor_rejected") {
                 await db.po_vendor_view_links.update({
+                    status: false,
                     viewer_info: `ip: ${ip},  viewer_info: ${JSON.stringify(headers)} `
                 }, {
                     where: {
@@ -1583,10 +1584,24 @@ module.exports = {
             const id = decrypt(param1);
             const po_number = decrypt(param2);
 
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_number,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { vendor_id } = findPO;
+
             const findPOVendorViewRecord = await db.po_vendor_view_links.findOne({
                 where: {
                     [Op.and]: [{
                         po_id: id,
+                        vendor_id,
+                        status: true,
                         tenant_id: TENANTID
                     }]
                 }
@@ -2693,6 +2708,110 @@ module.exports = {
         } catch (error) {
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "deletePOMFGDOC" });
+        }
+    },
+    // Resend PO Link
+    resendPOLink: async (req, db, user, isAuth, TENANTID) => {
+        const poSendTransaction = await db.sequelize.transaction();
+        // Try Catch Block
+        try {
+            // DATA FROM REQUEST
+            const { po_id } = req;
+
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            })
+
+            const { po_number, vendor_id } = findPO;
+
+            const findVendorEmail = await db.vendor.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: vendor_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { email } = findVendorEmail;
+
+            await db.po_vendor_view_links.update({
+                status: false
+            }, {
+                where: {
+                    [Op.and]: [{
+                        po_id,
+                        vendor_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            let purchaseOrderIDhashed = crypt(`${po_id}`);
+            let ponumberhashed = crypt(`${po_number}`);
+            // SET PASSWORD URL
+            const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
+            // Setting Up Data for EMAIL SENDER
+            const mailSubject = "Resent Purchase Order From Prime Server Parts"
+            const mailData = {
+                companyInfo: {
+                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                    companyName: config.get("COMPANY_NAME"),
+                    companyUrl: config.get("ECOM_URL"),
+                    shopUrl: config.get("ECOM_URL"),
+                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                },
+                about: 'Your Purchase Order Link Has Been Resent From Primer Server Parts',
+                email: email,
+                viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
+            }
+
+            // SENDING EMAIL
+            await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
+
+            const vendorPOViewExpire = config.get("VENDOR_PO_VIEW_DAY_EXPIRE");
+            let poViewExpireDate = new Date();
+            // Record Create
+            await db.po_vendor_view_links.create({
+                po_id,
+                vendor_id,
+                status: true,
+                expire_date: poViewExpireDate.setDate(poViewExpireDate.getDate() + parseInt(vendorPOViewExpire)),
+                tenant_id: TENANTID
+            });
+
+            // Create PO TRK Details
+            await db.po_activities.create({
+                po_id,
+                comment: `PO Resend To Vendor By ${user.first_name}`,
+                action_type: po_activity_type.PO_RESEND_TO_VENDOR,
+                tenant_id: TENANTID,
+                created_by: user.id,
+                updated_by: user.id
+            });
+
+            // Commit The query
+            await poSendTransaction.commit();
+            // Return Formation
+            return {
+                message: "Purchase Order Link Resent Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+        } catch (error) {
+            await poSendTransaction.rollback();
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "resendPOLink" });
         }
     },
 }

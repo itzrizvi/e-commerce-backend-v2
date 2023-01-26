@@ -425,6 +425,10 @@ type GetPORejectReasonList {
     data:[PORejectReasons]
 }
 
+input ResendPOLinkInput {
+    po_id:Int!
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -446,6 +450,7 @@ extend type Mutation {
     deletePOMFGDOC(data:deletePOMFGDOCInput):CommonOutput!
     updatePOInvoice(data:updatePOInvoiceInput):CommonOutput!
     updatePOMFGDOC(data:updatePOMFGDOCInput):CommonOutput!
+    resendPOLink(data:ResendPOLinkInput):CommonOutput!
 }
 
 extend type Query {

@@ -1130,7 +1130,7 @@ module.exports = {
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePOStatus" });
         }
     },
-    // Po Send to Vendor Helper
+    // Po Send to Vendor Helper ->> SUBMIT PO
     poSendToVendor: async (req, db, user, isAuth, TENANTID) => {
         const poSendTransaction = await db.sequelize.transaction();
         // Try Catch Block
@@ -1224,7 +1224,7 @@ module.exports = {
         } catch (error) {
             await poSendTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
-            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePOStatus" });
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "poSendToVendor" });
         }
     },
     // Update PO STATUS Public
@@ -1280,7 +1280,7 @@ module.exports = {
                 }, {
                     where: {
                         [Op.and]: [{
-                            id,
+                            po_id: id,
                             tenant_id: TENANTID
                         }]
                     }
@@ -1295,11 +1295,6 @@ module.exports = {
                         tenant_id: TENANTID,
                         created_by: 10001
                     });
-
-
-
-
-
 
 
                 } else if (slug === "vendor_rejected") {

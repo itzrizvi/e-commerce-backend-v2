@@ -27,4 +27,5 @@ module.exports = {
     updatePOMFGDOCController: require('./updatePOMFGDOCController'),
     deletePOMFGDOCController: require('./deletePOMFGDOCController'),
     resendPOLinkController: require('./resendPOLinkController'),
+    resendPOAttachmentController: require('./resendPOAttachmentController'),
 }

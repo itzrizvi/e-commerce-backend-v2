@@ -1158,6 +1158,13 @@ module.exports = {
                     });
             }
 
+            let cID = parseInt(searchQuery);
+            let customerID;
+            let notANumber = isNaN(cID);
+            if (!notANumber) {
+                customerID = cID
+            }
+
             // GET Searched Customer
             const getsearchedcustomers = await db.user.findAll({
                 include: [
@@ -1175,24 +1182,28 @@ module.exports = {
                         has_role: '0',
                         user_status: true,
                     }],
-                    [Op.or]: [
-                        {
-                            email: {
-                                [Op.iLike]: `%${searchQuery}%`
+                    ...((searchQuery && !customerID) && {
+                        [Op.or]: [
+                            {
+                                email: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                first_name: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
+                            },
+                            {
+                                last_name: {
+                                    [Op.iLike]: `%${searchQuery}%`
+                                }
                             }
-                        },
-                        {
-                            first_name: {
-                                [Op.iLike]: `%${searchQuery}%`
-                            }
-                        },
-                        {
-                            last_name: {
-                                [Op.iLike]: `%${searchQuery}%`
-                            }
-                        }
-                    ]
-
+                        ]
+                    }),
+                    ...(customerID && {
+                        id: customerID
+                    })
                 }
             });
 

@@ -429,6 +429,10 @@ input ResendPOLinkInput {
     po_id:Int!
 }
 
+input ResendPOAttachmentInput {
+    po_id:Int!
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
@@ -451,6 +455,7 @@ extend type Mutation {
     updatePOInvoice(data:updatePOInvoiceInput):CommonOutput!
     updatePOMFGDOC(data:updatePOMFGDOCInput):CommonOutput!
     resendPOLink(data:ResendPOLinkInput):CommonOutput!
+    resendPOAttachment(data:ResendPOAttachmentInput):CommonOutput!
 }
 
 extend type Query {

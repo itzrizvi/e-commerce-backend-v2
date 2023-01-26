@@ -16,7 +16,8 @@ const { poSettingController,
     updatePOInvoiceController,
     updatePOMFGDOCController,
     deletePOMFGDOCController,
-    resendPOLinkController
+    resendPOLinkController,
+    resendPOAttachmentController
 } = require("../../controllers");
 
 
@@ -215,6 +216,17 @@ module.exports = {
 
         // Send to Controller
         return await resendPOLinkController(args.data, db, user, isAuth, TENANTID);
+    },
+    // Resend PO Attachment To Vendor
+    resendPOAttachment: async (root, args, { db, user, isAuth, TENANTID }, info) => {
+        // Return If Not Have TENANT ID
+        if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+        // Return If No Auth
+        if (!user || !isAuth) return { message: "Not Authorized", status: false };
+        if (user.has_role === '0') return { message: "Not Authorized", status: false };
+
+        // Send to Controller
+        return await resendPOAttachmentController(args.data, db, user, isAuth, TENANTID);
     },
 
 

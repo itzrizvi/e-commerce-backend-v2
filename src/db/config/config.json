@@ -22,5 +22,13 @@
     "host": "awseb-e-eujdhwvftb-stack-awsebrdsdatabase-lf16epkxvqra.cy4pyx9glsva.us-east-1.rds.amazonaws.com",
     "port": 5432,
     "dialect": "postgres"
+  },
+  "local": {
+    "username": "sumon",
+    "password": "password",
+    "database": "psp",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgres"
   }
 }

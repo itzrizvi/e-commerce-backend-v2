@@ -52,5 +52,6 @@
   "QUOTE_APPROVE": "shop/quote-approve/",
   "PO_VIEW": "view-po/",
   "VENDOR_PO_VIEW_DAY_EXPIRE": 1,
-  "DEFAULT_MAILER": "node_mailer"
+  "DEFAULT_MAILER": "node_mailer",
+  "TEMP_PATH": "tmp"
 }

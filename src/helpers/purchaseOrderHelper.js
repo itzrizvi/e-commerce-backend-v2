@@ -9,7 +9,6 @@ const { singleFileUpload, deleteFile, getFileName } = require("../utils/fileUplo
 const { po_activity_type } = require("../../enums/po_enum");
 const { checkPermission } = require("../utils/permissionChecker");
 const { generatePDF } = require("../utils/pdfgeneration");
-const path = require('path');
 
 // PO HELPER
 module.exports = {
@@ -1619,12 +1618,11 @@ module.exports = {
                     email: email,
                     viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
                 }
-
-                // SENDING EMAIL
+                const temp_path = config.get("TEMP_PATH")
+               // SENDING EMAIL
                 await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID, [{
                     filename: `${invoice}.pdf`,
-                    path: path.join(__dirname, `../tmp/${invoice}.pdf`),
-                    contentType: 'application/pdf'
+                    path: `${temp_path}/${invoice}.pdf`
                 }]);
 
 

@@ -106,6 +106,8 @@ const Mail = async (
         ...(attachments.length > 0 && attachments)
       };
 
+      console.log(mailOptions)
+
       await transport.sendMail(mailOptions, function (error, response) {
         if (error) {
           console.log(error);

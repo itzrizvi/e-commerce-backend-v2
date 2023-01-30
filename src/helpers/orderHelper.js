@@ -656,8 +656,8 @@ module.exports = {
       // Create PO TRK Details
       await db.order_activities.create({
         order_id: insertOrder.id,
-        action_type: order_activity_type.ORDER_CREATE_CUSTOMER,
-        comment: `Order Created`,
+        action_type: order_activity_type.CREATE_ORDER,
+        comment: `Order Created By ${user.first_name}`,
         tenant_id: TENANTID,
         created_by: user.id
       });
@@ -957,8 +957,8 @@ module.exports = {
       // Create PO TRK Details
       await db.order_activities.create({
         order_id: insertOrder.id,
-        action_type: order_activity_type.ORDER_CREATE_ADMIN,
-        comment: `Order Created`,
+        action_type: order_activity_type.CREATE_ORDER,
+        comment: `Order Created By ${user.first_name}`,
         tenant_id: TENANTID,
         created_by: user.id
       });

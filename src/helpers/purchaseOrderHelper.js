@@ -9,6 +9,7 @@ const { singleFileUpload, deleteFile, getFileName } = require("../utils/fileUplo
 const { po_activity_type } = require("../../enums/po_enum");
 const { checkPermission } = require("../utils/permissionChecker");
 const { generatePDF } = require("../utils/pdfgeneration");
+const path = require('path');
 
 // PO HELPER
 module.exports = {
@@ -1177,470 +1178,478 @@ module.exports = {
             const { email } = findVendorEmail;
 
 
-            // // Single PO 
-            // const singlePO = await db.purchase_order.findOne({
-            //     // include: [
-            //     //     { model: db.vendor, as: 'vendor' },
-            //     //     { model: db.payment_method, as: 'paymentmethod' },
-            //     //     { model: db.shipping_method, as: 'shippingMethod' },
-            //     //     { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
-            //     //     { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
-            //     //     { model: db.po_trk_details, as: 'potrkdetails' },
-            //     //     { model: db.po_activities, as: 'poactivitites' },
-            //     //     { model: db.po_invoices, as: 'poinvoices' },
-            //     //     { model: db.po_mfg_doc, as: 'pomfgdoc' },
-            //     //     {
-            //     //         model: db.po_productlist, as: 'poProductlist', // 
-            //     //         include: {
-            //     //             model: db.product,
-            //     //             as: 'product',
-            //     //             include: [
-            //     //                 { model: db.category, as: 'category' },
-            //     //                 { model: db.brand, as: 'brand' }
-            //     //             ]
-            //     //         }
-            //     //     },
-            //     //     {
-            //     //         model: db.user, as: 'POCreated_by',
-            //     //         include: {
-            //     //             model: db.role,
-            //     //             as: 'roles'
-            //     //         }
-            //     //     },
-            //     // ],
-            //     where: {
-            //         [Op.and]: [{
-            //             id,
-            //             po_number,
-            //             tenant_id: TENANTID
-            //         }]
-            //     }
-            // });
-
-
-            // const temaplate = `<!DOCTYPE html>
-            // <html lang="en">
-
-            // <head>
-            //     <meta charset="utf-8">
-            //     <title>PO Invoice - Prime Server Parts</title>
-            //     <meta name="viewport" content="width=device-width, initial-scale=1">
-            //     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-            //     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-            //     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-            // </head>
-
-            // <body>
-            //     <div class="col-md-12">
-            //         <div class="row">
-            //             <div class="receipt-main col-xs-12 col-sm-12 col-md-12">
-            //                 <div class="row">
-            //                     <div class="col-md-12">
-            //                         <div class="receipt-header"
-            //                             style="border: 1px solid #1677ff;padding: 10px;height: 500px;border-radius: 8px; margin-bottom: 10px;">
-            //                             <div class="col-xs-6 col-sm-6 col-md-6">
-            //                                 <div class="receipt-left">
-            //                                     <img class="img-responsive" alt="iamgurdeeposahan"
-            //                                         src="https://main.dhgmx4ths2j4g.amplifyapp.com/_next/image?url=https%3A%2F%2Fapi.primeserverparts.com%2Fimages%2Flogo%2F100001%2Flogo.png&w=256&q=75"
-            //                                         style="width: 200px; margin-top: 15px;">
-
-            //                                     <h5 style="margin-top: 25px; font-weight: 600; font-size: 16px;">Prime Server Parts
-            //                                     </h5>
-            //                                     <p>Nova Street</p>
-            //                                     <p>Nova Street</p>
-            //                                     <p>Colorado, CO - 12356</p>
-            //                                     <p>USA <i class="fa fa-location-arrow"></i></p>
-
-            //                                 </div>
-            //                             </div>
-            //                             <div class="col-xs-6 col-sm-6 col-md-6 text-right">
-            //                                 <div class="receipt-right">
-            //                                     <p style="margin-top: 10px;"><span>Purchase Order:</span> <%= po_number %></p>
-            //                                     <p><span>Date:</span> <%= new Date(updatedAt).toDateString()%></p>
-
-            //                                 </div>
-            //                             </div>
-
-            //                             <div class="row">
-            //                                 <div class="col-xs-12 col-sm-12 col-md-12">
-            //                                     <div class="receipt-header receipt-header-mid">
-            //                                         <div class="col-xs-8 col-sm-8 col-md-8 text-left">
-            //                                             <div class="receipt-left2">
-            //                                                 <h5>Issued To</h5>
-            //                                                 <p>Company Name</p>
-            //                                                 <p>Company Contact Person</p>
-            //                                                 <p>Company Email</p>
-            //                                                 <p>0170000000</p>
-            //                                             </div>
-            //                                         </div>
-            //                                         <div class="col-xs-4 col-sm-4 col-md-4 text-left">
-            //                                             <div class="receipt-right2">
-            //                                                 <h5>Ship To</h5>
-            //                                                 <p>Company Address 1</p>
-            //                                                 <p>Company Address 2</p>
-            //                                                 <p>Company State</p>
-            //                                                 <p>Company Country</p>
-            //                                             </div>
-            //                                         </div>
-            //                                     </div>
-            //                                 </div>
-            //                             </div>
-
-            //                             <div class="row">
-            //                                 <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 30px;">
-            //                                     <div class="col-xs-3 col-sm-3 col-md-3">
-            //                                         <div class="receipt-right text-center">
-            //                                             <h5 style="font-weight: 600; font-size: 16px;">Rep</h5>
-            //                                             <p>Nova Street</p>
-
-            //                                         </div>
-            //                                     </div>
-            //                                     <div class="col-xs-3 col-sm-3 col-md-3">
-            //                                         <div class="receipt-right text-center">
-            //                                             <h5 style="font-weight: 600; font-size: 16px;">Payment Terms</h5>
-            //                                             <p>Company Name</p>
-
-            //                                         </div>
-            //                                     </div>
-            //                                     <div class="col-xs-3 col-sm-3 col-md-3">
-            //                                         <div class="receipt-right text-center">
-            //                                             <h5 style="font-weight: 600; font-size: 16px;">Delivery</h5>
-            //                                             <p>Company Name</p>
-
-            //                                         </div>
-            //                                     </div>
-            //                                     <div class="col-xs-3 col-sm-3 col-md-3">
-            //                                         <div class="receipt-right text-center">
-            //                                             <h5 style="font-weight: 600; font-size: 16px;">Tax Rate</h5>
-            //                                             <p>Company Name</p>
-
-            //                                         </div>
-            //                                     </div>
-            //                                 </div>
-            //                             </div>
-            //                         </div>
-            //                     </div>
-
-            //                 </div>
-
-            //                 <div class="row">
-            //                     <div class="col-xs-12 col-sm-12 col-md-12">
-            //                         <table class="table custom-data-table">
-            //                             <thead style="background-color: #1677ff !important">
-            //                                 <tr>
-            //                                     <th>Part Number</th>
-            //                                     <th>Description</th>
-            //                                     <th>Unite Price</th>
-            //                                     <th>Quantity</th>
-            //                                     <th style="text-align: right;">Total</th>
-            //                                 </tr>
-            //                             </thead>
-            //                             <tbody>
-            //                                 <tr>
-            //                                     <td class="col-xs-2 col-sm-2 col-md-2">ASR-123455</td>
-            //                                     <td class="col-xs-5 col-sm-5 col-md-5">Adaptec ASR-78165 PMC SAS/SATA 6Gb/s PCIe x8
-            //                                         Controller Gen3
-            //                                     </td>
-            //                                     <td class="col-xs-2 col-sm-2 col-md-2">$190.00</td>
-            //                                     <td class="col-xs-1 col-sm-1 col-md-1">1</td>
-            //                                     <td class="col-xs-2 col-sm-2 col-md-2" style="text-align: right;">$380.00</td>
-            //                                 </tr>
-            //                             </tbody>
-            //                         </table>
-            //                     </div>
-            //                 </div>
-            //                 <div class="row">
-            //                     <div class="col-xs-4 col-sm-4 col-md-4 col-md-offset-8 col-sm-offset-8 col-xs-offset-8">
-            //                         <table class="table custom-data-table-two">
-            //                             <thead>
-            //                                 <tr>
-            //                                     <th style="color: #000000; text-align: left;">Sub Total</th>
-            //                                     <th style="color: #000000; text-align: right;">$400</th>
-            //                                 </tr>
-            //                             </thead>
-            //                         </table>
-            //                     </div>
-            //                 </div>
-            //                 <div class="row">
-            //                     <div class="col-xs-8 col-sm-8 col-md-8">
-            //                         <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Comment: </h4>
-            //                         <h4 style="font-size: 16px; font-weight: 600;">Receiving Instruction: </h4>
-            //                     </div>
-            //                     <div class="col-xs-4 col-sm-4 col-md-4">
-            //                         <table class="table table-striped" cellspacing="0">
-            //                             <tbody>
-            //                                 <tr>
-            //                                     <td style="font-size: 13px; color: #000000;"><b>Tax: </b></td>
-            //                                     <td style="text-align: right; padding-right: 20px;color: #000000; font-size: 13px;">
-            //                                         $50.00</td>
-            //                                 </tr>
-            //                                 <tr>
-            //                                     <td style="font-size: 13px; color: #000000;"><b>Shipping Cost: </b></td>
-            //                                     <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-            //                                         $50.00</td>
-            //                                 </tr>
-            //                                 <tr>
-            //                                     <td style="font-size: 13px; color: #000000;"><b>Total: </b></td>
-            //                                     <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-            //                                         $680.00</td>
-            //                                 </tr>
-            //                             </tbody>
-            //                         </table>
-            //                     </div>
-            //                 </div>
-
-            //             </div>
-            //         </div>
-            //     </div>
-            //     <style type="text/css">
-            //         body {
-            //             background: #eee;
-            //         }
-
-            //         .text-danger strong {
-            //             color: #9f181c;
-            //         }
-
-            //         .receipt-main {
-            //             background: #ffffff none repeat scroll 0 0;
-            //             border-top: 12px solid #1677ff;
-            //             padding: 40px 30px !important;
-            //             position: relative;
-            //             box-shadow: 0 1px 21px #acacac;
-            //             color: #333333;
-            //             font-family: open sans;
-            //         }
-
-            //         .receipt-main p {
-            //             color: #333333;
-            //             font-family: open sans;
-            //             line-height: 1.42857;
-            //         }
-
-            //         .receipt-left p {
-            //             color: #333333;
-            //             font-family: open sans;
-            //             line-height: 1.42857;
-            //             padding: 0;
-            //             margin: 0;
-            //             font-size: 16px;
-            //         }
-
-            //         .receipt-right p span {
-            //             font-weight: 600;
-            //         }
-
-            //         .receipt-footer h1 {
-            //             font-size: 15px;
-            //             font-weight: 400 !important;
-            //             margin: 0 !important;
-            //         }
-
-            //         .receipt-main::after {
-            //             background: #414143 none repeat scroll 0 0;
-            //             content: "";
-            //             height: 5px;
-            //             left: 0;
-            //             position: absolute;
-            //             right: 0;
-            //             top: -13px;
-            //         }
-
-            //         .receipt-main thead {
-            //             background: #414143 none repeat scroll 0 0;
-            //         }
-
-            //         .receipt-main thead th {
-            //             color: #fff;
-            //         }
-
-            //         .receipt-right h5 {
-            //             font-size: 16px;
-            //             font-weight: bold;
-            //             margin: 0 0 7px 0;
-            //         }
-
-            //         .receipt-right p {
-            //             font-size: 16px;
-            //             margin: 0px;
-            //         }
-
-            //         .receipt-right p i {
-            //             text-align: center;
-            //             width: 18px;
-            //         }
-
-
-            //         .receipt-left2 p {
-            //             color: #333333;
-            //             font-family: open sans;
-            //             line-height: 1.42857;
-            //             padding: 0;
-            //             margin: 0;
-            //             font-size: 16px;
-            //         }
-
-            //         .receipt-left2 p span {
-            //             font-weight: 600;
-            //         }
-
-            //         .receipt-left2 h5 {
-            //             font-size: 16px;
-            //             font-weight: bold;
-            //             margin: 0 0 7px 0;
-            //         }
-
-            //         .receipt-right2 h5 {
-            //             font-size: 16px;
-            //             font-weight: bold;
-            //             margin: 0 0 7px 0;
-            //         }
-
-            //         .receipt-right2 p {
-            //             font-size: 16px;
-            //             margin: 0px;
-            //         }
-
-            //         .receipt-right2 p i {
-            //             text-align: center;
-            //             width: 18px;
-            //         }
-
-            //         .custom-data-table>thead {
-            //             background-color: #1677ff !important;
-            //             color: #000000 !important;
-            //             font-size: 12px;
-            //         }
-
-            //         .custom-data-table-two thead {
-            //             background-color: transparent;
-            //             color: #000000 !important;
-            //         }
-
-            //         .custom-data-table thead tr th,
-            //         .custom-data-table-two thead tr th {
-            //             color: #000000;
-            //             font-size: 13px;
-            //         }
-
-            //         table.table.custom-data-table tbody tr {
-            //             border: none !important;
-            //         }
-
-            //         table.table.custom-data-table tbody tr td {
-            //             border: none;
-            //             font-size: 13px;
-            //             color: #000000;
-            //         }
-
-            //         table.table.custom-data-table tbody tr {
-            //             border-bottom: 1px solid #4c4d4e33 !important;
-            //             margin-bottom: 5px !important;
-            //             font-size: 16px !important;
-            //         }
-
-
-
-
-            //         .receipt-main td {
-            //             padding: 9px 20px !important;
-            //         }
-
-            //         .receipt-main th {
-            //             padding: 13px 20px !important;
-            //         }
-
-            //         .receipt-main td {
-            //             font-size: 13px;
-            //             font-weight: initial !important;
-            //         }
-
-            //         .receipt-main td p:last-child {
-            //             margin: 0;
-            //             padding: 0;
-            //         }
-
-            //         .receipt-main td h2 {
-            //             font-size: 20px;
-            //             font-weight: 900;
-            //             margin: 0;
-            //             text-transform: uppercase;
-            //         }
-
-            //         .receipt-header-mid .receipt-left h1 {
-            //             font-weight: 100;
-            //             margin: 34px 0 0;
-            //             text-align: right;
-            //             text-transform: uppercase;
-            //         }
-
-            //         .receipt-header-mid {
-            //             margin: 24px 0;
-            //             overflow: hidden;
-            //         }
-
-            //         #container {
-            //             background-color: #dcdcdc;
-            //         }
-            //     </style>
-            //     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-            //     <script type="text/javascript">
-
-            //     </script>
-            // </body>
-
-            // </html>`
-
-            // const invoice = await generatePDF(id, singlePO, temaplate);
-
-            // console.log(invoice);
-
-
-            let purchaseOrderIDhashed = crypt(`${id}`);
-            let ponumberhashed = crypt(`${po_number}`);
-            // SET PASSWORD URL
-            const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
-            // Setting Up Data for EMAIL SENDER
-            const mailSubject = "Purchase Order From Prime Server Parts"
-            const mailData = {
-                companyInfo: {
-                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
-                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
-                    companyName: config.get("COMPANY_NAME"),
-                    companyUrl: config.get("ECOM_URL"),
-                    shopUrl: config.get("ECOM_URL"),
-                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
-                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
-                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
-                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
-                },
-                about: 'A Purchase Order Has Been Created On Primer Server Parts',
-                email: email,
-                viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
-            }
-
-            // SENDING EMAIL
-            await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID);
-
-
-            // Create PO TRK Details
-            await db.po_activities.create({
-                po_id: id,
-                comment: `PO Send To Vendor By ${user.first_name}`,
-                action_type: po_activity_type.PO_SEND_TO_VENDOR,
-                tenant_id: TENANTID,
-                created_by: user.id,
-                updated_by: user.id
+            // Single PO 
+            const singlePO = await db.purchase_order.findOne({
+                // include: [
+                //     { model: db.vendor, as: 'vendor' },
+                //     { model: db.payment_method, as: 'paymentmethod' },
+                //     { model: db.shipping_method, as: 'shippingMethod' },
+                //     { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
+                //     { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
+                //     { model: db.po_trk_details, as: 'potrkdetails' },
+                //     { model: db.po_activities, as: 'poactivitites' },
+                //     { model: db.po_invoices, as: 'poinvoices' },
+                //     { model: db.po_mfg_doc, as: 'pomfgdoc' },
+                //     {
+                //         model: db.po_productlist, as: 'poProductlist', // 
+                //         include: {
+                //             model: db.product,
+                //             as: 'product',
+                //             include: [
+                //                 { model: db.category, as: 'category' },
+                //                 { model: db.brand, as: 'brand' }
+                //             ]
+                //         }
+                //     },
+                //     {
+                //         model: db.user, as: 'POCreated_by',
+                //         include: {
+                //             model: db.role,
+                //             as: 'roles'
+                //         }
+                //     },
+                // ],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_number,
+                        tenant_id: TENANTID
+                    }]
+                }
             });
 
-            // Commit The query
-            await poSendTransaction.commit();
-            // Return Formation
-            return {
-                message: "Purchase Order Send Successfully!!!",
-                status: true,
-                tenant_id: TENANTID
+
+            const temaplate = `<!DOCTYPE html>
+            <html lang="en">
+
+            <head>
+                <meta charset="utf-8">
+                <title>PO Invoice - Prime Server Parts</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+                <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+                <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            </head>
+
+            <body>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="receipt-main col-xs-12 col-sm-12 col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="receipt-header"
+                                        style="border: 1px solid #1677ff;padding: 10px;height: 500px;border-radius: 8px; margin-bottom: 10px;">
+                                        <div class="col-xs-6 col-sm-6 col-md-6">
+                                            <div class="receipt-left">
+                                                <img class="img-responsive" alt="iamgurdeeposahan"
+                                                    src="https://main.dhgmx4ths2j4g.amplifyapp.com/_next/image?url=https%3A%2F%2Fapi.primeserverparts.com%2Fimages%2Flogo%2F100001%2Flogo.png&w=256&q=75"
+                                                    style="width: 200px; margin-top: 15px;">
+
+                                                <h5 style="margin-top: 25px; font-weight: 600; font-size: 16px;">Prime Server Parts
+                                                </h5>
+                                                <p>Nova Street</p>
+                                                <p>Nova Street</p>
+                                                <p>Colorado, CO - 12356</p>
+                                                <p>USA <i class="fa fa-location-arrow"></i></p>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                                            <div class="receipt-right">
+                                                <p style="margin-top: 10px;"><span>Purchase Order:</span> <%= po_number %></p>
+                                                <p><span>Date:</span> <%= new Date(updatedAt).toDateString()%></p>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                                <div class="receipt-header receipt-header-mid">
+                                                    <div class="col-xs-8 col-sm-8 col-md-8 text-left">
+                                                        <div class="receipt-left2">
+                                                            <h5>Issued To</h5>
+                                                            <p>Company Name</p>
+                                                            <p>Company Contact Person</p>
+                                                            <p>Company Email</p>
+                                                            <p>0170000000</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xs-4 col-sm-4 col-md-4 text-left">
+                                                        <div class="receipt-right2">
+                                                            <h5>Ship To</h5>
+                                                            <p>Company Address 1</p>
+                                                            <p>Company Address 2</p>
+                                                            <p>Company State</p>
+                                                            <p>Company Country</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 30px;">
+                                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                                    <div class="receipt-right text-center">
+                                                        <h5 style="font-weight: 600; font-size: 16px;">Rep</h5>
+                                                        <p>Nova Street</p>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                                    <div class="receipt-right text-center">
+                                                        <h5 style="font-weight: 600; font-size: 16px;">Payment Terms</h5>
+                                                        <p>Company Name</p>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                                    <div class="receipt-right text-center">
+                                                        <h5 style="font-weight: 600; font-size: 16px;">Delivery</h5>
+                                                        <p>Company Name</p>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                                    <div class="receipt-right text-center">
+                                                        <h5 style="font-weight: 600; font-size: 16px;">Tax Rate</h5>
+                                                        <p>Company Name</p>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12">
+                                    <table class="table custom-data-table">
+                                        <thead style="background-color: #1677ff !important">
+                                            <tr>
+                                                <th>Part Number</th>
+                                                <th>Description</th>
+                                                <th>Unite Price</th>
+                                                <th>Quantity</th>
+                                                <th style="text-align: right;">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="col-xs-2 col-sm-2 col-md-2">ASR-123455</td>
+                                                <td class="col-xs-5 col-sm-5 col-md-5">Adaptec ASR-78165 PMC SAS/SATA 6Gb/s PCIe x8
+                                                    Controller Gen3
+                                                </td>
+                                                <td class="col-xs-2 col-sm-2 col-md-2">$190.00</td>
+                                                <td class="col-xs-1 col-sm-1 col-md-1">1</td>
+                                                <td class="col-xs-2 col-sm-2 col-md-2" style="text-align: right;">$380.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-4 col-sm-4 col-md-4 col-md-offset-8 col-sm-offset-8 col-xs-offset-8">
+                                    <table class="table custom-data-table-two">
+                                        <thead>
+                                            <tr>
+                                                <th style="color: #000000; text-align: left;">Sub Total</th>
+                                                <th style="color: #000000; text-align: right;">$400</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-8 col-sm-8 col-md-8">
+                                    <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Comment: </h4>
+                                    <h4 style="font-size: 16px; font-weight: 600;">Receiving Instruction: </h4>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <table class="table table-striped" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td style="font-size: 13px; color: #000000;"><b>Tax: </b></td>
+                                                <td style="text-align: right; padding-right: 20px;color: #000000; font-size: 13px;">
+                                                    $50.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size: 13px; color: #000000;"><b>Shipping Cost: </b></td>
+                                                <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
+                                                    $50.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size: 13px; color: #000000;"><b>Total: </b></td>
+                                                <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
+                                                    $680.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <style type="text/css">
+                    body {
+                        background: #eee;
+                    }
+
+                    .text-danger strong {
+                        color: #9f181c;
+                    }
+
+                    .receipt-main {
+                        background: #ffffff none repeat scroll 0 0;
+                        border-top: 12px solid #1677ff;
+                        padding: 40px 30px !important;
+                        position: relative;
+                        box-shadow: 0 1px 21px #acacac;
+                        color: #333333;
+                        font-family: open sans;
+                    }
+
+                    .receipt-main p {
+                        color: #333333;
+                        font-family: open sans;
+                        line-height: 1.42857;
+                    }
+
+                    .receipt-left p {
+                        color: #333333;
+                        font-family: open sans;
+                        line-height: 1.42857;
+                        padding: 0;
+                        margin: 0;
+                        font-size: 16px;
+                    }
+
+                    .receipt-right p span {
+                        font-weight: 600;
+                    }
+
+                    .receipt-footer h1 {
+                        font-size: 15px;
+                        font-weight: 400 !important;
+                        margin: 0 !important;
+                    }
+
+                    .receipt-main::after {
+                        background: #414143 none repeat scroll 0 0;
+                        content: "";
+                        height: 5px;
+                        left: 0;
+                        position: absolute;
+                        right: 0;
+                        top: -13px;
+                    }
+
+                    .receipt-main thead {
+                        background: #414143 none repeat scroll 0 0;
+                    }
+
+                    .receipt-main thead th {
+                        color: #fff;
+                    }
+
+                    .receipt-right h5 {
+                        font-size: 16px;
+                        font-weight: bold;
+                        margin: 0 0 7px 0;
+                    }
+
+                    .receipt-right p {
+                        font-size: 16px;
+                        margin: 0px;
+                    }
+
+                    .receipt-right p i {
+                        text-align: center;
+                        width: 18px;
+                    }
+
+
+                    .receipt-left2 p {
+                        color: #333333;
+                        font-family: open sans;
+                        line-height: 1.42857;
+                        padding: 0;
+                        margin: 0;
+                        font-size: 16px;
+                    }
+
+                    .receipt-left2 p span {
+                        font-weight: 600;
+                    }
+
+                    .receipt-left2 h5 {
+                        font-size: 16px;
+                        font-weight: bold;
+                        margin: 0 0 7px 0;
+                    }
+
+                    .receipt-right2 h5 {
+                        font-size: 16px;
+                        font-weight: bold;
+                        margin: 0 0 7px 0;
+                    }
+
+                    .receipt-right2 p {
+                        font-size: 16px;
+                        margin: 0px;
+                    }
+
+                    .receipt-right2 p i {
+                        text-align: center;
+                        width: 18px;
+                    }
+
+                    .custom-data-table>thead {
+                        background-color: #1677ff !important;
+                        color: #000000 !important;
+                        font-size: 12px;
+                    }
+
+                    .custom-data-table-two thead {
+                        background-color: transparent;
+                        color: #000000 !important;
+                    }
+
+                    .custom-data-table thead tr th,
+                    .custom-data-table-two thead tr th {
+                        color: #000000;
+                        font-size: 13px;
+                    }
+
+                    table.table.custom-data-table tbody tr {
+                        border: none !important;
+                    }
+
+                    table.table.custom-data-table tbody tr td {
+                        border: none;
+                        font-size: 13px;
+                        color: #000000;
+                    }
+
+                    table.table.custom-data-table tbody tr {
+                        border-bottom: 1px solid #4c4d4e33 !important;
+                        margin-bottom: 5px !important;
+                        font-size: 16px !important;
+                    }
+
+
+
+
+                    .receipt-main td {
+                        padding: 9px 20px !important;
+                    }
+
+                    .receipt-main th {
+                        padding: 13px 20px !important;
+                    }
+
+                    .receipt-main td {
+                        font-size: 13px;
+                        font-weight: initial !important;
+                    }
+
+                    .receipt-main td p:last-child {
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    .receipt-main td h2 {
+                        font-size: 20px;
+                        font-weight: 900;
+                        margin: 0;
+                        text-transform: uppercase;
+                    }
+
+                    .receipt-header-mid .receipt-left h1 {
+                        font-weight: 100;
+                        margin: 34px 0 0;
+                        text-align: right;
+                        text-transform: uppercase;
+                    }
+
+                    .receipt-header-mid {
+                        margin: 24px 0;
+                        overflow: hidden;
+                    }
+
+                    #container {
+                        background-color: #dcdcdc;
+                    }
+                </style>
+                <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+                <script type="text/javascript">
+
+                </script>
+            </body>
+
+            </html>`
+
+            const invoice = await generatePDF(id, singlePO, temaplate);
+
+            console.log(invoice);
+
+            if (invoice) {
+                let purchaseOrderIDhashed = crypt(`${id}`);
+                let ponumberhashed = crypt(`${po_number}`);
+                // SET PASSWORD URL
+                const viewpoURL = config.get("ECOM_URL").concat(config.get("PO_VIEW"));
+                // Setting Up Data for EMAIL SENDER
+                const mailSubject = "Purchase Order From Prime Server Parts"
+                const mailData = {
+                    companyInfo: {
+                        logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                        banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                        companyName: config.get("COMPANY_NAME"),
+                        companyUrl: config.get("ECOM_URL"),
+                        shopUrl: config.get("ECOM_URL"),
+                        fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                        tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                        li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                        insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                    },
+                    about: 'A Purchase Order Has Been Created On Primer Server Parts',
+                    email: email,
+                    viewpolink: `${viewpoURL}${purchaseOrderIDhashed}/${ponumberhashed}`
+                }
+
+                // SENDING EMAIL
+                await Mail(email, mailSubject, mailData, 'create-purchase-order', TENANTID, [{
+                    filename: `${invoice}.pdf`,
+                    path: path.join(__dirname, `../tmp/${invoice}.pdf`),
+                    contentType: 'application/pdf'
+                }]);
+
+
+
+                // Create PO TRK Details
+                await db.po_activities.create({
+                    po_id: id,
+                    comment: `PO Send To Vendor By ${user.first_name}`,
+                    action_type: po_activity_type.PO_SEND_TO_VENDOR,
+                    tenant_id: TENANTID,
+                    created_by: user.id,
+                    updated_by: user.id
+                });
+
+                // Commit The query
+                await poSendTransaction.commit();
+                // Return Formation
+                return {
+                    message: "Purchase Order Send Successfully!!!",
+                    status: true,
+                    tenant_id: TENANTID
+                }
             }
+
+
 
         } catch (error) {
             await poSendTransaction.rollback();

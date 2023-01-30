@@ -6,6 +6,7 @@ const config = require("config");
 const { verifierEmail } = require("../utils/verifyEmailSender");
 const { decrypt } = require("../utils/hashes");
 const logger = require("../../logger");
+const { order_activity_type } = require("../../enums/order_enum");
 
 // Order HELPER
 module.exports = {
@@ -652,6 +653,15 @@ module.exports = {
         },
       });
 
+      // Create PO TRK Details
+      await db.order_activities.create({
+        order_id: insertOrder.id,
+        action_type: order_activity_type.ORDER_CREATE_CUSTOMER,
+        comment: `Order Created`,
+        tenant_id: TENANTID,
+        created_by: user.id
+      });
+
       // Return Formation
       return {
         message: "Successfully Placed The Order!!!",
@@ -943,6 +953,15 @@ module.exports = {
         const createOrderItem = await db.order_item.bulkCreate(orderProductItems);
         if (!createOrderItem) return { message: "Order Items Insert Failed", status: false };
       }
+
+      // Create PO TRK Details
+      await db.order_activities.create({
+        order_id: insertOrder.id,
+        action_type: order_activity_type.ORDER_CREATE_ADMIN,
+        comment: `Order Created`,
+        tenant_id: TENANTID,
+        created_by: user.id
+      });
 
       // Return Formation
       return {

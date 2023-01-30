@@ -142,7 +142,6 @@ module.exports = {
             // TENANT ID
             const tenant_id = TENANTID;
 
-
             // Check If User Has Alias or Not 
             if (!db.role.hasAlias('permissions_data') && !db.role.hasAlias('permissions')) {
                 await db.role.hasMany(db.permissions_data, { sourceKey: 'id', foreignKey: 'role_id', as: 'permissions' });

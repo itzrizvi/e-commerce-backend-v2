@@ -80,6 +80,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        order_created_by: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         created_by: {
             type: DataTypes.INTEGER,
             allowNull: true

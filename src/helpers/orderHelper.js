@@ -541,6 +541,7 @@ module.exports = {
         shipping_address_id,
         tax_exempt,
         created_by: user.id,
+        order_created_by: 10003,
         tenant_id: TENANTID,
       });
       if (!insertOrder)
@@ -858,6 +859,7 @@ module.exports = {
         shipping_method_id,
         tax_exempt,
         created_by: user.id,
+        order_created_by: user.id,
         tenant_id: TENANTID,
       });
       if (!insertOrder) return { message: "Order Coulnd't Placed!!!", status: false };
@@ -982,6 +984,15 @@ module.exports = {
         });
       }
 
+      // Order and User
+      if (!db.order.hasAlias("user") && !db.order.hasAlias("orderCreatedBy")) {
+        await db.order.hasOne(db.user, {
+          sourceKey: "order_created_by",
+          foreignKey: "id",
+          as: "orderCreatedBy",
+        });
+      }
+
       // Check If Has Alias with Order and Payment Method
       if (
         !db.order.hasAlias("payment_method") &&
@@ -1022,6 +1033,15 @@ module.exports = {
           sourceKey: "product_id",
           foreignKey: "id",
           as: "product"
+        });
+      }
+
+      // Order and Shipping method
+      if (!db.order.hasAlias("shipping_method") && !db.order.hasAlias("shippingmethod")) {
+        await db.order.hasOne(db.shipping_method, {
+          sourceKey: "shipping_method_id",
+          foreignKey: "id",
+          as: "shippingmethod",
         });
       }
 
@@ -1109,6 +1129,11 @@ module.exports = {
             as: "customer",
             ...((searchQuery && !orderID) && { where: searchQueryCustomerWhere }),
           },
+          {
+            model: db.user,
+            as: "orderCreatedBy", // User as Order Created By
+          },
+          { model: db.shipping_method, as: "shippingmethod" }, // Shipping Method
           {
             model: db.payment_method,
             as: "paymentmethod",
@@ -1337,6 +1362,15 @@ module.exports = {
         });
       }
 
+      // Order and User
+      if (!db.order.hasAlias("user") && !db.order.hasAlias("orderCreatedBy")) {
+        await db.order.hasOne(db.user, {
+          sourceKey: "order_created_by",
+          foreignKey: "id",
+          as: "orderCreatedBy",
+        });
+      }
+
 
       // Order and Shipping method
       if (!db.order.hasAlias("shipping_method") && !db.order.hasAlias("shippingmethod")) {
@@ -1398,6 +1432,10 @@ module.exports = {
               model: db.role,
               as: "roles",
             },
+          },
+          {
+            model: db.user,
+            as: "orderCreatedBy", // User as Order Created By
           },
         ],
         where: {

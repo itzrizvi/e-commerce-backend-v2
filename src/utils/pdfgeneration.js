@@ -18,14 +18,20 @@ const generatePDF = async (po_id, data, htmltemplate) => {
 
     // Set the content of the page to the rendered template
     await page.setContent(html);
-    console.log(page)
+
+    // Configure the navigation timeout
+    await page.setDefaultNavigationTimeout(0);
+
     // Generate a PDF of the page
     let pdfName = `${po_id}-${new Date().getTime()}`;
     await page.pdf({
         format: 'A4',
-        path: join(__dirname, `../../tmp/${pdfName}`)
+        printBackground: true,
+        path: join(__dirname, `../../tmp/${pdfName}.pdf`)
     })
     await browser.close();
+
+    return pdfName;
 }
 
 

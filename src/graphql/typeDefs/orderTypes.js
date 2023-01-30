@@ -122,6 +122,7 @@ type OrderAdmin {
     taxExemptFiles:[TaxExemptFiles]
     coupon:Coupon
     added_by:Staff
+    orderCreatedBy:Staff
     shippingMethod:ShippingMethodPublic
 }
 
@@ -194,6 +195,8 @@ type OrderList {
     tax_amount:Float
     orderStatus:OrderStatusPublic
     orderitems:[OrderItem]
+    shippingmethod:ShippingMethod
+    orderCreatedBy:Staff
     productCount:Int
     tax_exempt:Boolean
     createdAt:String

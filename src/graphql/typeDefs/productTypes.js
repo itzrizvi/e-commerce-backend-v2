@@ -93,6 +93,7 @@ type Product {
     prod_regular_price:Float
     prod_sale_price:Float
     cost:Float
+    qty:Int
     discount_type:[DiscountType]
     prod_partnum:String
     prod_sku:String
@@ -133,6 +134,7 @@ input AddProductInput {
     prod_regular_price:Float!
     prod_sale_price:Float
     cost:Float
+    qty:Int
     prod_partnum:String!
     prod_sku:String
     brand_id:Int!
@@ -170,6 +172,7 @@ type ProductForList {
     prod_regular_price:Float
     prod_sale_price:Float
     cost:Float
+    qty:Int
     prod_partnum:String
     prod_sku:String
     prod_status:Boolean
@@ -241,6 +244,7 @@ input UpdateProductInput {
     prod_regular_price:Float
     prod_sale_price:Float
     cost:Float
+    qty:Int
     prod_partnum:String
     prod_sku:String
     brand_id:Int
@@ -310,6 +314,7 @@ type PublicProductView {
     prod_meta_keywords:JSON
     prod_tags:JSON
     brand:Brand
+    qty:Int
     category:Category
     prod_attributes:[ProductAttributes]
     related_products:[RelatedProduct]

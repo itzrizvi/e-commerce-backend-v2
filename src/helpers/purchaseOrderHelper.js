@@ -1786,7 +1786,20 @@ module.exports = {
                     singlePO.company_logo = config.get("SERVER_URL").concat("media/email-assets/logo.jpg");
                     const invoice = await generatePDF(id, singlePO, temaplate);
 
-                    if (invoice) {
+                    // Upload Image to AWS S3
+                    const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
+                    const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
+                    const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
+                    const fileUploadS3 = singleFileUploadFromPath({
+                        file: join(__dirname, `../../tmp/${invoice}.pdf`),
+                        folder: psp_admin_doc_folder,
+                        idf: `${po_number}`,
+                        fileName: invoice,
+                        bucketName: psp_admin_doc_src_bucketName,
+                        // delete_file: false
+                    });
+
+                    if (invoice && fileUploadS3) {
 
                         // Setting Up Data for EMAIL SENDER
                         const mailSubject = "Purchase Order Confirmation From Prime Server Parts"
@@ -1805,19 +1818,6 @@ module.exports = {
                             about: 'A Purchase Order Has Been Confirmed On Primer Server Parts',
                             message: "Thank You For Accepting The Purchase Order, Your Invoice Has Been Attached"
                         }
-
-                        // Upload Image to AWS S3
-                        const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
-                        const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
-                        const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
-                        singleFileUploadFromPath({
-                            file: path.join(__dirname, `../../tmp/${invoice}.pdf`),
-                            folder: psp_admin_doc_folder,
-                            idf: `${po_number}`,
-                            fileName: invoice,
-                            bucketName: psp_admin_doc_src_bucketName,
-                            // delete_file: false
-                        });
 
                         // SENDING EMAIL
                         await Mail(email, mailSubject, mailData, 'purchase-order-confirmation', TENANTID, [{

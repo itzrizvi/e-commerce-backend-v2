@@ -447,6 +447,10 @@ type POUpdateOutput {
     po_number:String
 }
 
+input requestTrackingInput {
+    po_id:Int!
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 extend type Mutation {
@@ -470,6 +474,7 @@ extend type Mutation {
     resendPOLink(data:ResendPOLinkInput):CommonOutput!
     resendPOAttachment(data:ResendPOAttachmentInput):CommonOutput!
     createPOComment(data:createPOCommentInput):CommonOutput!
+    requestTracking(data:requestTrackingInput):CommonOutput!
 }
 
 extend type Query {

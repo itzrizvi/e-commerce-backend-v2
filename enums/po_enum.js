@@ -22,7 +22,10 @@ const po_activity_type = {
   HOLD_PO: "PO Held",
   KILL_PO: "PO Killed",
   PO_LINK_CLOSED: "PO Public View Link Closed",
-  ADD_COMMENT: "Comment Added"
+  ADD_COMMENT: "Comment Added",
+  INVOICE_UPLOAD: "Invoice Uploaded",
+  TRACKING_REQUEST: "Tracking Number Requested",
+  FAILED_REQUEST: "Tracking Number Request Failure",
 
 };
 

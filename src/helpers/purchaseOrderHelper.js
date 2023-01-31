@@ -1800,7 +1800,7 @@ module.exports = {
                     });
 
                     if (invoice && fileUploadS3) {
-
+                        this.insertPOActivity(po_activity_type.INVOICE_UPLOAD, `File Name: ${invoice}.pdf`, id, 10001, 10001, TENANTID);
                         // Setting Up Data for EMAIL SENDER
                         const mailSubject = "Purchase Order Confirmation From Prime Server Parts"
                         const mailData = {
@@ -3735,10 +3735,9 @@ module.exports = {
             });
 
 
+
             if (invoice && fileUploadS3) {
-
-                console.log(invoice)
-
+                this.insertPOActivity(po_activity_type.INVOICE_UPLOAD, `File Name: ${invoice}.pdf`, po_id, user.id, user.id, TENANTID);
                 // Setting Up Data for EMAIL SENDER
                 const mailSubject = "Purchase Order Invoice From Prime Server Parts"
                 const mailData = {
@@ -3826,6 +3825,81 @@ module.exports = {
             // Return Formation
             return {
                 message: "PO Comment Inserted Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOActivity" });
+        }
+    },
+    // Request Tracking
+    requestTracking: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { po_id } = req;
+            // 
+            const findPO = await db.purchase_order.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            const { po_number, vendor_id } = findPO;
+
+            const findVendorEmail = await db.vendor.findOne({
+                where: {
+                    [Op.and]: [{
+                        id: vendor_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            const { email } = findVendorEmail;
+
+
+            if (findPO && findVendorEmail) {
+
+                // Setting Up Data for EMAIL SENDER
+                const mailSubject = "Tracking Number Request From Prime Server Parts"
+                const mailData = {
+                    companyInfo: {
+                        logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                        banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                        companyName: config.get("COMPANY_NAME"),
+                        companyUrl: config.get("ECOM_URL"),
+                        shopUrl: config.get("ECOM_URL"),
+                        fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                        tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                        li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                        insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                    },
+                    about: 'Request Tracking From Primer Server Parts',
+                    message: `Please send the shipping tracking number(s) for this ${po_number}`
+                }
+
+                // SENDING EMAIL
+                await Mail(email, mailSubject, mailData, 'purchase-order-request-tracking', TENANTID, []);
+
+                this.insertPOActivity(po_activity_type.TRACKING_REQUEST, `PO Tracking Requested`, po_id, user.id, user.id, TENANTID);
+
+            } else {
+                this.insertPOActivity(po_activity_type.FAILED_REQUEST, `PO Tracking Request Failed`, po_id, user.id, user.id, TENANTID);
+                return { message: "Tracking Request Failed!!!", status: false }
+            }
+
+
+            // Return Formation
+            return {
+                message: "Tracking Request Sent Successfully!!!",
                 status: true,
                 tenant_id: TENANTID
             }

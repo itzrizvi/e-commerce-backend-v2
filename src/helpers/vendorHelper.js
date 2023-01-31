@@ -191,6 +191,7 @@ module.exports = {
                     {
                         foreignKey: 'ref_id',
                         constraints: false,
+                        as: "addresses",
                         scope: {
                             ref_model: 'vendor'
                         }
@@ -221,6 +222,7 @@ module.exports = {
                 include: [
                     {
                         model: db.address,
+                        as: "addresses",
                         separate: true,
                         include: { model: db.country, as: "countryCode" }
                     },
@@ -1118,6 +1120,7 @@ module.exports = {
                     {
                         foreignKey: 'ref_id',
                         constraints: false,
+                        as: "addresses",
                         scope: {
                             ref_model: 'vendor'
                         }
@@ -1150,6 +1153,7 @@ module.exports = {
                 include: [
                     {
                         model: db.address,
+                        as: "addresses",
                         separate: true,
                         include: { model: db.country, as: "countryCode" }
                     },

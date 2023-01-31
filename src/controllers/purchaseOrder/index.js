@@ -29,4 +29,5 @@ module.exports = {
     resendPOLinkController: require('./resendPOLinkController'),
     resendPOAttachmentController: require('./resendPOAttachmentController'),
     createPOCommentController: require('./createPOCommentController'),
+    requestTrackingController: require('./requestTrackingController'),
 }

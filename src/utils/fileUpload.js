@@ -98,7 +98,7 @@ module.exports.singleFileUploadFromPath = async ({
     Key: folderName,
   };
   const upload = await s3.upload(uploadParams).promise();
-  if (delete_file) await unlinkFile(file);
+  // if (delete_file) await unlinkFile(file);
   return upload;
 }; // This is single readfile
 

@@ -1625,8 +1625,6 @@ module.exports = {
                     path: `${temp_path}/${invoice}.pdf`
                 }]);
 
-
-
                 // Create PO TRK Details
                 await db.po_activities.create({
                     po_id: id,

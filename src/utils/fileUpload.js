@@ -77,6 +77,31 @@ module.exports.multipleFileUpload = async ({
   return fileUrl;
 };
 
+module.exports.singleFileUploadFromPath = async ({
+  file,
+  folder = "",
+  idf,
+  fileName = "",
+  bucketName,
+  delete_file = true,
+}) => {
+  var { ext } = parse(file);
+  const readableStream = fs.createReadStream(file);
+  if (!fileName) imageName = `${Math.floor(Math.random() * 10000 + 1)}`;
+  else imageName = fileName;
+  const fileNameExt = imageName + ext;
+  const folderName =
+    folder == "" ? fileNameExt : `${folder}/${idf}/${fileNameExt}`;
+  const uploadParams = {
+    Bucket: bucketName,
+    Body: readableStream,
+    Key: folderName,
+  };
+  const upload = await s3.upload(uploadParams).promise();
+  if (delete_file) await unlinkFile(file);
+  return upload;
+}; // This is single readfile
+
 // downloads a file from s3
 async function getFileStream(req, res) {
   const key = req.params[0];

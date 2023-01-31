@@ -427,10 +427,12 @@ type GetPORejectReasonList {
 
 input ResendPOLinkInput {
     po_id:Int!
+    emails:[String]
 }
 
 input ResendPOAttachmentInput {
     po_id:Int!
+    emails:[String]
 }
 
 # Extended QUERIES AND MUTATIONS ######################################

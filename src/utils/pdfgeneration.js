@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const ejs = require('ejs');
 const { join } = require("path");
+const config = require('config');
 
 
 const generatePDF = async (po_id, data, htmltemplate) => {
@@ -20,7 +21,7 @@ const generatePDF = async (po_id, data, htmltemplate) => {
     await page.setContent(html);
 
     // Configure the navigation timeout
-    await page.setDefaultNavigationTimeout(0);
+    await page.setDefaultNavigationTimeout(5000000);
 
     // Generate a PDF of the page
     let pdfName = `${po_id}-${new Date().getTime()}`;
@@ -30,7 +31,6 @@ const generatePDF = async (po_id, data, htmltemplate) => {
         path: join(__dirname, `../../tmp/${pdfName}.pdf`)
     })
     await browser.close();
-
     return pdfName;
 }
 

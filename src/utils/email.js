@@ -6,6 +6,8 @@ const db = require("../db");
 const logger = require("../../logger");
 const config = require("config");
 const default_mailer = config.get("DEFAULT_MAILER");
+const fs = require("fs");
+const { join } = require("path");
 
 const Mail = async (
   mail_address,
@@ -103,18 +105,30 @@ const Mail = async (
         to: mail_address,
         subject: subject,
         html: htmlToSend,
-        ...(attachments.length > 0 && attachments)
+        attachments: attachments ?? null
       };
 
-      console.log(mailOptions)
 
       await transport.sendMail(mailOptions, function (error, response) {
         if (error) {
           console.log(error);
         } else {
           console.log(response);
+          if (attachments.length) {
+            const file_name = attachments[0].filename;
+            const directorylink = join(__dirname, `../../tmp/`);
+
+            fs.unlink(directorylink + file_name, (err) => {
+              if (err) {
+                console.log("No Action Needed")
+              }
+
+            });
+          }
+
         }
       });
+
     }
   } catch (error) {
     logger.crit("crit", error, { service: "email.js" });

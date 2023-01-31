@@ -435,9 +435,13 @@ input ResendPOAttachmentInput {
     emails:[String]
 }
 
+input createPOCommentInput {
+    po_id:Int!
+    comment:String!
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
-
 extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
     createPurchaseOrder(data:CreatePurchaseOrderInput):CreatePOOutput!
@@ -458,6 +462,7 @@ extend type Mutation {
     updatePOMFGDOC(data:updatePOMFGDOCInput):CommonOutput!
     resendPOLink(data:ResendPOLinkInput):CommonOutput!
     resendPOAttachment(data:ResendPOAttachmentInput):CommonOutput!
+    createPOComment(data:createPOCommentInput):CommonOutput!
 }
 
 extend type Query {

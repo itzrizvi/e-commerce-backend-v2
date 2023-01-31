@@ -21,7 +21,8 @@ const po_activity_type = {
   CANCEL_PO: "PO Canceled",
   HOLD_PO: "PO Held",
   KILL_PO: "PO Killed",
-  PO_LINK_CLOSED: "PO Public View Link Closed"
+  PO_LINK_CLOSED: "PO Public View Link Closed",
+  ADD_COMMENT: "Comment Added"
 
 };
 

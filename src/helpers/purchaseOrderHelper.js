@@ -742,18 +742,71 @@ module.exports = {
                     as: 'postatus'
                 });
             }
+
+            if (!db.vendor.hasAlias('addresses')) {
+                await db.vendor.hasMany(db.address,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        as: "addresses",
+                        scope: {
+                            ref_model: 'vendor'
+                        }
+                    });
+            }
+            if (!db.vendor.hasAlias('contact_person') && !db.vendor.hasAlias('contactPersons')) {
+                await db.vendor.hasMany(db.contact_person,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        },
+                        as: "contactPersons"
+                    });
+            }
+            // 
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
             // ASSOCIATION ENDS
 
             // Single PO 
             const singlePO = await db.purchase_order.findOne({
                 include: [
-                    { model: db.vendor, as: 'vendor' },
+                    {
+                        model: db.vendor, as: 'vendor',
+                        include: [
+                            {
+                                model: db.address,
+                                as: "addresses",
+                                where: {
+                                    status: true
+                                },
+                                separate: true,
+                                include: { model: db.country, as: "countryCode" }
+                            },
+                            { model: db.contact_person, as: "contactPersons" }
+                        ]
+                    },
                     { model: db.payment_method, as: 'paymentmethod' },
                     { model: db.shipping_account, as: 'shippingAccount' },
                     { model: db.contact_person, as: 'contactPerson' },
                     { model: db.shipping_method, as: 'shippingMethod' },
-                    { model: db.address, as: 'vendorBillingAddress' },
-                    { model: db.address, as: 'vendorShippingAddress' },
+                    {
+                        model: db.address,
+                        as: 'vendorBillingAddress',
+                        include: { model: db.country, as: "countryCode" }
+                    },
+                    {
+                        model: db.address,
+                        as: 'vendorShippingAddress',
+                        include: { model: db.country, as: "countryCode" }
+                    },
                     { model: db.po_trk_details, as: 'potrkdetails' },
                     { model: db.po_activities, as: 'poactivitites' },
                     { model: db.po_invoices, as: 'poinvoices' },
@@ -3709,6 +3762,50 @@ module.exports = {
             await poSendTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "resendPOAttachment" });
+        }
+    },
+    // Create PO Comment
+    createPOComment: async (req, db, user, isAuth, TENANTID) => {
+        // Try Catch Block
+        try {
+
+            // DATA FROM REQUEST
+            const { po_id, comment } = req;
+            // 
+            const addPOComment = await db.purchase_order.update({
+                comment,
+                updated_by: user.id
+            }, {
+                where: {
+                    [Op.and]: [{
+                        id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            if (addPOComment) {
+                // Activity
+                this.insertPOActivity(po_activity_type.ADD_COMMENT, `PO Updated By A Comment`, po_id, user.id, user.id, TENANTID);
+
+            } else {
+                // Activity
+                this.insertPOActivity(po_activity_type.FAILURE_PO, `PO Comment Update Failed`, po_id, user.id, user.id, TENANTID);
+                return { message: "Comment Update Failed!!!", status: false }
+            }
+
+            // Return Formation
+            return {
+                message: "PO Comment Inserted Successfully!!!",
+                status: true,
+                tenant_id: TENANTID
+            }
+
+
+
+        } catch (error) {
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "createPOActivity" });
         }
     },
 }

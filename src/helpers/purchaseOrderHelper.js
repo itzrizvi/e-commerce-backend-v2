@@ -5,11 +5,12 @@ const config = require('config');
 const { Mail } = require("../utils/email");
 const logger = require("../../logger");
 const { default: slugify } = require("slugify");
-const { singleFileUpload, deleteFile, getFileName } = require("../utils/fileUpload");
+const { singleFileUpload, deleteFile, getFileName, singleFileUploadFromPath } = require("../utils/fileUpload");
 const { po_activity_type } = require("../../enums/po_enum");
 const { checkPermission } = require("../utils/permissionChecker");
 const { generatePDF } = require("../utils/pdfgeneration");
 const { join } = require("path");
+const path = require('path');
 const db = require("../db");
 
 
@@ -1079,7 +1080,8 @@ module.exports = {
             return {
                 message: "Purchase Order Updated Successfully!!!",
                 status: true,
-                tenant_id: TENANTID
+                tenant_id: TENANTID,
+                po_number
             }
 
 
@@ -1804,12 +1806,24 @@ module.exports = {
                             message: "Thank You For Accepting The Purchase Order, Your Invoice Has Been Attached"
                         }
 
+                        // Upload Image to AWS S3
+                        const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
+                        const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
+                        const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
+                        singleFileUploadFromPath({
+                            file: path.join(__dirname, `../../tmp/${invoice}.pdf`),
+                            folder: psp_admin_doc_folder,
+                            idf: `${po_number}`,
+                            fileName: invoice,
+                            bucketName: psp_admin_doc_src_bucketName,
+                            // delete_file: false
+                        });
+
                         // SENDING EMAIL
                         await Mail(email, mailSubject, mailData, 'purchase-order-confirmation', TENANTID, [{
                             filename: `${invoice}.pdf`,
                             path: join(__dirname, `../../tmp/${invoice}.pdf`)
                         }]);
-
 
                         this.insertPOActivity(po_activity_type.PO_ATTACHMENT_SENT, `File Name: ${invoice}.pdf`, id, 10001, 10001, TENANTID);
                     }
@@ -3707,8 +3721,23 @@ module.exports = {
             singlePO.company_logo = config.get("SERVER_URL").concat("media/email-assets/logo.jpg");
             const invoice = await generatePDF(po_id, singlePO, temaplate);
 
+            // Upload Image to AWS S3
+            const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
+            const psp_admin_doc_src_bucketName = psp_admin_doc_src[0]
+            const psp_admin_doc_folder = psp_admin_doc_src.slice(1)
+            const fileUploadS3 = singleFileUploadFromPath({
+                file: join(__dirname, `../../tmp/${invoice}.pdf`),
+                folder: psp_admin_doc_folder,
+                idf: `${po_number}`,
+                fileName: invoice,
+                bucketName: psp_admin_doc_src_bucketName,
+                // delete_file: false
+            });
 
-            if (invoice) {
+
+            if (invoice && fileUploadS3) {
+
+                console.log(invoice)
 
                 // Setting Up Data for EMAIL SENDER
                 const mailSubject = "Purchase Order Invoice From Prime Server Parts"

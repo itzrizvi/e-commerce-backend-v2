@@ -440,12 +440,19 @@ input createPOCommentInput {
     comment:String!
 }
 
+type POUpdateOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    po_number:String
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 extend type Mutation {
     poSetting(data:POSettingInput):CommonOutput!
     createPurchaseOrder(data:CreatePurchaseOrderInput):CreatePOOutput!
-    updatePurchaseOrder(data:UpdatePurchaseOrderInput):CommonOutput!
+    updatePurchaseOrder(data:UpdatePurchaseOrderInput):POUpdateOutput!
     poSendToVendor(data:POStatusChangeInput):CommonOutput!
     updatePOStatus(data:POStatusChangeInput):CommonOutput!
     updatePOStatusPublic(data:POStatusChangePublicInput):CommonOutput!

@@ -1967,6 +1967,18 @@ module.exports = {
                 });
             }
 
+            if (!db.vendor.hasAlias('contact_person') && !db.vendor.hasAlias('contactPersons')) {
+                await db.vendor.hasMany(db.contact_person,
+                    {
+                        foreignKey: 'ref_id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        },
+                        as: "contactPersons"
+                    });
+            }
+
             // PO TO payment_method
             if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
 
@@ -2090,6 +2102,26 @@ module.exports = {
                 });
             }
 
+            // PO TO ORDER
+            if (!db.purchase_order.hasAlias('order')) {
+
+                await db.purchase_order.hasOne(db.order, {
+                    sourceKey: 'order_id',
+                    foreignKey: 'id',
+                    as: 'order'
+                });
+            }
+
+            // PO TO ORDER
+            if (!db.order.hasAlias('address') && !db.order.hasAlias('shippingAddress')) {
+
+                await db.order.hasOne(db.address, {
+                    sourceKey: 'shipping_address_id',
+                    foreignKey: 'id',
+                    as: 'shippingAddress'
+                });
+            }
+
             // Created By Associations
             db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
             db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
@@ -2152,7 +2184,11 @@ module.exports = {
                 // Single PO 
                 const singlePO = await db.purchase_order.findOne({
                     include: [
-                        { model: db.vendor, as: 'vendor' },
+                        {
+                            model: db.vendor,
+                            as: 'vendor',
+                            include: { model: db.contact_person, as: "contactPersons" }
+                        },
                         { model: db.payment_method, as: 'paymentmethod' },
                         { model: db.shipping_method, as: 'shippingMethod' },
                         { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
@@ -2179,6 +2215,14 @@ module.exports = {
                                 as: 'roles'
                             }
                         },
+                        {
+                            model: db.order,
+                            as: 'order',
+                            include: {
+                                model: db.address,
+                                as: 'shippingAddress'
+                            }
+                        }
                     ],
                     where: {
                         [Op.and]: [{
@@ -2189,8 +2233,39 @@ module.exports = {
                     }
                 });
 
-                this.insertPOActivity(po_activity_type.PO_VIEWED_BY_VENDOR, `PO Viewed`, id, 10001, 10001, TENANTID);
+                if (singlePO.type === "drop_shipping") {
+                    singlePO.shipTo = singlePO.order.shippingAddress;
+                } else if (singlePO.type === "default") {
+                    const companyShippingAddress = await db.address.findOne({
+                        where: {
+                            [Op.and]: [{
+                                ref_model: "company_info",
+                                tenant_id: TENANTID,
+                                type: "shipping",
+                                status: true,
+                                isDefault: true
+                            }]
+                        }
+                    });
 
+                    singlePO.shipTo = companyShippingAddress;
+                }
+                // GET COMPANY BILLING ADDRESS
+                const companyBilling = await db.address.findOne({
+                    where: {
+                        [Op.and]: [{
+                            ref_model: "company_info",
+                            tenant_id: TENANTID,
+                            type: "billing",
+                            status: true,
+                            isDefault: true
+                        }]
+                    }
+                });
+                singlePO.companyBilling = companyBilling;
+
+                // Activity
+                this.insertPOActivity(po_activity_type.PO_VIEWED_BY_VENDOR, `PO Viewed`, id, 10001, 10001, TENANTID);
 
                 // Return Formation
                 return {
@@ -3916,12 +3991,18 @@ module.exports = {
 // PO ACTIVITY MODULE
 exports.insertPOActivity = async (actionType, comment, po_id, created_by, updated_by, tenant_id) => {
     // Create PO TRK Details
-    await db.po_activities.create({
-        po_id,
-        comment: comment,
-        action_type: actionType,
-        tenant_id,
-        created_by,
-        updated_by
-    });
+    try {
+        await db.po_activities.create({
+            po_id,
+            comment: comment,
+            action_type: actionType,
+            tenant_id,
+            created_by,
+            updated_by
+        });
+
+    } catch (error) {
+        console.error(error);
+        logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "insertPOActivity" });
+    }
 }

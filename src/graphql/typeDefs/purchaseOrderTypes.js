@@ -120,6 +120,9 @@ type PurchaseOrder {
     POCreated_by: Staff
     createdAt: String
     updatedAt: String
+    shipTo:AddressOutput
+    companyBilling:AddressOutput
+    contactPersons:[ContactPerson]
 }
 
 type GetPurchaseOrderList {

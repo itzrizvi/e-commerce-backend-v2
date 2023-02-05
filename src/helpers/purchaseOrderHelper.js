@@ -1663,8 +1663,7 @@ module.exports = {
                         }
                     });
                     singlePO.subTotal = subTotal;
-                    let grandTotal = subTotal + singlePO.tax_amount + singlePO.shipping_cost;
-                    singlePO.grandTotal = grandTotal;
+                    singlePO.grandTotal = this.poGrandTotal(id, TENANTID);
 
                     // TEMPLATE FOR NOW
                     const temaplate = `<!DOCTYPE html>

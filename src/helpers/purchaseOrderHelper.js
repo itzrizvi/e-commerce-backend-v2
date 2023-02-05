@@ -2220,7 +2220,8 @@ module.exports = {
                             as: 'order',
                             include: {
                                 model: db.address,
-                                as: 'shippingAddress'
+                                as: 'shippingAddress',
+                                include: { model: db.country, as: "countryCode" }
                             }
                         }
                     ],
@@ -2237,6 +2238,9 @@ module.exports = {
                     singlePO.shipTo = singlePO.order.shippingAddress;
                 } else if (singlePO.type === "default") {
                     const companyShippingAddress = await db.address.findOne({
+                        include: [
+                            { model: db.country, as: "countryCode" }
+                        ],
                         where: {
                             [Op.and]: [{
                                 ref_model: "company_info",
@@ -2252,6 +2256,9 @@ module.exports = {
                 }
                 // GET COMPANY BILLING ADDRESS
                 const companyBilling = await db.address.findOne({
+                    include: [
+                        { model: db.country, as: "countryCode" }
+                    ],
                     where: {
                         [Op.and]: [{
                             ref_model: "company_info",

@@ -1967,10 +1967,10 @@ module.exports = {
                 });
             }
 
-            if (!db.vendor.hasAlias('contact_person') && !db.vendor.hasAlias('contactPersons')) {
-                await db.vendor.hasMany(db.contact_person,
+            if (!db.purchase_order.hasAlias('contact_person') && !db.purchase_order.hasAlias('contactPersons')) {
+                await db.purchase_order.hasOne(db.contact_person,
                     {
-                        foreignKey: 'ref_id',
+                        foreignKey: 'contact_person_id',
                         constraints: false,
                         scope: {
                             ref_model: 'vendor'
@@ -2186,8 +2186,7 @@ module.exports = {
                     include: [
                         {
                             model: db.vendor,
-                            as: 'vendor',
-                            include: { model: db.contact_person, as: "contactPersons" }
+                            as: 'vendor'
                         },
                         { model: db.payment_method, as: 'paymentmethod' },
                         { model: db.shipping_method, as: 'shippingMethod' },
@@ -2223,6 +2222,10 @@ module.exports = {
                                 as: 'shippingAddress',
                                 include: { model: db.country, as: "countryCode" }
                             }
+                        },
+                        {
+                            model: db.contact_person,
+                            as: "contactPersons"
                         }
                     ],
                     where: {

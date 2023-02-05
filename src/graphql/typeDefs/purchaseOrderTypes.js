@@ -122,7 +122,7 @@ type PurchaseOrder {
     updatedAt: String
     shipTo:AddressOutput
     companyBilling:AddressOutput
-    contactPersons:[ContactPerson]
+    contactPersons:ContactPerson
 }
 
 type GetPurchaseOrderList {

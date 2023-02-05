@@ -41,9 +41,6 @@ input CreatePurchaseOrderInput {
     products:JSON!
     contact_person_id:Int
     status:String
-    # poTRKdetails:POTRKDetailsInputForPO
-    # poInvoice:POInvoiceInputForPO
-    # poMFGDoc:POMFGDOCInputForPO
 }
 
 type PurchaseOrderList {
@@ -53,7 +50,6 @@ type PurchaseOrderList {
     shipping_cost:Float
     is_insurance:Boolean
     receiving_instruction:String
-    grandTotal_price:Float
     comment:String
     vendor:Vendor
     paymentmethod:PaymentMethod
@@ -93,7 +89,6 @@ type PurchaseOrder {
     id: Int
     po_number: String
     rec_id:Int
-    grandTotal_price: Float
     tax_amount: Float
     comment: String
     shipping_method_id: Int

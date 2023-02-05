@@ -130,10 +130,7 @@ module.exports = {
                 comment,
                 order_id,
                 type,
-                products,
-                // poTRKdetails,
-                // poInvoice,
-                // poMFGDoc 
+                products
             } = req;
 
             // GET Prefix and Start From Value
@@ -167,13 +164,11 @@ module.exports = {
 
             }
 
-            let grandTotal_price = 0; // Grand Total Price
             // PO Product List Array
             const poProductList = [];
 
             products.forEach(async (element) => {
                 const calculateTotal = element.price * element.quantity;
-                grandTotal_price += calculateTotal;
 
                 // PO Product List Array Formation
                 await poProductList.push({
@@ -234,7 +229,6 @@ module.exports = {
                 po_number,
                 vendor_id,
                 payment_method_id,
-                grandTotal_price: grandTotal_price.toFixed(2),
                 tax_amount,
                 contact_person_id,
                 vendor_billing_id: vendor_billing_address_id,
@@ -1369,37 +1363,235 @@ module.exports = {
 
                     const { email } = findVendorEmail;
 
+
+                    // ASSOCIATION STARTS
+                    // PO TO vendor
+                    if (!db.purchase_order.hasAlias('vendor')) {
+
+                        await db.purchase_order.hasOne(db.vendor, {
+                            sourceKey: 'vendor_id',
+                            foreignKey: 'id',
+                            as: 'vendor'
+                        });
+                    }
+
+                    if (!db.purchase_order.hasAlias('contact_person') && !db.purchase_order.hasAlias('contactPersons')) {
+                        await db.purchase_order.hasOne(db.contact_person,
+                            {
+                                sourceKey: 'contact_person_id',
+                                foreignKey: 'id',
+                                constraints: false,
+                                scope: {
+                                    ref_model: 'vendor'
+                                },
+                                as: "contactPersons"
+                            });
+                    }
+
+                    // PO TO payment_method
+                    if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                        await db.purchase_order.hasOne(db.payment_method, {
+                            sourceKey: 'payment_method_id',
+                            foreignKey: 'id',
+                            as: 'paymentmethod'
+                        });
+                    }
+
+                    // 
+                    if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorBillingAddress')) {
+
+                        await db.purchase_order.hasOne(db.address, {
+                            sourceKey: 'vendor_billing_id',
+                            foreignKey: 'id',
+                            as: 'vendorBillingAddress'
+                        });
+                    }
+
+                    // 
+                    if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorShippingAddress')) {
+
+                        await db.purchase_order.hasOne(db.address, {
+                            sourceKey: 'vendor_shipping_id',
+                            foreignKey: 'id',
+                            as: 'vendorShippingAddress'
+                        });
+                    }
+
+                    if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                        await db.address.hasOne(db.country, {
+                            sourceKey: 'country',
+                            foreignKey: 'code',
+                            as: 'countryCode'
+                        });
+                    }
+
+                    // 
+                    if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
+
+                        await db.purchase_order.hasMany(db.po_productlist, {
+                            foreignKey: 'purchase_order_id',
+                            as: 'poProductlist'
+                        });
+                    }
+
+                    // 
+                    if (!db.purchase_order.hasAlias('shipping_method') && !db.purchase_order.hasAlias('shippingMethod')) {
+
+                        await db.purchase_order.hasOne(db.shipping_method, {
+                            sourceKey: 'shipping_method_id',
+                            foreignKey: 'id',
+                            as: 'shippingMethod'
+                        });
+                    }
+
+                    // 
+                    if (!db.po_productlist.hasAlias('product')) {
+
+                        await db.po_productlist.hasOne(db.product, {
+                            sourceKey: 'product_id',
+                            foreignKey: 'id',
+                            as: 'product'
+                        });
+                    }
+
+                    // Check If Has Alias with Categories
+                    if (!db.product.hasAlias('category')) {
+
+                        await db.product.hasOne(db.category, {
+                            sourceKey: 'prod_category',
+                            foreignKey: 'id',
+                            as: 'category'
+                        });
+                    }
+
+                    // Brand Table Association with Product
+                    if (!db.product.hasAlias('brand')) {
+
+                        await db.product.hasOne(db.brand, {
+                            sourceKey: 'brand_id',
+                            foreignKey: 'id',
+                            as: 'brand'
+                        });
+                    }
+
+                    // PO TO PO TRK DETAILS
+                    if (!db.purchase_order.hasAlias('po_trk_details') && !db.purchase_order.hasAlias('potrkdetails')) {
+
+                        await db.purchase_order.hasMany(db.po_trk_details, {
+                            foreignKey: 'po_id',
+                            as: 'potrkdetails'
+                        });
+                    }
+
+                    // PO TO PO Activities
+                    if (!db.purchase_order.hasAlias('po_activities') && !db.purchase_order.hasAlias('poactivitites')) {
+
+                        await db.purchase_order.hasMany(db.po_activities, {
+                            foreignKey: 'po_id',
+                            as: 'poactivitites'
+                        });
+                    }
+
+                    // PO TO PO Invoices
+                    if (!db.purchase_order.hasAlias('po_invoices') && !db.purchase_order.hasAlias('poinvoices')) {
+
+                        await db.purchase_order.hasMany(db.po_invoices, {
+                            foreignKey: 'po_id',
+                            as: 'poinvoices'
+                        });
+                    }
+
+                    // PO TO PO MFG DOC
+                    if (!db.purchase_order.hasAlias('po_mfg_doc') && !db.purchase_order.hasAlias('pomfgdoc')) {
+
+                        await db.purchase_order.hasMany(db.po_mfg_doc, {
+                            foreignKey: 'po_id',
+                            as: 'pomfgdoc'
+                        });
+                    }
+
+                    // PO TO ORDER
+                    if (!db.purchase_order.hasAlias('order')) {
+
+                        await db.purchase_order.hasOne(db.order, {
+                            sourceKey: 'order_id',
+                            foreignKey: 'id',
+                            as: 'order'
+                        });
+                    }
+
+                    // PO TO ORDER
+                    if (!db.order.hasAlias('address') && !db.order.hasAlias('shippingAddress')) {
+
+                        await db.order.hasOne(db.address, {
+                            sourceKey: 'shipping_address_id',
+                            foreignKey: 'id',
+                            as: 'shippingAddress'
+                        });
+                    }
+
+                    // Created By Associations
+                    db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+                    db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+                    // Check If Has Alias with Users and Roles
+                    if (!db.purchase_order.hasAlias('user') && !db.purchase_order.hasAlias('POCreated_by')) {
+                        await db.purchase_order.hasOne(db.user, {
+                            sourceKey: 'created_by',
+                            foreignKey: 'id',
+                            as: 'POCreated_by'
+                        });
+                    }
+                    // ASSOCIATION ENDS
+
                     // Single PO 
                     const singlePO = await db.purchase_order.findOne({
-                        // include: [
-                        //     { model: db.vendor, as: 'vendor' },
-                        //     { model: db.payment_method, as: 'paymentmethod' },
-                        //     { model: db.shipping_method, as: 'shippingMethod' },
-                        //     { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
-                        //     { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
-                        //     { model: db.po_trk_details, as: 'potrkdetails' },
-                        //     { model: db.po_activities, as: 'poactivitites' },
-                        //     { model: db.po_invoices, as: 'poinvoices' },
-                        //     { model: db.po_mfg_doc, as: 'pomfgdoc' },
-                        //     {
-                        //         model: db.po_productlist, as: 'poProductlist', // 
-                        //         include: {
-                        //             model: db.product,
-                        //             as: 'product',
-                        //             include: [
-                        //                 { model: db.category, as: 'category' },
-                        //                 { model: db.brand, as: 'brand' }
-                        //             ]
-                        //         }
-                        //     },
-                        //     {
-                        //         model: db.user, as: 'POCreated_by',
-                        //         include: {
-                        //             model: db.role,
-                        //             as: 'roles'
-                        //         }
-                        //     },
-                        // ],
+                        include: [
+                            {
+                                model: db.vendor,
+                                as: 'vendor'
+                            },
+                            { model: db.payment_method, as: 'paymentmethod' },
+                            { model: db.shipping_method, as: 'shippingMethod' },
+                            { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
+                            { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
+                            { model: db.po_trk_details, as: 'potrkdetails' },
+                            { model: db.po_activities, as: 'poactivitites' },
+                            { model: db.po_invoices, as: 'poinvoices' },
+                            { model: db.po_mfg_doc, as: 'pomfgdoc' },
+                            {
+                                model: db.po_productlist, as: 'poProductlist', // 
+                                include: {
+                                    model: db.product,
+                                    as: 'product',
+                                    include: [
+                                        { model: db.category, as: 'category' },
+                                        { model: db.brand, as: 'brand' }
+                                    ]
+                                }
+                            },
+                            {
+                                model: db.user, as: 'POCreated_by',
+                                include: {
+                                    model: db.role,
+                                    as: 'roles'
+                                }
+                            },
+                            {
+                                model: db.order,
+                                as: 'order',
+                                include: {
+                                    model: db.address,
+                                    as: 'shippingAddress',
+                                    include: { model: db.country, as: "countryCode" }
+                                }
+                            },
+                            {
+                                model: db.contact_person,
+                                as: "contactPersons"
+                            }
+                        ],
                         where: {
                             [Op.and]: [{
                                 id,
@@ -1409,10 +1601,68 @@ module.exports = {
                         }
                     });
 
+                    if (singlePO.type === "drop_shipping") {
+                        singlePO.shipTo = singlePO.order.shippingAddress;
+                    } else if (singlePO.type === "default") {
+                        const companyShippingAddress = await db.address.findOne({
+                            include: [
+                                { model: db.country, as: "countryCode" }
+                            ],
+                            where: {
+                                [Op.and]: [{
+                                    ref_model: "company_info",
+                                    tenant_id: TENANTID,
+                                    type: "shipping",
+                                    status: true,
+                                    isDefault: true
+                                }]
+                            }
+                        });
+
+                        singlePO.shipTo = companyShippingAddress;
+                    }
+                    // GET COMPANY BILLING ADDRESS
+                    const companyBilling = await db.address.findOne({
+                        include: [
+                            { model: db.country, as: "countryCode" }
+                        ],
+                        where: {
+                            [Op.and]: [{
+                                ref_model: "company_info",
+                                tenant_id: TENANTID,
+                                type: "billing",
+                                status: true,
+                                isDefault: true
+                            }]
+                        }
+                    });
+                    singlePO.companyBilling = companyBilling;
+
+                    // GET COMPANY INFO
+                    const companyInfo = await db.company_info.findOne({
+                        where: {
+                            tenant_id: TENANTID
+                        }
+                    });
+                    singlePO.companyInfo = companyInfo;
+
+                    // Calculate Sub Total
+                    let subTotal = await db.po_productlist.sum('totalPrice', {
+                        where: {
+                            [Op.and]: [{
+                                purchase_order_id: id,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+                    singlePO.subTotal = subTotal;
+                    let grandTotal = subTotal + singlePO.tax_amount + singlePO.shipping_cost;
+                    singlePO.grandTotal = grandTotal;
+
                     // TEMPLATE FOR NOW
                     const temaplate = `<!DOCTYPE html>
                     <html lang="en">
-
+                    
                     <head>
                         <meta charset="utf-8">
                         <title>PO Invoice - Prime Server Parts</title>
@@ -1421,7 +1671,7 @@ module.exports = {
                         <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
                         <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
                     </head>
-
+                    
                     <body>
                         <div class="col-md-12">
                             <div class="row">
@@ -1429,92 +1679,135 @@ module.exports = {
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="receipt-header"
-                                                style="border: 1px solid #1677ff;padding: 10px;height: 500px;border-radius: 8px; margin-bottom: 10px;">
+                                                style="border: 1px solid #1677ff;padding: 10px;height: auto;border-radius: 8px; margin-bottom: 10px;">
                                                 <div class="col-xs-6 col-sm-6 col-md-6">
                                                     <div class="receipt-left">
-                                                        <img class="img-responsive" alt="iamgurdeeposahan"
-                                                            src=<%= company_logo %>
-                                                            style="width: 150px; margin-top: 15px;">
-
-                                                        <h5 style="margin-top: 25px; font-weight: 600; font-size: 16px;">Prime Server Parts
+                                                        <img class="img-responsive" alt="iamgurdeeposahan" src=<%=company_logo %>
+                                                        style="width: 150px; margin-top: 15px;">
+                    
+                                                        <h5 style="margin-top: 25px; font-weight: 600; font-size: 16px;">
+                                                            <%= companyInfo.name %>
                                                         </h5>
-                                                        <p>Nova Street</p>
-                                                        <p>Nova Street</p>
-                                                        <p>Colorado, CO - 12356</p>
-                                                        <p>USA <i class="fa fa-location-arrow"></i></p>
-
+                                                        <p>
+                                                            <%= companyBilling.address1 %>
+                                                        </p>
+                                                        <% if (companyBilling.address2) { %>
+                                                            <p>
+                                                                <%= companyBilling.address2 %>
+                                                            </p>
+                                                            <% } %>
+                                                                <p>
+                                                                    <%= companyBilling.city + ', ' + companyBilling.state +' - '+ companyBilling.zip_code %>
+                                                                </p>
+                                                        <% if (companyBilling.phone) { %>
+                                                            <p><%= companyBilling.phone %></p>
+                                                            <% } %>
+                                                        <p><%= companyBilling.country %></p>
+                    
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                                                     <div class="receipt-right">
-                                                        <p style="margin-top: 10px;"><span>Purchase Order:</span> <%= po_number %></p>
-                                                        <p><span>Date:</span> <%= new Date(updatedAt).toDateString()%></p>
-
+                                                        <p style="margin-top: 10px;"><span>Purchase Order:</span>
+                                                            <%= po_number %>
+                                                        </p>
+                                                        <p><span>Date:</span>
+                                                            <%= new Date(updatedAt).toDateString()%>
+                                                        </p>
+                    
                                                     </div>
                                                 </div>
-
+                    
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                                         <div class="receipt-header receipt-header-mid">
                                                             <div class="col-xs-8 col-sm-8 col-md-8 text-left">
                                                                 <div class="receipt-left2">
                                                                     <h5>Issued To</h5>
-                                                                    <p>Company Name</p>
-                                                                    <p>Company Contact Person</p>
-                                                                    <p>Company Email</p>
-                                                                    <p>0170000000</p>
+                                                                    <p>
+                                                                        <%= vendor.company_name %>
+                                                                    </p>
+                                                                    <p>
+                                                                        <%= vendor.contact_person %>
+                                                                    </p>
+                                                                    <p>
+                                                                        <%= vendorBillingAddress.address1 %>
+                                                                    </p>
+                                                                    <% if (vendorBillingAddress.address2) { %>
+                                                                        <p><%= vendorBillingAddress.address2 %></p>
+                                                                        <% } %>
+                                                                    <p>
+                                                                        <%= vendorBillingAddress.city + ' , ' + vendorBillingAddress.state +' - '+ vendorBillingAddress.zip_code %>
+                                                                    </p>
+                                                                    <% if (contactPersons) { %>
+                                                                        <p><%= contactPersons.email %></p>
+                                                                        <p><%= contactPersons.phone %></p>
+                    
+                                                                        <% } else { %>
+                    
+                                                                            <p><%= vendor.email %></p>
+                                                                            <p><%= vemdor.phone_number %></p>
+                    
+                                                                            <% } %>
+                                                                    <p><%= companyBilling.country %></p>
                                                                 </div>
                                                             </div>
                                                             <div class="col-xs-4 col-sm-4 col-md-4 text-left">
                                                                 <div class="receipt-right2">
                                                                     <h5>Ship To</h5>
-                                                                    <p>Company Address 1</p>
-                                                                    <p>Company Address 2</p>
-                                                                    <p>Company State</p>
-                                                                    <p>Company Country</p>
+                                                                    <p>
+                                                                        <%= shipTo.address1 %>
+                                                                    </p>
+                                                                    <% if (shipTo.address2) { %>
+                                                                        <p><%= shipTo.address2 %></p>
+                                                                        <% } %>
+                                                                    <p>
+                                                                        <%= shipTo.city + ' , ' + shipTo.state +' - '+ shipTo.zip_code %>
+                                                                    </p>
+                                                                    <p><%= shipTo.country %></p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
+                    
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 30px;">
                                                         <div class="col-xs-3 col-sm-3 col-md-3">
                                                             <div class="receipt-right text-center">
                                                                 <h5 style="font-weight: 600; font-size: 16px;">Rep</h5>
-                                                                <p>Nova Street</p>
-
+                                                                <p><%= POCreated_by.first_name + ' , '+ POCreated_by.last_name %></p>
+                    
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-3 col-sm-3 col-md-3">
                                                             <div class="receipt-right text-center">
                                                                 <h5 style="font-weight: 600; font-size: 16px;">Payment Terms</h5>
-                                                                <p>Company Name</p>
-
+                                                                <p><%= paymentmethod.name %></p>
+                    
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-3 col-sm-3 col-md-3">
                                                             <div class="receipt-right text-center">
                                                                 <h5 style="font-weight: 600; font-size: 16px;">Delivery</h5>
-                                                                <p>Company Name</p>
-
+                                                                <p><%= shippingMethod.name %></p>
+                    
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-3 col-sm-3 col-md-3">
                                                             <div class="receipt-right text-center">
                                                                 <h5 style="font-weight: 600; font-size: 16px;">Tax Rate</h5>
-                                                                <p>Company Name</p>
-
+                                                                <p>$<%= tax_amount %></p>
+                    
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
+                    
                                     </div>
-
+                    
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12">
                                             <table class="table custom-data-table">
@@ -1529,13 +1822,13 @@ module.exports = {
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="col-xs-2 col-sm-2 col-md-2">ASR-123455</td>
-                                                        <td class="col-xs-5 col-sm-5 col-md-5">Adaptec ASR-78165 PMC SAS/SATA 6Gb/s PCIe x8
-                                                            Controller Gen3
-                                                        </td>
-                                                        <td class="col-xs-2 col-sm-2 col-md-2">$190.00</td>
-                                                        <td class="col-xs-1 col-sm-1 col-md-1">1</td>
-                                                        <td class="col-xs-2 col-sm-2 col-md-2" style="text-align: right;">$380.00</td>
+                                                        <% poProductlist.forEach(function(item){ %>
+                                                            <td class="col-xs-2 col-sm-2 col-md-2"><%= item.product.prod_partnum %></td>
+                                                            <td class="col-xs-5 col-sm-5 col-md-5"><%= item.product.prod_name %></td>
+                                                            <td class="col-xs-2 col-sm-2 col-md-2"><%= item.price %></td>
+                                                            <td class="col-xs-1 col-sm-1 col-md-1"><%= item.quantity %></td>
+                                                            <td class="col-xs-2 col-sm-2 col-md-2" style="text-align: right;">$<%= item.totalPrice %></td>
+                                                          <% }); %>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1547,7 +1840,7 @@ module.exports = {
                                                 <thead>
                                                     <tr>
                                                         <th style="color: #000000; text-align: left;">Sub Total</th>
-                                                        <th style="color: #000000; text-align: right;">$400</th>
+                                                        <th style="color: #000000; text-align: right;">$<%= subTotal %></th>
                                                     </tr>
                                                 </thead>
                                             </table>
@@ -1555,8 +1848,12 @@ module.exports = {
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-8 col-sm-8 col-md-8">
-                                            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Comment: </h4>
-                                            <h4 style="font-size: 16px; font-weight: 600;">Receiving Instruction: </h4>
+                                            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Comment: <br>
+                                                <%= comment %>
+                                            </h4>
+                                            <h4 style="font-size: 16px; font-weight: 600;">Receiving Instruction: <br>
+                                                <%= receiving_instruction %>
+                                            </h4>
                                         </div>
                                         <div class="col-xs-4 col-sm-4 col-md-4">
                                             <table class="table table-striped" cellspacing="0">
@@ -1564,23 +1861,23 @@ module.exports = {
                                                     <tr>
                                                         <td style="font-size: 13px; color: #000000;"><b>Tax: </b></td>
                                                         <td style="text-align: right; padding-right: 20px;color: #000000; font-size: 13px;">
-                                                            $50.00</td>
+                                                            $<%= tax_amount %></td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size: 13px; color: #000000;"><b>Shipping Cost: </b></td>
                                                         <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-                                                            $50.00</td>
+                                                            $<%= shipping_cost %></td>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-size: 13px; color: #000000;"><b>Total: </b></td>
                                                         <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-                                                            $680.00</td>
+                                                            $<%= grandTotal %></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-
+                    
                                 </div>
                             </div>
                         </div>
@@ -1588,11 +1885,11 @@ module.exports = {
                             body {
                                 background: #eee;
                             }
-
+                    
                             .text-danger strong {
                                 color: #9f181c;
                             }
-
+                    
                             .receipt-main {
                                 background: #ffffff none repeat scroll 0 0;
                                 border-top: 12px solid #1677ff;
@@ -1602,13 +1899,13 @@ module.exports = {
                                 color: #333333;
                                 font-family: open sans;
                             }
-
+                    
                             .receipt-main p {
                                 color: #333333;
                                 font-family: open sans;
                                 line-height: 1.42857;
                             }
-
+                    
                             .receipt-left p {
                                 color: #333333;
                                 font-family: open sans;
@@ -1617,17 +1914,17 @@ module.exports = {
                                 margin: 0;
                                 font-size: 16px;
                             }
-
+                    
                             .receipt-right p span {
                                 font-weight: 600;
                             }
-
+                    
                             .receipt-footer h1 {
                                 font-size: 15px;
                                 font-weight: 400 !important;
                                 margin: 0 !important;
                             }
-
+                    
                             .receipt-main::after {
                                 background: #414143 none repeat scroll 0 0;
                                 content: "";
@@ -1637,32 +1934,32 @@ module.exports = {
                                 right: 0;
                                 top: -13px;
                             }
-
+                    
                             .receipt-main thead {
                                 background: #414143 none repeat scroll 0 0;
                             }
-
+                    
                             .receipt-main thead th {
                                 color: #fff;
                             }
-
+                    
                             .receipt-right h5 {
                                 font-size: 16px;
                                 font-weight: bold;
                                 margin: 0 0 7px 0;
                             }
-
+                    
                             .receipt-right p {
                                 font-size: 16px;
                                 margin: 0px;
                             }
-
+                    
                             .receipt-right p i {
                                 text-align: center;
                                 width: 18px;
                             }
-
-
+                    
+                    
                             .receipt-left2 p {
                                 color: #333333;
                                 font-family: open sans;
@@ -1671,116 +1968,116 @@ module.exports = {
                                 margin: 0;
                                 font-size: 16px;
                             }
-
+                    
                             .receipt-left2 p span {
                                 font-weight: 600;
                             }
-
+                    
                             .receipt-left2 h5 {
                                 font-size: 16px;
                                 font-weight: bold;
                                 margin: 0 0 7px 0;
                             }
-
+                    
                             .receipt-right2 h5 {
                                 font-size: 16px;
                                 font-weight: bold;
                                 margin: 0 0 7px 0;
                             }
-
+                    
                             .receipt-right2 p {
                                 font-size: 16px;
                                 margin: 0px;
                             }
-
+                    
                             .receipt-right2 p i {
                                 text-align: center;
                                 width: 18px;
                             }
-
+                    
                             .custom-data-table>thead {
                                 background-color: #1677ff !important;
                                 color: #000000 !important;
                                 font-size: 12px;
                             }
-
+                    
                             .custom-data-table-two thead {
                                 background-color: transparent;
                                 color: #000000 !important;
                             }
-
+                    
                             .custom-data-table thead tr th,
                             .custom-data-table-two thead tr th {
                                 color: #000000;
                                 font-size: 13px;
                             }
-
+                    
                             table.table.custom-data-table tbody tr {
                                 border: none !important;
                             }
-
+                    
                             table.table.custom-data-table tbody tr td {
                                 border: none;
                                 font-size: 13px;
                                 color: #000000;
                             }
-
+                    
                             table.table.custom-data-table tbody tr {
                                 border-bottom: 1px solid #4c4d4e33 !important;
                                 margin-bottom: 5px !important;
                                 font-size: 16px !important;
                             }
-
-
-
-
+                    
+                    
+                    
+                    
                             .receipt-main td {
                                 padding: 9px 20px !important;
                             }
-
+                    
                             .receipt-main th {
                                 padding: 13px 20px !important;
                             }
-
+                    
                             .receipt-main td {
                                 font-size: 13px;
                                 font-weight: initial !important;
                             }
-
+                    
                             .receipt-main td p:last-child {
                                 margin: 0;
                                 padding: 0;
                             }
-
+                    
                             .receipt-main td h2 {
                                 font-size: 20px;
                                 font-weight: 900;
                                 margin: 0;
                                 text-transform: uppercase;
                             }
-
+                    
                             .receipt-header-mid .receipt-left h1 {
                                 font-weight: 100;
                                 margin: 34px 0 0;
                                 text-align: right;
                                 text-transform: uppercase;
                             }
-
+                    
                             .receipt-header-mid {
                                 margin: 24px 0;
                                 overflow: hidden;
                             }
-
+                    
                             #container {
                                 background-color: #dcdcdc;
                             }
                         </style>
                         <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
                         <script type="text/javascript">
-
+                    
                         </script>
                     </body>
-
+                    
                     </html>`
 
                     singlePO.company_logo = config.get("SERVER_URL").concat("media/email-assets/logo.jpg");
@@ -2176,7 +2473,7 @@ module.exports = {
             let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
             // Difference
             const diffs = Math.round(minutes);
-            // console.log(diffs)
+            console.log(diffs)
             // IF Difference Less than or Equal to CONFIG minutes
             if (diffs < 0 || !status) {
 

@@ -24,10 +24,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        grandTotal_price: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
         shipping_cost: {
             type: DataTypes.FLOAT,
             allowNull: true,

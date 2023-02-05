@@ -921,7 +921,7 @@ module.exports = {
                 // In Case of Existing Products Update
                 products.forEach(async (element) => {
                     const calculateTotal = element.price * element.quantity;
-                    if (!element.isNew) {
+                    if (!element?.isNew) {
                         // PO Product List Array Formation
                         poProductList.push({
                             product_id: element.id,
@@ -936,7 +936,7 @@ module.exports = {
 
                 // In Case New Product Insert in PO
                 products.forEach(async (newElement) => {
-                    if (newElement.isNew) {
+                    if (newElement?.isNew) {
                         const calculateTotal = newElement.price * newElement.quantity;
                         // New PO Product List Array Formation
                         newPoProductList.push({

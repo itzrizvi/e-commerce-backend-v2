@@ -1970,7 +1970,8 @@ module.exports = {
             if (!db.purchase_order.hasAlias('contact_person') && !db.purchase_order.hasAlias('contactPersons')) {
                 await db.purchase_order.hasOne(db.contact_person,
                     {
-                        foreignKey: 'contact_person_id',
+                        sourceKey: 'contact_person_id',
+                        foreignKey: 'id',
                         constraints: false,
                         scope: {
                             ref_model: 'vendor'
@@ -2175,6 +2176,7 @@ module.exports = {
             let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
             // Difference
             const diffs = Math.round(minutes);
+            // console.log(diffs)
             // IF Difference Less than or Equal to CONFIG minutes
             if (diffs < 0 || !status) {
 

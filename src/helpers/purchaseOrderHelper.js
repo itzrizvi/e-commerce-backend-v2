@@ -890,21 +890,19 @@ module.exports = {
     // Update PO
     updatePurchaseOrder: async (req, db, user, isAuth, TENANTID) => {
         // Try Catch Block
+        const poUpdateTransaction = await db.sequelize.transaction();
         try {
 
             // DATA FROM REQUEST
-            const { id,
+            const { 
+                id,
                 po_number,
                 contact_person_id,
-                reason,
                 vendor_id,
                 shipping_method_id,
                 shipping_account_id,
                 payment_method_id,
-                order_placed_via,
-                status,
                 vendor_billing_id,
-                vendor_shipping_id,
                 shipping_cost,
                 is_insurance,
                 receiving_instruction,
@@ -913,43 +911,22 @@ module.exports = {
                 type,
                 comment,
                 products,
-                poTRKdetails,
-                poInvoice,
-                poMFGDoc } = req;
+            } = req;
 
-
-            // Find PO
-            const findPO = await db.purchase_order.findOne({
-                where: {
-                    [Op.and]: [{
-                        id,
-                        po_number,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
-            const { grandTotal_price: previousGrandTotal } = findPO;
-
-            let grandTotal_price = 0; // Grand Total Price
             // PO Product List Array
             const poProductList = [];
             const newPoProductList = [];
             if (products) {
-
                 // In Case of Existing Products Update
                 products.forEach(async (element) => {
                     const calculateTotal = element.price * element.quantity;
-                    grandTotal_price += calculateTotal;
-
                     if (!element.isNew) {
                         // PO Product List Array Formation
-                        await poProductList.push({
+                        poProductList.push({
                             product_id: element.id,
                             quantity: element.quantity,
                             price: element.price,
                             totalPrice: calculateTotal,
-                            recieved_quantity: element.recieved_quantity ? element.recieved_quantity : 0,
-                            remaining_quantity: element.recieved_quantity ? element.quantity - element.recieved_quantity : element.quantity,
                             updated_by: user.id,
                             tenant_id: TENANTID
                         })
@@ -961,14 +938,12 @@ module.exports = {
                     if (newElement.isNew) {
                         const calculateTotal = newElement.price * newElement.quantity;
                         // New PO Product List Array Formation
-                        await newPoProductList.push({
+                        newPoProductList.push({
                             purchase_order_id: id,
                             product_id: newElement.id,
                             quantity: newElement.quantity,
                             price: newElement.price,
                             totalPrice: calculateTotal,
-                            recieved_quantity: newElement.recieved_quantity ? newElement.recieved_quantity : 0,
-                            remaining_quantity: newElement.recieved_quantity ? newElement.quantity - newElement.recieved_quantity : newElement.quantity,
                             created_by: user.id,
                             tenant_id: TENANTID
                         })
@@ -981,13 +956,9 @@ module.exports = {
             const poUpdateDoc = {
                 shipping_method_id,
                 contact_person_id,
-                reason,
                 shipping_account_id,
                 payment_method_id,
-                order_placed_via,
-                status,
                 vendor_billing_id,
-                vendor_shipping_id,
                 tax_amount,
                 comment,
                 shipping_cost,
@@ -996,7 +967,6 @@ module.exports = {
                 order_id,
                 type,
                 vendor_id,
-                grandTotal_price: grandTotal_price === 0 ? previousGrandTotal : grandTotal_price.toFixed(2),
                 updated_by: user.id
             }
 
@@ -1010,13 +980,15 @@ module.exports = {
                     }]
                 }
             });
-            if (!updatePurchaseOrder) return { message: "PO Update Failed!!!", status: false }
+            if (!updatePurchaseOrder) {
+                await poUpdateTransaction.rollback();
+                return { message: "PO Update Failed!!!", status: false }
+            }
 
             // If Products is Available For Update
             if (poProductList && poProductList.length > 0) {
                 // Update Product List With Loop
-                await poProductList.forEach(async (product) => {
-
+                poProductList.forEach(async (product) => {
                     await db.po_productlist.update(product, {
                         where: {
                             [Op.and]: [{
@@ -1033,48 +1005,99 @@ module.exports = {
             if (newPoProductList && newPoProductList.length > 0) {
                 // Insert NEW Product List
                 const insertNewProductList = await db.po_productlist.bulkCreate(newPoProductList);
-                if (!insertNewProductList) return { message: "New Product List Insert Failed!!!", status: false }
+                if (!insertNewProductList) {
+                    await poUpdateTransaction.rollback();
+                    return { message: "New Product List Insert Failed!!!", status: false }
+                }
             }
 
-            if (poTRKdetails) {
-                poTRKdetails.updated_by = user.id;
-                const potrkUpdate = await db.po_trk_details.update(poTRKdetails, {
-                    where: {
-                        [Op.and]: [{
-                            po_id: id,
-                            tenant_id: TENANTID
-                        }]
-                    }
+            
+            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poproducts')) {
+                await db.purchase_order.hasMany(db.po_productlist, {
+                    foreignKey: 'purchase_order_id',
+                    as: 'poproducts'
                 });
-                if (!potrkUpdate) return { message: "PO TRK Detail Unable To Update!!!" }
             }
 
-            if (poInvoice) {
-                poInvoice.updated_by = user.id;
-                const poInvoiceUpdate = await db.po_invoices.update(poInvoice, {
-                    where: {
-                        [Op.and]: [{
-                            po_id: id,
-                            tenant_id: TENANTID
-                        }]
-                    }
-                });
-                if (!poInvoiceUpdate) return { message: "PO Invoice Unable To Update!!!" }
+            // Find PO
+            const findPO = await db.purchase_order.findOne({
+                include: [{ model: db.po_productlist, as: "poproducts" }],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_number,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+
+            /* ----------------------------- Activity Added Start ----------------------------- */
+            if(findPO){
+                if(findPO.shipping_method_id !== shipping_method_id) 
+                    await this.insertPOActivity(po_activity_type.SHIPPING_METHOD_UPDATE, `From: ${findPO.shipping_method_id} & To: ${shipping_method_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.contact_person_id !== contact_person_id) 
+                    await this.insertPOActivity(po_activity_type.CONTACT_PERSON_UPDATE, `From: ${findPO.contact_person_id} & To: ${contact_person_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.vendor_id !== vendor_id) 
+                    await this.insertPOActivity(po_activity_type.VENDOR_UPDATE, `From: ${findPO.vendor_id} & To: ${vendor_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.type !== type) 
+                    await this.insertPOActivity(po_activity_type.PO_TYPE_UPDATE, `From: ${findPO.type} & To: ${type}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.payment_method_id !== payment_method_id) 
+                    await this.insertPOActivity(po_activity_type.PAYMENT_METHOD_UPDATE, `From: ${findPO.payment_method_id} & To: ${payment_method_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.shipping_account_id !== shipping_account_id) 
+                    await this.insertPOActivity(po_activity_type.SHIPPING_ACCOUNT_UPDATE, `From: ${findPO.shipping_account_id} & To: ${shipping_account_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.vendor_billing_id !== vendor_billing_id) 
+                    await this.insertPOActivity(po_activity_type.VENDOR_BILLING_ADDRESS_UPDATE, `From: ${findPO.vendor_billing_id} & To: ${vendor_billing_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.tax_amount !== tax_amount) 
+                    await this.insertPOActivity(po_activity_type.TAX_AMOUNT_UPDATE, `From: ${findPO.tax_amount} & To: ${tax_amount}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.comment !== comment) 
+                    await this.insertPOActivity(po_activity_type.COMMENT_UPDATE, `From: ${findPO.comment} & To: ${comment}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.shipping_cost !== shipping_cost) 
+                    await this.insertPOActivity(po_activity_type.SHIPPING_COST_UPDATE, `From: ${findPO.shipping_cost} & To: ${shipping_cost}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.is_insurance !== is_insurance) 
+                    await this.insertPOActivity(po_activity_type.INSURANCE_UPDATE, `From: ${findPO.is_insurance} & To: ${is_insurance}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.receiving_instruction !== receiving_instruction) 
+                    await this.insertPOActivity(po_activity_type.RECEIVING_INSTRUCTION_UPDATE, `From: ${findPO.receiving_instruction} & To: ${receiving_instruction}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.order_id !== order_id) 
+                    await this.insertPOActivity(po_activity_type.ORDER_UPDATE, `From: ${findPO.order_id} & To: ${order_id}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.updated_by !== updated_by) 
+                    await this.insertPOActivity(po_activity_type.UPDATED_BY_UPDATE, `From: ${findPO.updated_by} & To: ${updated_by}`, findPO.id, user.id, user.id, TENANTID);
+                if (poProductList && poProductList.length > 0) {
+                    poProductList.forEach(async element => {
+                        findPO.poproducts.forEach(async item => {
+                            if(item.product_id === element.product_id){
+                                if(item.quantity !== element.quantity)
+                                    await this.insertPOActivity(po_activity_type.PRODUCT_QUANTITY_UPDATE, `From: ${item.quantity} & To: ${element.quantity}`, findPO.id, user.id, user.id, TENANTID);
+                                if(item.price !== element.price)
+                                    await this.insertPOActivity(po_activity_type.PRODUCT_PRICE_UPDATE, `From: ${item.price} & To: ${element.price}`, findPO.id, user.id, user.id, TENANTID);
+                                if(item.updated_by !== element.updated_by)
+                                    await this.insertPOActivity(po_activity_type.PRODUCT_UPDATED_BY_UPDATE, `From: ${item.updated_by} & To: ${element.updated_by}`, findPO.id, user.id, user.id, TENANTID);
+                            }
+                        })
+                    });
+                    // Delete If Not Exit
+                    findPO.poproducts.forEach(async (item) => {
+                        const exists = poProductList.every(item2 => item2.product_id === item.product_id)
+                        if(!exists) {
+                            await db.po_productlist.destroy({
+                                where: {
+                                    [Op.and]: [{
+                                        id: item.id,
+                                        tenant_id: TENANTID
+                                    }]
+                                }
+                            })
+                            await this.insertPOActivity(po_activity_type.PRODUCT_DELETE, `Product ID: ${item.id}`, findPO.id, user.id, user.id, TENANTID);
+                        }
+                    });
+                }
+                
             }
 
-            if (poMFGDoc) {
-                poMFGDoc.updated_by = user.id;
-                const poMFGDOCUpdate = await db.po_mfg_doc.update(poMFGDoc, {
-                    where: {
-                        [Op.and]: [{
-                            po_id: id,
-                            tenant_id: TENANTID
-                        }]
-                    }
-                });
-                if (!poInvoiceUpdate) return { message: "PO Invoice Unable To Update!!!" }
-            }
 
+            /* --------------------------- Activity Added End --------------------------- */
+
+            await poUpdateTransaction.commit();
 
             // Return Formation
             return {
@@ -1086,6 +1109,7 @@ module.exports = {
 
 
         } catch (error) {
+            await poUpdateTransaction.rollback();
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
             logger.crit("crit", error, { service: 'purchaseOrderHelper.js', muation: "updatePurchaseOrder" });
         }

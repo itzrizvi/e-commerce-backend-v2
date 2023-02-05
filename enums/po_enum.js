@@ -26,7 +26,24 @@ const po_activity_type = {
   INVOICE_UPLOAD: "Invoice Uploaded",
   TRACKING_REQUEST: "Tracking Number Requested",
   FAILED_REQUEST: "Tracking Number Request Failure",
-
+  SHIPPING_METHOD_UPDATE: "Shipping Method Update",
+  CONTACT_PERSON_UPDATE: "Contact Person Update",
+  VENDOR_UPDATE: "Vendor Update",
+  PO_TYPE_UPDATE: "PO Type Update",
+  PAYMENT_METHOD_UPDATE: "Payment Method Update",
+  SHIPPING_ACCOUNT_UPDATE: "Shipping Account Update",
+  VENDOR_BILLING_ADDRESS_UPDATE: "Vendor Billing Address Update",
+  TAX_AMOUNT_UPDATE: "Tax Amount Update",
+  COMMENT_UPDATE: "Comment Update",
+  SHIPPING_COST_UPDATE: "Shipping Cost Update",
+  INSURANCE_UPDATE: "Insurance Update",
+  RECEIVING_INSTRUCTION_UPDATE: "Receiving Instruction Update",
+  ORDER_UPDATE: "Order Update",
+  UPDATED_BY_UPDATE: "Updated By Update",
+  PRODUCT_QUANTITY_UPDATE: "Product Quantity Update",
+  PRODUCT_PRICE_UPDATE: "Product Price Update",
+  PRODUCT_UPDATED_BY_UPDATE: "Product Updated By Update",
+  PRODUCT_DELETE: "Product Delete",
 };
 
 module.exports = {

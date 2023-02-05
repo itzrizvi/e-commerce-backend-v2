@@ -10,8 +10,8 @@ const { po_activity_type } = require("../../enums/po_enum");
 const { checkPermission } = require("../utils/permissionChecker");
 const { generatePDF } = require("../utils/pdfgeneration");
 const { join } = require("path");
-const path = require('path');
 const db = require("../db");
+const { sequelize } = require("../db");
 
 
 // PO HELPER
@@ -548,6 +548,11 @@ module.exports = {
                 ]
             });
 
+            // Assign Grand Total Price 
+            await poList.forEach(async (item) => {
+                item.grandTotal_price = this.poGrandTotal(item.id, TENANTID)
+            });
+
             // Return Formation
             return {
                 message: "GET Purchase Order List Success!!!",
@@ -864,7 +869,9 @@ module.exports = {
 
                 singlePO.customer = singleOrder.customer;
 
-            }
+            };
+
+            singlePO.grandTotal_price = this.poGrandTotal(id, TENANTID);
 
             // Return Formation
             return {
@@ -1680,8 +1687,7 @@ module.exports = {
                         }
                     });
                     singlePO.subTotal = subTotal;
-                    let grandTotal = subTotal + singlePO.tax_amount + singlePO.shipping_cost;
-                    singlePO.grandTotal = grandTotal;
+                    singlePO.grandTotal = this.poGrandTotal(id, TENANTID);
 
                     // TEMPLATE FOR NOW
                     const temaplate = `<!DOCTYPE html>
@@ -2596,6 +2602,7 @@ module.exports = {
                     }
                 });
                 singlePO.companyBilling = companyBilling;
+                singlePO.grandTotal_price = this.poGrandTotal(id, TENANTID);
 
                 // Activity
                 this.insertPOActivity(po_activity_type.PO_VIEWED_BY_VENDOR, `PO Viewed`, id, 10001, 10001, TENANTID);
@@ -4337,5 +4344,39 @@ exports.insertPOActivity = async (actionType, comment, po_id, created_by, update
     } catch (error) {
         console.error(error);
         logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "insertPOActivity" });
+    }
+}
+
+// PO Grand Total Calculation
+exports.poGrandTotal = async (po_id, tenant_id) => {
+    // 
+    try {
+        const totalProductPrice = await db.po_productlist.sum('totalPrice', {
+            where: {
+                [Op.and]: [{
+                    purchase_order_id: po_id,
+                    tenant_id
+                }]
+            }
+        });
+        const sum = sequelize.literal(`"tax_amount" + "shipping_cost"`);
+        const costResult = await db.purchase_order.findOne({
+            attributes: [
+                [sum, 'sum'],
+            ],
+            where: {
+                [Op.and]: [{
+                    id: po_id,
+                    tenant_id
+                }]
+            }
+        });
+        const cost = costResult.get('sum');
+        let grandTotal_price = parseInt(cost) + totalProductPrice;
+        return grandTotal_price;
+
+    } catch (error) {
+        console.error(error);
+        logger.crit("crit", error, { service: 'purchaseOrderHelper.js', mutation: "poGrandTotal" });
     }
 }

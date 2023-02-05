@@ -151,7 +151,7 @@ module.exports = {
             let po_number;
             if ((new Date().getDate() % 2) === 0) {
 
-                if (findMaxPONumber.split('-').slice(-1)[0] != 0) { // Check if the last entry is available
+                if (findMaxPONumber && findMaxPONumber.split('-').slice(-1)[0] != 0) { // Check if the last entry is available
                     po_number = `${po_prefix}-${parseInt(findMaxPONumber.split('-').slice(-1)[0]) + 2}`
                 } else {
                     po_number = `${po_prefix}-${po_startfrom + 2}`
@@ -159,7 +159,7 @@ module.exports = {
 
             } else {
 
-                if (findMaxPONumber.split('-').slice(-1)[0] != 0) { // Check if the last entry is available
+                if (findMaxPONumber && findMaxPONumber.split('-').slice(-1)[0] != 0) { // Check if the last entry is available
                     po_number = `${po_prefix}-${parseInt(findMaxPONumber.split('-').slice(-1)[0]) + 3}`
                 } else {
                     po_number = `${po_prefix}-${po_startfrom + 3}`

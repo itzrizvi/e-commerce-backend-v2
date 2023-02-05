@@ -1030,7 +1030,7 @@ module.exports = {
             if(findPO){
                 if(findPO.shipping_method_id !== shipping_method_id) 
                     await this.insertPOActivity(po_activity_type.SHIPPING_METHOD_UPDATE, `From: ${findPO.shipping_method_id} & To: ${shipping_method_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.contact_person_id !== contact_person_id) 
+                if(contact_person_id && findPO.contact_person_id !== contact_person_id) 
                     await this.insertPOActivity(po_activity_type.CONTACT_PERSON_UPDATE, `From: ${findPO.contact_person_id} & To: ${contact_person_id}`, findPO.id, user.id, user.id, TENANTID);
                 if(findPO.vendor_id !== vendor_id) 
                     await this.insertPOActivity(po_activity_type.VENDOR_UPDATE, `From: ${findPO.vendor_id} & To: ${vendor_id}`, findPO.id, user.id, user.id, TENANTID);
@@ -1038,24 +1038,24 @@ module.exports = {
                     await this.insertPOActivity(po_activity_type.PO_TYPE_UPDATE, `From: ${findPO.type} & To: ${type}`, findPO.id, user.id, user.id, TENANTID);
                 if(findPO.payment_method_id !== payment_method_id) 
                     await this.insertPOActivity(po_activity_type.PAYMENT_METHOD_UPDATE, `From: ${findPO.payment_method_id} & To: ${payment_method_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.shipping_account_id !== shipping_account_id) 
+                if(shipping_account_id && findPO.shipping_account_id !== shipping_account_id) 
                     await this.insertPOActivity(po_activity_type.SHIPPING_ACCOUNT_UPDATE, `From: ${findPO.shipping_account_id} & To: ${shipping_account_id}`, findPO.id, user.id, user.id, TENANTID);
                 if(findPO.vendor_billing_id !== vendor_billing_id) 
                     await this.insertPOActivity(po_activity_type.VENDOR_BILLING_ADDRESS_UPDATE, `From: ${findPO.vendor_billing_id} & To: ${vendor_billing_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.tax_amount !== tax_amount) 
+                if( tax_amount && findPO.tax_amount !== tax_amount) 
                     await this.insertPOActivity(po_activity_type.TAX_AMOUNT_UPDATE, `From: ${findPO.tax_amount} & To: ${tax_amount}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.comment !== comment) 
+                if(comment && findPO.comment !== comment) 
                     await this.insertPOActivity(po_activity_type.COMMENT_UPDATE, `From: ${findPO.comment} & To: ${comment}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.shipping_cost !== shipping_cost) 
+                if( shipping_cost && findPO.shipping_cost !== shipping_cost) 
                     await this.insertPOActivity(po_activity_type.SHIPPING_COST_UPDATE, `From: ${findPO.shipping_cost} & To: ${shipping_cost}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.is_insurance !== is_insurance) 
+                if(is_insurance && findPO.is_insurance !== is_insurance) 
                     await this.insertPOActivity(po_activity_type.INSURANCE_UPDATE, `From: ${findPO.is_insurance} & To: ${is_insurance}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.receiving_instruction !== receiving_instruction) 
+                if(receiving_instruction && findPO.receiving_instruction !== receiving_instruction) 
                     await this.insertPOActivity(po_activity_type.RECEIVING_INSTRUCTION_UPDATE, `From: ${findPO.receiving_instruction} & To: ${receiving_instruction}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.order_id !== order_id) 
+                if(order_id && findPO.order_id !== order_id) 
                     await this.insertPOActivity(po_activity_type.ORDER_UPDATE, `From: ${findPO.order_id} & To: ${order_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.updated_by !== updated_by) 
-                    await this.insertPOActivity(po_activity_type.UPDATED_BY_UPDATE, `From: ${findPO.updated_by} & To: ${updated_by}`, findPO.id, user.id, user.id, TENANTID);
+                if(findPO.updated_by !== user.id) 
+                    await this.insertPOActivity(po_activity_type.UPDATED_BY_UPDATE, `From: ${findPO.updated_by} & To: ${user.id}`, findPO.id, user.id, user.id, TENANTID);
                 if (poProductList && poProductList.length > 0) {
                     poProductList.forEach(async element => {
                         findPO.poproducts.forEach(async item => {

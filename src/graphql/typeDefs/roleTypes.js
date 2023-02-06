@@ -8,7 +8,6 @@ module.exports = gql`
 
 type Role {
     id: Int
-    role_no: Float
     role:String
     role_slug:String
     role_status:Boolean
@@ -71,7 +70,6 @@ type DeleteRoleOutput {
 
 type SingleRole {
     id: Int
-    role_no: Float
     role:String
     role_slug:String
     role_status:Boolean

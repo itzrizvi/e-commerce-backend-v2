@@ -24,10 +24,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        role_no: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
         tenant_id: {
             type: DataTypes.STRING,
             allowNull: false

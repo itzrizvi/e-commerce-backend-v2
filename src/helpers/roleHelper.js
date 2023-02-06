@@ -32,14 +32,9 @@ module.exports = {
                 }
             });
 
-            // Create Random String for Role No
-            const roleNo = Math.ceil(Date.now() + Math.random());
-
-
             // If Not Exists then create
             if (!checkRoleExist) {
                 const createrole = await db.role.create({
-                    role_no: roleNo,
                     role: role,
                     role_status: role_status,
                     role_slug: role_slug,
@@ -52,7 +47,6 @@ module.exports = {
                     // Loop For Assign Other Values to Permissions
                     permissionsData.forEach(element => {
                         element.role_id = createrole.id;
-                        element.role_no = createrole.role_no;
                         element.tenant_id = createrole.tenant_id;
 
                     });
@@ -296,22 +290,8 @@ module.exports = {
             // If The Permission is New
             if (!checkIsNewPermission) {
 
-                // GET ROLE NO
-                const findRoleNo = await db.role.findOne({
-                    where: {
-                        [Op.and]: [{
-                            id: role_id,
-                            tenant_id: TENANTID
-                        }]
-                    }
-                });
-
-                // Role No
-                const { role_no } = findRoleNo;
-
                 // Create Permission Data 
                 const creareRolePermissionsData = {
-                    role_no,
                     role_id,
                     permission_id,
                     edit_access,

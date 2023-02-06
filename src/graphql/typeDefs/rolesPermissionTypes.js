@@ -8,7 +8,6 @@ module.exports = gql`
 
 type PermissionData {
     id:Int
-    role_no:Float
     tenant_id:String
     role_id:Int
     edit_access:Boolean

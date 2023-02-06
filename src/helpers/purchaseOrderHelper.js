@@ -1007,7 +1007,6 @@ module.exports = {
                 
                 // Insert NEW Product List
                 const insertNewProductList = await db.po_productlist.bulkCreate(newPoProductList);
-                console.log("🚀 ~ file: purchaseOrderHelper.js:1010 ~ updatePurchaseOrder: ~ insertNewProductList", insertNewProductList)
                 if (!insertNewProductList) {
                     await poUpdateTransaction.rollback();
                     return { message: "New Product List Insert Failed!!!", status: false }
@@ -1086,7 +1085,7 @@ module.exports = {
                 }
                 // Delete If Not Exit
                 findPO.poproducts.forEach(async (item) => {
-                    const notExists = poProductList.every(item2 => item2.product_id !== item.product_id)
+                    const notExists = poProductList.every(item2 => item2.product_id != item.product_id)
                     if(notExists) {
                         await db.po_productlist.destroy({
                             where: {

@@ -914,6 +914,25 @@ module.exports = {
                 products,
             } = req;
 
+            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poproducts')) {
+                await db.purchase_order.hasMany(db.po_productlist, {
+                    foreignKey: 'purchase_order_id',
+                    as: 'poproducts'
+                });
+            }
+
+            // Find PO
+            const findPO = await db.purchase_order.findOne({
+                include: [{ model: db.po_productlist, as: "poproducts" }],
+                where: {
+                    [Op.and]: [{
+                        id,
+                        po_number,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
             // PO Product List Array
             const poProductList = [];
             const newPoProductList = [];
@@ -921,7 +940,7 @@ module.exports = {
                 // In Case of Existing Products Update
                 products.forEach(async (element) => {
                     const calculateTotal = element.price * element.quantity;
-                    if (!element.isNew) {
+                    if (!element?.isNew) {
                         // PO Product List Array Formation
                         poProductList.push({
                             product_id: element.id,
@@ -936,18 +955,22 @@ module.exports = {
 
                 // In Case New Product Insert in PO
                 products.forEach(async (newElement) => {
-                    if (newElement.isNew) {
+                    if (newElement?.isNew) {
                         const calculateTotal = newElement.price * newElement.quantity;
                         // New PO Product List Array Formation
-                        newPoProductList.push({
-                            purchase_order_id: id,
-                            product_id: newElement.id,
-                            quantity: newElement.quantity,
-                            price: newElement.price,
-                            totalPrice: calculateTotal,
-                            created_by: user.id,
-                            tenant_id: TENANTID
-                        })
+                        const exists = findPO?.poproducts?.find(item2 => item2.product_id === newElement.id)
+
+                        if(!exists) {
+                            newPoProductList.push({
+                                purchase_order_id: id,
+                                product_id: newElement.id,
+                                quantity: newElement.quantity,
+                                price: newElement.price,
+                                totalPrice: calculateTotal,
+                                created_by: user.id,
+                                tenant_id: TENANTID
+                            })
+                        }
                     }
                 });
             }
@@ -1004,33 +1027,18 @@ module.exports = {
 
             // If NEW Products is Available For Update
             if (newPoProductList && newPoProductList.length > 0) {
+                
                 // Insert NEW Product List
                 const insertNewProductList = await db.po_productlist.bulkCreate(newPoProductList);
+                
                 if (!insertNewProductList) {
                     await poUpdateTransaction.rollback();
                     return { message: "New Product List Insert Failed!!!", status: false }
                 }
+                insertNewProductList.forEach((async item => {
+                    await this.insertPOActivity(po_activity_type.PRODUCT_ADDED, `Product ID: ${item.id}`, findPO.id, user.id, user.id, TENANTID);
+                }))
             }
-
-            
-            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poproducts')) {
-                await db.purchase_order.hasMany(db.po_productlist, {
-                    foreignKey: 'purchase_order_id',
-                    as: 'poproducts'
-                });
-            }
-
-            // Find PO
-            const findPO = await db.purchase_order.findOne({
-                include: [{ model: db.po_productlist, as: "poproducts" }],
-                where: {
-                    [Op.and]: [{
-                        id,
-                        po_number,
-                        tenant_id: TENANTID
-                    }]
-                }
-            });
 
 
             /* ----------------------------- Activity Added Start ----------------------------- */
@@ -1061,7 +1069,7 @@ module.exports = {
                     await this.insertPOActivity(po_activity_type.RECEIVING_INSTRUCTION_UPDATE, `From: ${findPO.receiving_instruction} & To: ${receiving_instruction}`, findPO.id, user.id, user.id, TENANTID);
                 if(order_id && findPO.order_id !== order_id) 
                     await this.insertPOActivity(po_activity_type.ORDER_UPDATE, `From: ${findPO.order_id} & To: ${order_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.updated_by !== user.id) 
+                if(findPO.updated_by != user.id) 
                     await this.insertPOActivity(po_activity_type.UPDATED_BY_UPDATE, `From: ${findPO.updated_by} & To: ${user.id}`, findPO.id, user.id, user.id, TENANTID);
                 if (poProductList && poProductList.length > 0) {
                     poProductList.forEach(async element => {
@@ -1076,22 +1084,23 @@ module.exports = {
                             }
                         })
                     });
-                    // Delete If Not Exit
-                    findPO.poproducts.forEach(async (item) => {
-                        const exists = poProductList.every(item2 => item2.product_id === item.product_id)
-                        if(!exists) {
-                            await db.po_productlist.destroy({
-                                where: {
-                                    [Op.and]: [{
-                                        id: item.id,
-                                        tenant_id: TENANTID
-                                    }]
-                                }
-                            })
-                            await this.insertPOActivity(po_activity_type.PRODUCT_DELETE, `Product ID: ${item.id}`, findPO.id, user.id, user.id, TENANTID);
-                        }
-                    });
                 }
+
+                // Delete If Not Exit
+                findPO.poproducts.forEach(async (item) => {
+                    const notExists = poProductList.find(({product_id}) => product_id == item.product_id)
+                    if(!notExists) {
+                        await db.po_productlist.destroy({
+                            where: {
+                                [Op.and]: [{
+                                    id: item.id,
+                                    tenant_id: TENANTID
+                                }]
+                            }
+                        })
+                        await this.insertPOActivity(po_activity_type.PRODUCT_DELETE, `Product ID: ${item.id}`, findPO.id, user.id, user.id, TENANTID);
+                    }
+                });
                 
             }
 

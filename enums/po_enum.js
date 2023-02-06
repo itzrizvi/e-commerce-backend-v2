@@ -44,6 +44,7 @@ const po_activity_type = {
   PRODUCT_PRICE_UPDATE: "Product Price Update",
   PRODUCT_UPDATED_BY_UPDATE: "Product Updated By Update",
   PRODUCT_DELETE: "Product Delete",
+  PRODUCT_ADDED: "New Product Add",
 };
 
 module.exports = {

@@ -12,6 +12,7 @@ const { generatePDF } = require("../utils/pdfgeneration");
 const { join } = require("path");
 const db = require("../db");
 const { sequelize } = require("../db");
+const { getReadyEmailTemplate } = require("../utils/getReadyEmailTemplate");
 
 
 // PO HELPER
@@ -895,7 +896,7 @@ module.exports = {
         try {
 
             // DATA FROM REQUEST
-            const { 
+            const {
                 id,
                 po_number,
                 contact_person_id,
@@ -960,7 +961,7 @@ module.exports = {
                         // New PO Product List Array Formation
                         const exists = findPO?.poproducts?.find(item2 => item2.product_id === newElement.id)
 
-                        if(!exists) {
+                        if (!exists) {
                             newPoProductList.push({
                                 purchase_order_id: id,
                                 product_id: newElement.id,
@@ -1027,10 +1028,10 @@ module.exports = {
 
             // If NEW Products is Available For Update
             if (newPoProductList && newPoProductList.length > 0) {
-                
+
                 // Insert NEW Product List
                 const insertNewProductList = await db.po_productlist.bulkCreate(newPoProductList);
-                
+
                 if (!insertNewProductList) {
                     await poUpdateTransaction.rollback();
                     return { message: "New Product List Insert Failed!!!", status: false }
@@ -1042,44 +1043,44 @@ module.exports = {
 
 
             /* ----------------------------- Activity Added Start ----------------------------- */
-            if(findPO){
-                if(findPO.shipping_method_id !== shipping_method_id) 
+            if (findPO) {
+                if (findPO.shipping_method_id !== shipping_method_id)
                     await this.insertPOActivity(po_activity_type.SHIPPING_METHOD_UPDATE, `From: ${findPO.shipping_method_id} & To: ${shipping_method_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(contact_person_id && findPO.contact_person_id !== contact_person_id) 
+                if (contact_person_id && findPO.contact_person_id !== contact_person_id)
                     await this.insertPOActivity(po_activity_type.CONTACT_PERSON_UPDATE, `From: ${findPO.contact_person_id} & To: ${contact_person_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.vendor_id !== vendor_id) 
+                if (findPO.vendor_id !== vendor_id)
                     await this.insertPOActivity(po_activity_type.VENDOR_UPDATE, `From: ${findPO.vendor_id} & To: ${vendor_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.type !== type) 
+                if (findPO.type !== type)
                     await this.insertPOActivity(po_activity_type.PO_TYPE_UPDATE, `From: ${findPO.type} & To: ${type}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.payment_method_id !== payment_method_id) 
+                if (findPO.payment_method_id !== payment_method_id)
                     await this.insertPOActivity(po_activity_type.PAYMENT_METHOD_UPDATE, `From: ${findPO.payment_method_id} & To: ${payment_method_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(shipping_account_id && findPO.shipping_account_id !== shipping_account_id) 
+                if (shipping_account_id && findPO.shipping_account_id !== shipping_account_id)
                     await this.insertPOActivity(po_activity_type.SHIPPING_ACCOUNT_UPDATE, `From: ${findPO.shipping_account_id} & To: ${shipping_account_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.vendor_billing_id !== vendor_billing_id) 
+                if (findPO.vendor_billing_id !== vendor_billing_id)
                     await this.insertPOActivity(po_activity_type.VENDOR_BILLING_ADDRESS_UPDATE, `From: ${findPO.vendor_billing_id} & To: ${vendor_billing_id}`, findPO.id, user.id, user.id, TENANTID);
-                if( tax_amount && findPO.tax_amount !== tax_amount) 
+                if (tax_amount && findPO.tax_amount !== tax_amount)
                     await this.insertPOActivity(po_activity_type.TAX_AMOUNT_UPDATE, `From: ${findPO.tax_amount} & To: ${tax_amount}`, findPO.id, user.id, user.id, TENANTID);
-                if(comment && findPO.comment !== comment) 
+                if (comment && findPO.comment !== comment)
                     await this.insertPOActivity(po_activity_type.COMMENT_UPDATE, `From: ${findPO.comment} & To: ${comment}`, findPO.id, user.id, user.id, TENANTID);
-                if( shipping_cost && findPO.shipping_cost !== shipping_cost) 
+                if (shipping_cost && findPO.shipping_cost !== shipping_cost)
                     await this.insertPOActivity(po_activity_type.SHIPPING_COST_UPDATE, `From: ${findPO.shipping_cost} & To: ${shipping_cost}`, findPO.id, user.id, user.id, TENANTID);
-                if(is_insurance && findPO.is_insurance !== is_insurance) 
+                if (is_insurance && findPO.is_insurance !== is_insurance)
                     await this.insertPOActivity(po_activity_type.INSURANCE_UPDATE, `From: ${findPO.is_insurance} & To: ${is_insurance}`, findPO.id, user.id, user.id, TENANTID);
-                if(receiving_instruction && findPO.receiving_instruction !== receiving_instruction) 
+                if (receiving_instruction && findPO.receiving_instruction !== receiving_instruction)
                     await this.insertPOActivity(po_activity_type.RECEIVING_INSTRUCTION_UPDATE, `From: ${findPO.receiving_instruction} & To: ${receiving_instruction}`, findPO.id, user.id, user.id, TENANTID);
-                if(order_id && findPO.order_id !== order_id) 
+                if (order_id && findPO.order_id !== order_id)
                     await this.insertPOActivity(po_activity_type.ORDER_UPDATE, `From: ${findPO.order_id} & To: ${order_id}`, findPO.id, user.id, user.id, TENANTID);
-                if(findPO.updated_by != user.id) 
+                if (findPO.updated_by != user.id)
                     await this.insertPOActivity(po_activity_type.UPDATED_BY_UPDATE, `From: ${findPO.updated_by} & To: ${user.id}`, findPO.id, user.id, user.id, TENANTID);
                 if (poProductList && poProductList.length > 0) {
                     poProductList.forEach(async element => {
                         findPO.poproducts.forEach(async item => {
-                            if(item.product_id === element.product_id){
-                                if(item.quantity !== element.quantity)
+                            if (item.product_id === element.product_id) {
+                                if (item.quantity !== element.quantity)
                                     await this.insertPOActivity(po_activity_type.PRODUCT_QUANTITY_UPDATE, `From: ${item.quantity} & To: ${element.quantity}`, findPO.id, user.id, user.id, TENANTID);
-                                if(item.price !== element.price)
+                                if (item.price !== element.price)
                                     await this.insertPOActivity(po_activity_type.PRODUCT_PRICE_UPDATE, `From: ${item.price} & To: ${element.price}`, findPO.id, user.id, user.id, TENANTID);
-                                if(item.updated_by !== element.updated_by)
+                                if (item.updated_by !== element.updated_by)
                                     await this.insertPOActivity(po_activity_type.PRODUCT_UPDATED_BY_UPDATE, `From: ${item.updated_by} & To: ${element.updated_by}`, findPO.id, user.id, user.id, TENANTID);
                             }
                         })
@@ -1088,8 +1089,8 @@ module.exports = {
 
                 // Delete If Not Exit
                 findPO.poproducts.forEach(async (item) => {
-                    const notExists = poProductList.find(({product_id}) => product_id == item.product_id)
-                    if(!notExists) {
+                    const notExists = poProductList.find(({ product_id }) => product_id == item.product_id)
+                    if (!notExists) {
                         await db.po_productlist.destroy({
                             where: {
                                 [Op.and]: [{
@@ -1101,7 +1102,7 @@ module.exports = {
                         await this.insertPOActivity(po_activity_type.PRODUCT_DELETE, `Product ID: ${item.id}`, findPO.id, user.id, user.id, TENANTID);
                     }
                 });
-                
+
             }
 
 
@@ -1696,431 +1697,14 @@ module.exports = {
                         }
                     });
                     singlePO.subTotal = subTotal;
-                    singlePO.grandTotal = this.poGrandTotal(id, TENANTID);
+                    const grandTotal = await this.poGrandTotal(id, TENANTID);
+                    singlePO.grandTotal = grandTotal;
 
-                    // TEMPLATE FOR NOW
-                    const temaplate = `<!DOCTYPE html>
-                    <html lang="en">
-                    
-                    <head>
-                        <meta charset="utf-8">
-                        <title>PO Invoice - Prime Server Parts</title>
-                        <meta name="viewport" content="width=device-width, initial-scale=1">
-                        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-                        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-                        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-                    </head>
-                    
-                    <body>
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="receipt-main col-xs-12 col-sm-12 col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="receipt-header"
-                                                style="border: 1px solid #1677ff;padding: 10px;height: auto;border-radius: 8px; margin-bottom: 10px;">
-                                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                                    <div class="receipt-left">
-                                                        <img class="img-responsive" alt="iamgurdeeposahan" src=<%=company_logo %>
-                                                        style="width: 150px; margin-top: 15px;">
-                    
-                                                        <h5 style="margin-top: 25px; font-weight: 600; font-size: 16px;">
-                                                            <%= companyInfo.name %>
-                                                        </h5>
-                                                        <p>
-                                                            <%= companyBilling.address1 %>
-                                                        </p>
-                                                        <% if (companyBilling.address2) { %>
-                                                            <p>
-                                                                <%= companyBilling.address2 %>
-                                                            </p>
-                                                            <% } %>
-                                                                <p>
-                                                                    <%= companyBilling.city + ', ' + companyBilling.state +' - '+ companyBilling.zip_code %>
-                                                                </p>
-                                                        <% if (companyBilling.phone) { %>
-                                                            <p><%= companyBilling.phone %></p>
-                                                            <% } %>
-                                                        <p><%= companyBilling.country %></p>
-                    
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-6 col-sm-6 col-md-6 text-right">
-                                                    <div class="receipt-right">
-                                                        <p style="margin-top: 10px;"><span>Purchase Order:</span>
-                                                            <%= po_number %>
-                                                        </p>
-                                                        <p><span>Date:</span>
-                                                            <%= new Date(updatedAt).toDateString()%>
-                                                        </p>
-                    
-                                                    </div>
-                                                </div>
-                    
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                                        <div class="receipt-header receipt-header-mid">
-                                                            <div class="col-xs-8 col-sm-8 col-md-8 text-left">
-                                                                <div class="receipt-left2">
-                                                                    <h5>Issued To</h5>
-                                                                    <p>
-                                                                        <%= vendor.company_name %>
-                                                                    </p>
-                                                                    <p>
-                                                                        <%= vendor.contact_person %>
-                                                                    </p>
-                                                                    <p>
-                                                                        <%= vendorBillingAddress.address1 %>
-                                                                    </p>
-                                                                    <% if (vendorBillingAddress.address2) { %>
-                                                                        <p><%= vendorBillingAddress.address2 %></p>
-                                                                        <% } %>
-                                                                    <p>
-                                                                        <%= vendorBillingAddress.city + ' , ' + vendorBillingAddress.state +' - '+ vendorBillingAddress.zip_code %>
-                                                                    </p>
-                                                                    <% if (contactPersons) { %>
-                                                                        <p><%= contactPersons.email %></p>
-                                                                        <p><%= contactPersons.phone %></p>
-                    
-                                                                        <% } else { %>
-                    
-                                                                            <p><%= vendor.email %></p>
-                                                                            <p><%= vemdor.phone_number %></p>
-                    
-                                                                            <% } %>
-                                                                    <p><%= companyBilling.country %></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-4 col-sm-4 col-md-4 text-left">
-                                                                <div class="receipt-right2">
-                                                                    <h5>Ship To</h5>
-                                                                    <p>
-                                                                        <%= shipTo.address1 %>
-                                                                    </p>
-                                                                    <% if (shipTo.address2) { %>
-                                                                        <p><%= shipTo.address2 %></p>
-                                                                        <% } %>
-                                                                    <p>
-                                                                        <%= shipTo.city + ' , ' + shipTo.state +' - '+ shipTo.zip_code %>
-                                                                    </p>
-                                                                    <p><%= shipTo.country %></p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                    
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 30px;">
-                                                        <div class="col-xs-3 col-sm-3 col-md-3">
-                                                            <div class="receipt-right text-center">
-                                                                <h5 style="font-weight: 600; font-size: 16px;">Rep</h5>
-                                                                <p><%= POCreated_by.first_name + ' , '+ POCreated_by.last_name %></p>
-                    
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-3 col-sm-3 col-md-3">
-                                                            <div class="receipt-right text-center">
-                                                                <h5 style="font-weight: 600; font-size: 16px;">Payment Terms</h5>
-                                                                <p><%= paymentmethod.name %></p>
-                    
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-3 col-sm-3 col-md-3">
-                                                            <div class="receipt-right text-center">
-                                                                <h5 style="font-weight: 600; font-size: 16px;">Delivery</h5>
-                                                                <p><%= shippingMethod.name %></p>
-                    
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xs-3 col-sm-3 col-md-3">
-                                                            <div class="receipt-right text-center">
-                                                                <h5 style="font-weight: 600; font-size: 16px;">Tax Rate</h5>
-                                                                <p>$<%= tax_amount %></p>
-                    
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                    
-                                    </div>
-                    
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12">
-                                            <table class="table custom-data-table">
-                                                <thead style="background-color: #1677ff !important">
-                                                    <tr>
-                                                        <th>Part Number</th>
-                                                        <th>Description</th>
-                                                        <th>Unite Price</th>
-                                                        <th>Quantity</th>
-                                                        <th style="text-align: right;">Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <% poProductlist.forEach(function(item){ %>
-                                                            <td class="col-xs-2 col-sm-2 col-md-2"><%= item.product.prod_partnum %></td>
-                                                            <td class="col-xs-5 col-sm-5 col-md-5"><%= item.product.prod_name %></td>
-                                                            <td class="col-xs-2 col-sm-2 col-md-2"><%= item.price %></td>
-                                                            <td class="col-xs-1 col-sm-1 col-md-1"><%= item.quantity %></td>
-                                                            <td class="col-xs-2 col-sm-2 col-md-2" style="text-align: right;">$<%= item.totalPrice %></td>
-                                                          <% }); %>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-4 col-sm-4 col-md-4 col-md-offset-8 col-sm-offset-8 col-xs-offset-8">
-                                            <table class="table custom-data-table-two">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="color: #000000; text-align: left;">Sub Total</th>
-                                                        <th style="color: #000000; text-align: right;">$<%= subTotal %></th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-8 col-sm-8 col-md-8">
-                                            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Comment: <br>
-                                                <%= comment %>
-                                            </h4>
-                                            <h4 style="font-size: 16px; font-weight: 600;">Receiving Instruction: <br>
-                                                <%= receiving_instruction %>
-                                            </h4>
-                                        </div>
-                                        <div class="col-xs-4 col-sm-4 col-md-4">
-                                            <table class="table table-striped" cellspacing="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="font-size: 13px; color: #000000;"><b>Tax: </b></td>
-                                                        <td style="text-align: right; padding-right: 20px;color: #000000; font-size: 13px;">
-                                                            $<%= tax_amount %></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="font-size: 13px; color: #000000;"><b>Shipping Cost: </b></td>
-                                                        <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-                                                            $<%= shipping_cost %></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="font-size: 13px; color: #000000;"><b>Total: </b></td>
-                                                        <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-                                                            $<%= grandTotal %></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                    
-                                </div>
-                            </div>
-                        </div>
-                        <style type="text/css">
-                            body {
-                                background: #eee;
-                            }
-                    
-                            .text-danger strong {
-                                color: #9f181c;
-                            }
-                    
-                            .receipt-main {
-                                background: #ffffff none repeat scroll 0 0;
-                                border-top: 12px solid #1677ff;
-                                padding: 40px 30px !important;
-                                position: relative;
-                                box-shadow: 0 1px 21px #acacac;
-                                color: #333333;
-                                font-family: open sans;
-                            }
-                    
-                            .receipt-main p {
-                                color: #333333;
-                                font-family: open sans;
-                                line-height: 1.42857;
-                            }
-                    
-                            .receipt-left p {
-                                color: #333333;
-                                font-family: open sans;
-                                line-height: 1.42857;
-                                padding: 0;
-                                margin: 0;
-                                font-size: 16px;
-                            }
-                    
-                            .receipt-right p span {
-                                font-weight: 600;
-                            }
-                    
-                            .receipt-footer h1 {
-                                font-size: 15px;
-                                font-weight: 400 !important;
-                                margin: 0 !important;
-                            }
-                    
-                            .receipt-main::after {
-                                background: #414143 none repeat scroll 0 0;
-                                content: "";
-                                height: 5px;
-                                left: 0;
-                                position: absolute;
-                                right: 0;
-                                top: -13px;
-                            }
-                    
-                            .receipt-main thead {
-                                background: #414143 none repeat scroll 0 0;
-                            }
-                    
-                            .receipt-main thead th {
-                                color: #fff;
-                            }
-                    
-                            .receipt-right h5 {
-                                font-size: 16px;
-                                font-weight: bold;
-                                margin: 0 0 7px 0;
-                            }
-                    
-                            .receipt-right p {
-                                font-size: 16px;
-                                margin: 0px;
-                            }
-                    
-                            .receipt-right p i {
-                                text-align: center;
-                                width: 18px;
-                            }
-                    
-                    
-                            .receipt-left2 p {
-                                color: #333333;
-                                font-family: open sans;
-                                line-height: 1.42857;
-                                padding: 0;
-                                margin: 0;
-                                font-size: 16px;
-                            }
-                    
-                            .receipt-left2 p span {
-                                font-weight: 600;
-                            }
-                    
-                            .receipt-left2 h5 {
-                                font-size: 16px;
-                                font-weight: bold;
-                                margin: 0 0 7px 0;
-                            }
-                    
-                            .receipt-right2 h5 {
-                                font-size: 16px;
-                                font-weight: bold;
-                                margin: 0 0 7px 0;
-                            }
-                    
-                            .receipt-right2 p {
-                                font-size: 16px;
-                                margin: 0px;
-                            }
-                    
-                            .receipt-right2 p i {
-                                text-align: center;
-                                width: 18px;
-                            }
-                    
-                            .custom-data-table>thead {
-                                background-color: #1677ff !important;
-                                color: #000000 !important;
-                                font-size: 12px;
-                            }
-                    
-                            .custom-data-table-two thead {
-                                background-color: transparent;
-                                color: #000000 !important;
-                            }
-                    
-                            .custom-data-table thead tr th,
-                            .custom-data-table-two thead tr th {
-                                color: #000000;
-                                font-size: 13px;
-                            }
-                    
-                            table.table.custom-data-table tbody tr {
-                                border: none !important;
-                            }
-                    
-                            table.table.custom-data-table tbody tr td {
-                                border: none;
-                                font-size: 13px;
-                                color: #000000;
-                            }
-                    
-                            table.table.custom-data-table tbody tr {
-                                border-bottom: 1px solid #4c4d4e33 !important;
-                                margin-bottom: 5px !important;
-                                font-size: 16px !important;
-                            }
-                    
-                    
-                    
-                    
-                            .receipt-main td {
-                                padding: 9px 20px !important;
-                            }
-                    
-                            .receipt-main th {
-                                padding: 13px 20px !important;
-                            }
-                    
-                            .receipt-main td {
-                                font-size: 13px;
-                                font-weight: initial !important;
-                            }
-                    
-                            .receipt-main td p:last-child {
-                                margin: 0;
-                                padding: 0;
-                            }
-                    
-                            .receipt-main td h2 {
-                                font-size: 20px;
-                                font-weight: 900;
-                                margin: 0;
-                                text-transform: uppercase;
-                            }
-                    
-                            .receipt-header-mid .receipt-left h1 {
-                                font-weight: 100;
-                                margin: 34px 0 0;
-                                text-align: right;
-                                text-transform: uppercase;
-                            }
-                    
-                            .receipt-header-mid {
-                                margin: 24px 0;
-                                overflow: hidden;
-                            }
-                    
-                            #container {
-                                background-color: #dcdcdc;
-                            }
-                        </style>
-                        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-                        <script type="text/javascript">
-                    
-                        </script>
-                    </body>
-                    
-                    </html>`
+                    // GET TEMPLATE FUNCTION
+                    const template = await getReadyEmailTemplate("po-invoice-attachment", TENANTID);
 
                     singlePO.company_logo = config.get("SERVER_URL").concat("media/email-assets/logo.jpg");
-                    const invoice = await generatePDF(id, singlePO, temaplate);
+                    const invoice = await generatePDF(id, singlePO, template);
 
                     // Upload Image to AWS S3
                     const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
@@ -3717,37 +3301,234 @@ module.exports = {
             // DATA FROM REQUEST
             const { po_id, emails } = req;
 
+            // ASSOCIATION STARTS
+            // PO TO vendor
+            if (!db.purchase_order.hasAlias('vendor')) {
+
+                await db.purchase_order.hasOne(db.vendor, {
+                    sourceKey: 'vendor_id',
+                    foreignKey: 'id',
+                    as: 'vendor'
+                });
+            }
+
+            if (!db.purchase_order.hasAlias('contact_person') && !db.purchase_order.hasAlias('contactPersons')) {
+                await db.purchase_order.hasOne(db.contact_person,
+                    {
+                        sourceKey: 'contact_person_id',
+                        foreignKey: 'id',
+                        constraints: false,
+                        scope: {
+                            ref_model: 'vendor'
+                        },
+                        as: "contactPersons"
+                    });
+            }
+
+            // PO TO payment_method
+            if (!db.purchase_order.hasAlias('payment_method') && !db.purchase_order.hasAlias('paymentmethod')) {
+
+                await db.purchase_order.hasOne(db.payment_method, {
+                    sourceKey: 'payment_method_id',
+                    foreignKey: 'id',
+                    as: 'paymentmethod'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorBillingAddress')) {
+
+                await db.purchase_order.hasOne(db.address, {
+                    sourceKey: 'vendor_billing_id',
+                    foreignKey: 'id',
+                    as: 'vendorBillingAddress'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('address') && !db.purchase_order.hasAlias('vendorShippingAddress')) {
+
+                await db.purchase_order.hasOne(db.address, {
+                    sourceKey: 'vendor_shipping_id',
+                    foreignKey: 'id',
+                    as: 'vendorShippingAddress'
+                });
+            }
+
+            if (!db.address.hasAlias('country') && !db.address.hasAlias('countryCode')) {
+                await db.address.hasOne(db.country, {
+                    sourceKey: 'country',
+                    foreignKey: 'code',
+                    as: 'countryCode'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('po_productlist') && !db.purchase_order.hasAlias('poProductlist')) {
+
+                await db.purchase_order.hasMany(db.po_productlist, {
+                    foreignKey: 'purchase_order_id',
+                    as: 'poProductlist'
+                });
+            }
+
+            // 
+            if (!db.purchase_order.hasAlias('shipping_method') && !db.purchase_order.hasAlias('shippingMethod')) {
+
+                await db.purchase_order.hasOne(db.shipping_method, {
+                    sourceKey: 'shipping_method_id',
+                    foreignKey: 'id',
+                    as: 'shippingMethod'
+                });
+            }
+
+            // 
+            if (!db.po_productlist.hasAlias('product')) {
+
+                await db.po_productlist.hasOne(db.product, {
+                    sourceKey: 'product_id',
+                    foreignKey: 'id',
+                    as: 'product'
+                });
+            }
+
+            // Check If Has Alias with Categories
+            if (!db.product.hasAlias('category')) {
+
+                await db.product.hasOne(db.category, {
+                    sourceKey: 'prod_category',
+                    foreignKey: 'id',
+                    as: 'category'
+                });
+            }
+
+            // Brand Table Association with Product
+            if (!db.product.hasAlias('brand')) {
+
+                await db.product.hasOne(db.brand, {
+                    sourceKey: 'brand_id',
+                    foreignKey: 'id',
+                    as: 'brand'
+                });
+            }
+
+            // PO TO PO TRK DETAILS
+            if (!db.purchase_order.hasAlias('po_trk_details') && !db.purchase_order.hasAlias('potrkdetails')) {
+
+                await db.purchase_order.hasMany(db.po_trk_details, {
+                    foreignKey: 'po_id',
+                    as: 'potrkdetails'
+                });
+            }
+
+            // PO TO PO Activities
+            if (!db.purchase_order.hasAlias('po_activities') && !db.purchase_order.hasAlias('poactivitites')) {
+
+                await db.purchase_order.hasMany(db.po_activities, {
+                    foreignKey: 'po_id',
+                    as: 'poactivitites'
+                });
+            }
+
+            // PO TO PO Invoices
+            if (!db.purchase_order.hasAlias('po_invoices') && !db.purchase_order.hasAlias('poinvoices')) {
+
+                await db.purchase_order.hasMany(db.po_invoices, {
+                    foreignKey: 'po_id',
+                    as: 'poinvoices'
+                });
+            }
+
+            // PO TO PO MFG DOC
+            if (!db.purchase_order.hasAlias('po_mfg_doc') && !db.purchase_order.hasAlias('pomfgdoc')) {
+
+                await db.purchase_order.hasMany(db.po_mfg_doc, {
+                    foreignKey: 'po_id',
+                    as: 'pomfgdoc'
+                });
+            }
+
+            // PO TO ORDER
+            if (!db.purchase_order.hasAlias('order')) {
+
+                await db.purchase_order.hasOne(db.order, {
+                    sourceKey: 'order_id',
+                    foreignKey: 'id',
+                    as: 'order'
+                });
+            }
+
+            // PO TO ORDER
+            if (!db.order.hasAlias('address') && !db.order.hasAlias('shippingAddress')) {
+
+                await db.order.hasOne(db.address, {
+                    sourceKey: 'shipping_address_id',
+                    foreignKey: 'id',
+                    as: 'shippingAddress'
+                });
+            }
+
+            // Created By Associations
+            db.user.belongsToMany(db.role, { through: db.admin_role, foreignKey: 'admin_id' });
+            db.role.belongsToMany(db.user, { through: db.admin_role, foreignKey: 'role_id' });
+
+            // Check If Has Alias with Users and Roles
+            if (!db.purchase_order.hasAlias('user') && !db.purchase_order.hasAlias('POCreated_by')) {
+                await db.purchase_order.hasOne(db.user, {
+                    sourceKey: 'created_by',
+                    foreignKey: 'id',
+                    as: 'POCreated_by'
+                });
+            }
+            // ASSOCIATION ENDS
+
             // Single PO 
             const singlePO = await db.purchase_order.findOne({
-                // include: [
-                //     { model: db.vendor, as: 'vendor' },
-                //     { model: db.payment_method, as: 'paymentmethod' },
-                //     { model: db.shipping_method, as: 'shippingMethod' },
-                //     { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
-                //     { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
-                //     { model: db.po_trk_details, as: 'potrkdetails' },
-                //     { model: db.po_activities, as: 'poactivitites' },
-                //     { model: db.po_invoices, as: 'poinvoices' },
-                //     { model: db.po_mfg_doc, as: 'pomfgdoc' },
-                //     {
-                //         model: db.po_productlist, as: 'poProductlist', // 
-                //         include: {
-                //             model: db.product,
-                //             as: 'product',
-                //             include: [
-                //                 { model: db.category, as: 'category' },
-                //                 { model: db.brand, as: 'brand' }
-                //             ]
-                //         }
-                //     },
-                //     {
-                //         model: db.user, as: 'POCreated_by',
-                //         include: {
-                //             model: db.role,
-                //             as: 'roles'
-                //         }
-                //     },
-                // ],
+                include: [
+                    {
+                        model: db.vendor,
+                        as: 'vendor'
+                    },
+                    { model: db.payment_method, as: 'paymentmethod' },
+                    { model: db.shipping_method, as: 'shippingMethod' },
+                    { model: db.address, as: 'vendorBillingAddress', include: { model: db.country, as: "countryCode" } },
+                    { model: db.address, as: 'vendorShippingAddress', include: { model: db.country, as: "countryCode" } },
+                    { model: db.po_trk_details, as: 'potrkdetails' },
+                    { model: db.po_activities, as: 'poactivitites' },
+                    { model: db.po_invoices, as: 'poinvoices' },
+                    { model: db.po_mfg_doc, as: 'pomfgdoc' },
+                    {
+                        model: db.po_productlist, as: 'poProductlist', // 
+                        include: {
+                            model: db.product,
+                            as: 'product',
+                            include: [
+                                { model: db.category, as: 'category' },
+                                { model: db.brand, as: 'brand' }
+                            ]
+                        }
+                    },
+                    {
+                        model: db.user, as: 'POCreated_by',
+                        include: {
+                            model: db.role,
+                            as: 'roles'
+                        }
+                    },
+                    {
+                        model: db.order,
+                        as: 'order',
+                        include: {
+                            model: db.address,
+                            as: 'shippingAddress',
+                            include: { model: db.country, as: "countryCode" }
+                        }
+                    },
+                    {
+                        model: db.contact_person,
+                        as: "contactPersons"
+                    }
+                ],
                 where: {
                     [Op.and]: [{
                         id: po_id,
@@ -3768,382 +3549,69 @@ module.exports = {
 
             const { email } = findVendorEmail;
 
-            // TEMPLATE FOR NOW
-            const temaplate = `<!DOCTYPE html>
-            <html lang="en">
 
-            <head>
-                <meta charset="utf-8">
-                <title>PO Invoice - Prime Server Parts</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-                <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-                <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-            </head>
-
-            <body>
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="receipt-main col-xs-12 col-sm-12 col-md-12">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="receipt-header"
-                                        style="border: 1px solid #1677ff;padding: 10px;height: 500px;border-radius: 8px; margin-bottom: 10px;">
-                                        <div class="col-xs-6 col-sm-6 col-md-6">
-                                            <div class="receipt-left">
-                                                <img class="img-responsive" alt="iamgurdeeposahan"
-                                                    src=<%= company_logo %>
-                                                    style="width: 150px; margin-top: 15px;">
-
-                                                <h5 style="margin-top: 25px; font-weight: 600; font-size: 16px;">Prime Server Parts
-                                                </h5>
-                                                <p>Nova Street</p>
-                                                <p>Nova Street</p>
-                                                <p>Colorado, CO - 12356</p>
-                                                <p>USA <i class="fa fa-location-arrow"></i></p>
-
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-6 text-right">
-                                            <div class="receipt-right">
-                                                <p style="margin-top: 10px;"><span>Purchase Order:</span> <%= po_number %></p>
-                                                <p><span>Date:</span> <%= new Date(updatedAt).toDateString()%></p>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12">
-                                                <div class="receipt-header receipt-header-mid">
-                                                    <div class="col-xs-8 col-sm-8 col-md-8 text-left">
-                                                        <div class="receipt-left2">
-                                                            <h5>Issued To</h5>
-                                                            <p>Company Name</p>
-                                                            <p>Company Contact Person</p>
-                                                            <p>Company Email</p>
-                                                            <p>0170000000</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-4 col-sm-4 col-md-4 text-left">
-                                                        <div class="receipt-right2">
-                                                            <h5>Ship To</h5>
-                                                            <p>Company Address 1</p>
-                                                            <p>Company Address 2</p>
-                                                            <p>Company State</p>
-                                                            <p>Company Country</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12" style="margin-top: 30px;">
-                                                <div class="col-xs-3 col-sm-3 col-md-3">
-                                                    <div class="receipt-right text-center">
-                                                        <h5 style="font-weight: 600; font-size: 16px;">Rep</h5>
-                                                        <p>Nova Street</p>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-3 col-sm-3 col-md-3">
-                                                    <div class="receipt-right text-center">
-                                                        <h5 style="font-weight: 600; font-size: 16px;">Payment Terms</h5>
-                                                        <p>Company Name</p>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-3 col-sm-3 col-md-3">
-                                                    <div class="receipt-right text-center">
-                                                        <h5 style="font-weight: 600; font-size: 16px;">Delivery</h5>
-                                                        <p>Company Name</p>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-3 col-sm-3 col-md-3">
-                                                    <div class="receipt-right text-center">
-                                                        <h5 style="font-weight: 600; font-size: 16px;">Tax Rate</h5>
-                                                        <p>Company Name</p>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <table class="table custom-data-table">
-                                        <thead style="background-color: #1677ff !important">
-                                            <tr>
-                                                <th>Part Number</th>
-                                                <th>Description</th>
-                                                <th>Unite Price</th>
-                                                <th>Quantity</th>
-                                                <th style="text-align: right;">Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="col-xs-2 col-sm-2 col-md-2">ASR-123455</td>
-                                                <td class="col-xs-5 col-sm-5 col-md-5">Adaptec ASR-78165 PMC SAS/SATA 6Gb/s PCIe x8
-                                                    Controller Gen3
-                                                </td>
-                                                <td class="col-xs-2 col-sm-2 col-md-2">$190.00</td>
-                                                <td class="col-xs-1 col-sm-1 col-md-1">1</td>
-                                                <td class="col-xs-2 col-sm-2 col-md-2" style="text-align: right;">$380.00</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-4 col-sm-4 col-md-4 col-md-offset-8 col-sm-offset-8 col-xs-offset-8">
-                                    <table class="table custom-data-table-two">
-                                        <thead>
-                                            <tr>
-                                                <th style="color: #000000; text-align: left;">Sub Total</th>
-                                                <th style="color: #000000; text-align: right;">$400</th>
-                                            </tr>
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-8 col-sm-8 col-md-8">
-                                    <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Comment: </h4>
-                                    <h4 style="font-size: 16px; font-weight: 600;">Receiving Instruction: </h4>
-                                </div>
-                                <div class="col-xs-4 col-sm-4 col-md-4">
-                                    <table class="table table-striped" cellspacing="0">
-                                        <tbody>
-                                            <tr>
-                                                <td style="font-size: 13px; color: #000000;"><b>Tax: </b></td>
-                                                <td style="text-align: right; padding-right: 20px;color: #000000; font-size: 13px;">
-                                                    $50.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-size: 13px; color: #000000;"><b>Shipping Cost: </b></td>
-                                                <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-                                                    $50.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-size: 13px; color: #000000;"><b>Total: </b></td>
-                                                <td style="text-align: right; padding-right: 20px; font-size: 13px;color: #000000;">
-                                                    $680.00</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <style type="text/css">
-                    body {
-                        background: #eee;
+            if (singlePO.type === "drop_shipping") {
+                singlePO.shipTo = singlePO.order.shippingAddress;
+            } else if (singlePO.type === "default") {
+                const companyShippingAddress = await db.address.findOne({
+                    include: [
+                        { model: db.country, as: "countryCode" }
+                    ],
+                    where: {
+                        [Op.and]: [{
+                            ref_model: "company_info",
+                            tenant_id: TENANTID,
+                            type: "shipping",
+                            status: true,
+                            isDefault: true
+                        }]
                     }
+                });
 
-                    .text-danger strong {
-                        color: #9f181c;
-                    }
+                singlePO.shipTo = companyShippingAddress;
+            }
+            // GET COMPANY BILLING ADDRESS
+            const companyBilling = await db.address.findOne({
+                include: [
+                    { model: db.country, as: "countryCode" }
+                ],
+                where: {
+                    [Op.and]: [{
+                        ref_model: "company_info",
+                        tenant_id: TENANTID,
+                        type: "billing",
+                        status: true,
+                        isDefault: true
+                    }]
+                }
+            });
+            singlePO.companyBilling = companyBilling;
 
-                    .receipt-main {
-                        background: #ffffff none repeat scroll 0 0;
-                        border-top: 12px solid #1677ff;
-                        padding: 40px 30px !important;
-                        position: relative;
-                        box-shadow: 0 1px 21px #acacac;
-                        color: #333333;
-                        font-family: open sans;
-                    }
+            // GET COMPANY INFO
+            const companyInfo = await db.company_info.findOne({
+                where: {
+                    tenant_id: TENANTID
+                }
+            });
+            singlePO.companyInfo = companyInfo;
 
-                    .receipt-main p {
-                        color: #333333;
-                        font-family: open sans;
-                        line-height: 1.42857;
-                    }
+            // Calculate Sub Total
+            let subTotal = await db.po_productlist.sum('totalPrice', {
+                where: {
+                    [Op.and]: [{
+                        purchase_order_id: po_id,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+            singlePO.subTotal = subTotal;
+            singlePO.grandTotal = await this.poGrandTotal(po_id, TENANTID);
 
-                    .receipt-left p {
-                        color: #333333;
-                        font-family: open sans;
-                        line-height: 1.42857;
-                        padding: 0;
-                        margin: 0;
-                        font-size: 16px;
-                    }
-
-                    .receipt-right p span {
-                        font-weight: 600;
-                    }
-
-                    .receipt-footer h1 {
-                        font-size: 15px;
-                        font-weight: 400 !important;
-                        margin: 0 !important;
-                    }
-
-                    .receipt-main::after {
-                        background: #414143 none repeat scroll 0 0;
-                        content: "";
-                        height: 5px;
-                        left: 0;
-                        position: absolute;
-                        right: 0;
-                        top: -13px;
-                    }
-
-                    .receipt-main thead {
-                        background: #414143 none repeat scroll 0 0;
-                    }
-
-                    .receipt-main thead th {
-                        color: #fff;
-                    }
-
-                    .receipt-right h5 {
-                        font-size: 16px;
-                        font-weight: bold;
-                        margin: 0 0 7px 0;
-                    }
-
-                    .receipt-right p {
-                        font-size: 16px;
-                        margin: 0px;
-                    }
-
-                    .receipt-right p i {
-                        text-align: center;
-                        width: 18px;
-                    }
-
-
-                    .receipt-left2 p {
-                        color: #333333;
-                        font-family: open sans;
-                        line-height: 1.42857;
-                        padding: 0;
-                        margin: 0;
-                        font-size: 16px;
-                    }
-
-                    .receipt-left2 p span {
-                        font-weight: 600;
-                    }
-
-                    .receipt-left2 h5 {
-                        font-size: 16px;
-                        font-weight: bold;
-                        margin: 0 0 7px 0;
-                    }
-
-                    .receipt-right2 h5 {
-                        font-size: 16px;
-                        font-weight: bold;
-                        margin: 0 0 7px 0;
-                    }
-
-                    .receipt-right2 p {
-                        font-size: 16px;
-                        margin: 0px;
-                    }
-
-                    .receipt-right2 p i {
-                        text-align: center;
-                        width: 18px;
-                    }
-
-                    .custom-data-table>thead {
-                        background-color: #1677ff !important;
-                        color: #000000 !important;
-                        font-size: 12px;
-                    }
-
-                    .custom-data-table-two thead {
-                        background-color: transparent;
-                        color: #000000 !important;
-                    }
-
-                    .custom-data-table thead tr th,
-                    .custom-data-table-two thead tr th {
-                        color: #000000;
-                        font-size: 13px;
-                    }
-
-                    table.table.custom-data-table tbody tr {
-                        border: none !important;
-                    }
-
-                    table.table.custom-data-table tbody tr td {
-                        border: none;
-                        font-size: 13px;
-                        color: #000000;
-                    }
-
-                    table.table.custom-data-table tbody tr {
-                        border-bottom: 1px solid #4c4d4e33 !important;
-                        margin-bottom: 5px !important;
-                        font-size: 16px !important;
-                    }
-
-
-
-
-                    .receipt-main td {
-                        padding: 9px 20px !important;
-                    }
-
-                    .receipt-main th {
-                        padding: 13px 20px !important;
-                    }
-
-                    .receipt-main td {
-                        font-size: 13px;
-                        font-weight: initial !important;
-                    }
-
-                    .receipt-main td p:last-child {
-                        margin: 0;
-                        padding: 0;
-                    }
-
-                    .receipt-main td h2 {
-                        font-size: 20px;
-                        font-weight: 900;
-                        margin: 0;
-                        text-transform: uppercase;
-                    }
-
-                    .receipt-header-mid .receipt-left h1 {
-                        font-weight: 100;
-                        margin: 34px 0 0;
-                        text-align: right;
-                        text-transform: uppercase;
-                    }
-
-                    .receipt-header-mid {
-                        margin: 24px 0;
-                        overflow: hidden;
-                    }
-
-                    #container {
-                        background-color: #dcdcdc;
-                    }
-                </style>
-                <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-                <script type="text/javascript">
-
-                </script>
-            </body>
-
-            </html>`
+            // GET TEMPLATE FUNCTION
+            const template = await getReadyEmailTemplate("po-invoice-attachment", TENANTID);
 
             singlePO.company_logo = config.get("SERVER_URL").concat("media/email-assets/logo.jpg");
-            const invoice = await generatePDF(po_id, singlePO, temaplate);
+            const invoice = await generatePDF(po_id, singlePO, template);
 
             // Upload Image to AWS S3
             const psp_admin_doc_src = config.get("AWS.PSP_ADMIN_DOC_PO_SRC").split("/")
@@ -4157,8 +3625,6 @@ module.exports = {
                 bucketName: psp_admin_doc_src_bucketName,
                 // delete_file: false
             });
-
-
 
             if (invoice && fileUploadS3) {
                 this.insertPOActivity(po_activity_type.INVOICE_UPLOAD, `File Name: ${invoice}.pdf`, po_id, user.id, user.id, TENANTID);

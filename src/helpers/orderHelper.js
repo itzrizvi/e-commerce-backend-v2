@@ -2374,10 +2374,11 @@ module.exports = {
 
       //
       let adminArray = [];
-      await orderUpdateAdminList.forEach(async (item) => {
-        await adminArray.push(item.admin);
-      });
-
+      if (orderUpdateAdminList && orderUpdateAdminList.length) {
+        await orderUpdateAdminList.forEach(async (item) => {
+          await adminArray.push(item.admin);
+        });
+      }
 
       if (adminArray.length) {
         let finalArray = [...new Map(adminArray.map((admin) => [admin.id, admin])).values()];
@@ -2390,9 +2391,12 @@ module.exports = {
         };
 
       } else {
+        // Return Formation
         return {
-          message: `Something Went Wrong!!!`,
-          status: false,
+          message: "GET Order Update Admin List Success!!!",
+          status: true,
+          tenant_id: TENANTID,
+          data: []
         };
       }
 

@@ -349,8 +349,8 @@ module.exports = {
                     const updateDoc = {
                         password: await bcrypt.hash(confirmPassword, 10),
                         email_verified: true,
-                        forgot_password_code: null,
-                        verification_code: null
+                        forgot_password_code: 0,
+                        verification_code: 0
                     }
                     // Update User
                     const updateUser = await db.user.update(updateDoc, {

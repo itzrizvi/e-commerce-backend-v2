@@ -368,7 +368,7 @@ module.exports = {
             }
 
             // SENDING EMAIL
-            await Mail(user.email, mailSubject, mailData, 'user-email-verification', TENANTID);
+            await Mail(email, mailSubject, mailData, 'user-email-verification', TENANTID);
 
 
 

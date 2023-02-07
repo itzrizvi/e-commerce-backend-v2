@@ -1,5 +1,5 @@
-const { format, createLogger, transports } = require('winston');
-const { timestamp, combine, errors, json } = format;
+const { format, createLogger, transports, error } = require('winston');
+const { timestamp, combine, errors, json, label } = format;
 
 function buildProdLogger() {
     return createLogger({
@@ -12,7 +12,9 @@ function buildProdLogger() {
             http: 5
         },
         format: combine(
-            timestamp(),
+            timestamp({
+                format: 'YYYY-MM-DD HH:mm:ss ZZ'
+            }),
             errors({ stack: true }),
             json()
         ),
@@ -22,7 +24,8 @@ function buildProdLogger() {
             new transports.File({ filename: 'logs/error.log', level: 'crit' }),
             new transports.File({ filename: 'logs/error.log', level: 'warning' }),
             new transports.File({ filename: 'logs/info.log', level: 'info' }),
-            new transports.File({ filename: 'logs/requesttrack.log', level: 'http' })
+            new transports.File({ filename: 'logs/requesttrack.log', level: 'http' }),
+            new transports.File({ filename: 'logs/apiactivites.log' })
         ],
     });
 }

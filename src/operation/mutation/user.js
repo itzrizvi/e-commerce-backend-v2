@@ -1,4 +1,6 @@
 // All Requires
+const { error } = require('winston');
+const logger = require('../../../logger');
 const { userSignUpController,
     userSignInController,
     emailVerifyController,
@@ -21,9 +23,10 @@ module.exports = {
     },
     // SIGN IN MUTATION
     userSignIn: async (root, { email, password }, { db, TENANTID }, info) => {
+        // Logger
+        // logger.info({ error: error, user_data: `${email}`, service: `user.js`, line: 26, module: `userSignIn` });
         // Return If Not Have TENANT ID
         if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
-
         const data = {
             email,
             password

@@ -2737,3 +2737,22 @@
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-06T21:07:54.946Z"}
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-06T21:09:44.057Z"}
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-07T19:06:02.090Z"}
+2023-02-08 01:56:27 +0600 [My API] info: 🚀 Server Ready To GO
+2023-02-08 01:56:33 +0600 [My API] info: Received Sign In Request
+2023-02-08 01:58:43 +0600 info: 🚀 Server Ready To GO
+2023-02-08 02:12:57 +0600 info: 🚀 Server Ready To GO (...args) => defaultLogger[method](...args) undefined server.js undefined undefined
+2023-02-08 02:13:08 +0600 info: 🚀 Server Ready To GO (...args) => defaultLogger[method](...args) undefined server.js undefined undefined
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:14:33 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:16:24 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:17:25 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:17:59 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:28:48 +0600"}
+{"level":"info","message":{"line":26,"module":"userSignIn","service":"user.js","user_data":"shahriar.me.work@gmail.com"},"timestamp":"2023-02-08 02:29:05 +0600"}
+{"level":"info","message":{"line":26,"module":"userSignIn","service":"user.js","user_data":"shahriar.me.work@gmail.com"},"timestamp":"2023-02-08 02:29:18 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:31:12 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:31:49 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:32:24 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:32:36 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:34:51 +0600"}
+{"level":"info","message":{"line":26,"module":"userSignIn","service":"user.js","user_data":"shahriar.me.work@gmail.com"},"timestamp":"2023-02-08 02:34:58 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:37:35 +0600"}

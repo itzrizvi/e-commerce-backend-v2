@@ -2738,3 +2738,136 @@
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:34:51 +0600"}
 {"level":"info","message":{"line":26,"module":"userSignIn","service":"user.js","user_data":"shahriar.me.work@gmail.com"},"timestamp":"2023-02-08 02:34:58 +0600"}
 {"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:37:35 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:39:52 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:43:17 +0600"}
+{"level":"info","line":26,"module":"userSignIn","service":"user.js","timestamp":"2023-02-08 02:43:21 +0600","user_data":"shahriar.me.work@gmail.com"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:45:06 +0600"}
+2023-02-08 02:45:25 +0600 [info] 🚀 Server Ready To GO
+2023-02-08 02:45:33 +0600 [info] undefined
+2023-02-08 02:46:11 +0600 [info] undefined
+2023-02-08 02:46:27 +0600 [info] undefined undefined
+2023-02-08 02:46:32 +0600 [info] (...args) => defaultLogger[method](...args) shahriar.me.work@gmail.com
+undefined
+undefined
+undefined
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:47:42 +0600"}
+{"level":"info","line":26,"module":"userSignIn","service":"user.js","timestamp":"2023-02-08 02:48:01 +0600","user_data":"shahriar.me.work@gmail.com"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:49:05 +0600"}
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:51:25 +0600"}
+2023-02-08 02:51:36 +0600 [info] 🚀 Server Ready To GO undefined
+2023-02-08 02:51:50 +0600 [info] 🚀 Server Ready To GO undefined
+2023-02-08 02:51:54 +0600 [info] undefined "shahriar.me.work@gmail.com"
+2023-02-08 02:52:20 +0600 [info] undefined undefined
+2023-02-08 02:52:28 +0600 [info] (...args) => defaultLogger[method](...args) "shahriar.me.work@gmail.com"
+2023-02-08 02:52:51 +0600 [info] undefined
+2023-02-08 02:53:03 +0600 (...args) => defaultLogger[method](...args) [info] undefined
+2023-02-08 02:53:18 +0600 (...args) => defaultLogger[method](...args) [info] undefined
+2023-02-08 02:53:22 +0600 (...args) => defaultLogger[method](...args) [info] "shahriar.me.work@gmail.com"
+2023-02-08 02:53:44 +0600 [info] undefined
+2023-02-08 02:53:56 +0600 [info] undefined
+2023-02-08 02:54:18 +0600 [info] undefined "server.js"
+2023-02-08 02:56:00 +0600 [info] undefined "server.js"
+2023-02-08 02:56:14 +0600 [info] undefined "server.js"
+2023-02-08 02:56:22 +0600 [info] undefined "server.js"
+2023-02-08 02:56:58 +0600 [info] undefined "server.js" undefined 
+2023-02-08 02:57:11 +0600 [info] undefined "server.js" undefined undefined 
+2023-02-08 02:57:28 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: undefined
+2023-02-08 02:59:04 +0600 [info] undefined "server.js" undefined undefined 
+{"level":"info","message":"🚀 Server Ready To GO","service":"server.js","timestamp":"2023-02-08 02:59:26 +0600"}
+{"level":"info","line":26,"module":"userSignIn","service":"user.js","timestamp":"2023-02-08 02:59:29 +0600","user_data":"shahriar.me.work@gmail.com"}
+2023-02-08 02:59:53 +0600 [info] undefined "server.js" undefined undefined 
+2023-02-08 03:00:09 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: undefined
+2023-02-08 03:01:06 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: undefined
+2023-02-08 03:02:18 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: undefined
+2023-02-08 03:02:20 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: undefined
+2023-02-08 03:20:41 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: ReferenceError: esdfvsdfv is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:27:25)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-08 03:21:17 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: undefined
+2023-02-08 03:21:57 +0600 [info] "shahriar.me.work@gmail.com" "user.js" 26 "userSignIn" 
+Error: No Error
+2023-02-08 03:22:56 +0600 [info] "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:26:28 +0600 [info] "undefined User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:27:34 +0600 [info] "undefined User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+2023-02-08 03:28:59 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:28:59 +0600 [info] {"error":{},"user_data":"shahriar.me.work@gmail.com","service":"user.js","line":26,"module":"userSignIn"} undefined undefined undefined undefined
+2023-02-08 03:29:45 +0600 [info] "undefined User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:29:45 +0600 [info] "dsd is not defined" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: ReferenceError: dsd is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:38:25)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-08 03:31:30 +0600 [info] "undefined (...args) => defaultLogger[method](...args)" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:31:30 +0600 [info] "dsd is not defined" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: ReferenceError: dsd is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:38:25)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-08 03:31:52 +0600 [info] "undefined (...args) => defaultLogger[method](...args)" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:43:26 +0600 [info] "undefined User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:44:41 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:45:07 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:45:07 +0600 [info] undefined "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: ReferenceError: dsd is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:38:25)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-08 03:58:45 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-08 03:58:45 +0600 [info] "Error Occurd" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: ReferenceError: dsd is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:38:25)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)

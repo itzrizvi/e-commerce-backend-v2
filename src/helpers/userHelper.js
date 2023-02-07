@@ -269,14 +269,11 @@ module.exports = {
                     // SENDING EMAIL
                     await Mail(email, mailSubject, mailData, 'email-verification-confirmation', TENANTID);
 
-
-
-
                     return {
                         email: email,
                         emailVerified: true,
                         message: "Email Verified Successfully!!",
-                        status: false
+                        status: true
                     }
                 } else {
                     return { // If Not updated
@@ -296,7 +293,6 @@ module.exports = {
                     status: false
                 }
             }
-
 
         } else { // If Time Expired
 

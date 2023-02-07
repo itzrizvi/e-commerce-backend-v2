@@ -26,7 +26,6 @@ const app = express();
 // Middlewares Require
 const onReqTokenGenerate = require("./src/middlewares/onReqTokenGenerator");
 const onReqTenantCheck = require("./src/middlewares/onReqTenantCheckMiddleware");
-const logger = require("./logger");
 
 // MIDDLWARES ARRAY
 const middlewares = [
@@ -99,7 +98,6 @@ async function startApolloServer() {
   console.log(
     `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`
   );
-  logger.info("🚀 Server Ready To GO", { service: "server.js" });
   return { server, app };
 }
 startApolloServer();

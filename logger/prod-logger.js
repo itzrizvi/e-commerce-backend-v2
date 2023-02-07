@@ -1,7 +1,16 @@
 const { format, createLogger, transports, error } = require('winston');
-const { timestamp, combine, errors, json, label } = format;
+const { timestamp, combine, errors, json, printf } = format;
 
 function buildProdLogger() {
+
+    const customFormat = printf(info => {
+        let logMessage = `${info.timestamp} [${info.level}] ${JSON.stringify(info.apiaction)} ${JSON.stringify(info.user_data)} ${JSON.stringify(info.service)} ${JSON.stringify(info.module)} ${JSON.stringify(info.line)}`;
+        if (info.error) {
+            logMessage += `\nError: ${info.error.stack ?? "No Error"}`;
+        }
+        return logMessage;
+    });
+
     return createLogger({
         levels: {
             crit: 0,
@@ -15,8 +24,8 @@ function buildProdLogger() {
             timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss ZZ'
             }),
-            errors({ stack: true }),
-            json()
+            // errors({ stack: true }),
+            customFormat
         ),
         transports: [
             // new transports.Console(),

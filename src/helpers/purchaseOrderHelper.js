@@ -2198,7 +2198,7 @@ module.exports = {
                 singlePO.grandTotal_price = this.poGrandTotal(id, TENANTID);
 
                 // Activity
-                this.insertPOActivity(po_activity_type.PO_VIEWED_BY_VENDOR, `PO Viewed`, id, 10001, 10001, TENANTID);
+                this.insertPOActivity(po_activity_type.PO_VIEWED_BY_VENDOR, `PO Viewed By ${singlePO.vendor.company_name}`, id, 10001, 10001, TENANTID);
 
                 // Return Formation
                 return {

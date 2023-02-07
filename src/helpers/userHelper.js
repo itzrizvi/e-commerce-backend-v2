@@ -75,21 +75,23 @@ module.exports = {
             });
 
             return {
-                authToken,
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                phone: user.phone,
-                fax: user.fax,
-                email: user.email,
-                emailVerified: user.email_verified,
                 message: "Sign Up succesfull",
-                verificationCode: user.verification_code,
-                user_status: user.user_status,
-                updatedAt: user.createdAt,
-                createdAt: user.updatedAt,
-                tenant_id: user.tenant_id,
-                status: true
+                status: true,
+                tenant_id: TENANTID,
+                data: {
+                    authToken,
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    phone: user.phone,
+                    fax: user.fax,
+                    email: user.email,
+                    emailVerified: user.email_verified,
+                    verificationCode: user.verification_code,
+                    user_status: user.user_status,
+                    updatedAt: user.createdAt,
+                    createdAt: user.updatedAt
+                }
             }
 
         } catch (error) {
@@ -168,22 +170,24 @@ module.exports = {
             });
 
             return {
-                authToken,
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                phone: user.phone,
-                fax: user.fax,
                 message: "Sign In succesfull",
-                emailVerified: user.email_verified,
-                verificationCode: user.verification_code,
-                user_status: user.user_status,
-                updatedAt: user.createdAt,
-                createdAt: user.updatedAt,
-                tenant_id: user.tenant_id,
-                image: user.image,
-                status: true
+                status: true,
+                tenant_id: TENANTID,
+                data: {
+                    authToken,
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    phone: user.phone,
+                    fax: user.fax,
+                    email: user.email,
+                    emailVerified: user.email_verified,
+                    verificationCode: user.verification_code,
+                    user_status: user.user_status,
+                    updatedAt: user.createdAt,
+                    image: user.image,
+                    createdAt: user.updatedAt
+                }
             }
 
         } catch (error) {

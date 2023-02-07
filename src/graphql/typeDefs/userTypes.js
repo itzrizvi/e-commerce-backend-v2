@@ -57,12 +57,19 @@ input UserProfileUpdateInput {
     image:Upload
 }
 
+type UserAuthOutput {
+    message:String
+    tenant_id:String
+    status:Boolean
+    data:AuthPayload
+}
+
 # Extended QUERIES AND MUTATIONS ######################################
 #######################################################################
 
 extend type Mutation {
-    userSignUp(data: UserInput): AuthPayload!
-    userSignIn(email: String!, password: String!): AuthPayload!
+    userSignUp(data: UserInput): UserAuthOutput!
+    userSignIn(email: String!, password: String!): UserAuthOutput!
     userProfileUpdate(data:UserProfileUpdateInput): CommonOutput!
 }
 

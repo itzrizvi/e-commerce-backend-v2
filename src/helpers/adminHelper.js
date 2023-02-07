@@ -344,12 +344,13 @@ module.exports = {
             // IF Difference Less than or Equal to 20 minutes
             if (diffs <= 20) {
                 // Matching Codes
-                if (verification_code === verificationCode) {
+                if (verification_code === verificationCode && forgot_password_code === verificationCode) {
                     // Updating Doc
                     const updateDoc = {
                         password: await bcrypt.hash(confirmPassword, 10),
                         email_verified: true,
-                        forgot_password_code: 0
+                        forgot_password_code: null,
+                        verification_code: null
                     }
                     // Update User
                     const updateUser = await db.user.update(updateDoc, {
@@ -445,8 +446,9 @@ module.exports = {
 
             // Update Doc
             const updateDoc = {
+                verification_code: verificationCode,
                 forgot_password_code: verificationCode,
-                password: null,
+                password: await bcrypt.hash(process.env.secretKey, 10),
                 updated_by: user.id
             }
             // Insert User

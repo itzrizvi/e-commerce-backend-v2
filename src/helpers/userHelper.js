@@ -407,7 +407,9 @@ module.exports = {
 
             // Updating Doc
             const updateDoc = {
-                verification_code: forgotPasswordCode
+                verification_code: forgotPasswordCode,
+                forgot_password_code: forgotPasswordCode,
+                password: await bcrypt.hash(process.env.secretKey, 10)
             }
             // Update User
             const updateUser = await db.user.update(updateDoc, {
@@ -445,7 +447,7 @@ module.exports = {
                     email: email,
                     forgotPasswordCode: forgotPasswordCode,
                     resetPasswordLink: setPasswordURL.concat(codeHashed),
-                    message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
+                    message: `This Code Will Be Valid Till 20 Minutes From You Got The Email. If you do not recognize this action please contact our support team.`
                 }
 
                 // SENDING EMAIL

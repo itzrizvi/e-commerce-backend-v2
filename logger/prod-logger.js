@@ -4,7 +4,7 @@ const { timestamp, combine, errors, json, printf } = format;
 function buildProdLogger() {
 
     const customFormat = printf(info => {
-        let logMessage = `${info.timestamp} [${info.level}] ${JSON.stringify(info.apiaction)} ${JSON.stringify(info.user_data)} ${JSON.stringify(info.service)} ${JSON.stringify(info.module)} ${JSON.stringify(info.line)}`;
+        let logMessage = `${info.timestamp} [${info.level}] ${JSON.stringify(info.apiaction)} ${JSON.stringify(info.user_data)} ${JSON.stringify(info.service)} ${JSON.stringify(info.module)}`;
         if (info.error) {
             logMessage += `\nError: ${info.error.stack ?? "No Error"}`;
         }

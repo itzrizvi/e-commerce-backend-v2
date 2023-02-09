@@ -7,16 +7,29 @@ const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
 const config = require('config');
 const { Mail } = require('../utils/email');
 const { crypt, decrypt } = require('../utils/hashes');
+const logger = require('../../logger');
+const { error } = require('winston');
 
 
 module.exports = {
     // SIGN UP
     userSignUp: async (req, db, TENANTID) => {
-
+        const userTransaction = await db.sequelize.transaction();
         try {
 
             const { first_name, last_name, email, password, phone, fax } = req;
             const verificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'User Data Received In Helper...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `userSignUp`
+                });
 
             if (!email || !first_name || !password) return { message: "Account Valid Credentials Is Missing!!!", status: false }
 
@@ -37,6 +50,17 @@ module.exports = {
                 process.env.JWT_SECRET,
                 { expiresIn: '1y' }
             );
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'User Inserted to Database...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `userSignUp`
+                });
 
             // Setting Up Data for EMAIL SENDER
             const mailSubject = "Profile Verification Code From Prime Server Parts"
@@ -61,10 +85,22 @@ module.exports = {
             // SENDING EMAIL
             await Mail(user.email, mailSubject, mailData, 'user-sign-up-verification', TENANTID);
 
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'New User Verification Email Sent...',
+                    user_data: `${user.email}`,
+                    service: `userHelper.js`,
+                    module: `userSignUp`
+                });
+
             // Update Last Login
             const updateLastLogin = {
                 last_login: Date.now()
             }
+
             db.user.update(updateLastLogin, {
                 where: {
                     [Op.and]: [{
@@ -74,6 +110,7 @@ module.exports = {
                 }
             });
 
+            await userTransaction.commit();
             return {
                 message: "Sign Up succesfull",
                 status: true,
@@ -95,15 +132,37 @@ module.exports = {
             }
 
         } catch (error) {
+            await userTransaction.rollback();
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${req.email}`,
+                    service: `userHelper.js`,
+                    module: `userSignUp`
+                });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
         }
     },
     // SIGN IN
     userSignIn: async (req, db, TENANTID) => {
-
+        const userTransaction = await db.sequelize.transaction();
         try {
             // DATA FROM REQUEST
             const { email, password } = req;
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'User Data Received In Helper...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `userSignIn`
+                });
 
             // CHECK USER
             const user = await db.user.findOne({
@@ -115,6 +174,17 @@ module.exports = {
                 }
             });
             if (!user) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User Not Found...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `userSignIn`
+                    });
+
                 return {
                     message: "User Not Found!!!",
                     status: false
@@ -124,6 +194,17 @@ module.exports = {
             // CHECK IS VALID
             const isValid = await bcrypt.compare(password, user.password);
             if (!isValid) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User Gave Wrong Password...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `userSignIn`
+                    });
+
                 return {
                     message: "Invalid Email or Password!!!",
                     status: false,
@@ -134,6 +215,17 @@ module.exports = {
             // IF USER EMAIL VERIFIED OR NOT
             const isVarified = user.email_verified;
             if (!isVarified) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User Email is Not Verified...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `userSignIn`
+                    });
+
                 return {
                     message: "Email Is Not Verified!!!",
                     status: false,
@@ -144,6 +236,16 @@ module.exports = {
             // IF USER STATUS IS FALSE
             const isActive = user.user_status;
             if (!isActive) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User Status is False...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `userSignIn`
+                    });
                 return {
                     message: "User Has Been Deactivated, Please Contact To Support",
                     status: false,
@@ -170,7 +272,19 @@ module.exports = {
                     }]
                 }
             });
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'User found, returning with all data...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `userSignIn`
+                });
 
+            // Transaction
+            await userTransaction.commit();
             return {
                 message: "Sign In succesfull",
                 status: true,
@@ -194,224 +308,296 @@ module.exports = {
             }
 
         } catch (error) {
-            if (error) return { message: "USER NOT FOUND", status: false };
+            await userTransaction.rollback();
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${req.email}`,
+                    service: `userHelper.js`,
+                    module: `userSignIn`
+                });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
     },
     // Email Verify
     verifyEmail: async (req, db, TENANTID) => {
+        const verifyEmailTransaction = await db.sequelize.transaction();
+        try {
 
-        const email = req.email; // Email From Request
+            const email = req.email; // Email From Request
 
-        // User Find For Matching Code
-        const findUser = await db.user.findOne({
-            where: {
-                [Op.and]: [{
-                    email,
-                    tenant_id: TENANTID
-                }]
-            }
-        });
-
-        // IF Not User
-        if (!findUser) {
-            return { emailVerified: false, message: "User Not Found!!!", email: email, status: false };
-        };
-
-        // Destructure Values
-        const { updatedAt, verification_code } = findUser;
-
-        // Time Calculating
-        const reqTime = new Date();
-        const recordTime = new Date(updatedAt);
-
-        // Calculating Minutes
-        let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
-        // Difference
-        const diffs = Math.abs(Math.round(minutes));
-
-        // IF Difference Less than or Equal to 20 minutes
-        if (diffs <= 20) {
-            // Matching Codes
-            if (verification_code === req.verificationCode) {
-                // Updating Doc
-                const updateDoc = {
-                    email_verified: true
-                }
-                // Update User
-                const updateUser = await db.user.update(updateDoc, {
-                    where: {
-                        [Op.and]: [{
-                            email,
-                            tenant_id: TENANTID
-                        }]
-                    }
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'Email Verify Data Received In Helper...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `verifyEmail`
                 });
 
-                // If Updated then return values
-                if (updateUser) {
+            // User Find For Matching Code
+            const findUser = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
 
-                    // Setting Up Data for EMAIL SENDER
-                    const mailSubject = "Email Verification Success From Prime Server Parts"
-                    const mailData = {
-                        companyInfo: {
-                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
-                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
-                            companyName: config.get("COMPANY_NAME"),
-                            companyUrl: config.get("ECOM_URL"),
-                            shopUrl: config.get("ECOM_URL"),
-                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
-                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
-                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
-                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
-                        },
-                        about: 'Email Verification on Prime Server Parts',
-                        email: email,
-                        message: `Your Email Has Been Verified Successfully on Prime Server Parts.`
+            // IF Not User
+            if (!findUser) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Requested Email Data Not Found...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `verifyEmail`
+                    });
+                return { emailVerified: false, message: "User Not Found!!!", email: email, status: false };
+            };
+
+            // Destructure Values
+            const { updatedAt, verification_code } = findUser;
+
+            // Time Calculating
+            const reqTime = new Date();
+            const recordTime = new Date(updatedAt);
+
+            // Calculating Minutes
+            let minutes = ((recordTime.getTime() - reqTime.getTime()) / 1000) / 60;
+            // Difference
+            const diffs = Math.abs(Math.round(minutes));
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'Calculating Time Difference...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `verifyEmail`
+                });
+
+            // IF Difference Less than or Equal to 20 minutes
+            if (diffs <= 20) {
+                // Matching Codes
+                if (verification_code === req.verificationCode) {
+                    // Updating Doc
+                    const updateDoc = {
+                        email_verified: true
+                    }
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Updating Email Verify Status...',
+                            user_data: `${email}`,
+                            service: `userHelper.js`,
+                            module: `verifyEmail`
+                        });
+                    // Update User
+                    const updateUser = await db.user.update(updateDoc, {
+                        where: {
+                            [Op.and]: [{
+                                email,
+                                tenant_id: TENANTID
+                            }]
+                        }
+                    });
+
+                    // If Updated then return values
+                    if (updateUser) {
+
+                        // Logger
+                        logger.info(
+                            error.message,
+                            {
+                                error: error,
+                                apiaction: 'Updated Email Verify Status...',
+                                user_data: `${email}`,
+                                service: `userHelper.js`,
+                                module: `verifyEmail`
+                            });
+
+                        // Setting Up Data for EMAIL SENDER
+                        const mailSubject = "Email Verification Success From Prime Server Parts"
+                        const mailData = {
+                            companyInfo: {
+                                logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                                banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                                companyName: config.get("COMPANY_NAME"),
+                                companyUrl: config.get("ECOM_URL"),
+                                shopUrl: config.get("ECOM_URL"),
+                                fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                                tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                                li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                                insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                            },
+                            about: 'Email Verification on Prime Server Parts',
+                            email: email,
+                            message: `Your Email Has Been Verified Successfully on Prime Server Parts.`
+                        }
+
+                        // SENDING EMAIL
+                        await Mail(email, mailSubject, mailData, 'email-verification-confirmation', TENANTID);
+
+                        // Logger
+                        logger.info(
+                            error.message,
+                            {
+                                error: error,
+                                apiaction: 'Email Verify Confirmation Email Sent to User...',
+                                user_data: `${email}`,
+                                service: `userHelper.js`,
+                                module: `verifyEmail`
+                            });
+
+                        await verifyEmailTransaction.commit();
+                        return {
+                            email: email,
+                            emailVerified: true,
+                            message: "Email Verified Successfully!!",
+                            status: true
+                        }
+                    } else {
+                        return { // If Not updated
+                            email: email,
+                            emailVerified: false,
+                            message: "ERROR WHEN MATCHING",
+                            status: false
+                        }
                     }
 
-                    // SENDING EMAIL
-                    await Mail(email, mailSubject, mailData, 'email-verification-confirmation', TENANTID);
 
-                    return {
-                        email: email,
-                        emailVerified: true,
-                        message: "Email Verified Successfully!!",
-                        status: true
-                    }
                 } else {
-                    return { // If Not updated
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Given codes not matched...',
+                            user_data: `${email}`,
+                            service: `userHelper.js`,
+                            module: `verifyEmail`
+                        });
+                    return { // If nOt Matched
                         email: email,
                         emailVerified: false,
-                        message: "ERROR WHEN MATCHING",
+                        message: "CODE DIDN'T MATCHED",
                         status: false
                     }
                 }
 
+            } else { // If Time Expired
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Given codes expired...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `verifyEmail`
+                    });
 
-            } else {
-                return { // If nOt Matched
+                return {
                     email: email,
                     emailVerified: false,
-                    message: "CODE DIDN'T MATCHED",
+                    message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Try Again!!!",
                     status: false
                 }
             }
 
-        } else { // If Time Expired
+        } catch (error) {
+            await verifyEmailTransaction.rollback();
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${req.email}`,
+                    service: `userHelper.js`,
+                    module: `verifyEmail`
+                });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
 
-            return {
-                email: email,
-                emailVerified: false,
-                message: "YOUR 6 DIGIT CODE IS EXPIRED, Please Try Again!!!",
-                status: false
-            }
         }
-
-
 
     },
     // Resend Email For Verification
     resendVerificationEmail: async (req, db, TENANTID) => {
+        const resendVerifyEmailTransaction = await db.sequelize.transaction();
+        try {
 
-        // EMAIL FROM REQUEST
-        const email = req.email;
-        // NEW VERIFICATION CODE GENERATE
-        const newVerificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
+            // EMAIL FROM REQUEST
+            const email = req.email;
 
-        // Check Email Has User
-        const findUser = await db.user.findOne({
-            where: {
-                [Op.and]: [{
-                    tenant_id: TENANTID,
-                    email
-                }]
-            }
-        });
-        if (!findUser) return { message: "User Not Found!!!", status: false, email: email }
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'Resend Email Verify Data Received In Helper...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `resendVerificationEmail`
+                });
 
-        // Updating Doc
-        const updateDoc = {
-            verification_code: newVerificationCode,
-        }
-        // Update User
-        const updateUser = await db.user.update(updateDoc, {
-            where: {
-                [Op.and]: [{
-                    email,
-                    tenant_id: TENANTID
-                }]
-            }
-        });
+            // NEW VERIFICATION CODE GENERATE
+            const newVerificationCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
-        // If Updated then return values
-        if (updateUser) {
+            // Check Email Has User
+            const findUser = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        tenant_id: TENANTID,
+                        email
+                    }]
+                }
+            });
+            if (!findUser) {
 
-            // Setting Up Data for EMAIL SENDER
-            const mailSubject = "Email Verification Code From Primer Server Parts"
-            const mailData = {
-                companyInfo: {
-                    logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
-                    banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
-                    companyName: config.get("COMPANY_NAME"),
-                    companyUrl: config.get("ECOM_URL"),
-                    shopUrl: config.get("ECOM_URL"),
-                    fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
-                    tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
-                    li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
-                    insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
-                },
-                about: 'Verify Your Email on Prime Server Parts',
-                email: email,
-                verificationCode: newVerificationCode,
-                message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Requested Email Not Found...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `resendVerificationEmail`
+                    });
+
+                return { message: "User Not Found!!!", status: false, email: email }
             }
 
-            // SENDING EMAIL
-            await Mail(email, mailSubject, mailData, 'user-email-verification', TENANTID);
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'Updating User Email Verify Status...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `resendVerificationEmail`
+                });
 
-
-
-
-            // Return The Response
-            return {
-                email: email,
-                message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!",
-                status: true
-            }
-        } else {
-            return { // If Not updated
-                email: email,
-                message: "Failed To Send New Code",
-                status: false
-            }
-        }
-
-    },
-    // Forgot Password Initiation Helper (STEP 1)
-    forgotPassInit: async (req, db, TENANTID) => {
-
-        // GET EMAIL FROM REQUEST
-        const email = req.email;
-
-        // Check User is Exists
-        const checkUser = await db.user.findOne({
-            where: {
-                [Op.and]: [{
-                    email,
-                    tenant_id: TENANTID
-                }]
-            }
-        });
-
-        // IF USer Exists
-        if (checkUser) {
-            // GENERATE FORGOT PASS VERIFY CODE
-            const forgotPasswordCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
 
             // Updating Doc
             const updateDoc = {
-                verification_code: forgotPasswordCode,
-                forgot_password_code: forgotPasswordCode
+                verification_code: newVerificationCode,
             }
             // Update User
             const updateUser = await db.user.update(updateDoc, {
@@ -423,16 +609,22 @@ module.exports = {
                 }
             });
 
-            // IF USER UPDATED
+            // If Updated then return values
             if (updateUser) {
 
-                // IF SEND EMAIL IS TRUE
-                let codeHashed = crypt(email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
-                // SET PASSWORD URL
-                const setPasswordURL = config.get("ECOM_URL").concat(config.get("RESET_PASSWORD"));
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Updated User Email Verify Status...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `resendVerificationEmail`
+                    });
 
                 // Setting Up Data for EMAIL SENDER
-                const mailSubject = "Reset Password Verification Code From Primer Server Parts"
+                const mailSubject = "Email Verification Code From Primer Server Parts"
                 const mailData = {
                     companyInfo: {
                         logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
@@ -445,38 +637,246 @@ module.exports = {
                         li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
                         insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
                     },
-                    about: 'Reset Password From Prime Server Parts',
+                    about: 'Verify Your Email on Prime Server Parts',
                     email: email,
-                    forgotPasswordCode: forgotPasswordCode,
-                    resetPasswordLink: setPasswordURL.concat(codeHashed),
-                    message: `This Code Will Be Valid Till 20 Minutes From You Got The Email. If you do not recognize this action please contact our support team.`
+                    verificationCode: newVerificationCode,
+                    message: `This Code Will Be Valid Till 20 Minutes From You Got The Email.`
                 }
 
                 // SENDING EMAIL
-                await Mail(email, mailSubject, mailData, 'password-reset-initiation', TENANTID);
+                await Mail(email, mailSubject, mailData, 'user-email-verification', TENANTID);
 
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User Email Verify Confirmation Email Sent...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `resendVerificationEmail`
+                    });
 
+                //
+                await resendVerifyEmailTransaction.commit();
                 // Return The Response
                 return {
-                    message: "A Reset Password Verification Code is Sent to Your Email!!!",
                     email: email,
+                    message: "A New 6 Digit Verification Code Has Been Sent to Your Email!!",
                     status: true
                 }
+            } else {
+                return { // If Not updated
+                    email: email,
+                    message: "Failed To Send New Code",
+                    status: false
+                }
+            }
 
-            } else { // ELSE USER COULDN"T UPDATE
+
+        } catch (error) {
+            await resendVerifyEmailTransaction.rollback();
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${req.email}`,
+                    service: `userHelper.js`,
+                    module: `verifyEmail`
+                });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
+        }
+    },
+    // Forgot Password Initiation Helper (STEP 1)
+    forgotPassInit: async (req, db, TENANTID) => {
+        const forgotPassInitTransaction = await db.sequelize.transaction();
+        try {
+            // GET EMAIL FROM REQUEST
+            const email = req.email;
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'Forgot Password Data Received In Helper...',
+                    user_data: `${email}`,
+                    service: `userHelper.js`,
+                    module: `forgotPassInit`
+                });
+
+            // Check User is Exists
+            const checkUser = await db.user.findOne({
+                where: {
+                    [Op.and]: [{
+                        email,
+                        tenant_id: TENANTID
+                    }]
+                }
+            });
+
+            // IF USer Exists
+            if (checkUser) {
+
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User found iniating forgot password actions...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `forgotPassInit`
+                    });
+
+                // GENERATE FORGOT PASS VERIFY CODE
+                const forgotPasswordCode = Math.floor(100000 + Math.random() * 900000); // CODE GENERATOR
+
+                // Updating Doc
+                const updateDoc = {
+                    verification_code: forgotPasswordCode,
+                    forgot_password_code: forgotPasswordCode
+                }
+
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Updating verification codes...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `forgotPassInit`
+                    });
+
+                // Update User
+                const updateUser = await db.user.update(updateDoc, {
+                    where: {
+                        [Op.and]: [{
+                            email,
+                            tenant_id: TENANTID
+                        }]
+                    }
+                });
+
+                // IF USER UPDATED
+                if (updateUser) {
+
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Updated verification codes...',
+                            user_data: `${email}`,
+                            service: `userHelper.js`,
+                            module: `forgotPassInit`
+                        });
+
+                    // IF SEND EMAIL IS TRUE
+                    let codeHashed = crypt(email); // TODO ->> SEND THIS ON SET PASSWORD PARAMS
+                    // SET PASSWORD URL
+                    const setPasswordURL = config.get("ECOM_URL").concat(config.get("RESET_PASSWORD"));
+
+                    // Setting Up Data for EMAIL SENDER
+                    const mailSubject = "Reset Password Verification Code From Primer Server Parts"
+                    const mailData = {
+                        companyInfo: {
+                            logo: config.get("SERVER_URL").concat("media/email-assets/logo.jpg"),
+                            banner: config.get("SERVER_URL").concat("media/email-assets/banner.jpeg"),
+                            companyName: config.get("COMPANY_NAME"),
+                            companyUrl: config.get("ECOM_URL"),
+                            shopUrl: config.get("ECOM_URL"),
+                            fb: config.get("SERVER_URL").concat("media/email-assets/fb.png"),
+                            tw: config.get("SERVER_URL").concat("media/email-assets/tw.png"),
+                            li: config.get("SERVER_URL").concat("media/email-assets/in.png"),
+                            insta: config.get("SERVER_URL").concat("media/email-assets/inst.png")
+                        },
+                        about: 'Reset Password From Prime Server Parts',
+                        email: email,
+                        forgotPasswordCode: forgotPasswordCode,
+                        resetPasswordLink: setPasswordURL.concat(codeHashed),
+                        message: `This Code Will Be Valid Till 20 Minutes From You Got The Email. If you do not recognize this action please contact our support team.`
+                    }
+
+                    // SENDING EMAIL
+                    await Mail(email, mailSubject, mailData, 'password-reset-initiation', TENANTID);
+
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Send email to user with verification codes...',
+                            user_data: `${email}`,
+                            service: `userHelper.js`,
+                            module: `forgotPassInit`
+                        });
+
+                    //
+                    await forgotPassInitTransaction.commit();
+                    // Return The Response
+                    return {
+                        message: "A Reset Password Verification Code is Sent to Your Email!!!",
+                        email: email,
+                        status: true
+                    }
+
+                } else { // ELSE USER COULDN"T UPDATE
+
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Verification codes updated failed...',
+                            user_data: `${email}`,
+                            service: `userHelper.js`,
+                            module: `forgotPassInit`
+                        });
+
+
+                    return {
+                        message: "Something Went Wrong Try Again!!!",
+                        email: email,
+                        status: false
+                    }
+                }
+
+            } else { // IF USER NOT FOUND
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Verification codes updated failed...',
+                        user_data: `${email}`,
+                        service: `userHelper.js`,
+                        module: `forgotPassInit`
+                    });
                 return {
-                    message: "Something Went Wrong Try Again!!!",
+                    message: "User Not Found, Please Enter Your Account Email!!!",
                     email: email,
                     status: false
                 }
             }
 
-        } else { // IF USER NOT FOUND
-            return {
-                message: "User Not Found, Please Enter Your Account Email!!!",
-                email: email,
-                status: false
-            }
+        } catch (error) {
+            await forgotPassInitTransaction.rollback();
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${req.email}`,
+                    service: `userHelper.js`,
+                    module: `forgotPassInit`
+                });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
+
         }
 
     },
@@ -649,10 +1049,22 @@ module.exports = {
     },
     // User Profile Update
     userProfileUpdate: async (req, db, user, TENANTID) => {
+        const profileUpdateTransaction = await db.sequelize.transaction();
         // Try Catch Block
         try {
             // Data From Request 
             const { first_name, last_name, oldPassword, newPassword, image, phone, fax } = req;
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'Forgot Password Data Received In Helper...',
+                    user_data: `${user.email}`,
+                    service: `userHelper.js`,
+                    module: `userProfileUpdate`
+                });
 
             // FIND User FIRST
             const findUser = await db.user.findOne({
@@ -663,12 +1075,22 @@ module.exports = {
                     }]
                 }
             });
-            if (!findUser) return { message: "User Not Found!!!", status: false }
-
+            if (!findUser) { return { message: "User Not Found!!!", status: false } }
 
 
             // IF Image Also Updated
             if (image && findUser.image) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'User updating image, deleting previous profile image from S3...',
+                        user_data: `${user.email}`,
+                        service: `userHelper.js`,
+                        module: `userProfileUpdate`
+                    });
+
                 // Delete Previous S3 Image For this User
                 const user_image_src = config.get("AWS.USER_IMG_DEST").split("/");
                 const user_image_bucketName = user_image_src[0];
@@ -678,6 +1100,16 @@ module.exports = {
 
             // Upload New Image to S3
             if (image) {
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Deleted previous profile image, upload initating new one to S3...',
+                        user_data: `${user.email}`,
+                        service: `userHelper.js`,
+                        module: `userProfileUpdate`
+                    });
                 // Upload Image to AWS S3
                 const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
                 const user_image_bucketName = user_image_src[0];
@@ -692,6 +1124,17 @@ module.exports = {
                 const userImageUpdate = {
                     image: imageName
                 }
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Uploaded new image to S3...',
+                        user_data: `${user.email}`,
+                        service: `userHelper.js`,
+                        module: `userProfileUpdate`
+                    });
+
                 // Update Brand Image
                 const updateUser = await db.user.update(userImageUpdate, {
                     where: {
@@ -707,13 +1150,37 @@ module.exports = {
 
             if (oldPassword && newPassword) {
 
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Old Password and New Password Received...',
+                        user_data: `${user.email}`,
+                        service: `userHelper.js`,
+                        module: `userProfileUpdate`
+                    });
+
                 // GET OLD PASSWORD FROM DB
                 const { password } = findUser;
 
                 // Check Old Password Is Matching or Not
                 const isMatched = await bcrypt.compare(oldPassword, password);
                 // IF NOT MATCHED
-                if (!isMatched) return { message: "Incorrect Old Password!!!", status: false };
+                if (!isMatched) {
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Password not matched, returning from here...',
+                            user_data: `${user.email}`,
+                            service: `userHelper.js`,
+                            module: `userProfileUpdate`
+                        });
+
+                    return { message: "Incorrect Old Password!!!", status: false };
+                }
 
                 // Update Password Doc
                 const updateDoc = {
@@ -725,6 +1192,17 @@ module.exports = {
                     password: await bcrypt.hash(newPassword, 10)
                 }
 
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Profile update initiated...',
+                        user_data: `${user.email}`,
+                        service: `userHelper.js`,
+                        module: `userProfileUpdate`
+                    });
+
                 // Update With New Password
                 const updateUser = await db.user.update(updateDoc, {
                     where: {
@@ -735,8 +1213,18 @@ module.exports = {
                     }
                 });
 
-
                 if (updateUser) {
+
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Profile updated...',
+                            user_data: `${user.email}`,
+                            service: `userHelper.js`,
+                            module: `userProfileUpdate`
+                        });
 
                     // Find User to Get Image Name
                     const findUpdatedUser = await db.user.findOne({
@@ -769,8 +1257,19 @@ module.exports = {
                     // SENDING EMAIL
                     await Mail(findUpdatedUser.email, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
 
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Profile update confirmation email sent to user...',
+                            user_data: `${user.email}`,
+                            service: `userHelper.js`,
+                            module: `userProfileUpdate`
+                        });
 
-
+                    //
+                    await profileUpdateTransaction.commit();
                     // Return Formation
                     return {
                         message: "User Profile Updated Successfully!!!",
@@ -790,6 +1289,17 @@ module.exports = {
                     updated_by: user.id
                 }
 
+                // Logger
+                logger.info(
+                    error.message,
+                    {
+                        error: error,
+                        apiaction: 'Profile update initiated...',
+                        user_data: `${user.email}`,
+                        service: `userHelper.js`,
+                        module: `userProfileUpdate`
+                    });
+
                 // Update User Table 
                 const updateUser = await db.user.update(updateUserDoc, {
                     where: {
@@ -801,6 +1311,18 @@ module.exports = {
                 });
 
                 if (updateUser) { // IF USER UPDATED
+
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Profile updated...',
+                            user_data: `${user.email}`,
+                            service: `userHelper.js`,
+                            module: `userProfileUpdate`
+                        });
+
 
                     // Find User to Get Image Name
                     const findUpdatedUser = await db.user.findOne({
@@ -834,6 +1356,19 @@ module.exports = {
                     // SENDING EMAIL
                     await Mail(findUpdatedUser.email, mailSubject, mailData, 'profile-update-confirmation', TENANTID);
 
+                    // Logger
+                    logger.info(
+                        error.message,
+                        {
+                            error: error,
+                            apiaction: 'Profile update confirmation email sent to user...',
+                            user_data: `${user.email}`,
+                            service: `userHelper.js`,
+                            module: `userProfileUpdate`
+                        });
+
+                    //
+                    await profileUpdateTransaction.commit();
                     // Return Formation
                     return {
                         message: "User Profile Updated Successfully!!!",
@@ -841,16 +1376,25 @@ module.exports = {
                         tenant_id: TENANTID
 
                     }
-
-
                 }
 
             }
 
-
-
         } catch (error) {
-            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
+            //
+            await profileUpdateTransaction.rollback();
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${user.email}`,
+                    service: `userHelper.js`,
+                    module: `userProfileUpdate`
+                });
+
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
     }
 }

@@ -2871,3 +2871,71 @@ Error: ReferenceError: dsd is not defined
     at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
     at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
     at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-09 21:01:25 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-09 21:08:44 +0600 [info] User Sign In Data Received In Mutation:"User Sign In Data Received In Mutation" shahriar.me.work@gmail.com:"shahriar.me.work@gmail.com" user.js:"user.js" userSignIn:"userSignIn" 26:26
+Error: No Error
+2023-02-09 21:14:54 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn" 26
+Error: No Error
+2023-02-09 22:42:56 +0600 [info] "Error Occurd" "shahriar.me.work@gmail.com" "user.js" "userSignIn"
+Error: ReferenceError: error is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:53:17)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-09 22:43:01 +0600 [info] "Error Occurd" "shahriar.me.work@gmail.com" "user.js" "userSignIn"
+Error: ReferenceError: error is not defined
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:53:17)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+    at processGraphQLRequest (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:148:34)
+2023-02-09 23:50:23 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn"
+Error: No Error
+2023-02-09 23:50:23 +0600 [info] "Error Occurd" "shahriar.me.work@gmail.com" "userSignInController.js" "userSignInController"
+Error: ReferenceError: hjg is not defined
+    at module.exports (D:\Prime Server Parts\PrimerServerPartsBackend\src\controllers\users\userSignInController.js:11:21)
+    at Object.userSignIn (D:\Prime Server Parts\PrimerServerPartsBackend\src\operation\mutation\user.js:68:26)
+    at field.resolve (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\utils\schemaInstrumentation.js:56:26)
+    at executeField (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:481:20)
+    at D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:377:22
+    at promiseReduce (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\jsutils\promiseReduce.js:23:9)
+    at executeFieldsSerially (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:373:43)
+    at executeOperation (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:347:14)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\graphql\execution\execute.js:136:20)
+    at execute (D:\Prime Server Parts\PrimerServerPartsBackend\node_modules\apollo-server-core\dist\requestPipeline.js:205:48)
+2023-02-10 02:45:21 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn"
+Error: No Error
+2023-02-10 02:45:21 +0600 [info] "User Sign In Controller Initating..." "shahriar.me.work@gmail.com" "userSignInController.js" "userSignInController"
+Error: No Error
+2023-02-10 02:45:22 +0600 [info] "User Data Received In Helper..." "shahriar.me.work@gmail.com" "userHelper.js" "userSignIn"
+Error: No Error
+2023-02-10 02:45:23 +0600 [info] "User Status is False..." "shahriar.me.work@gmail.com" "userHelper.js" "userSignIn"
+Error: No Error
+2023-02-10 02:49:29 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn"
+Error: No Error
+2023-02-10 02:49:29 +0600 [info] "User Sign In Controller Initating..." "shahriar.me.work@gmail.com" "userSignInController.js" "userSignInController"
+Error: No Error
+2023-02-10 02:49:29 +0600 [info] "User Data Received In Helper..." "shahriar.me.work@gmail.com" "userHelper.js" "userSignIn"
+Error: No Error
+2023-02-10 02:49:30 +0600 [info] "User found returning with all data..." "shahriar.me.work@gmail.com" "userHelper.js" "userSignIn"
+Error: No Error
+2023-02-10 02:50:42 +0600 [info] "User Sign In Data Received In Mutation" "shahriar.me.work@gmail.com" "user.js" "userSignIn"
+Error: No Error
+2023-02-10 02:50:42 +0600 [info] "User Sign In Controller Initating..." "shahriar.me.work@gmail.com" "userSignInController.js" "userSignInController"
+Error: No Error
+2023-02-10 02:50:42 +0600 [info] "User Data Received In Helper..." "shahriar.me.work@gmail.com" "userHelper.js" "userSignIn"
+Error: No Error
+2023-02-10 02:50:44 +0600 [info] "User found, returning with all data..." "shahriar.me.work@gmail.com" "userHelper.js" "userSignIn"
+Error: No Error

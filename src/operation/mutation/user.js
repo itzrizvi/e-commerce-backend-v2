@@ -19,7 +19,15 @@ module.exports = {
     userSignUp: async (root, args, { db, TENANTID }, info) => {
         try {
             // Logger
-            logger.info(error.message, { error: error, apiaction: 'User Sign Up Data Received In Mutation', user_data: `${args.data.email}`, service: `user.js`, line: 22, module: `userSignUp` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: 'User Sign Up Data Received In Mutation',
+                    user_data: `${args.data.email}`,
+                    service: `user.js`,
+                    module: `userSignUp`
+                });
 
             // Return If Not Have TENANT ID
             if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
@@ -27,14 +35,30 @@ module.exports = {
 
         } catch (error) {
             // Logger
-            logger.info(error.message, { error: error, apiaction: "Error Occurd", user_data: `${email}`, service: `user.js`, line: 26, module: `userSignIn` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${args.data.email}`,
+                    service: `user.js`,
+                    module: `userSignIn`
+                });
         }
     },
     // SIGN IN MUTATION
     userSignIn: async (root, { email, password }, { db, TENANTID }, info) => {
         try {
             // Logger
-            logger.info(error.message, { error: error, apiaction: `User Sign In Data Received In Mutation`, user_data: `${email}`, service: `user.js`, line: 26, module: `userSignIn` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: `User Sign In Data Received In Mutation`,
+                    user_data: `${email}`,
+                    service: `user.js`,
+                    module: `userSignIn`
+                });
             // Return If Not Have TENANT ID
             if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
             const data = {
@@ -45,7 +69,17 @@ module.exports = {
 
         } catch (error) {
             // Logger
-            logger.info(error.message, { error: error, apiaction: "Error Occurd", user_data: `${email}`, service: `user.js`, line: 26, module: `userSignIn` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${email}`,
+                    service: `user.js`,
+                    module: `userSignIn`
+                });
+
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
 
     },
@@ -53,7 +87,15 @@ module.exports = {
     verifyEmail: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         try {
             // Logger
-            logger.info(error.message, { error: error, apiaction: `Verify Email Data Received In Mutation`, user_data: `${args.data.email}`, service: `user.js`, line: 56, module: `verifyEmail` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: `Verify Email Data Received In Mutation`,
+                    user_data: `${args.data.email}`,
+                    service: `user.js`,
+                    module: `verifyEmail`
+                });
 
             // Return If Not Have TENANT ID
             if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
@@ -61,14 +103,31 @@ module.exports = {
             return await emailVerifyController(args.data, db, TENANTID);
         } catch (error) {
             // Logger
-            logger.info(error.message, { error: error, apiaction: "Error Occurd", user_data: `${args.data.email}`, service: `user.js`, line: 64, module: `verifyEmail` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${args.data.email}`,
+                    service: `user.js`,
+                    module: `verifyEmail`
+                });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
     },
     // Resend Verification Email MUTATION
     resendVerificationEmail: async (root, args, { db, user, isAuth, TENANTID }, info) => {
         try {
             // Logger
-            logger.info(error.message, { error: error, apiaction: `Resend Verify Email Data Received In Mutation`, user_data: `${args.data.email}`, service: `user.js`, line: 56, module: `resendVerificationEmail` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: `Resend Verify Email Data Received In Mutation`,
+                    user_data: `${args.data.email}`,
+                    service: `user.js`,
+                    module: `resendVerificationEmail`
+                });
 
             // Return If Not Have TENANT ID
             if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
@@ -76,7 +135,16 @@ module.exports = {
             return await resendVerificationEmailController(args.data, db, TENANTID);
         } catch (error) {
             // Logger
-            logger.info(error.message, { error: error, apiaction: "Error Occurd", user_data: `${args.data.email}`, service: `user.js`, line: 79, module: `resendVerificationEmail` });
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: "Error Occurd",
+                    user_data: `${args.data.email}`,
+                    service: `user.js`,
+                    module: `resendVerificationEmail`
+                });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
     },
     // Forgot Password Initiation (FP STEP 1)
@@ -90,7 +158,6 @@ module.exports = {
                     apiaction: `Forgot Password Data Received In Mutation`,
                     user_data: `${args.data.email}`,
                     service: `user.js`,
-                    line: 93,
                     module: `forgotPassInit`
                 });
 
@@ -107,9 +174,10 @@ module.exports = {
                     apiaction: "Error Occurd",
                     user_data: `${args.data.email}`,
                     service: `user.js`,
-                    line: 110,
                     module: `forgotPassInit`
                 });
+
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
     },
     // Forgot Password Code Match Mutation (FP STEP 2)
@@ -144,7 +212,6 @@ module.exports = {
                     apiaction: `Update Profile Data Received In Mutation`,
                     user_data: `${user.email}`,
                     service: `user.js`,
-                    line: 147,
                     module: `userProfileUpdate`
                 });
             // Return If Not Have TENANT ID
@@ -163,9 +230,9 @@ module.exports = {
                     apiaction: "Error Occurd",
                     user_data: `${user.email}`,
                     service: `user.js`,
-                    line: 166,
                     module: `userProfileUpdate`
                 });
+            if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
         }
     },
 }

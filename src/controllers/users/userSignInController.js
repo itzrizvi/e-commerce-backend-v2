@@ -1,3 +1,5 @@
+const { error } = require("winston");
+const logger = require("../../../logger");
 const { userSignIn } = require("../../helpers/userHelper");
 const { singleResponse } = require("../../utils/response");
 
@@ -5,7 +7,35 @@ const { singleResponse } = require("../../utils/response");
 // Controller
 module.exports = async (req, db, TENANTID) => {
 
-    const data = await userSignIn(req, db, TENANTID)
+    try {
+        // Logger
+        logger.info(
+            error.message,
+            {
+                error: error,
+                apiaction: 'User Sign In Controller Initating...',
+                user_data: `${req.email}`,
+                service: `userSignInController.js`,
+                module: `userSignInController`
+            });
 
-    return singleResponse(data);
+        const data = await userSignIn(req, db, TENANTID);
+        return singleResponse(data);
+
+    } catch (error) {
+        // Logger
+        logger.info(
+            error.message,
+            {
+                error: error,
+                apiaction: "Error Occurd",
+                user_data: `${req.email}`,
+                service: `userSignInController.js`,
+                module: `userSignInController`
+            });
+
+        if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
+    }
+
+
 }

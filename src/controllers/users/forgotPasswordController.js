@@ -1,15 +1,50 @@
 // All Requires
+const { error } = require("winston");
+const logger = require("../../../logger");
 const { forgotPassInit, forgotPassCodeMatch, forgotPassFinal } = require("../../helpers/userHelper");
 const { singleResponse } = require("../../utils/response");
 
 
 // FORGOT PASSWORD INITIATION (STEP 1)
 const forgotPasswordInitController = async (req, db, TENANTID) => {
-    // Forgot Password Init With Helper
-    const data = await forgotPassInit(req, db, TENANTID);
 
-    // Final Response
-    return singleResponse(data);
+    try {
+
+        // Logger
+        logger.info(
+            error.message,
+            {
+                error: error,
+                apiaction: 'Forgot Password Controller Initating...',
+                user_data: `${req.email}`,
+                service: `forgotPasswordController.js`,
+                module: `forgotPasswordInitController`
+            });
+
+        // Forgot Password Init With Helper
+        const data = await forgotPassInit(req, db, TENANTID);
+
+        // Final Response
+        return singleResponse(data);
+
+    } catch (error) {
+
+        // Logger
+        logger.info(
+            error.message,
+            {
+                error: error,
+                apiaction: "Error Occurd",
+                user_data: `${req.email}`,
+                service: `forgotPasswordController.js`,
+                module: `forgotPasswordInitController`
+            });
+
+        if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
+
+    }
+
+
 }
 
 

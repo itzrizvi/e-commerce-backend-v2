@@ -1,4 +1,6 @@
 // ALL REQUIRES
+const { error } = require("winston");
+const logger = require("../../../logger");
 const { userProfileUpdate } = require("../../helpers/userHelper");
 const { singleResponse } = require("../../utils/response");
 

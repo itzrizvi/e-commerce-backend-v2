@@ -1,5 +1,6 @@
 // All Requires For Email Verification
 const { error } = require("winston");
+const logger = require("../../../logger");
 const { verifyEmail } = require("../../helpers/userHelper");
 const { singleResponse } = require("../../utils/response");
 

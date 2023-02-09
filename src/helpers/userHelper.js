@@ -116,7 +116,7 @@ module.exports = {
             });
             if (!user) {
                 return {
-                    message: "Invalid Email or Password!!!",
+                    message: "User Not Found!!!",
                     status: false
                 };
             }
@@ -126,7 +126,8 @@ module.exports = {
             if (!isValid) {
                 return {
                     message: "Invalid Email or Password!!!",
-                    status: false
+                    status: false,
+                    emailVerified: user.email_verified
                 };
             }
 
@@ -145,7 +146,8 @@ module.exports = {
             if (!isActive) {
                 return {
                     message: "User Has Been Deactivated, Please Contact To Support",
-                    status: false
+                    status: false,
+                    emailVerified: user.email_verified
                 }
             }
 
@@ -173,6 +175,7 @@ module.exports = {
                 message: "Sign In succesfull",
                 status: true,
                 tenant_id: TENANTID,
+                emailVerified: user.email_verified,
                 data: {
                     authToken,
                     id: user.id,
@@ -408,8 +411,7 @@ module.exports = {
             // Updating Doc
             const updateDoc = {
                 verification_code: forgotPasswordCode,
-                forgot_password_code: forgotPasswordCode,
-                password: await bcrypt.hash(process.env.secretKey, 10)
+                forgot_password_code: forgotPasswordCode
             }
             // Update User
             const updateUser = await db.user.update(updateDoc, {

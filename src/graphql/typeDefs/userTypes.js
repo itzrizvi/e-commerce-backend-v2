@@ -61,6 +61,7 @@ type UserAuthOutput {
     message:String
     tenant_id:String
     status:Boolean
+    emailVerified:Boolean
     data:AuthPayload
 }
 

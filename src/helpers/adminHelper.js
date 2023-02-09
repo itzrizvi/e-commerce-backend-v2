@@ -30,7 +30,7 @@ module.exports = {
             if (!user) {
                 logger.warning("User Not Found - Line:30", { service: 'adminSignIn.js' });
                 return {
-                    message: "USER NOT FOUND",
+                    message: "User Not Found!!!",
                     status: false,
                 };
             }
@@ -40,7 +40,7 @@ module.exports = {
             if (!isValid) {
                 logger.warning("User Not Found - Line:40", { service: 'adminSignIn.js' });
                 return {
-                    message: "USER NOT FOUND",
+                    message: "Invalid Email or Password!!!",
                     status: false,
                 };
             }
@@ -51,7 +51,7 @@ module.exports = {
             if (has_role === '0') {
                 logger.warning("User Not Found - Line:51", { service: 'adminSignIn.js' });
                 return {
-                    message: "USER NOT FOUND",
+                    message: "Your Are Not Authorized!!!",
                     status: false,
                 }
             };
@@ -61,7 +61,7 @@ module.exports = {
             if (!isActive) {
                 logger.warning("Staff Is Disabled - Line:61", { service: 'adminSignIn.js' });
                 return {
-                    message: "STAFF IS DISABLED",
+                    message: "Your Are Not Authorized!!!",
                     status: false
                 }
             }

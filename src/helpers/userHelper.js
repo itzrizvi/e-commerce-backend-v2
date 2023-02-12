@@ -1111,7 +1111,7 @@ module.exports = {
                         module: `userProfileUpdate`
                     });
 
-                let rawFileName = await getFileName(image, true);
+                let rawFileName = await getFileName(image, false);
                 const fileName = `${findUser.id}-${rawFileName}`;
                 // Upload Image to AWS S3
                 const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");

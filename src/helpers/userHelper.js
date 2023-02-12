@@ -1274,8 +1274,8 @@ module.exports = {
                     return {
                         message: "User Profile Updated Successfully!!!",
                         status: true,
-                        tenant_id: TENANTID
-
+                        tenant_id: TENANTID,
+                        data: findUpdatedUser
                     }
                 }
             } else {
@@ -1373,8 +1373,8 @@ module.exports = {
                     return {
                         message: "User Profile Updated Successfully!!!",
                         status: true,
-                        tenant_id: TENANTID
-
+                        tenant_id: TENANTID,
+                        data: findUpdatedUser
                     }
                 }
 

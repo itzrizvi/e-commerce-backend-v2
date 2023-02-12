@@ -57,6 +57,13 @@ input UserProfileUpdateInput {
     image:Upload
 }
 
+type UserProfileUpdateOutput{
+    message:String
+    status:Boolean
+    tenant_id:String
+    data: User
+}
+
 type UserAuthOutput {
     message:String
     tenant_id:String
@@ -71,7 +78,7 @@ type UserAuthOutput {
 extend type Mutation {
     userSignUp(data: UserInput): UserAuthOutput!
     userSignIn(email: String!, password: String!): UserAuthOutput!
-    userProfileUpdate(data:UserProfileUpdateInput): CommonOutput!
+    userProfileUpdate(data:UserProfileUpdateInput): UserProfileUpdateOutput!
 }
 
 

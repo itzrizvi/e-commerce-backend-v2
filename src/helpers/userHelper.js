@@ -1121,11 +1121,11 @@ module.exports = {
                 if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Brand with New Image Name
-                // const imageName = imageUrl.Key.split('/').slice(-1)[0];
+                const imageName = imageUrl.Key.split('/').slice(-1)[0];
 
                 // Find and Update Brand Image Name By UUID
                 const userImageUpdate = {
-                    image: fileName
+                    image: imageName
                 }
                 // Logger
                 logger.info(

@@ -1110,19 +1110,21 @@ module.exports = {
                         service: `userHelper.js`,
                         module: `userProfileUpdate`
                     });
+
+                const fileName = `${findUser.id}-${new Date().getTime()}`;
                 // Upload Image to AWS S3
                 const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
                 const user_image_bucketName = user_image_src[0];
                 const user_image_folder = user_image_src.slice(1);
-                const imageUrl = await singleFileUpload({ file: image, idf: findUser.id, folder: user_image_folder, fileName: findUser.id, bucketName: user_image_bucketName });
+                const imageUrl = await singleFileUpload({ file: image, idf: findUser.id, folder: user_image_folder, fileName: fileName, bucketName: user_image_bucketName });
                 if (!imageUrl) return { message: "New Image Couldnt Uploaded Properly!!!", status: false };
 
                 // Update Brand with New Image Name
-                const imageName = imageUrl.Key.split('/').slice(-1)[0];
+                // const imageName = imageUrl.Key.split('/').slice(-1)[0];
 
                 // Find and Update Brand Image Name By UUID
                 const userImageUpdate = {
-                    image: imageName
+                    image: fileName
                 }
                 // Logger
                 logger.info(

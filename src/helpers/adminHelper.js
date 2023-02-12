@@ -7,6 +7,7 @@ const { verifierEmail } = require('../utils/verifyEmailSender');
 const config = require('config');
 const logger = require('../../logger');
 const { Mail } = require('../utils/email');
+const { error } = require('winston');
 
 
 // HELPER
@@ -16,6 +17,17 @@ module.exports = {
 
         try {
             const { email, password } = req;
+
+            // Logger
+            logger.info(
+                error.message,
+                {
+                    error: error,
+                    apiaction: `Admin User Sign In Data Received In Helper...`,
+                    user_data: `${email}`,
+                    service: `adminSignInHelper.js`,
+                    module: `adminSignIn`
+                });
 
             // Check User
             const user = await db.user.findOne({

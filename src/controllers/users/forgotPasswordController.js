@@ -1,4 +1,5 @@
 // All Requires
+const path = require("path");
 const { error } = require("winston");
 const logger = require("../../../logger");
 const { forgotPassInit, forgotPassCodeMatch, forgotPassFinal } = require("../../helpers/userHelper");
@@ -17,7 +18,7 @@ const forgotPasswordInitController = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: 'Forgot Password Controller Initating...',
                 user_data: `${req.email}`,
-                service: `forgotPasswordController.js`,
+                service: path.basename(__filename),
                 module: `forgotPasswordInitController`
             });
 
@@ -36,7 +37,7 @@ const forgotPasswordInitController = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: "Error Occurd",
                 user_data: `${req.email}`,
-                service: `forgotPasswordController.js`,
+                service: path.basename(__filename),
                 module: `forgotPasswordInitController`
             });
 

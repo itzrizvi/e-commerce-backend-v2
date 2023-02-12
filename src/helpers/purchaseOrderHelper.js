@@ -2422,7 +2422,10 @@ module.exports = {
                         po_id,
                         tenant_id: TENANTID
                     }]
-                }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ]
             });
 
             // Return Formation

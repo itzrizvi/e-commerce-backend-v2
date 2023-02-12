@@ -9,6 +9,7 @@ const { Mail } = require('../utils/email');
 const { crypt, decrypt } = require('../utils/hashes');
 const logger = require('../../logger');
 const { error } = require('winston');
+const path = require('path');
 
 
 module.exports = {
@@ -27,7 +28,7 @@ module.exports = {
                     error: error,
                     apiaction: 'User Data Received In Helper...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignUp`
                 });
 
@@ -58,7 +59,7 @@ module.exports = {
                     error: error,
                     apiaction: 'User Inserted to Database...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignUp`
                 });
 
@@ -92,7 +93,7 @@ module.exports = {
                     error: error,
                     apiaction: 'New User Verification Email Sent...',
                     user_data: `${user.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignUp`
                 });
 
@@ -140,7 +141,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${req.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignUp`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false }
@@ -160,7 +161,7 @@ module.exports = {
                     error: error,
                     apiaction: 'User Data Received In Helper...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignIn`
                 });
 
@@ -181,7 +182,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User Not Found...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userSignIn`
                     });
 
@@ -201,7 +202,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User Gave Wrong Password...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userSignIn`
                     });
 
@@ -222,7 +223,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User Email is Not Verified...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userSignIn`
                     });
 
@@ -243,7 +244,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User Status is False...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userSignIn`
                     });
                 return {
@@ -279,7 +280,7 @@ module.exports = {
                     error: error,
                     apiaction: 'User found, returning with all data...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignIn`
                 });
 
@@ -316,7 +317,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${req.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userSignIn`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -336,7 +337,7 @@ module.exports = {
                     error: error,
                     apiaction: 'Email Verify Data Received In Helper...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `verifyEmail`
                 });
 
@@ -359,7 +360,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Requested Email Data Not Found...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `verifyEmail`
                     });
                 return { emailVerified: false, message: "User Not Found!!!", email: email, status: false };
@@ -384,7 +385,7 @@ module.exports = {
                     error: error,
                     apiaction: 'Calculating Time Difference...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `verifyEmail`
                 });
 
@@ -403,7 +404,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Updating Email Verify Status...',
                             user_data: `${email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `verifyEmail`
                         });
                     // Update User
@@ -426,7 +427,7 @@ module.exports = {
                                 error: error,
                                 apiaction: 'Updated Email Verify Status...',
                                 user_data: `${email}`,
-                                service: `userHelper.js`,
+                                service: path.basename(__filename),
                                 module: `verifyEmail`
                             });
 
@@ -459,7 +460,7 @@ module.exports = {
                                 error: error,
                                 apiaction: 'Email Verify Confirmation Email Sent to User...',
                                 user_data: `${email}`,
-                                service: `userHelper.js`,
+                                service: path.basename(__filename),
                                 module: `verifyEmail`
                             });
 
@@ -488,7 +489,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Given codes not matched...',
                             user_data: `${email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `verifyEmail`
                         });
                     return { // If nOt Matched
@@ -507,7 +508,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Given codes expired...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `verifyEmail`
                     });
 
@@ -528,7 +529,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${req.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `verifyEmail`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -551,7 +552,7 @@ module.exports = {
                     error: error,
                     apiaction: 'Resend Email Verify Data Received In Helper...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `resendVerificationEmail`
                 });
 
@@ -576,7 +577,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Requested Email Not Found...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `resendVerificationEmail`
                     });
 
@@ -590,7 +591,7 @@ module.exports = {
                     error: error,
                     apiaction: 'Updating User Email Verify Status...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `resendVerificationEmail`
                 });
 
@@ -619,7 +620,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Updated User Email Verify Status...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `resendVerificationEmail`
                     });
 
@@ -653,7 +654,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User Email Verify Confirmation Email Sent...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `resendVerificationEmail`
                     });
 
@@ -683,7 +684,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${req.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `verifyEmail`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -703,7 +704,7 @@ module.exports = {
                     error: error,
                     apiaction: 'Forgot Password Data Received In Helper...',
                     user_data: `${email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `forgotPassInit`
                 });
 
@@ -727,7 +728,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User found iniating forgot password actions...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `forgotPassInit`
                     });
 
@@ -747,7 +748,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Updating verification codes...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `forgotPassInit`
                     });
 
@@ -771,7 +772,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Updated verification codes...',
                             user_data: `${email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `forgotPassInit`
                         });
 
@@ -811,7 +812,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Send email to user with verification codes...',
                             user_data: `${email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `forgotPassInit`
                         });
 
@@ -833,7 +834,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Verification codes updated failed...',
                             user_data: `${email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `forgotPassInit`
                         });
 
@@ -853,7 +854,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Verification codes updated failed...',
                         user_data: `${email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `forgotPassInit`
                     });
                 return {
@@ -872,7 +873,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${req.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `forgotPassInit`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -1062,7 +1063,7 @@ module.exports = {
                     error: error,
                     apiaction: 'Forgot Password Data Received In Helper...',
                     user_data: `${user.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userProfileUpdate`
                 });
 
@@ -1087,7 +1088,7 @@ module.exports = {
                         error: error,
                         apiaction: 'User updating image, deleting previous profile image from S3...',
                         user_data: `${user.email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userProfileUpdate`
                     });
 
@@ -1107,12 +1108,11 @@ module.exports = {
                         error: error,
                         apiaction: 'Deleted previous profile image, upload initating new one to S3...',
                         user_data: `${user.email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userProfileUpdate`
                     });
 
-                let rawFileName = await getFileName(image, false);
-                const fileName = `${findUser.id}-${rawFileName}`;
+                const fileName = `${findUser.id}-${new Date().getTime()}`;
                 // Upload Image to AWS S3
                 const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
                 const user_image_bucketName = user_image_src[0];
@@ -1134,7 +1134,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Uploaded new image to S3...',
                         user_data: `${user.email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userProfileUpdate`
                     });
 
@@ -1160,7 +1160,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Old Password and New Password Received...',
                         user_data: `${user.email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userProfileUpdate`
                     });
 
@@ -1178,7 +1178,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Password not matched, returning from here...',
                             user_data: `${user.email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `userProfileUpdate`
                         });
 
@@ -1202,7 +1202,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Profile update initiated...',
                         user_data: `${user.email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userProfileUpdate`
                     });
 
@@ -1225,7 +1225,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Profile updated...',
                             user_data: `${user.email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `userProfileUpdate`
                         });
 
@@ -1267,7 +1267,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Profile update confirmation email sent to user...',
                             user_data: `${user.email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `userProfileUpdate`
                         });
 
@@ -1299,7 +1299,7 @@ module.exports = {
                         error: error,
                         apiaction: 'Profile update initiated...',
                         user_data: `${user.email}`,
-                        service: `userHelper.js`,
+                        service: path.basename(__filename),
                         module: `userProfileUpdate`
                     });
 
@@ -1322,7 +1322,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Profile updated...',
                             user_data: `${user.email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `userProfileUpdate`
                         });
 
@@ -1366,7 +1366,7 @@ module.exports = {
                             error: error,
                             apiaction: 'Profile update confirmation email sent to user...',
                             user_data: `${user.email}`,
-                            service: `userHelper.js`,
+                            service: path.basename(__filename),
                             module: `userProfileUpdate`
                         });
 
@@ -1393,7 +1393,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${user.email}`,
-                    service: `userHelper.js`,
+                    service: path.basename(__filename),
                     module: `userProfileUpdate`
                 });
 

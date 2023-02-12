@@ -1,3 +1,4 @@
+const path = require("path");
 const { Op } = require("sequelize");
 const { error } = require("winston");
 const logger = require("../../../logger");
@@ -17,7 +18,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: 'User Sign Up Controller Initating...',
                 user_data: `${req.email}`,
-                service: `userSignUpController.js`,
+                service: path.basename(__filename),
                 module: `userSignUpController`
             });
 
@@ -38,7 +39,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: 'User Email Checked...',
                 user_data: `${req.email}`,
-                service: `userSignUpController.js`,
+                service: path.basename(__filename),
                 module: `userSignUpController`
             });
 
@@ -51,7 +52,7 @@ module.exports = async (req, db, TENANTID) => {
                     error: error,
                     apiaction: 'New User Found...',
                     user_data: `${req.email}`,
-                    service: `userSignUpController.js`,
+                    service: path.basename(__filename),
                     module: `userSignUpController`
                 });
 
@@ -67,7 +68,7 @@ module.exports = async (req, db, TENANTID) => {
                     error: error,
                     apiaction: 'User Already Exists....',
                     user_data: `${req.email}`,
-                    service: `userSignUpController.js`,
+                    service: path.basename(__filename),
                     module: `userSignUpController`
                 });
 
@@ -87,7 +88,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: "Error Occurd",
                 user_data: `${req.email}`,
-                service: `userSignUpController.js`,
+                service: path.basename(__filename),
                 module: `userSignUpController`
             });
 

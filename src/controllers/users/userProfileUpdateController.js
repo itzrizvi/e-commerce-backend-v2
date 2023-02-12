@@ -1,4 +1,5 @@
 // ALL REQUIRES
+const path = require("path");
 const { error } = require("winston");
 const logger = require("../../../logger");
 const { userProfileUpdate } = require("../../helpers/userHelper");
@@ -16,7 +17,7 @@ module.exports = async (req, db, user, TENANTID) => {
                 error: error,
                 apiaction: 'User Profile Update Controller Initating...',
                 user_data: `${req.email}`,
-                service: `userProfileUpdateController.js`,
+                service: path.basename(__filename),
                 module: `userProfileUpdateController`
             });
 
@@ -34,7 +35,7 @@ module.exports = async (req, db, user, TENANTID) => {
                 error: error,
                 apiaction: "Error Occurd",
                 user_data: `${req.email}`,
-                service: `userProfileUpdateController.js`,
+                service: path.basename(__filename),
                 module: `userProfileUpdateController`
             });
 

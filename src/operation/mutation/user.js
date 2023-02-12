@@ -1,4 +1,5 @@
 // All Requires
+const path = require('path');
 const { error } = require('winston');
 const logger = require('../../../logger');
 const { userSignUpController,
@@ -8,6 +9,7 @@ const { userSignUpController,
     validateToken,
     forgotPasswordController,
     userProfileUpdateController } = require('../../controllers');
+const { getFunctionName } = require('../../utils/getFunctionName');
 
 const { forgotPasswordInitController,
     forgotPasswordCodeMatchController,
@@ -25,7 +27,7 @@ module.exports = {
                     error: error,
                     apiaction: 'User Sign Up Data Received In Mutation',
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `userSignUp`
                 });
 
@@ -41,8 +43,8 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
-                    module: `userSignIn`
+                    service: path.basename(__filename),
+                    module: `userSignUp`
                 });
         }
     },
@@ -56,11 +58,12 @@ module.exports = {
                     error: error,
                     apiaction: `User Sign In Data Received In Mutation`,
                     user_data: `${email}`,
-                    service: `user.js`,
-                    module: `userSignIn`
+                    service: path.basename(__filename),
+                    module: 'userSignIn'
                 });
+
             // Return If Not Have TENANT ID
-            if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false }
+            if (!TENANTID || TENANTID == "undefined") return { message: "TENANT ID IS MISSING!!!", status: false };
             const data = {
                 email,
                 password
@@ -75,8 +78,8 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${email}`,
-                    service: `user.js`,
-                    module: `userSignIn`
+                    service: path.basename(__filename),
+                    module: 'userSignIn'
                 });
 
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -93,7 +96,7 @@ module.exports = {
                     error: error,
                     apiaction: `Verify Email Data Received In Mutation`,
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `verifyEmail`
                 });
 
@@ -109,7 +112,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `verifyEmail`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -125,7 +128,7 @@ module.exports = {
                     error: error,
                     apiaction: `Resend Verify Email Data Received In Mutation`,
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `resendVerificationEmail`
                 });
 
@@ -141,7 +144,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `resendVerificationEmail`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };
@@ -157,7 +160,7 @@ module.exports = {
                     error: error,
                     apiaction: `Forgot Password Data Received In Mutation`,
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `forgotPassInit`
                 });
 
@@ -173,7 +176,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${args.data.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `forgotPassInit`
                 });
 
@@ -211,7 +214,7 @@ module.exports = {
                     error: error,
                     apiaction: `Update Profile Data Received In Mutation`,
                     user_data: `${user.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `userProfileUpdate`
                 });
             // Return If Not Have TENANT ID
@@ -229,7 +232,7 @@ module.exports = {
                     error: error,
                     apiaction: "Error Occurd",
                     user_data: `${user.email}`,
-                    service: `user.js`,
+                    service: path.basename(__filename),
                     module: `userProfileUpdate`
                 });
             if (error) return { message: `Something Went Wrong!!! Error: ${error}`, status: false };

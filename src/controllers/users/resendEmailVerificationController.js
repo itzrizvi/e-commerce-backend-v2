@@ -1,4 +1,5 @@
 // All Requires For Email Verification
+const path = require("path");
 const { error } = require("winston");
 const logger = require("../../../logger");
 const { resendVerificationEmail } = require("../../helpers/userHelper");
@@ -16,7 +17,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: 'Resend Email Verification Controller Initating...',
                 user_data: `${req.email}`,
-                service: `resendVerificationEmailController.js`,
+                service: path.basename(__filename),
                 module: `resendVerificationEmailController`
             });
 
@@ -34,7 +35,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: "Error Occurd",
                 user_data: `${req.email}`,
-                service: `resendVerificationEmailController.js`,
+                service: path.basename(__filename),
                 module: `resendVerificationEmailController`
             });
 

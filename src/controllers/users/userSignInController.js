@@ -1,3 +1,4 @@
+const path = require("path");
 const { error } = require("winston");
 const logger = require("../../../logger");
 const { userSignIn } = require("../../helpers/userHelper");
@@ -15,7 +16,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: 'User Sign In Controller Initating...',
                 user_data: `${req.email}`,
-                service: `userSignInController.js`,
+                service: path.basename(__filename),
                 module: `userSignInController`
             });
 
@@ -30,7 +31,7 @@ module.exports = async (req, db, TENANTID) => {
                 error: error,
                 apiaction: "Error Occurd",
                 user_data: `${req.email}`,
-                service: `userSignInController.js`,
+                service: path.basename(__filename),
                 module: `userSignInController`
             });
 

@@ -8,6 +8,7 @@ const config = require('config');
 const logger = require('../../logger');
 const { Mail } = require('../utils/email');
 const { error } = require('winston');
+const path = require('path');
 
 
 // HELPER
@@ -25,7 +26,7 @@ module.exports = {
                     error: error,
                     apiaction: `Admin User Sign In Data Received In Helper...`,
                     user_data: `${email}`,
-                    service: `adminSignInHelper.js`,
+                    service: path.basename(__filename),
                     module: `adminSignIn`
                 });
 

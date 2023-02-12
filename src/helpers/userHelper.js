@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { verifierEmail } = require('../utils/verifyEmailSender');
 const { Op } = require('sequelize');
-const { deleteFile, singleFileUpload } = require("../utils/fileUpload");
+const { deleteFile, singleFileUpload, getFileName } = require("../utils/fileUpload");
 const config = require('config');
 const { Mail } = require('../utils/email');
 const { crypt, decrypt } = require('../utils/hashes');
@@ -1111,7 +1111,8 @@ module.exports = {
                         module: `userProfileUpdate`
                     });
 
-                const fileName = `${findUser.id}-${new Date().getTime()}`;
+                let rawFileName = await getFileName(image, true);
+                const fileName = `${findUser.id}-${rawFileName}`;
                 // Upload Image to AWS S3
                 const user_image_src = config.get("AWS.USER_IMG_SRC").split("/");
                 const user_image_bucketName = user_image_src[0];
